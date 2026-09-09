@@ -1,0 +1,13 @@
+dist/
+local/
+*.tmp
+*.log
+__pycache__/
+.DS_Store
+Thumbs.db
+node_modules/
+
+# Personal / company-specific packs stay local. Only the template and the public example are tracked.
+packs/*
+!packs/_template/
+!packs/example/
