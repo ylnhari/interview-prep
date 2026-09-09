@@ -35,14 +35,23 @@ All HTML strings are backtick template literals. Never write the two characters 
 
 - Part order inside a chapter: `field` (the subject, generic) → `experience` (what the candidate did, with the correct technical names, and the honest boundary) → `role` (how it applies to this role, from the job description and recruiter information only).
 - Chapters in `core/library.js` carry `field` chunks only, and their `connect`, `sayQuestion` and `sayItOutLoud` are `null`: core is shared by every pack and must name no candidate and no employer. A pack supplies its own `experience` and `role` chunks, exercises, connect block and spoken answer through its overlay. The engine splices overlay learn chunks in after the last `field` chunk, appends overlay activities, and sets the connect and say fields.
-- The first learn chunk of every core chapter is `Foundations: the words you need first`, a list of every term the chapter uses, each defined in one sentence with an example. Later chunks may use those words freely; never introduce a new undefined term.
-- Every learn chunk ends with `<p><b>In the room:</b> …</p>`: a concrete question to expect or a phrase to use.
+- The first learn chunk of every core chapter is titled `Key terms`: every term the chapter uses, each defined in one sentence with an example. Later chunks may use those words freely; never introduce a new undefined term.
+- No learn chunk carries an `In the room:` closing paragraph. Bodies teach the subject; they do not narrate the document. Sentences that explain the page rather than the subject ("this chapter covers…", "you will be asked…", "as an assessor would…") do not belong in core.
 - `viz` names a diagram id from `engine/viz-catalog.md`; the shell renders it at the top of the section. Use it where the diagram shows the mechanism; foundations, glossary and question-bank chunks usually have none.
-- Question-bank chapters: id ending in `question-bank`; body lists `<li><b>Qn.</b> …</li>`, deeper lists `<li><b>An.</b> …</li>` in the same order; the shell pairs them and adds a hide/show toggle.
+- `link: { url, label }` on a learn chunk renders a prominent "Open in the course" button (new tab) under the chunk title, before the body; the chunk's tick button then reads "Mark done". Used by private packs that send the reader to a generic chapter on the public site and back.
+- `kind: "prereqs"` on a topic renders its learn chunks as a compact checklist (title, one-line body, the link button, a done tick) instead of prose sections, and its header shows "n of m done". Such a chapter carries no `activities`; the home page shows the pack with a "Prerequisites: n of m generic chapters done" line.
+- A chapter whose chunks all share one `part` shows no part headers; the "Part 1 / 2 / 3" movements appear only when a chapter mixes `field`, `experience` and `role` chunks.
+- Question-bank chapters: id containing `question-bank` (`question-bank-fundamentals`, `question-bank-mle`, or a pack's own `mle-question-bank`); body lists `<li><b>Qn.</b> …</li>`, deeper lists `<li><b>An.</b> …</li>` in the same order; the shell pairs them and adds a hide/show toggle.
+
+## Packs: the public course and private packs
+
+- `packs/course/content.js` is the public course: it uses every chapter in `core/library.js` through `useCore`, carries a neutral `honesty` sentence, `overlays: {}`, `interviewer: null` and `interviewAt: null`, and its `groups` are reading-order tracks rather than a round's agenda. It contains no candidate record and no employer research, and it is the pack the published site is built from. Its own `start-here` topic explains the course, the recommended path and how progress is exported.
+- `packs/<private>/<round>/content.js` is one interview process. It lists the core chapters it wants in `useCore`, adds its own chapters for the employer's systems, the candidate's systems and the round's logistics, and puts everything candidate- or employer-specific for a core chapter in a sibling `overlays.js`. `packs/*` is ignored by git except `packs/_template/` and `packs/course/`.
+- Chunk and activity ids must be unique across `core/library.js` and every overlay a pack loads, because the engine merges them into one chapter.
 
 ## Voice
 
-- Coach voice (addressed to the candidate as "you"): `why`, learn bodies, `deeper`, `In the room`, prompts, rubrics, interviewer block.
+- Coach voice (addressed to the reader as "you"): `why`, learn bodies, `deeper`, prompts, rubrics, interviewer block. In core it never addresses a specific candidate.
 - Candidate voice (first person, spoken to the interviewer): `sayItOutLoud`, `connect.model`, and `model` of `followup`/`story` activities. These are words the candidate would actually say. No commentary about the answer, no references to the document, no second-person coaching inside quotes. 140–250 words for a 60–90-second answer.
 - `sayQuestion` states the interviewer question the spoken answer answers; every exercise prompt states the question in the interviewer's words.
 

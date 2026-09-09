@@ -11,17 +11,19 @@ Read this file, then `README.md`, then the pack you are working on.
 - `engine/build.py` — builds one pack round into `dist/<pack>__<round>.html` (inlines viz library, core chapters and the pack content; escapes the output to pure ASCII so it renders correctly regardless of host charset). Usage: `python engine/build.py packs/<pack>/<round>`.
 - `engine/serve.py` — loopback-only static server for `dist/` (see Local server below).
 - `engine/check.js` — schema validation for a built page or a content file (`node engine/check.js dist/<file>.html`).
-- `engine/roadmap.py` — builds every pack round and `dist/index.html`, the fan-out map of every pack → chapter → section with deep links and progress.
+- `engine/roadmap.py` — builds every pack round and `dist/index.html`, the course home page: each pack as a card, its tracks as a vertical path of chapters and sections with deep links and progress; packs with a `kind: "prereqs"` chapter are listed after the course with a "Prerequisites: n of m" line. Change only `render_index`, its CSS and its script; standard library only.
+- `engine/test_io.js` — unit test for the progress export/import functions in the shell (`node engine/test_io.js`). Progress lives in `localStorage` under `prep-state-<meta.id>-v1`; the header's Export/Import buttons move it between devices as a JSON file.
 - `core/library.js` — shared GENERIC chapters (`window.PREP_CORE = { <topicId>: topic }`), field-level only: no candidate, employer or role-specific text; rubrics carry the placeholder `{{HONESTY}}` which the engine replaces with the pack's sentence. A pack lists the chapters it uses in `useCore`.
-- `packs/<pack>/<round>/content.js` — one round's content (`window.PREP_CONTENT = {...}`) with `honesty`, `useCore`, and optional `overlays.js` (`window.PREP_OVERLAYS = { topicId: { learn, activities, connect, sayQuestion, sayItOutLoud } }`) that splices candidate-specific material into core chapters at runtime. `notes*.md` hold the round's intel and sources. Only `packs/_template/` and `packs/example/` are tracked; every other pack is ignored and private.
+- `packs/<pack>/<round>/content.js` — one round's content (`window.PREP_CONTENT = {...}`) with `honesty`, `useCore`, and optional `overlays.js` (`window.PREP_OVERLAYS = { topicId: { learn, activities, connect, sayQuestion, sayItOutLoud } }`) that splices candidate-specific material into core chapters at runtime. `notes*.md` hold the round's intel and sources. Only `packs/_template/` and `packs/course/` are tracked; every other pack is ignored and private.
+- `packs/course/content.js` — the public course (tracked): every core chapter, grouped into five reading-order tracks, with a neutral honesty rule, public readings, a generic glossary and no overlay. It is what the published site is built from.
 - `docs/content-schema.md` — the content object schema and authoring rules (voice, honesty rule, define-before-use, diagrams).
 - `local/` (ignored) — machine-specific settings, published-artifact URLs, scratch builds.
 - `dist/` (ignored) — built pages.
 
 ## Content rules (summary; full text in `docs/content-schema.md`)
 
-- Two voices, never mixed: coach voice (bodies, deeper, why, prompts, rubrics, "In the room" lines) and candidate voice (spoken answers, follow-up and story model answers, recall-exercise model). Candidate-voice blocks are things the candidate would actually say, in first person, with no commentary about the answer.
-- Every chapter opens with a Foundations chunk defining every term it uses; terms are defined before use in reading order; every learn chunk ends with an `In the room:` line.
+- Two voices, never mixed: coach voice (bodies, deeper, why, prompts, rubrics) and candidate voice (spoken answers, follow-up and story model answers, recall-exercise model). Candidate-voice blocks are things the candidate would actually say, in first person, with no commentary about the answer.
+- Every chapter opens with a `Key terms` chunk defining every term it uses; terms are defined before use in reading order. No chunk carries an `In the room:` line, and no core text explains the document rather than the subject or addresses a specific candidate.
 - Every rubric carries the pack's single honesty sentence verbatim, tied to the candidate's verified record; graders must flag overclaims. No invented facts about the candidate or the employer; employer facts carry a source and date; unverified third-party reports are labelled as such.
 - Order chapters, drills and questions by importance for the round. Add and revise rather than delete; delete only what is clearly irrelevant.
 - Diagrams: reference ids from `engine/viz-catalog.md`; add new diagrams to `engine/viz-lib.js` following its helper conventions (CSS-variable colours only, `uid`-prefixed ids, the shell's animation classes).
@@ -38,7 +40,7 @@ This repository owns prep content and its rendering, nothing else. A job-search 
 
 ## Privacy and gates
 
-- Public repository (MIT). Everything tracked must be generic: engine, core chapters, docs, template, example pack. Personal or company-specific packs, notes, glossaries of the candidate's record, published-artifact URLs and machine settings live only in ignored paths (`packs/<private>`, `local/`, `dist/`). Before any commit, grep the staged files for employer names, personal identifiers, credentials and absolute user paths.
+- Public repository (MIT). Everything tracked must be generic: engine, core chapters, docs, template, the public course pack. Personal or company-specific packs, notes, glossaries of the candidate's record, published-artifact URLs and machine settings live only in ignored paths (`packs/<private>`, `local/`, `dist/`). Before any commit, grep the staged files for employer names, personal identifiers, credentials and absolute user paths.
 - Creating or editing files does not authorise a commit, push, publication or account action; each needs the user's explicit approval for the current task.
 
 ## Validation before handoff
@@ -46,6 +48,7 @@ This repository owns prep content and its rendering, nothing else. A job-search 
 ```
 python engine/build.py packs/<pack>/<round>
 node engine/check.js dist/<pack>__<round>.html
+node engine/test_io.js
 git status --short
 ```
 Scan changed tracked files for credentials and absolute user paths.

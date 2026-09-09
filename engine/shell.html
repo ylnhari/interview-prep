@@ -3,37 +3,41 @@
   @import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
   :root {
-    --bg: #f2f4f8; --surface: #ffffff; --surface-2: #e8edf4; --surface-3: #d6dee9;
-    --ink: #161b22; --ink-dim: #525c6b; --border: #d6dee9; --border-strong: #b9c4d4;
-    --accent: #2454cc; --accent-weak: #e4ebfc; --accent-ink: #173c99; --on-accent: #ffffff;
-    --danger: #c1402a; --danger-weak: #fbe7e2;
-    --warning: #a3720a; --warning-weak: #fbf0d6;
+    --bg: #f3f4f7; --surface: #ffffff; --surface-2: #e9ecf2; --surface-3: #d7dce6;
+    --ink: #161b22; --ink-dim: #545d6b; --border: #d7dce6; --border-strong: #b7c0cf;
+    --accent: #2454cc; --accent-weak: #e5ebfb; --accent-ink: #173c99; --on-accent: #ffffff;
+    --danger: #bf3f2a; --danger-weak: #fbe7e2;
+    --warning: #9e6f0a; --warning-weak: #fbf0d6;
     --good: #177a5c; --good-weak: #def3ea;
-    --shadow: 0 1px 2px rgba(20,30,50,.06), 0 8px 24px -12px rgba(20,30,50,.18);
+    --shadow: 0 1px 2px rgba(20,30,50,.05), 0 6px 20px -14px rgba(20,30,50,.18);
     --font-display: 'Sora', ui-sans-serif, system-ui, sans-serif;
     --font-body: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
     --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-    --measure: 72ch;
+    --measure: 70ch;
+    --rail-w: 272px;
+    color-scheme: light;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #0d131f; --surface: #141b2a; --surface-2: #1b2436; --surface-3: #28324a;
-      --ink: #e8edf6; --ink-dim: #9fabc2; --border: #2a3550; --border-strong: #3d4a68;
-      --accent: #7ba1ff; --accent-weak: #1c2c52; --accent-ink: #c4d6ff; --on-accent: #0d131f;
+      --bg: #0d121c; --surface: #141a27; --surface-2: #1b2331; --surface-3: #283143;
+      --ink: #e8edf6; --ink-dim: #9ea9bd; --border: #29324a; --border-strong: #3c4862;
+      --accent: #7ea3ff; --accent-weak: #1b2a4d; --accent-ink: #c6d6ff; --on-accent: #0d121c;
       --danger: #ff8a6e; --danger-weak: #3a2013;
       --warning: #f2c463; --warning-weak: #3a2c0c;
       --good: #5fdcb0; --good-weak: #123526;
-      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 12px 32px -16px rgba(0,0,0,.6);
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 28px -18px rgba(0,0,0,.6);
+      color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #0d131f; --surface: #141b2a; --surface-2: #1b2436; --surface-3: #28324a;
-    --ink: #e8edf6; --ink-dim: #9fabc2; --border: #2a3550; --border-strong: #3d4a68;
-    --accent: #7ba1ff; --accent-weak: #1c2c52; --accent-ink: #c4d6ff; --on-accent: #0d131f;
+    --bg: #0d121c; --surface: #141a27; --surface-2: #1b2331; --surface-3: #283143;
+    --ink: #e8edf6; --ink-dim: #9ea9bd; --border: #29324a; --border-strong: #3c4862;
+    --accent: #7ea3ff; --accent-weak: #1b2a4d; --accent-ink: #c6d6ff; --on-accent: #0d121c;
     --danger: #ff8a6e; --danger-weak: #3a2013;
     --warning: #f2c463; --warning-weak: #3a2c0c;
     --good: #5fdcb0; --good-weak: #123526;
-    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 12px 32px -16px rgba(0,0,0,.6);
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 28px -18px rgba(0,0,0,.6);
+    color-scheme: dark;
   }
 
   * { box-sizing: border-box; }
@@ -41,48 +45,55 @@
   html { scroll-behavior: smooth; }
   body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
   a { color: var(--accent); }
-  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
   button { font: inherit; color: inherit; }
   [hidden] { display: none !important; }
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, label:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
   /* header */
   header.top { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--border); }
-  .top-inner { max-width: 1360px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; gap: 10px 14px; flex-wrap: wrap; }
-  .brand { display: flex; flex-direction: column; gap: 0; margin-right: auto; min-width: 0; flex: 1 1 220px; }
+  .top-inner { max-width: 1360px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; }
+  .home { flex: none; font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-dim); text-decoration: none; padding: 5px 9px 5px 0; border-right: 1px solid var(--border); white-space: nowrap; }
+  .home:hover { color: var(--accent); }
+  .brand { display: flex; flex-direction: column; margin-right: auto; min-width: 0; flex: 1 1 200px; }
   .brand .eyebrow { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .brand h1 { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin: 0; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .stat { flex: none; display: flex; align-items: center; gap: 9px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 6px 11px; box-shadow: var(--shadow); font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-dim); white-space: nowrap; }
+  .stat { flex: none; display: flex; align-items: center; gap: 9px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 5px 11px; font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-dim); white-space: nowrap; }
   .stat b { color: var(--ink); font-size: 14px; font-variant-numeric: tabular-nums; font-weight: 500; }
   .stat.accent { background: var(--accent-weak); color: var(--accent-ink); border-color: transparent; }
   .stat.accent b { color: var(--accent-ink); }
   .ring { width: 26px; height: 26px; border-radius: 50%; flex: none; background: conic-gradient(var(--accent) calc(var(--pct, 0) * 1%), var(--surface-3) 0); display: grid; place-items: center; }
   .ring::after { content: ""; width: 18px; height: 18px; border-radius: 50%; background: var(--surface); }
+  .io { flex: none; display: flex; gap: 6px; }
+  .btn.sm { padding: 5px 10px; font-size: 12px; border-radius: 8px; font-weight: 500; }
   .sync { flex: none; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-dim); display: flex; align-items: center; gap: 6px; white-space: nowrap; }
   .sync::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--surface-3); flex: none; }
   .sync.on::before { background: var(--good); }
-  .sync.local::before { background: var(--warning); }
+  .sync.local::before { background: var(--border-strong); }
   @media (max-width: 760px) {
-    .top-inner { padding: 8px 16px; gap: 8px 10px; }
-    .brand { flex-basis: 100%; }
-    .sync { margin-right: auto; }
+    .top-inner { padding: 8px 14px; gap: 8px 10px; }
+    .brand { flex-basis: calc(100% - 140px); }
+    .home { border-right: 0; padding-right: 0; }
+    .sync { display: none; }
+    .io { margin-left: auto; }
   }
-  @media (max-width: 480px) { .sync { flex-basis: 100%; order: 3; } }
 
   /* shell */
-  .shell { max-width: 1360px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 24px; align-items: start; }
-  @media (max-width: 940px) { .shell { grid-template-columns: 1fr; } }
+  .shell { max-width: 1360px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: var(--rail-w) minmax(0, 1fr); gap: 24px; align-items: start; }
+  @media (max-width: 940px) { .shell { grid-template-columns: minmax(0, 1fr); padding: 14px; } }
 
-  /* TOC rail */
-  .rail { position: sticky; top: 66px; max-height: calc(100vh - 80px); overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px; scrollbar-width: thin; scrollbar-color: var(--surface-3) transparent; }
+  /* rail: course outline */
+  .rail { position: sticky; top: 62px; max-height: calc(100vh - 76px); overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px; scrollbar-width: thin; scrollbar-color: var(--surface-3) transparent; }
   .rail > * { flex: none; }
-  @media (max-width: 940px) { .rail { position: static; max-height: none; } }
-  .today { background: var(--accent-weak); color: var(--accent-ink); border-radius: 12px; padding: 10px 13px; font-size: 12.5px; }
-  .today .k { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .07em; opacity: .8; }
-  .today .v { font-family: var(--font-display); font-weight: 600; font-size: 13.5px; line-height: 1.35; margin-top: 2px; }
-  .toc { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
-  .toc .dh { padding: 7px 12px 5px; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-ink); background: var(--surface-2); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
+  .continue { background: var(--accent-weak); color: var(--accent-ink); border: 0; border-radius: 12px; padding: 10px 13px; font: inherit; font-size: 12.5px; text-align: left; width: 100%; cursor: pointer; }
+  .continue:hover { filter: brightness(1.04); }
+  .continue .k { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .07em; opacity: .8; }
+  .continue .v { font-family: var(--font-display); font-weight: 600; font-size: 13.5px; line-height: 1.35; margin-top: 2px; }
+  .continue .s { font-size: 12px; line-height: 1.4; margin-top: 2px; opacity: .85; }
+  .toc { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .toc .dh { padding: 8px 12px 6px; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-ink); background: var(--surface-2); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
   .toc .dh span:last-child { color: var(--ink-dim); text-transform: none; letter-spacing: 0; }
-  .ti { display: block; text-decoration: none; color: inherit; padding: 8px 12px; border-bottom: 1px solid var(--border); transition: background-color .15s ease; }
+  .ti { display: block; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--border); text-decoration: none; color: inherit; padding: 8px 12px; cursor: pointer; transition: background-color .15s ease; }
   .ti:last-child { border-bottom: 0; }
   .ti:hover { background: var(--surface-2); }
   .ti:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 0; }
@@ -97,6 +108,22 @@
   .state { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-dim); white-space: nowrap; flex: none; }
   .state.verified { color: var(--good); }
   .ti.gl .t { color: var(--accent-ink); }
+  .subtoc { background: var(--surface); border-bottom: 1px solid var(--border); padding: 4px 0 8px; }
+  .subtoc .sp { font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-ink); padding: 8px 12px 3px 22px; }
+  .subtoc .si { display: grid; grid-template-columns: 16px 1fr; gap: 6px; padding: 4px 12px 4px 22px; font-size: 12px; color: var(--ink); text-decoration: none; line-height: 1.35; }
+  .subtoc .si:hover { background: var(--surface-2); }
+  .subtoc .si:focus-visible { outline-offset: -2px; border-radius: 0; }
+  .subtoc .si .sn { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); text-align: right; }
+  .subtoc .si.read { color: var(--ink-dim); }
+  .subtoc .si.read .sn { color: var(--good); }
+  .menu { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 6px 12px; font-weight: 600; font-size: 13px; cursor: pointer; }
+  @media (max-width: 940px) {
+    .rail { position: static; max-height: none; }
+    .menu { display: inline-block; }
+    .rail { display: none; }
+    body.menu-open .rail { display: flex; position: fixed; inset: 0; z-index: 30; background: var(--bg); padding: 16px; overflow-y: auto; max-height: none; }
+    body.menu-open .book { display: none; }
+  }
 
   .pill { flex: none; font-family: var(--font-mono); font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: .05em; padding: 2px 8px; border-radius: 999px; border: 1px solid transparent; white-space: nowrap; }
   .pill.danger { background: var(--danger-weak); color: var(--danger); border-color: color-mix(in srgb, var(--danger) 35%, transparent); }
@@ -104,28 +131,31 @@
   .pill.good { background: var(--good-weak); color: var(--good); border-color: color-mix(in srgb, var(--good) 35%, transparent); }
 
   /* book */
-  .book { min-width: 0; display: flex; flex-direction: column; gap: 32px; }
-  .chapter { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; scroll-margin-top: 72px; }
-  .chh { padding: 24px 32px 20px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, var(--surface-2), var(--surface)); }
+  .book { min-width: 0; display: flex; flex-direction: column; gap: 28px; }
+  .chapter { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; scroll-margin-top: 72px; min-width: 0; max-width: 100%; }
+  .chb, .chh { min-width: 0; }
+  .chh { padding: 26px 36px 22px; border-bottom: 1px solid var(--border); }
   .chh .eyebrow { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-  .chh h2 { font-family: var(--font-display); font-size: 28px; line-height: 1.2; font-weight: 700; margin: 8px 0 0; letter-spacing: -.018em; text-wrap: balance; max-width: 30ch; }
-  .chh .why { margin-top: 12px; color: var(--ink-dim); font-size: 15px; line-height: 1.55; border-left: 2px solid var(--accent); padding-left: 12px; max-width: var(--measure); }
+  .chh h2 { font-family: var(--font-display); font-size: clamp(23px, 1.4vw + 17px, 30px); line-height: 1.18; font-weight: 700; margin: 8px 0 0; letter-spacing: -.02em; text-wrap: balance; max-width: 32ch; }
+  .chh .why { margin-top: 12px; color: var(--ink-dim); font-size: 15px; line-height: 1.6; border-left: 2px solid var(--accent); padding-left: 12px; max-width: var(--measure); }
   .chh .mastery { margin-top: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); }
   .chh .mastery .bar { flex: 1 1 140px; max-width: 220px; height: 6px; border-radius: 3px; }
-  .chb { padding: 8px 32px 30px; }
+  .chb { padding: 8px 36px 30px; }
   @media (max-width: 1100px) { .chh { padding-left: 28px; padding-right: 28px; } .chb { padding-left: 28px; padding-right: 28px; } }
-  @media (max-width: 600px) { .chh, .chb { padding-left: 16px; padding-right: 16px; } }
+  @media (max-width: 600px) { .chh { padding: 20px 16px 16px; } .chb { padding-left: 16px; padding-right: 16px; } }
 
-  /* diagrams: keep a floor on the drawn width so 9-12px labels stay legible; the box scrolls instead of shrinking the text */
-  .viz { margin: 18px 0 6px; padding: 14px 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; }
-  .viz svg { width: 100%; height: auto; display: block; font-family: var(--font-mono); font-size: 11px; }
-  .viz .cap { font-size: 13px; line-height: 1.5; color: var(--ink-dim); margin-top: 10px; max-width: var(--measure); }
-  .viz .cap b { color: var(--ink); }
+  /* diagrams: the drawing keeps a floor width so labels stay legible; the box scrolls on narrow screens */
+  .viz, .cviz { margin: 14px 0 6px; padding: 12px 14px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto; }
+  .viz svg, .cviz svg { width: 100%; min-width: 520px; height: auto; display: block; font-family: var(--font-mono); font-size: 11px; }
+  .viz, .cviz, .gwrap { max-width: 100%; contain: inline-size; }
+  .viz .cap, .cviz .cap { font-size: 12.5px; line-height: 1.5; color: var(--ink-dim); margin-top: 8px; max-width: var(--measure); }
+  .viz .cap b, .cviz .cap b { color: var(--ink); }
 
-  /* section = the reading unit: hairline dashed rule, numbered heading */
+  /* section: the reading unit */
   .sec { padding: 24px 0 8px; border-top: 1px dashed var(--border); margin-top: 18px; scroll-margin-top: 72px; }
-  .sec:first-of-type, .reads + .sec, .viz + .sec { border-top: 0; }
+  .sec:first-of-type, .reads + .sec, .viz + .sec, .part + .sec { border-top: 0; }
   .reads + .sec { margin-top: 10px; }
+  .part + .sec { padding-top: 12px; }
   .sech { display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px; }
   .sech .num { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent-ink); min-width: 32px; font-variant-numeric: tabular-nums; }
   .sech.read .num { color: var(--good); }
@@ -148,19 +178,37 @@
   .mcq .opts { display: grid; gap: 6px; }
   .opt { text-align: left; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px; cursor: pointer; font-size: 14px; line-height: 1.45; color: var(--ink); transition: border-color .15s ease, background-color .15s ease; }
   .opt:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-weak); }
-  .opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
   .opt.right { border-color: var(--good); background: var(--good-weak); }
   .opt.wrong { border-color: var(--danger); background: var(--danger-weak); }
   .opt:disabled { cursor: default; }
   .opt:disabled:not(.right):not(.wrong) { color: var(--ink-dim); }
   .mcq .ex { margin-top: 10px; font-size: 14px; line-height: 1.55; color: var(--ink-dim); }
   .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .row .meta, .note { font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); font-variant-numeric: tabular-nums; }
+  .note { margin-top: 10px; }
+
+  /* external link under a section title (prerequisite chapters) */
+  .ext { display: inline-flex; align-items: center; gap: 6px; margin: 2px 0 12px; padding: 7px 12px; border-radius: 9px; background: var(--accent); color: var(--on-accent); font-weight: 600; font-size: 13px; text-decoration: none; }
+  .ext:hover { background: color-mix(in srgb, var(--accent) 88%, var(--ink)); }
+  .ext::after { content: "\2197"; font-family: var(--font-mono); font-size: 12px; }
+
+  /* prerequisite checklist chapter */
+  .plist { margin-top: 12px; display: flex; flex-direction: column; }
+  .pitem { display: grid; grid-template-columns: 28px 1fr; gap: 12px; padding: 14px 0; border-top: 1px dashed var(--border); scroll-margin-top: 72px; }
+  .pitem:first-child { border-top: 0; }
+  .tick { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--border-strong); background: var(--surface); cursor: pointer; display: grid; place-items: center; color: transparent; font-size: 14px; line-height: 1; padding: 0; margin-top: 1px; transition: background-color .15s ease, border-color .15s ease; }
+  .tick:hover { border-color: var(--accent); }
+  .tick.on { background: var(--good); border-color: var(--good); color: var(--on-accent); }
+  .pitem .pt { font-family: var(--font-display); font-weight: 600; font-size: 15.5px; line-height: 1.35; }
+  .pitem.done .pt { color: var(--ink-dim); }
+  .pitem .pd { font-size: 14px; color: var(--ink-dim); line-height: 1.55; margin: 3px 0 8px; max-width: var(--measure); }
+  .pitem .pd p { margin: 0; }
+  .pitem .ext { margin: 0; }
 
   /* buttons */
   .btn { background: var(--surface); border: 1px solid var(--border-strong); border-radius: 9px; padding: 7px 13px; font-weight: 600; font-size: 13px; line-height: 1.3; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; color: var(--ink); transition: border-color .15s ease, background-color .15s ease, transform .1s ease; }
   .btn:hover:not(:disabled) { border-color: var(--accent); background: var(--surface-2); }
   .btn:active:not(:disabled) { transform: translateY(1px); }
-  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .btn:disabled { opacity: .55; cursor: default; }
   .btn.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   .btn.primary:hover:not(:disabled) { background: color-mix(in srgb, var(--accent) 88%, var(--ink)); border-color: color-mix(in srgb, var(--accent) 88%, var(--ink)); }
@@ -169,11 +217,11 @@
   .btn.done { background: var(--good-weak); color: var(--good); border-color: color-mix(in srgb, var(--good) 40%, transparent); }
   .btn.done:hover:not(:disabled) { background: var(--good-weak); border-color: var(--good); }
 
-  /* part = a chapter's major movement (Your experience / Exercises / Rehearse): heavier rule, more air, labelled */
-  .part { margin-top: 40px; padding-top: 26px; border-top: 2px solid var(--border-strong); }
+  /* part: a chapter's major movement */
+  .part { margin-top: 40px; padding-top: 24px; border-top: 2px solid var(--border-strong); }
   .part .ph { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
   .part .ph .lbl { font-family: var(--font-mono); font-size: 10.5px; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; color: var(--accent-ink); background: var(--accent-weak); padding: 3px 9px; border-radius: 999px; flex: none; }
-  .part .ph h3 { font-family: var(--font-display); font-size: 20px; line-height: 1.25; font-weight: 600; margin: 0; letter-spacing: -.012em; text-wrap: balance; }
+  .part .ph h3 { font-family: var(--font-display); font-size: 21px; line-height: 1.25; font-weight: 600; margin: 0; letter-spacing: -.012em; text-wrap: balance; }
   .part .sub { color: var(--ink-dim); font-size: 14px; line-height: 1.5; margin-bottom: 12px; max-width: var(--measure); }
   .part > .prose { margin-top: 12px; }
 
@@ -194,7 +242,7 @@
   .timer { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; color: var(--ink-dim); }
   .timer.over { color: var(--danger); }
 
-  /* grade result: verdict dominant, then feedback, then the lists */
+  /* grade result */
   .grade { margin-top: 14px; padding: 14px 16px 16px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--border); border-left-width: 4px; border-left-color: var(--border-strong); font-size: 14px; line-height: 1.6; }
   .grade:has(.verdict.pass) { border-left-color: var(--good); }
   .grade:has(.verdict.retry) { border-left-color: var(--warning); }
@@ -213,18 +261,19 @@
   .model { margin-top: 14px; padding: 14px 18px; border-left: 3px solid var(--accent); background: var(--accent-weak); border-radius: 0 10px 10px 0; max-width: var(--measure); }
   .model .lbl { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-ink); margin-bottom: 6px; }
   .model .prose { font-size: 15px; }
-  .meta { font-family: var(--font-mono); font-size: 11px; color: var(--ink-dim); font-variant-numeric: tabular-nums; }
   .say { margin-top: 14px; padding: 18px 22px; border-left: 3px solid var(--accent); background: var(--accent-weak); border-radius: 0 12px 12px 0; line-height: 1.75; font-size: 16px; max-width: var(--measure); }
   .say .lbl { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--accent-ink); margin-bottom: 8px; }
   .say .prose { line-height: inherit; }
+  .sayq { margin: 10px 0 2px; padding: 10px 14px; border: 1px dashed var(--border); border-radius: 10px; font-size: 14.5px; font-weight: 600; max-width: var(--measure); display: flex; gap: 10px; align-items: baseline; }
+  .sayq .lbl { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-ink); white-space: nowrap; font-weight: 500; }
 
-  /* interviewer */
+  /* interviewer profile */
   .who { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; scroll-margin-top: 72px; }
-  .who .wh { padding: 18px 32px; display: grid; grid-template-columns: auto 1fr; gap: 2px 16px; align-items: center; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, var(--surface-2), var(--surface)); }
+  .who .wh { padding: 20px 36px; display: grid; grid-template-columns: auto 1fr; gap: 2px 16px; align-items: center; border-bottom: 1px solid var(--border); }
   .who .av { width: 46px; height: 46px; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; font-size: 16px; grid-row: span 2; }
   .who .nm { font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: -.01em; }
-  .who .rl { font-size: 13.5px; color: var(--ink-dim); }
-  .who .wb { padding: 8px 32px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px 32px; }
+  .who .rl { font-size: 13.5px; color: var(--ink-dim); max-width: var(--measure); }
+  .who .wb { padding: 8px 36px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px 32px; }
   @media (max-width: 1100px) { .who .wh { padding-left: 28px; padding-right: 28px; } .who .wb { padding-left: 28px; padding-right: 28px; } }
   @media (max-width: 760px) { .who .wb { grid-template-columns: 1fr; } .who .wh, .who .wb { padding-left: 16px; padding-right: 16px; } }
   .who h4 { font-family: var(--font-mono); font-size: 10.5px; font-weight: 500; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-ink); margin: 14px 0 6px; }
@@ -241,7 +290,7 @@
   .gtable td { padding: 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
   .gtable tbody tr:hover td { background: var(--surface-2); }
   .gtable td:first-child { font-weight: 600; white-space: nowrap; }
-  .gtable td.say { font-style: italic; color: var(--ink-dim); }
+  .gtable td.say { font-style: italic; color: var(--ink-dim); margin: 0; padding: 10px; border-left: 0; background: none; border-radius: 0; line-height: 1.5; font-size: 13.5px; max-width: none; }
   .gwrap { overflow-x: auto; }
   .ggroup { margin-top: 26px; }
   .ggroup h3 { font-family: var(--font-display); font-size: 18px; line-height: 1.3; margin: 0 0 4px; letter-spacing: -.008em; }
@@ -256,40 +305,21 @@
   .rd:last-child { border-bottom: 0; }
   .rd:hover { background: color-mix(in srgb, var(--surface-2) 50%, var(--surface)); }
   .rd input { margin: 4px 0 0; width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
-  .rd input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .rd a { font-weight: 600; font-size: 14px; line-height: 1.45; text-decoration: none; }
   .rd a:hover { text-decoration: underline; }
   .rd .w { grid-column: 2; font-size: 13px; line-height: 1.5; color: var(--ink-dim); max-width: var(--measure); }
   .rd .mn { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-dim); white-space: nowrap; margin-top: 3px; }
   .rd.done a { color: var(--ink-dim); }
 
-  /* course navigation */
-  .menu { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 6px 12px; font-weight: 600; font-size: 13px; cursor: pointer; }
-  .menu:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .today { border: 0; text-align: left; width: 100%; cursor: pointer; font: inherit; }
-  .today:hover { filter: brightness(1.05); }
-  .today:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .ti { width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--border); font: inherit; color: inherit; cursor: pointer; }
-  .subtoc { background: var(--surface); border-bottom: 1px solid var(--border); padding: 6px 0 8px; }
-  .subtoc .sp { font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-ink); padding: 8px 12px 3px 22px; }
-  .subtoc .si { display: grid; grid-template-columns: 16px 1fr; gap: 6px; padding: 4px 12px 4px 22px; font-size: 12px; color: var(--ink); text-decoration: none; line-height: 1.35; }
-  .subtoc .si:hover { background: var(--surface-2); }
-  .subtoc .si .sn { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); text-align: right; }
-  .subtoc .si.read { color: var(--ink-dim); }
-  .subtoc .si.read .sn { color: var(--good); }
+  /* previous / next */
   .chnav { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .navbtn { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 2px; box-shadow: var(--shadow); font: inherit; color: inherit; }
+  .navbtn { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 2px; font: inherit; color: inherit; }
   .navbtn.next { text-align: right; align-items: flex-end; }
   .navbtn:hover { border-color: var(--accent); }
-  .navbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .navbtn .k { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-ink); }
   .navbtn .v { font-family: var(--font-display); font-weight: 600; font-size: 14px; }
-  @media (max-width: 940px) {
-    .menu { display: inline-block; }
-    .rail { display: none; }
-    body.menu-open .rail { display: flex; position: fixed; inset: 0; z-index: 30; background: var(--bg); padding: 16px; overflow-y: auto; max-height: none; }
-    body.menu-open .book { display: none; }
-  }
+  @media (max-width: 480px) { .chnav { grid-template-columns: 1fr; } .navbtn.next { text-align: left; align-items: flex-start; } }
+
   /* question bank pairs */
   .qa { list-style: none; padding: 0; margin: 10px 0 0; }
   .qa li { padding: 12px 0; border-top: 1px dashed var(--border); }
@@ -297,13 +327,8 @@
   .qa-q { font-weight: 600; }
   .qa-a { margin-top: 6px; color: var(--ink-dim); padding-left: 14px; border-left: 3px solid var(--accent); }
   .qa-a.hidden-a { display: none; }
-  .sayq { margin: 10px 0 2px; padding: 10px 14px; border: 1px dashed var(--border); border-radius: 10px; font-size: 14.5px; font-weight: 600; max-width: var(--measure); display: flex; gap: 10px; align-items: baseline; }
-  .sayq .lbl { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-ink); white-space: nowrap; font-weight: 500; }
-  /* animated concept diagrams */
-  .cviz { margin: 12px 0 4px; padding: 12px 14px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; }
-  .cviz svg { width: 100%; height: auto; display: block; font-family: var(--font-mono); }
-  .cviz .cap { font-size: 12.5px; color: var(--ink-dim); margin-top: 8px; max-width: var(--measure); }
-  .cviz .cap b { color: var(--ink); }
+
+  /* diagram animation classes used by engine/viz-lib.js */
   .v-flow { stroke-dasharray: 6 6; animation: vdash 1.6s linear infinite; }
   .v-flow-slow { stroke-dasharray: 6 6; animation: vdash 3.2s linear infinite; }
   @keyframes vdash { to { stroke-dashoffset: -24; } }
@@ -320,28 +345,35 @@
   .v-rotate { transform-box: fill-box; transform-origin: center; animation: vrot 6s linear infinite; }
   @keyframes vrot { to { transform: rotate(360deg); } }
   @media (prefers-reduced-motion: reduce) { .v-flow, .v-flow-slow, .v-pulse, .v-blink, .v-move-x, .v-grow, .v-fade-seq > *, .v-rotate { animation: none !important; opacity: 1 !important; } }
+
   .empty { color: var(--ink-dim); font-size: 13.5px; padding: 40px; text-align: center; }
   footer { max-width: 1360px; margin: 24px auto 0; padding: 16px 20px 48px; border-top: 1px solid var(--border); font-size: 12px; line-height: 1.5; color: var(--ink-dim); font-family: var(--font-mono); }
 </style>
 
 <header class="top">
   <div class="top-inner">
+    <a class="home" href="index.html">Course</a>
     <div class="brand">
       <span class="eyebrow">Interview prep</span>
       <h1>Prep</h1>
     </div>
-    <button class="menu" id="menu-btn" type="button" aria-label="Contents">Contents</button>
-    <div class="sync" id="sync">connecting</div>
-    <div class="stat"><div class="ring" id="ring" style="--pct:0"></div><span><b id="pct">0%</b> ready</span></div>
-    <div class="stat accent"><span>interview in</span><b id="countdown">—</b></div>
+    <button class="menu" id="menu-btn" type="button" aria-expanded="false" aria-controls="rail">Contents</button>
+    <div class="sync" id="sync" hidden></div>
+    <div class="stat" title="Overall progress across chapters"><div class="ring" id="ring" style="--pct:0" aria-hidden="true"></div><span><b id="pct">0%</b> done</span></div>
+    <div class="stat accent" id="countdown-wrap" hidden><span>interview in</span><b id="countdown"></b></div>
+    <div class="io">
+      <button class="btn sm" id="export-btn" type="button" title="Download this page's progress as a JSON file">Export progress</button>
+      <label class="btn sm" for="import-file" tabindex="0" title="Replace this page's progress with a previously exported file">Import progress</label>
+      <input type="file" id="import-file" accept="application/json,.json" hidden>
+    </div>
   </div>
 </header>
 
 <div class="shell">
-  <nav class="rail" id="rail" aria-label="Contents"></nav>
+  <nav class="rail" id="rail" aria-label="Course outline"></nav>
   <main class="book" id="book"></main>
 </div>
-<footer>Round 2 · ML engineering focus · exercises are graded by Claude against a rubric and saved so we can review them together</footer>
+<footer>Progress is saved in this browser. Use Export progress in the header to carry it to another device, and Import progress to load it there.</footer>
 
 <script>
 /*__VIZLIB__*/
@@ -356,6 +388,31 @@
 /*__OVERLAYS__*/
 </script>
 <script>
+// Progress export/import: pure functions, no DOM, so they can be unit-tested (engine/test_io.js).
+window.PREP_IO = (function () {
+  var FORMAT = 'interview-prep-progress';
+  function serialise(key, state, now) {
+    return JSON.stringify({ format: FORMAT, version: 1, key: key, exportedAt: (now || new Date()).toISOString(), state: state }, null, 2);
+  }
+  function validState(st) {
+    return !!st && typeof st === 'object' && !Array.isArray(st) && !!st.topics && typeof st.topics === 'object' && !Array.isArray(st.topics);
+  }
+  // Returns { state, key } for an export file or a raw state object; throws on anything else.
+  function parse(text) {
+    var doc = JSON.parse(text);
+    var wrapped = !!doc && typeof doc === 'object' && doc.format === FORMAT;
+    var st = wrapped ? doc.state : doc;
+    if (!validState(st)) throw new Error('This file is not an interview-prep progress export.');
+    return { state: st, key: wrapped && typeof doc.key === 'string' ? doc.key : null };
+  }
+  function filename(key, now) {
+    var d = (now || new Date()).toISOString().slice(0, 10);
+    return String(key).replace(/^prep-state-/, '').replace(/-v\d+$/, '') + '-progress-' + d + '.json';
+  }
+  return { FORMAT: FORMAT, serialise: serialise, parse: parse, filename: filename, validState: validState };
+})();
+</script>
+<script>
 (function () {
   var C = window.PREP_CONTENT;
   var book = document.getElementById('book');
@@ -366,11 +423,12 @@
   Object.keys(OV).forEach(function (id) {
     var t = C.topics.filter(function (x) { return x.id === id; })[0]; if (!t) return; var o = OV[id] || {};
     if (o.learn && o.learn.length) { var lastField = -1; t.learn.forEach(function (c, i) { if (c.part === 'field') lastField = i; }); var ins = lastField + 1; o.learn.forEach(function (c, k) { t.learn.splice(ins + k, 0, c); }); }
-    if (o.activities && o.activities.length) t.activities = t.activities.concat(o.activities);
+    if (o.activities && o.activities.length) t.activities = (t.activities || []).concat(o.activities);
     if (o.connect) t.connect = o.connect;
     if (o.sayQuestion) t.sayQuestion = o.sayQuestion;
     if (o.sayItOutLoud) t.sayItOutLoud = o.sayItOutLoud;
   });
+  C.topics.forEach(function (t) { t.learn = t.learn || []; t.activities = t.activities || []; });
   // honesty sentence substitution
   var HON = C.honesty || 'Honesty rule: no candidate record was supplied; grade on correctness and reasoning and flag any claim of specific production experience as unverified.';
   C.topics.forEach(function (t) { if (t.connect && t.connect.rubric) t.connect.rubric = t.connect.rubric.split('{{HONESTY}}').join(HON); t.activities.forEach(function (a) { if (a.rubric) a.rubric = a.rubric.split('{{HONESTY}}').join(HON); }); });
@@ -381,23 +439,23 @@
   var GROUPS = C.groups || [];
   function groupOf(id) { return GROUPS.filter(function (g) { return g.ids.indexOf(id) >= 0; })[0] || GROUPS[0]; }
   function orderedTopics() { var out = []; GROUPS.forEach(function (g) { g.ids.forEach(function (id) { var t = TOPICS.filter(function (x) { return x.id === id; })[0]; if (t) out.push(t); }); }); TOPICS.forEach(function (t) { if (out.indexOf(t) < 0) out.push(t); }); return out; }
+  function topicById(id) { return TOPICS.filter(function (x) { return x.id === id; })[0]; }
+  function isQBank(topic) { return /question-bank/.test(topic.id); }
+  function isPrereqs(topic) { return topic.kind === 'prereqs'; }
+  // graded mode exists only when the page runs inside a Claude-published copy
+  function graded() { return !!(window.claude && typeof window.claude.use === 'function'); }
+  var TICK = '✓', DOT = '·';
 
   var LS_KEY = 'prep-state-' + ((C.meta && C.meta.id) || 'pack') + '-v1';
-
-  // ---------- glossary: what you built, what to call it ----------
   var GLOSSARY = C.glossary || [];
-
-  // ---------- primary sources: read, don't reimplement ----------
   var READINGS = C.readings || {};
-
-  // ---------- diagrams (inline SVG) ----------
   var VIZ = C.topicViz || {};
 
   // ---------- state ----------
   var state = { topics: {}, whoOpen: true };
-  try { var ls = JSON.parse(localStorage.getItem(LS_KEY) || 'null'); if (ls) state = ls; } catch (e) {}
+  try { var ls = JSON.parse(localStorage.getItem(LS_KEY) || 'null'); if (ls && window.PREP_IO.validState(ls)) state = ls; } catch (e) {}
   function T(id) {
-    if (!state.topics[id]) state.topics[id] = { learn: {}, checks: {}, connect: { status: 'none', attempts: 0 }, acts: {}, said: false, updatedAt: null };
+    if (!state.topics[id]) state.topics[id] = { learn: {}, checks: {}, reads: {}, connect: { status: 'none', attempts: 0 }, acts: {}, said: false, updatedAt: null };
     var t = state.topics[id]; t.learn = t.learn || {}; t.checks = t.checks || {}; t.reads = t.reads || {}; t.acts = t.acts || {}; t.connect = t.connect || { status: 'none', attempts: 0 }; return t;
   }
   function AC(tid, aid) { var t = T(tid); if (!t.acts[aid]) t.acts[aid] = { status: 'none', attempts: 0 }; return t.acts[aid]; }
@@ -408,84 +466,115 @@
     clearTimeout(saveTimer[tid]);
     saveTimer[tid] = setTimeout(function () { var t = T(tid); t.updatedAt = new Date().toISOString(); db.doc('progress/' + tid).set(JSON.parse(JSON.stringify(t))).catch(function () { setSync('local'); }); }, 400);
   }
+  var draftTimer = null;
+  function persistDraft(tid) { clearTimeout(draftTimer); draftTimer = setTimeout(function () { persist(tid); }, 600); }
   function logAttempt(rec) { if (!db) return; rec.at = new Date().toISOString(); db.collection('attempts').add(rec).catch(function () {}); }
-  function setSync(mode) { var e = document.getElementById('sync'); e.className = 'sync ' + (mode === 'on' ? 'on' : mode === 'local' ? 'local' : ''); e.textContent = mode === 'on' ? 'progress synced' : mode === 'local' ? 'saved in this browser only' : 'connecting'; }
+  function setSync(mode) { var e = document.getElementById('sync'); e.hidden = false; e.className = 'sync ' + (mode === 'on' ? 'on' : mode === 'local' ? 'local' : ''); e.textContent = mode === 'on' ? 'progress synced' : mode === 'local' ? 'saved in this browser' : 'connecting'; }
 
+  // progress: weights count only the components a chapter actually has
   function topicProgress(topic) {
     var t = T(topic.id);
     var nL = topic.learn.length, rL = topic.learn.filter(function (c) { return t.learn[c.id]; }).length;
     var nA = topic.activities.length, pA = topic.activities.filter(function (a) { return AC(topic.id, a.id).status === 'pass'; }).length;
-    var cd = topic.connect ? (t.connect.status === 'pass' ? 1 : 0) : 1;
-    var hasSay = !!topic.sayItOutLoud;
-    var wAct = (hasSay ? 0.4 : 0.5) + (topic.connect ? 0 : 0.15);
-    var pct = (nL ? rL / nL : 1) * 0.35 + cd * (topic.connect ? 0.15 : 0) + (nA ? pA / nA : 1) * wAct + (t.said ? 1 : 0) * (hasSay ? 0.1 : 0);
+    var hasSay = !!topic.sayItOutLoud, hasConnect = !!topic.connect;
+    var cd = hasConnect && t.connect.status === 'pass' ? 1 : 0;
+    var num = 0, den = 0;
+    if (nL) { num += 0.4 * rL / nL; den += 0.4; }
+    if (hasConnect) { num += 0.15 * cd; den += 0.15; }
+    if (nA) { num += 0.35 * pA / nA; den += 0.35; }
+    if (hasSay) { num += 0.1 * (t.said ? 1 : 0); den += 0.1; }
+    var pct = den ? num / den : 1;
     var label = 'Not started';
-    if (rL > 0 || pA > 0 || (topic.connect && t.connect.status !== 'none')) label = 'Reading';
-    if (nL && rL === nL) label = 'Practising';
-    if (nL && rL === nL && pA === nA && cd) label = 'Verified';
-    return { pct: Math.min(100, Math.round(pct * 100)), label: label, rL: rL, nL: nL, pA: pA, nA: nA };
+    if (rL > 0 || pA > 0 || (hasConnect && t.connect.status !== 'none') || (hasSay && t.said)) label = 'In progress';
+    if (nL && rL === nL) label = nA || hasConnect || hasSay ? 'Practising' : 'Done';
+    if (rL === nL && pA === nA && (!hasConnect || cd) && (!hasSay || t.said)) label = nA || hasConnect || hasSay ? 'Verified' : 'Done';
+    return { pct: Math.min(100, Math.round(pct * 100)), label: label, rL: rL, nL: nL, pA: pA, nA: nA, complete: label === 'Verified' || label === 'Done' };
   }
-  function overall() { var s = 0; TOPICS.forEach(function (tp) { s += topicProgress(tp).pct; }); return Math.round(s / TOPICS.length); }
+  function overall() { if (!TOPICS.length) return 0; var s = 0; TOPICS.forEach(function (tp) { s += topicProgress(tp).pct; }); return Math.round(s / TOPICS.length); }
+  function nextUnfinished() {
+    var ts = orderedTopics();
+    for (var i = 0; i < ts.length; i++) { var t = ts[i], st = T(t.id); for (var j = 0; j < t.learn.length; j++) { if (!st.learn[t.learn[j].id]) return { topic: t, section: t.learn[j] }; } }
+    for (var k = 0; k < ts.length; k++) { if (!topicProgress(ts[k]).complete) return { topic: ts[k], section: null }; }
+    return null;
+  }
 
-  function tick() { var e = document.getElementById('countdown'); if (!C.interviewAt) { e.textContent = 'date TBD'; return; } var target = new Date(C.interviewAt), diff = target - new Date(); if (diff <= 0) { e.textContent = 'now'; return; } e.textContent = Math.floor(diff / 864e5) + 'd ' + Math.floor(diff % 864e5 / 36e5) + 'h ' + Math.floor(diff % 36e5 / 6e4) + 'm'; }
-  tick(); setInterval(tick, 60000);
-  function todayDay() { var n = new Date(); if (n.getMonth() !== 8) return null; return { 4: 1, 5: 1, 6: 2, 7: 3 }[n.getDate()] || (n.getDate() >= 8 ? 'interview' : null); }
+  // countdown: shown only when the pack sets interviewAt
+  (function () {
+    var wrap = document.getElementById('countdown-wrap'), e = document.getElementById('countdown');
+    if (!C.interviewAt) return;
+    var target = new Date(C.interviewAt); if (isNaN(target.getTime())) return;
+    wrap.hidden = false;
+    function tick() { var diff = target - new Date(); if (diff <= 0) { e.textContent = 'now'; return; } e.textContent = Math.floor(diff / 864e5) + 'd ' + Math.floor(diff % 864e5 / 36e5) + 'h ' + Math.floor(diff % 36e5 / 6e4) + 'm'; }
+    tick(); setInterval(tick, 60000);
+  })();
 
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
   function txt(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; e.textContent = text; return e; }
+  function extLink(link) { var a = txt('a', 'ext', (link && link.label) || 'Open in the course'); a.href = link.url; a.target = '_blank'; a.rel = 'noopener'; return a; }
 
-  // ---------- rail (course menu) ----------
-  function viewOrder() { var v = []; if (C.interviewer) v.push('who'); orderedTopics().forEach(function (t) { v.push(t.id); }); v.push('glossary'); return v; }
+  // ---------- rail: course outline ----------
+  var PART_SHORT = { field: 'The field', experience: 'Your experience', role: 'In this role' };
+  function viewOrder() { var v = []; if (C.interviewer) v.push('who'); orderedTopics().forEach(function (t) { v.push(t.id); }); if (GLOSSARY.length) v.push('glossary'); return v; }
   function renderRail() {
     var rail = document.getElementById('rail'); rail.innerHTML = '';
-    var nxt = orderedTopics().filter(function (t) { return topicProgress(t).label !== 'Verified'; })[0];
-    var today = el('button', 'today'); today.type = 'button';
-    today.appendChild(txt('div', 'k', nxt ? 'Pick up here' : 'All chapters verified'));
-    today.appendChild(txt('div', 'v', nxt ? nxt.title : 'Re-read the opener. Then stop.'));
-    if (nxt) today.addEventListener('click', function () { go(nxt.id); });
-    rail.appendChild(today);
-    if (C.interviewer) { var w = el('div', 'toc'); var a = el('button', 'ti gl' + (state.view === 'who' ? ' cur' : '')); a.type = 'button'; a.appendChild(el('span', 't', '<span>Know your interviewer</span>')); a.addEventListener('click', function () { go('who'); }); w.appendChild(a); rail.appendChild(w); }
-    GROUPS.forEach(function (grp) {
-      var g = el('div', 'toc'); var dh = el('div', 'dh'); dh.appendChild(txt('span', null, grp.label)); dh.appendChild(txt('span', null, grp.sub)); g.appendChild(dh);
-      orderedTopics().filter(function (t) { return groupOf(t.id) === grp; }).forEach(function (t) {
+    var nxt = nextUnfinished();
+    var cont = el('button', 'continue'); cont.type = 'button';
+    cont.appendChild(txt('div', 'k', nxt ? (overall() ? 'Continue' : 'Start here') : 'Course complete'));
+    cont.appendChild(txt('div', 'v', nxt ? nxt.topic.title : 'Every chapter is done'));
+    if (nxt && nxt.section) cont.appendChild(txt('div', 's', nxt.section.title));
+    if (nxt) cont.addEventListener('click', function () { go(nxt.topic.id, nxt.section ? nxt.section.id : null); });
+    rail.appendChild(cont);
+    if (C.interviewer) { var w = el('div', 'toc'); var a = el('button', 'ti gl' + (state.view === 'who' ? ' cur' : '')); a.type = 'button'; a.appendChild(el('span', 't', '<span>Interviewer profile</span>')); a.addEventListener('click', function () { go('who'); }); w.appendChild(a); rail.appendChild(w); }
+    var groupsToRender = GROUPS.length ? GROUPS : [{ id: 'all', label: 'Chapters', sub: '', ids: TOPICS.map(function (t) { return t.id; }) }];
+    groupsToRender.forEach(function (grp) {
+      var g = el('div', 'toc'); var dh = el('div', 'dh'); dh.appendChild(txt('span', null, grp.label)); if (grp.sub) dh.appendChild(txt('span', null, grp.sub)); g.appendChild(dh);
+      var members = GROUPS.length ? orderedTopics().filter(function (t) { return groupOf(t.id) === grp; }) : orderedTopics();
+      members.forEach(function (t) {
         var p = topicProgress(t); var active = state.view === t.id;
-        var a = el('button', 'ti' + (active ? ' cur' : '')); a.type = 'button'; a.dataset.id = t.id;
+        var a = el('button', 'ti' + (active ? ' cur' : '')); a.type = 'button'; a.dataset.id = t.id; if (active) a.setAttribute('aria-current', 'page');
         var tt = el('span', 't'); tt.appendChild(txt('span', null, t.title)); tt.appendChild(txt('span', 'n', p.rL + '/' + p.nL)); a.appendChild(tt);
-        var m = el('span', 'm'); var bar = el('span', 'bar', '<i></i>'); bar.style.setProperty('--pct', p.pct); m.appendChild(bar); m.appendChild(txt('span', 'state' + (p.label === 'Verified' ? ' verified' : ''), p.label)); a.appendChild(m);
+        var m = el('span', 'm'); var bar = el('span', 'bar', '<i></i>'); bar.style.setProperty('--pct', p.pct); m.appendChild(bar); m.appendChild(txt('span', 'state' + (p.complete ? ' verified' : ''), p.label)); a.appendChild(m);
         a.addEventListener('click', function () { go(t.id); });
         g.appendChild(a);
         if (active) {
           var sub = el('div', 'subtoc'); var tst = T(t.id); var lastPart = null;
-          var PL = { field: 'Part 1 · The field', experience: 'Part 2 · Your experience', role: 'Part 3 · In this role' };
+          var parts = {}; t.learn.forEach(function (c) { if (c.part) parts[c.part] = 1; }); var multi = Object.keys(parts).length > 1;
           t.learn.forEach(function (c, i) {
-            if (c.part && c.part !== lastPart) { lastPart = c.part; sub.appendChild(txt('div', 'sp', PL[c.part] || c.part)); }
-            var li = el('a', 'si' + (tst.learn[c.id] ? ' read' : '')); li.href = '#sec-' + c.id; li.appendChild(txt('span', 'sn', tst.learn[c.id] ? '✓' : String(i + 1))); li.appendChild(txt('span', null, c.title)); sub.appendChild(li);
+            if (multi && c.part && c.part !== lastPart) { lastPart = c.part; sub.appendChild(txt('div', 'sp', PART_SHORT[c.part] || c.part)); }
+            var li = el('a', 'si' + (tst.learn[c.id] ? ' read' : '')); li.href = '#sec-' + c.id; li.appendChild(txt('span', 'sn', tst.learn[c.id] ? TICK : String(i + 1))); li.appendChild(txt('span', null, c.title)); sub.appendChild(li);
           });
-          if (t.connect) { var lc = el('a', 'si'); lc.href = '#connect-' + t.id; lc.appendChild(txt('span', 'sn', '·')); lc.appendChild(txt('span', null, 'Map it onto your work')); sub.appendChild(lc); }
-          if (t.activities.length) { var la = el('a', 'si'); la.href = '#ex-' + t.id; la.appendChild(txt('span', 'sn', '·')); la.appendChild(txt('span', null, 'Exercises (' + p.pA + '/' + p.nA + ')')); sub.appendChild(la); }
-          if (t.sayItOutLoud) { var ls = el('a', 'si'); ls.href = '#say-' + t.id; ls.appendChild(txt('span', 'sn', '·')); ls.appendChild(txt('span', null, 'Say it out loud')); sub.appendChild(ls); }
+          if (t.connect) { var lc = el('a', 'si'); lc.href = '#connect-' + t.id; lc.appendChild(txt('span', 'sn', DOT)); lc.appendChild(txt('span', null, 'Map it onto your work')); sub.appendChild(lc); }
+          if (t.activities.length) { var la = el('a', 'si'); la.href = '#ex-' + t.id; la.appendChild(txt('span', 'sn', DOT)); la.appendChild(txt('span', null, 'Exercises (' + p.pA + '/' + p.nA + ')')); sub.appendChild(la); }
+          if (t.sayItOutLoud) { var ls2 = el('a', 'si'); ls2.href = '#say-' + t.id; ls2.appendChild(txt('span', 'sn', DOT)); ls2.appendChild(txt('span', null, 'Spoken answer')); sub.appendChild(ls2); }
           g.appendChild(sub);
         }
       });
       rail.appendChild(g);
     });
-    var gl = el('div', 'toc'); var ga = el('button', 'ti gl' + (state.view === 'glossary' ? ' cur' : '')); ga.type = 'button'; ga.appendChild(el('span', 't', '<span>Glossary: what to call what you built</span>')); ga.addEventListener('click', function () { go('glossary'); }); gl.appendChild(ga); rail.appendChild(gl);
+    if (GLOSSARY.length) { var gl = el('div', 'toc'); var ga = el('button', 'ti gl' + (state.view === 'glossary' ? ' cur' : '')); ga.type = 'button'; ga.appendChild(el('span', 't', '<span>Glossary</span>')); ga.addEventListener('click', function () { go('glossary'); }); gl.appendChild(ga); rail.appendChild(gl); }
     var o = overall(); document.getElementById('ring').style.setProperty('--pct', o); document.getElementById('pct').textContent = o + '%';
   }
-  function go(view) { state.view = view; persist(); document.body.classList.remove('menu-open'); renderAll(); window.scrollTo({ top: 0 }); }
+  function setHash(h) { try { if (window.history && history.replaceState) history.replaceState(null, '', '#' + h); } catch (e) {} }
+  function closeMenu() { document.body.classList.remove('menu-open'); document.getElementById('menu-btn').setAttribute('aria-expanded', 'false'); }
+  function go(view, secId) {
+    state.view = view; persist(); closeMenu(); renderAll(); setHash(secId ? view + '/' + secId : view);
+    if (secId) { var s = document.getElementById('sec-' + secId); if (s) { s.scrollIntoView({ block: 'start' }); return; } }
+    window.scrollTo({ top: 0 });
+  }
 
   // ---------- book: one view at a time ----------
   function renderBook() {
     book.innerHTML = '';
-    var order = viewOrder(); if (order.indexOf(state.view) < 0) state.view = order[0];
+    var order = viewOrder(); if (!order.length) { book.appendChild(el('div', 'empty', 'This pack has no chapters yet.')); return; }
+    if (order.indexOf(state.view) < 0) state.view = order[0];
     if (state.view === 'who') { book.appendChild(renderWho(C.interviewer)); book.appendChild(renderNav('who')); return; }
     if (state.view === 'glossary') { book.appendChild(renderGlossary()); book.appendChild(renderNav('glossary')); return; }
-    var t = TOPICS.filter(function (x) { return x.id === state.view; })[0];
+    var t = topicById(state.view);
     var n = orderedTopics().indexOf(t) + 1;
     book.appendChild(renderChapter(t, n)); book.appendChild(renderNav(t.id));
   }
   function rerenderChapter(topic) { if (state.view !== topic.id) { renderRail(); return; } var y = window.scrollY; renderBook(); renderRail(); window.scrollTo({ top: y }); }
-  function titleOf(v) { if (v === 'who') return 'Know your interviewer'; if (v === 'glossary') return 'Glossary'; var t = TOPICS.filter(function (x) { return x.id === v; })[0]; return t ? t.title : v; }
+  function titleOf(v) { if (v === 'who') return 'Interviewer profile'; if (v === 'glossary') return 'Glossary'; var t = topicById(v); return t ? t.title : v; }
   function renderNav(cur) {
     var order = viewOrder(), i = order.indexOf(cur); var nav = el('div', 'chnav');
     if (i > 0) { var pb = el('button', 'navbtn prev'); pb.type = 'button'; pb.appendChild(txt('span', 'k', 'Previous')); pb.appendChild(txt('span', 'v', titleOf(order[i - 1]))); pb.addEventListener('click', function () { go(order[i - 1]); }); nav.appendChild(pb); } else nav.appendChild(el('span'));
@@ -497,176 +586,221 @@
     var d = el('section', 'who'); d.id = 'who';
     var wh = el('div', 'wh');
     var initials = (w.name || '?').replace(/\(.*?\)/g, '').trim().split(/\s+/).map(function (x) { return x[0]; }).join('').slice(0, 2).toUpperCase();
-    wh.appendChild(txt('div', 'av', initials)); wh.appendChild(txt('div', 'nm', w.name)); wh.appendChild(txt('div', 'rl', w.title + ' · public-source profile. The JD and recruiter email set the topics (confirmed); his background only suggests which follow-ups are likelier (inferred). Emphasis, not syllabus.')); d.appendChild(wh);
+    wh.appendChild(txt('div', 'av', initials)); wh.appendChild(txt('div', 'nm', w.name)); wh.appendChild(txt('div', 'rl', (w.title ? w.title + ' ' + DOT + ' ' : '') + 'public-source profile. The role description and recruiter information set the topics (confirmed); the profile only suggests which follow-ups are likelier (inferred).')); d.appendChild(wh);
     var wb = el('div', 'wb');
-    [['Background', w.background], ['What he is likely to probe', w.probes], ['Where your record genuinely meets his', w.overlap], ['Do not', w.avoid]].forEach(function (sec) {
+    [['Background', w.background], ['Likely to probe', w.probes], ['Where your record overlaps', w.overlap], ['Avoid', w.avoid]].forEach(function (sec) {
       if (!sec[1] || !sec[1].length) return; var c = el('div'); c.appendChild(txt('h4', null, sec[0])); var ul = el('ul'); sec[1].forEach(function (li) { ul.appendChild(el('li', null, li)); }); c.appendChild(ul); wb.appendChild(c);
     });
-    if (w.sources && w.sources.length) { var sc = el('div', 'src'); sc.appendChild(document.createTextNode('Sources · ')); w.sources.forEach(function (sr) { var a = txt('a', null, sr.label); a.href = sr.url; a.target = '_blank'; a.rel = 'noopener'; sc.appendChild(a); }); wb.appendChild(sc); }
+    if (w.sources && w.sources.length) { var sc = el('div', 'src'); sc.appendChild(document.createTextNode('Sources ' + DOT + ' ')); w.sources.forEach(function (sr) { var a = txt('a', null, sr.label); a.href = sr.url; a.target = '_blank'; a.rel = 'noopener'; sc.appendChild(a); }); wb.appendChild(sc); }
     d.appendChild(wb); return d;
   }
 
+  // strong-answer / model reveal shared by exercises and the connect block
+  function revealBlock(label, html) { var md = el('div', 'model'); md.hidden = true; md.appendChild(txt('div', 'lbl', label)); md.appendChild(el('div', 'prose', html)); return md; }
+  function selfMarkButton(rec, topic, label) {
+    var on = rec.status === 'pass' && rec.self;
+    var b = txt('button', 'btn' + (on ? ' done' : ''), on ? label + ' ' + TICK : label); b.type = 'button';
+    b.addEventListener('click', function () { if (on) { rec.status = 'none'; delete rec.self; } else { rec.status = 'pass'; rec.self = true; } persist(topic.id); rerenderChapter(topic); });
+    return b;
+  }
+
   function renderChapter(topic, n) {
-    var t = T(topic.id), p = topicProgress(topic);
+    var t = T(topic.id), p = topicProgress(topic), qbank = isQBank(topic), prereqs = isPrereqs(topic);
     var ch = el('section', 'chapter'); ch.id = 'ch-' + topic.id; ch.dataset.n = n;
     var hd = el('div', 'chh');
-    var eb = el('div', 'eyebrow'); eb.appendChild(txt('span', null, 'Chapter ' + n + ' · ' + groupOf(topic.id).label)); eb.appendChild(txt('span', 'pill ' + topic.level, topic.levelLabel)); hd.appendChild(eb);
+    var eb = el('div', 'eyebrow'); eb.appendChild(txt('span', null, 'Chapter ' + n + (GROUPS.length ? ' ' + DOT + ' ' + groupOf(topic.id).label : ''))); if (topic.levelLabel) eb.appendChild(txt('span', 'pill ' + (topic.level || 'good'), topic.levelLabel)); hd.appendChild(eb);
     hd.appendChild(txt('h2', null, topic.title));
     if (topic.why) hd.appendChild(el('div', 'why', topic.why));
-    var ms = el('div', 'mastery'); var mb = el('span', 'bar', '<i></i>'); mb.style.setProperty('--pct', p.pct); ms.appendChild(mb); ms.appendChild(txt('span', null, p.pct + '% · ' + p.label + ' · ' + p.rL + '/' + p.nL + ' sections read · ' + p.pA + '/' + p.nA + ' exercises passed')); hd.appendChild(ms);
-    if (/question-bank$/.test(topic.id)) { var tg = txt('button', 'btn' + (state.hideAnswers ? ' primary' : ''), state.hideAnswers ? 'Show answers' : 'Hide answers (self-test)'); tg.type = 'button'; tg.style.marginTop = '10px'; tg.addEventListener('click', function () { state.hideAnswers = !state.hideAnswers; persist(); renderBook(); }); hd.appendChild(tg); }
+    var ms = el('div', 'mastery'); var mb = el('span', 'bar', '<i></i>'); mb.style.setProperty('--pct', p.pct); ms.appendChild(mb);
+    var msText = prereqs ? p.rL + ' of ' + p.nL + ' done' : p.pct + '% ' + DOT + ' ' + p.label + ' ' + DOT + ' ' + p.rL + '/' + p.nL + ' sections read' + (p.nA ? ' ' + DOT + ' ' + p.pA + '/' + p.nA + ' exercises' : '');
+    ms.appendChild(txt('span', null, msText)); hd.appendChild(ms);
+    if (qbank) { var tg = txt('button', 'btn' + (state.hideAnswers ? ' primary' : ''), state.hideAnswers ? 'Show answers' : 'Hide answers (self-test)'); tg.type = 'button'; tg.style.marginTop = '10px'; tg.addEventListener('click', function () { state.hideAnswers = !state.hideAnswers; persist(); renderBook(); }); hd.appendChild(tg); }
     ch.appendChild(hd);
     var body = el('div', 'chb');
 
     function appendVizAndReadings() {
       if (VIZ[topic.id]) { var v = el('div', 'viz'); v.innerHTML = VIZ[topic.id].svg + '<div class="cap">' + VIZ[topic.id].cap + '</div>'; body.appendChild(v); }
-    if (READINGS[topic.id]) {
-        var rd = el('div', 'reads'); var rh = el('div', 'rh'); rh.appendChild(txt('span', 'lbl', 'Primary sources')); rh.appendChild(txt('span', 'sub', 'PRIMER links first if the basics are rusty; the rest instead of re-deriving. Tick when done.')); rd.appendChild(rh);
+      if (READINGS[topic.id] && READINGS[topic.id].length) {
+        var rd = el('div', 'reads'); var rh = el('div', 'rh'); rh.appendChild(txt('span', 'lbl', 'Primary sources')); rh.appendChild(txt('span', 'sub', 'PRIMER links first if the basics are rusty. Tick each one when read.')); rd.appendChild(rh);
         READINGS[topic.id].forEach(function (r, ri) {
           var done = !!t.reads[ri]; var row = el('div', 'rd' + (done ? ' done' : ''));
-          var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = done; cb.id = 'rd-' + topic.id + '-' + ri; cb.addEventListener('change', function () { t.reads[ri] = cb.checked; persist(topic.id); row.classList.toggle('done', cb.checked); });
-          row.appendChild(cb); var a = txt('a', null, r.l); a.href = r.u; a.target = '_blank'; a.rel = 'noopener'; row.appendChild(a); row.appendChild(txt('span', 'mn', '~' + r.m + ' min')); row.appendChild(txt('div', 'w', r.w)); rd.appendChild(row);
+          var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = done; cb.id = 'rd-' + topic.id + '-' + ri; cb.setAttribute('aria-label', 'Mark read: ' + r.l); cb.addEventListener('change', function () { t.reads[ri] = cb.checked; persist(topic.id); row.classList.toggle('done', cb.checked); });
+          row.appendChild(cb); var a = txt('a', null, r.l); a.href = r.u; a.target = '_blank'; a.rel = 'noopener'; row.appendChild(a); row.appendChild(txt('span', 'mn', r.m ? '~' + r.m + ' min' : '')); if (r.w) row.appendChild(txt('div', 'w', r.w)); rd.appendChild(row);
         });
         body.appendChild(rd);
       }
-
     }
     if (!topic.learn.length) appendVizAndReadings();
-    // sections (grouped by part: field -> experience -> role)
-    var PART_LABEL = { field: ['Part 1', 'The field: what it is, the methods, the tools'], experience: ['Part 2', 'Your experience: what you did and what to call it'], role: ['Part 3', 'In this role: how it most likely applies'] };
-    var lastPart = null;
-    topic.learn.forEach(function (c, i) {
-      if (c.part && c.part !== lastPart && PART_LABEL[c.part]) {
-        lastPart = c.part; var pp = el('div', 'part'); var pph = el('div', 'ph'); pph.appendChild(txt('span', 'lbl', PART_LABEL[c.part][0])); pph.appendChild(txt('h3', null, PART_LABEL[c.part][1])); pp.appendChild(pph); body.appendChild(pp);
-      }
-      var read = !!t.learn[c.id];
-      var sec = el('div', 'sec'); sec.id = 'sec-' + c.id;
-      var sh = el('div', 'sech' + (read ? ' read' : '')); sh.appendChild(txt('span', 'num', read ? '✓' : n + '.' + (i + 1))); sh.appendChild(txt('h3', null, c.title)); sec.appendChild(sh);
-      if (c.viz && window.VIZLIB && window.VIZLIB[c.viz]) { var cv = el('div', 'cviz'); cv.innerHTML = window.VIZLIB[c.viz]('v' + Math.random().toString(36).slice(2, 8)) + (window.VIZLIB_CAPTIONS && window.VIZLIB_CAPTIONS[c.viz] ? '<div class="cap">' + window.VIZLIB_CAPTIONS[c.viz] + '</div>' : ''); sec.appendChild(cv); }
-      if (/question-bank$/.test(topic.id) && c.deeper) {
-        var qb = document.createElement('div'); qb.innerHTML = c.body; var ab = document.createElement('div'); ab.innerHTML = c.deeper;
-        var qs = Array.prototype.slice.call(qb.querySelectorAll('li')), as = Array.prototype.slice.call(ab.querySelectorAll('li'));
-        var pr = el('div', 'prose'); var ps = qb.querySelectorAll('p'); if (ps.length) pr.appendChild(ps[0].cloneNode(true));
-        var list = el('ul', 'qa');
-        qs.forEach(function (q, k) {
-          var li = el('li'); var qd = el('div', 'qa-q'); qd.innerHTML = q.innerHTML; li.appendChild(qd);
-          if (as[k]) { var ad = el('div', 'qa-a' + (state.hideAnswers ? ' hidden-a' : '')); ad.innerHTML = as[k].innerHTML.replace(/^\s*<b>A\d+\.<\/b>\s*/, ''); li.appendChild(ad); }
-          list.appendChild(li);
-        });
-        pr.appendChild(list); if (ps.length > 1) pr.appendChild(ps[ps.length - 1].cloneNode(true));
-        sec.appendChild(pr);
-      } else {
-        sec.appendChild(el('div', 'prose', c.body));
-      }
-      if (c.deeper && !/question-bank$/.test(topic.id)) { var dp = el('div', 'deeper'); dp.hidden = !t.learn[c.id + ':deeper']; dp.appendChild(txt('div', 'lbl', /question-bank$/.test(topic.id) ? 'Answers' : 'One level deeper')); dp.appendChild(el('div', 'prose', c.deeper)); sec.appendChild(dp); }
-      if (c.check) {
-        var mq = el('div', 'mcq'); mq.appendChild(txt('div', 'q', c.check.question)); var opts = el('div', 'opts'); var chosen = t.checks[c.id];
-        c.check.options.forEach(function (o, oi) { var ob = txt('button', 'opt', o); ob.type = 'button'; if (chosen != null) { ob.disabled = true; if (oi === c.check.answer) ob.classList.add('right'); else if (oi === chosen) ob.classList.add('wrong'); } ob.addEventListener('click', function () { t.checks[c.id] = oi; if (oi === c.check.answer) t.learn[c.id] = true; persist(topic.id); rerenderChapter(topic); }); opts.appendChild(ob); });
-        mq.appendChild(opts); if (chosen != null) mq.appendChild(txt('div', 'ex', (chosen === c.check.answer ? 'Right. ' : 'Not quite. ') + c.check.explain)); sec.appendChild(mq);
-      }
-      var row = el('div', 'row');
-      var got = txt('button', 'btn' + (read ? ' done' : ' primary'), read ? 'Understood ✓' : 'Understood'); got.type = 'button'; got.addEventListener('click', function () { t.learn[c.id] = !read; persist(topic.id); rerenderChapter(topic); }); row.appendChild(got);
-      if (c.deeper && !/question-bank$/.test(topic.id)) { var db2 = txt('button', 'btn ghost', /question-bank$/.test(topic.id) ? (t.learn[c.id + ':deeper'] ? 'Hide answers' : 'Reveal answers') : (t.learn[c.id + ':deeper'] ? 'Hide the deeper layer' : 'Go one level deeper')); db2.type = 'button'; db2.addEventListener('click', function () { t.learn[c.id + ':deeper'] = !t.learn[c.id + ':deeper']; persist(topic.id); rerenderChapter(topic); }); row.appendChild(db2); }
-      sec.appendChild(row); body.appendChild(sec);
-      if (i === 0) appendVizAndReadings();
-    });
 
-    // connect
+    if (prereqs) {
+      // compact checklist: title, one-line body, external link, done tick
+      var list = el('div', 'plist');
+      topic.learn.forEach(function (c) {
+        var done = !!t.learn[c.id];
+        var it = el('div', 'pitem' + (done ? ' done' : '')); it.id = 'sec-' + c.id;
+        var tk = txt('button', 'tick' + (done ? ' on' : ''), TICK); tk.type = 'button'; tk.setAttribute('aria-pressed', done ? 'true' : 'false'); tk.setAttribute('aria-label', (done ? 'Mark not done: ' : 'Mark done: ') + c.title);
+        tk.addEventListener('click', function () { t.learn[c.id] = !done; persist(topic.id); rerenderChapter(topic); });
+        var bd = el('div', 'pbody'); bd.appendChild(txt('div', 'pt', c.title)); if (c.body) bd.appendChild(el('div', 'pd', c.body)); if (c.link && c.link.url) bd.appendChild(extLink(c.link));
+        it.appendChild(tk); it.appendChild(bd); list.appendChild(it);
+      });
+      body.appendChild(list);
+      appendVizAndReadings();
+    } else {
+      // sections, grouped into parts only when the chapter has more than one part
+      var PART_LABEL = { field: ['Part 1', 'The field: what it is, the methods, the tools'], experience: ['Part 2', 'Your experience: what you did and what to call it'], role: ['Part 3', 'In this role: how it most likely applies'] };
+      var partsSeen = {}; topic.learn.forEach(function (c) { if (c.part) partsSeen[c.part] = 1; }); var multiPart = Object.keys(partsSeen).length > 1;
+      var lastPart = null;
+      topic.learn.forEach(function (c, i) {
+        if (multiPart && c.part && c.part !== lastPart && PART_LABEL[c.part]) {
+          lastPart = c.part; var pp = el('div', 'part'); var pph = el('div', 'ph'); pph.appendChild(txt('span', 'lbl', PART_LABEL[c.part][0])); pph.appendChild(txt('h3', null, PART_LABEL[c.part][1])); pp.appendChild(pph); body.appendChild(pp);
+        }
+        var read = !!t.learn[c.id];
+        var sec = el('div', 'sec'); sec.id = 'sec-' + c.id;
+        var sh = el('div', 'sech' + (read ? ' read' : '')); sh.appendChild(txt('span', 'num', read ? TICK : n + '.' + (i + 1))); sh.appendChild(txt('h3', null, c.title)); sec.appendChild(sh);
+        if (c.link && c.link.url) sec.appendChild(extLink(c.link));
+        if (c.viz && window.VIZLIB && window.VIZLIB[c.viz]) { var cv = el('div', 'cviz'); cv.innerHTML = window.VIZLIB[c.viz]('v' + Math.random().toString(36).slice(2, 8)) + (window.VIZLIB_CAPTIONS && window.VIZLIB_CAPTIONS[c.viz] ? '<div class="cap">' + window.VIZLIB_CAPTIONS[c.viz] + '</div>' : ''); sec.appendChild(cv); }
+        if (qbank && c.deeper) {
+          var qb = document.createElement('div'); qb.innerHTML = c.body || ''; var ab = document.createElement('div'); ab.innerHTML = c.deeper;
+          var qs = Array.prototype.slice.call(qb.querySelectorAll('li')), as = Array.prototype.slice.call(ab.querySelectorAll('li'));
+          var pr = el('div', 'prose'); var ps = qb.querySelectorAll('p'); if (ps.length) pr.appendChild(ps[0].cloneNode(true));
+          var qlist = el('ul', 'qa');
+          qs.forEach(function (q, k) {
+            var li = el('li'); var qd = el('div', 'qa-q'); qd.innerHTML = q.innerHTML; li.appendChild(qd);
+            if (as[k]) { var ad = el('div', 'qa-a' + (state.hideAnswers ? ' hidden-a' : '')); ad.innerHTML = as[k].innerHTML.replace(/^\s*<b>A\d+\.<\/b>\s*/, ''); li.appendChild(ad); }
+            qlist.appendChild(li);
+          });
+          pr.appendChild(qlist); if (ps.length > 1) pr.appendChild(ps[ps.length - 1].cloneNode(true));
+          sec.appendChild(pr);
+        } else if (c.body) {
+          sec.appendChild(el('div', 'prose', c.body));
+        }
+        if (c.deeper && !qbank) { var dp = el('div', 'deeper'); dp.hidden = !t.learn[c.id + ':deeper']; dp.appendChild(txt('div', 'lbl', 'One level deeper')); dp.appendChild(el('div', 'prose', c.deeper)); sec.appendChild(dp); }
+        if (c.check) {
+          var mq = el('div', 'mcq'); mq.appendChild(txt('div', 'q', c.check.question)); var opts = el('div', 'opts'); var chosen = t.checks[c.id];
+          c.check.options.forEach(function (o, oi) { var ob = txt('button', 'opt', o); ob.type = 'button'; if (chosen != null) { ob.disabled = true; if (oi === c.check.answer) ob.classList.add('right'); else if (oi === chosen) ob.classList.add('wrong'); } ob.addEventListener('click', function () { t.checks[c.id] = oi; if (oi === c.check.answer) t.learn[c.id] = true; persist(topic.id); rerenderChapter(topic); }); opts.appendChild(ob); });
+          mq.appendChild(opts); if (chosen != null) mq.appendChild(txt('div', 'ex', (chosen === c.check.answer ? 'Right. ' : 'Not quite. ') + c.check.explain)); sec.appendChild(mq);
+        }
+        var row = el('div', 'row');
+        var doneLabel = c.link ? 'Mark done' : 'Understood';
+        var got = txt('button', 'btn' + (read ? ' done' : ' primary'), read ? (c.link ? 'Done' : 'Understood') + ' ' + TICK : doneLabel); got.type = 'button'; got.setAttribute('aria-pressed', read ? 'true' : 'false'); got.addEventListener('click', function () { t.learn[c.id] = !read; persist(topic.id); rerenderChapter(topic); }); row.appendChild(got);
+        if (c.deeper && !qbank) { var db2 = txt('button', 'btn ghost', t.learn[c.id + ':deeper'] ? 'Hide the deeper layer' : 'Go one level deeper'); db2.type = 'button'; db2.addEventListener('click', function () { t.learn[c.id + ':deeper'] = !t.learn[c.id + ':deeper']; persist(topic.id); rerenderChapter(topic); }); row.appendChild(db2); }
+        sec.appendChild(row); body.appendChild(sec);
+        if (i === 0) appendVizAndReadings();
+      });
+    }
+
+    var G = graded();
+
+    // connect: map the chapter onto the candidate's own work (only when the pack supplies one)
     if (topic.connect) {
       var cn = topic.connect, part = el('div', 'part'); part.id = 'connect-' + topic.id;
       var ph = el('div', 'ph'); ph.appendChild(txt('span', 'lbl', 'Your experience')); ph.appendChild(txt('h3', null, 'Map it onto ' + cn.project)); part.appendChild(ph);
-      part.appendChild(txt('div', 'sub', 'Recall first, then check. Write it the way you would say it in the room.'));
+      part.appendChild(txt('div', 'sub', 'Recall first, then check. Write it the way you would say it aloud.'));
       part.appendChild(el('div', 'prose', cn.prompt));
-      var ta = document.createElement('textarea'); ta.value = t.connect.lastAnswer || ''; part.appendChild(ta);
-      var row2 = el('div', 'row'); var gb = txt('button', 'btn primary', 'Grade my mapping'); gb.type = 'button'; var rv = txt('button', 'btn ghost', 'Show the honest mapping'); rv.type = 'button'; row2.appendChild(gb); row2.appendChild(rv);
-      if (t.connect.attempts) row2.appendChild(txt('span', 'meta', t.connect.attempts + ' attempt' + (t.connect.attempts > 1 ? 's' : ''))); part.appendChild(row2);
-      var out = el('div'); part.appendChild(out); if (t.connect.last) out.appendChild(renderGrade(t.connect.last));
-      var md = el('div', 'model'); md.hidden = true; md.appendChild(txt('div', 'lbl', 'The mapping to arrive at')); md.appendChild(el('div', 'prose', cn.model)); part.appendChild(md);
-      rv.addEventListener('click', function () { md.hidden = !md.hidden; });
-      gb.addEventListener('click', function () { var ans = ta.value.trim(); if (ans.length < 20) { ta.focus(); return; }
-        runGrade({ kind: 'connect', topic: topic, title: 'Mapping onto ' + cn.project, prompt: cn.prompt, rubric: cn.rubric, model: cn.model, answer: ans, out: out, btn: gb, onDone: function (g) { t.connect.attempts++; t.connect.last = g; t.connect.lastAnswer = ans; t.connect.status = g.verdict === 'pass' ? 'pass' : 'retry'; persist(topic.id); renderRail(); } }); });
+      var ta = document.createElement('textarea'); ta.value = t.connect.lastAnswer || ''; ta.setAttribute('aria-label', 'Your mapping'); ta.addEventListener('input', function () { t.connect.lastAnswer = ta.value; persistDraft(topic.id); }); part.appendChild(ta);
+      var row2 = el('div', 'row'); var out = el('div'); var md = revealBlock('The mapping to arrive at', cn.model);
+      if (G) {
+        var gb = txt('button', 'btn primary', 'Grade my mapping'); gb.type = 'button'; var rv = txt('button', 'btn ghost', 'Show the honest mapping'); rv.type = 'button'; row2.appendChild(gb); row2.appendChild(rv);
+        rv.addEventListener('click', function () { md.hidden = !md.hidden; });
+        gb.addEventListener('click', function () { var ans = ta.value.trim(); if (ans.length < 20) { ta.focus(); return; }
+          runGrade({ kind: 'connect', topic: topic, title: 'Mapping onto ' + cn.project, prompt: cn.prompt, rubric: cn.rubric, model: cn.model, answer: ans, out: out, btn: gb, onDone: function (g) { t.connect.attempts++; t.connect.last = g; t.connect.lastAnswer = ans; t.connect.status = g.verdict === 'pass' ? 'pass' : 'retry'; delete t.connect.self; persist(topic.id); renderRail(); } }); });
+      } else {
+        var cmp = txt('button', 'btn primary', 'Compare with the honest mapping'); cmp.type = 'button'; cmp.addEventListener('click', function () { md.hidden = !md.hidden; cmp.textContent = md.hidden ? 'Compare with the honest mapping' : 'Hide the mapping'; }); row2.appendChild(cmp);
+        row2.appendChild(selfMarkButton(t.connect, topic, 'Mark practised'));
+      }
+      if (t.connect.attempts) row2.appendChild(txt('span', 'meta', t.connect.attempts + ' graded attempt' + (t.connect.attempts > 1 ? 's' : ''))); part.appendChild(row2);
+      part.appendChild(out); if (t.connect.last) out.appendChild(renderGrade(t.connect.last));
+      part.appendChild(md);
+      if (!G) part.appendChild(txt('div', 'note', 'Graded mode is available in a Claude-published copy.'));
       body.appendChild(part);
     }
 
     // exercises
     if (topic.activities.length) {
-      var px = el('div', 'part'); px.id = 'ex-' + topic.id; var ph2 = el('div', 'ph'); ph2.appendChild(txt('span', 'lbl', 'Exercises')); ph2.appendChild(txt('h3', null, 'Prove it to yourself')); px.appendChild(ph2);
-      px.appendChild(txt('div', 'sub', 'Claude grades against the rubric a Principal Engineer would use. Retry until it passes — and it will call out any overclaim.'));
+      var px = el('div', 'part'); px.id = 'ex-' + topic.id; var ph2 = el('div', 'ph'); ph2.appendChild(txt('span', 'lbl', p.pA + '/' + p.nA)); ph2.appendChild(txt('h3', null, 'Exercises')); px.appendChild(ph2);
+      px.appendChild(txt('div', 'sub', G ? 'Graded against the chapter rubric; retry until it passes. Overclaims beyond your record are named.' : 'Write your answer first, then compare it with a strong answer and mark the exercise practised.'));
       topic.activities.forEach(function (a) {
         var st = AC(topic.id, a.id); var box2 = el('div', 'act' + (st.status === 'pass' ? ' pass' : ''));
-        var ah = el('div', 'ah'); ah.appendChild(txt('span', 'type', a.type)); ah.appendChild(txt('h4', null, a.title)); if (st.status !== 'none') ah.appendChild(txt('span', 'verdict ' + st.status, st.status)); box2.appendChild(ah);
+        var ah = el('div', 'ah'); ah.appendChild(txt('span', 'type', a.type)); ah.appendChild(txt('h4', null, a.title)); if (st.status !== 'none') ah.appendChild(txt('span', 'verdict ' + st.status, st.self ? 'practised' : st.status)); box2.appendChild(ah);
         if (a.viz && window.VIZLIB && window.VIZLIB[a.viz]) { var av = el('div', 'cviz'); av.innerHTML = window.VIZLIB[a.viz]('a' + Math.random().toString(36).slice(2, 8)); box2.appendChild(av); }
         box2.appendChild(el('div', 'prose', a.prompt));
-        var ta2 = document.createElement('textarea'); ta2.placeholder = a.type === 'formulate' ? 'Decision variables → objective → constraints → problem class…' : 'Answer in first person, as you would say it…'; ta2.value = st.lastAnswer || ''; box2.appendChild(ta2);
-        var row3 = el('div', 'row'); var gb2 = txt('button', 'btn primary', st.status === 'pass' ? 'Grade again' : 'Grade with Claude'); gb2.type = 'button'; row3.appendChild(gb2);
+        var ta2 = document.createElement('textarea'); ta2.placeholder = a.type === 'formulate' ? 'Decision variables, objective, constraints, problem class' : 'Answer in first person, as you would say it'; ta2.value = st.lastAnswer || ''; ta2.setAttribute('aria-label', 'Your answer'); ta2.addEventListener('input', function () { st.lastAnswer = ta2.value; persistDraft(topic.id); }); box2.appendChild(ta2);
+        var row3 = el('div', 'row'); var out2 = el('div'); var md2 = revealBlock('Strong answer', a.model);
+        if (G) {
+          var gb2 = txt('button', 'btn primary', st.status === 'pass' ? 'Grade again' : 'Grade with Claude'); gb2.type = 'button'; row3.appendChild(gb2);
+          gb2.addEventListener('click', function () { var ans = ta2.value.trim(); if (ans.length < 20) { ta2.focus(); return; }
+            runGrade({ kind: a.type, topic: topic, title: a.title, prompt: a.prompt, rubric: a.rubric, model: a.model, answer: ans, out: out2, btn: gb2, onDone: function (g) { st.attempts++; st.last = g; st.lastAnswer = ans; st.lastScore = g.score; st.status = g.verdict === 'pass' ? 'pass' : 'retry'; delete st.self; persist(topic.id); rerenderChapter(topic); } }); });
+        } else {
+          var cmp2 = txt('button', 'btn primary', 'Compare with a strong answer'); cmp2.type = 'button'; cmp2.addEventListener('click', function () { md2.hidden = !md2.hidden; cmp2.textContent = md2.hidden ? 'Compare with a strong answer' : 'Hide the strong answer'; }); row3.appendChild(cmp2);
+          row3.appendChild(selfMarkButton(st, topic, 'Mark practised'));
+        }
         if (a.timeboxSec) { var tb = txt('button', 'btn', 'Start ' + Math.round(a.timeboxSec / 6) / 10 + ' min timer'); tb.type = 'button'; var tm = txt('span', 'timer', ''); var iv = null, left = a.timeboxSec;
-          tb.addEventListener('click', function () { if (iv) { clearInterval(iv); iv = null; tb.textContent = 'Restart timer'; return; } left = a.timeboxSec; tb.textContent = 'Stop'; tm.classList.remove('over'); iv = setInterval(function () { left--; var mm = Math.floor(Math.abs(left) / 60), ss = Math.abs(left) % 60; tm.textContent = (left < 0 ? '−' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss; if (left < 0) tm.classList.add('over'); }, 1000); });
+          tb.addEventListener('click', function () { if (iv) { clearInterval(iv); iv = null; tb.textContent = 'Restart timer'; return; } left = a.timeboxSec; tb.textContent = 'Stop'; tm.classList.remove('over'); iv = setInterval(function () { left--; var mm = Math.floor(Math.abs(left) / 60), ss = Math.abs(left) % 60; tm.textContent = (left < 0 ? '-' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss; if (left < 0) tm.classList.add('over'); }, 1000); });
           row3.appendChild(tb); row3.appendChild(tm); }
-        var rv2 = txt('button', 'btn ghost', 'Show a strong answer'); rv2.type = 'button'; row3.appendChild(rv2);
-        if (st.attempts) row3.appendChild(txt('span', 'meta', st.attempts + ' attempt' + (st.attempts > 1 ? 's' : '') + (st.lastScore != null ? ' · last ' + st.lastScore : ''))); box2.appendChild(row3);
-        var out2 = el('div'); box2.appendChild(out2); if (st.last) out2.appendChild(renderGrade(st.last));
-        var md2 = el('div', 'model'); md2.hidden = true; md2.appendChild(txt('div', 'lbl', 'Strong answer')); md2.appendChild(el('div', 'prose', a.model)); box2.appendChild(md2);
-        rv2.addEventListener('click', function () { if (md2.hidden && !st.attempts && !confirm('You have not attempted this yet. Reveal the strong answer anyway?')) return; md2.hidden = !md2.hidden; });
-        gb2.addEventListener('click', function () { var ans = ta2.value.trim(); if (ans.length < 20) { ta2.focus(); return; }
-          runGrade({ kind: a.type, topic: topic, title: a.title, prompt: a.prompt, rubric: a.rubric, model: a.model, answer: ans, out: out2, btn: gb2, onDone: function (g) { st.attempts++; st.last = g; st.lastAnswer = ans; st.lastScore = g.score; st.status = g.verdict === 'pass' ? 'pass' : 'retry'; persist(topic.id); rerenderChapter(topic); } }); });
+        if (G) { var rv2 = txt('button', 'btn ghost', 'Show a strong answer'); rv2.type = 'button'; row3.appendChild(rv2); rv2.addEventListener('click', function () { if (md2.hidden && !st.attempts && !confirm('You have not attempted this yet. Reveal the strong answer anyway?')) return; md2.hidden = !md2.hidden; }); }
+        if (st.attempts) row3.appendChild(txt('span', 'meta', st.attempts + ' graded attempt' + (st.attempts > 1 ? 's' : '') + (st.lastScore != null ? ' ' + DOT + ' last ' + st.lastScore : ''))); box2.appendChild(row3);
+        box2.appendChild(out2); if (st.last) out2.appendChild(renderGrade(st.last));
+        box2.appendChild(md2);
         px.appendChild(box2);
       });
+      if (!G) px.appendChild(txt('div', 'note', 'Graded mode is available in a Claude-published copy.'));
       body.appendChild(px);
     }
 
-    // say it
+    // spoken answer
     if (topic.sayItOutLoud) {
-      var ps = el('div', 'part'); ps.id = 'say-' + topic.id; var ph3 = el('div', 'ph'); ph3.appendChild(txt('span', 'lbl', 'Rehearse')); ph3.appendChild(txt('h3', null, 'Your spoken answer')); ps.appendChild(ph3);
-      if (topic.sayQuestion) { var sq = el('div', 'sayq'); sq.appendChild(txt('span', 'lbl', 'If he asks')); sq.appendChild(txt('span', null, topic.sayQuestion)); ps.appendChild(sq); }
-      ps.appendChild(txt('div', 'sub', 'This is what you say, in your own words, when he asks the question below. Say it unscripted, time it (60 to 90 seconds), then mark it rehearsed.'));
-      var sy = el('div', 'say'); sy.appendChild(txt('div', 'lbl', 'Your answer, out loud')); sy.appendChild(el('div', 'prose', topic.sayItOutLoud)); ps.appendChild(sy);
+      var ps2 = el('div', 'part'); ps2.id = 'say-' + topic.id; var ph3 = el('div', 'ph'); ph3.appendChild(txt('span', 'lbl', 'Rehearse')); ph3.appendChild(txt('h3', null, 'Spoken answer')); ps2.appendChild(ph3);
+      if (topic.sayQuestion) { var sq = el('div', 'sayq'); sq.appendChild(txt('span', 'lbl', 'The question')); sq.appendChild(txt('span', null, topic.sayQuestion)); ps2.appendChild(sq); }
+      ps2.appendChild(txt('div', 'sub', 'Your answer to the question above, in your own words. Say it unscripted, time it (60 to 90 seconds), then mark it rehearsed.'));
+      var sy = el('div', 'say'); sy.appendChild(txt('div', 'lbl', 'Spoken answer')); sy.appendChild(el('div', 'prose', topic.sayItOutLoud)); ps2.appendChild(sy);
       var row4 = el('div', 'row'); var sw = txt('button', 'btn', 'Start stopwatch'); sw.type = 'button'; var tm2 = txt('span', 'timer', ''); var iv2 = null, s = 0;
-      sw.addEventListener('click', function () { if (iv2) { clearInterval(iv2); iv2 = null; sw.textContent = 'Start stopwatch'; return; } s = 0; sw.textContent = 'Stop'; tm2.classList.remove('over'); iv2 = setInterval(function () { s++; tm2.textContent = Math.floor(s / 60) + ':' + (s % 60 < 10 ? '0' : '') + s % 60 + (s > 100 ? ' — trim' : ''); if (s > 100) tm2.classList.add('over'); }, 1000); });
-      var mk = txt('button', 'btn' + (t.said ? ' done' : ' primary'), t.said ? 'Rehearsed ✓' : 'Mark rehearsed'); mk.type = 'button'; mk.addEventListener('click', function () { t.said = !t.said; persist(topic.id); rerenderChapter(topic); });
-      row4.appendChild(sw); row4.appendChild(tm2); row4.appendChild(mk); ps.appendChild(row4); body.appendChild(ps);
+      sw.addEventListener('click', function () { if (iv2) { clearInterval(iv2); iv2 = null; sw.textContent = 'Start stopwatch'; return; } s = 0; sw.textContent = 'Stop'; tm2.classList.remove('over'); iv2 = setInterval(function () { s++; tm2.textContent = Math.floor(s / 60) + ':' + (s % 60 < 10 ? '0' : '') + s % 60 + (s > 100 ? ' (trim)' : ''); if (s > 100) tm2.classList.add('over'); }, 1000); });
+      var mk = txt('button', 'btn' + (t.said ? ' done' : ' primary'), t.said ? 'Rehearsed ' + TICK : 'Mark rehearsed'); mk.type = 'button'; mk.setAttribute('aria-pressed', t.said ? 'true' : 'false'); mk.addEventListener('click', function () { t.said = !t.said; persist(topic.id); rerenderChapter(topic); });
+      row4.appendChild(sw); row4.appendChild(tm2); row4.appendChild(mk); ps2.appendChild(row4); body.appendChild(ps2);
     }
     ch.appendChild(body); return ch;
   }
 
   function renderGlossary() {
     var sec = el('section', 'chapter gloss'); sec.id = 'glossary';
-    var hd = el('div', 'chh'); hd.appendChild(el('div', 'eyebrow', '<span>Reference</span>')); hd.appendChild(txt('h2', null, 'Glossary: what you built, and what to call it')); hd.appendChild(txt('div', 'why', 'Interviewers grade vocabulary as a proxy for depth. Every row: the term, what it means, where it lives in your record, and a phrase you can say. Rows marked "learn / not shipped" are for recognition, not claiming.')); sec.appendChild(hd);
+    var hd = el('div', 'chh'); hd.appendChild(el('div', 'eyebrow', '<span>Reference</span>')); hd.appendChild(txt('h2', null, 'Glossary')); hd.appendChild(txt('div', 'why', 'Interviewers grade vocabulary as a proxy for depth. Every row: the term, what it means, where it lives in your record, and a phrase you can say. Rows marked "learn / not shipped" are for recognition, not claiming.')); sec.appendChild(hd);
     var body = el('div', 'chb');
     GLOSSARY.forEach(function (g) {
-      var gg = el('div', 'ggroup'); gg.appendChild(txt('h3', null, g.g)); gg.appendChild(txt('div', 'sub', g.sub));
+      var gg = el('div', 'ggroup'); gg.appendChild(txt('h3', null, g.g)); if (g.sub) gg.appendChild(txt('div', 'sub', g.sub));
       var wrap = el('div', 'gwrap'); var tb = el('table', 'gtable'); tb.innerHTML = '<thead><tr><th>Term</th><th>Meaning</th><th>In your record</th><th>Say it as</th></tr></thead>';
-      var tbody = el('tbody'); g.rows.forEach(function (r) { var tr = el('tr'); r.forEach(function (c, i) { var td = txt('td', i === 3 ? 'say' : null, c); tr.appendChild(td); }); tbody.appendChild(tr); }); tb.appendChild(tbody); wrap.appendChild(tb); gg.appendChild(wrap); body.appendChild(gg);
+      var tbody = el('tbody'); (g.rows || []).forEach(function (r) { var tr = el('tr'); r.forEach(function (c, i) { var td = txt('td', i === 3 ? 'say' : null, c); tr.appendChild(td); }); tbody.appendChild(tr); }); tb.appendChild(tbody); wrap.appendChild(tb); gg.appendChild(wrap); body.appendChild(gg);
     });
     sec.appendChild(body); return sec;
   }
 
-  // ---------- grading ----------
+  // ---------- grading (Claude-published copies only) ----------
   function renderGrade(g) {
     var d = el('div', 'grade'); var gh = el('div', 'gh'); gh.appendChild(txt('span', 'verdict ' + g.verdict, g.verdict)); if (g.score != null) gh.appendChild(txt('span', 'score', 'score ' + g.score + '/100')); d.appendChild(gh);
     d.appendChild(txt('div', 'fb', g.feedback || ''));
     if (g.missing && g.missing.length) { d.appendChild(txt('div', 'lbl', 'Missing')); var ul = el('ul'); g.missing.forEach(function (m) { ul.appendChild(txt('li', null, m)); }); d.appendChild(ul); }
-    if (g.overclaims && g.overclaims.length) { d.appendChild(txt('div', 'lbl', 'Overclaims — fix these')); var ul2 = el('ul', 'over'); g.overclaims.forEach(function (m) { ul2.appendChild(txt('li', null, m)); }); d.appendChild(ul2); }
+    if (g.overclaims && g.overclaims.length) { d.appendChild(txt('div', 'lbl', 'Overclaims to fix')); var ul2 = el('ul', 'over'); g.overclaims.forEach(function (m) { ul2.appendChild(txt('li', null, m)); }); d.appendChild(ul2); }
     if (g.followup) { d.appendChild(txt('div', 'lbl', 'The interviewer would push next')); d.appendChild(txt('div', 'fb', g.followup)); }
     return d;
   }
   function stripHtml(h) { var x = document.createElement('div'); x.innerHTML = h || ''; return x.textContent; }
   function runGrade(o) {
-    o.out.innerHTML = ''; var pend = el('div', 'grade'); pend.appendChild(txt('div', 'pending', 'Grading…')); o.out.appendChild(pend); o.btn.disabled = true;
+    o.out.innerHTML = ''; var pend = el('div', 'grade'); pend.appendChild(txt('div', 'pending', 'Grading')); o.out.appendChild(pend); o.btn.disabled = true;
     (async function () {
       try {
+        if (!graded()) { pend.innerHTML = ''; pend.appendChild(txt('div', 'err', 'Graded mode is available in a Claude-published copy. Compare with the strong answer and self-assess.')); return; }
         if (!sample) sample = await claude.use('sample');
-        if (!sample) { pend.innerHTML = ''; pend.appendChild(txt('div', 'err', 'Claude grading is not available in this view. Compare with the strong answer and self-assess.')); o.btn.disabled = false; return; }
+        if (!sample) { pend.innerHTML = ''; pend.appendChild(txt('div', 'err', 'Grading is not available in this view. Compare with the strong answer and self-assess.')); return; }
         var prompt = [
-          'You are a senior engineer on the hiring panel grading a candidate\'s interview-prep answer for the role described by the rubric. Grade strictly but fairly, as you would in the room.',
+          'You are a senior engineer on the hiring panel grading a candidate\'s interview-prep answer for the role described by the rubric. Grade strictly but fairly, as you would in a live interview.',
           '', 'TOPIC: ' + o.topic.title, 'ACTIVITY: ' + o.title, 'TYPE: ' + o.kind,
           '', 'THE TASK THE CANDIDATE WAS GIVEN:', stripHtml(o.prompt),
           '', 'GRADING RUBRIC (authoritative):', stripHtml(o.rubric),
-          '', 'REFERENCE STRONG ANSWER (calibration only — do not require the same wording):', stripHtml(o.model),
+          '', 'REFERENCE STRONG ANSWER (calibration only; do not require the same wording):', stripHtml(o.model),
           '', 'HONESTY RULE (overrides everything): ' + HON + ' Any answer claiming beyond that record is verdict "retry" and each such claim goes in "overclaims". Honest boundary statements are a strength.',
           '', 'CANDIDATE ANSWER:', '"""', o.answer, '"""',
           '', 'Respond with ONLY a JSON object, no prose, no code fence:',
           '{"verdict":"pass"|"retry","score":0-100,"feedback":"2-4 sentences, specific, addressed to the candidate as you","missing":["rubric points not covered, short"],"overclaims":["claims violating the honesty rule, short; empty if none"],"followup":"the single question you would ask next to probe deeper"}',
-          'Pass requires: every must-have in the rubric present or clearly implied, no overclaims, and the answer would satisfy you in a live room. Score ≥ 70 aligns with pass.'
+          'Pass requires: every must-have in the rubric present or clearly implied, no overclaims, and the answer would satisfy you in a live interview. Score >= 70 aligns with pass.'
         ].join('\n');
         var g = await sample.json(prompt, { modelTier: (o.kind === 'formulate' || o.kind === 'story') ? 'complex' : 'default', cache: false });
         if (!g || (g.verdict !== 'pass' && g.verdict !== 'retry')) throw { code: 'invalid_json', message: 'Unexpected grader output' };
@@ -677,26 +811,65 @@
         o.onDone(g);
       } catch (e) {
         var code = e && e.code ? e.code : 'error';
-        var msg = code === 'not_granted' ? 'Grading needs your consent — reload and allow Claude on this page.' : code === 'rate_limited' ? 'Rate limited — wait a minute and try again.' : code === 'cancelled' ? 'Cancelled.' : 'Grading failed (' + code + '). Try again.';
+        var msg = code === 'not_granted' ? 'Grading needs your consent: reload and allow Claude on this page.' : code === 'rate_limited' ? 'Rate limited; wait a minute and try again.' : code === 'cancelled' ? 'Cancelled.' : 'Grading failed (' + code + '). Try again.';
         pend.innerHTML = ''; pend.appendChild(txt('div', 'err', msg));
       } finally { o.btn.disabled = false; }
     })();
   }
 
-  // in-page anchors: scroll explicitly (hash navigation is unreliable inside the artifact frame)
+  // ---------- progress export / import ----------
+  function exportProgress() {
+    var json = window.PREP_IO.serialise(LS_KEY, state); var name = window.PREP_IO.filename(LS_KEY);
+    var a = document.createElement('a'); a.download = name; a.rel = 'noopener';
+    try { var blob = new Blob([json], { type: 'application/json' }); a.href = URL.createObjectURL(blob); } catch (e) { a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json); }
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { try { if (a.href.indexOf('blob:') === 0) URL.revokeObjectURL(a.href); } catch (e) {} }, 2000);
+  }
+  function importProgress(file) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      var parsed;
+      try { parsed = window.PREP_IO.parse(String(reader.result)); } catch (e) { alert(e && e.message ? e.message : 'Could not read that file.'); return; }
+      if (parsed.key && parsed.key !== LS_KEY && !confirm('This file was exported from a different page (' + parsed.key + '). Import it here anyway? Your current progress on this page will be replaced.')) return;
+      if (!parsed.key && !confirm('Replace the progress saved on this page with the contents of this file?')) return;
+      state = parsed.state; if (!state.view) state.view = null;
+      persist(); TOPICS.forEach(function (t) { if (state.topics[t.id]) persist(t.id); });
+      renderAll(); window.scrollTo({ top: 0 });
+    };
+    reader.readAsText(file);
+  }
+  document.getElementById('export-btn').addEventListener('click', exportProgress);
+  var importInput = document.getElementById('import-file');
+  importInput.addEventListener('change', function () { if (importInput.files && importInput.files[0]) importProgress(importInput.files[0]); importInput.value = ''; });
+  document.querySelector('label[for="import-file"]').addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); importInput.click(); } });
+
+  // ---------- navigation plumbing ----------
+  // in-page anchors: scroll explicitly (hash navigation is unreliable inside an artifact frame)
   document.addEventListener('click', function (ev) {
     var a = ev.target.closest && ev.target.closest('a[href^="#"]'); if (!a) return;
     var id = a.getAttribute('href').slice(1); var target = document.getElementById(id); if (!target) return;
-    ev.preventDefault(); document.body.classList.remove('menu-open'); target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    ev.preventDefault(); closeMenu(); target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (id.indexOf('sec-') === 0 && state.view) setHash(state.view + '/' + id.slice(4));
   });
-  document.getElementById('menu-btn').addEventListener('click', function () { document.body.classList.toggle('menu-open'); });
+  var menuBtn = document.getElementById('menu-btn');
+  menuBtn.addEventListener('click', function () { var open = document.body.classList.toggle('menu-open'); menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false'); if (open) { var first = document.querySelector('#rail button, #rail a'); if (first) first.focus(); } });
+  document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' && document.body.classList.contains('menu-open')) { closeMenu(); menuBtn.focus(); } });
   function renderAll() { renderRail(); renderBook(); }
-  (function () { var h = (location.hash || '').replace(/^#/, ''); if (!h) return; var parts = h.split('/'); var vid = parts[0]; var ok = vid === 'who' || vid === 'glossary' || TOPICS.some(function (t) { return t.id === vid; }); if (ok) { state.view = vid; state.pendingScroll = parts[1] ? 'sec-' + parts[1] : null; } })();
-  if (!state.view) state.view = C.interviewer ? 'who' : orderedTopics()[0].id;
+  function applyHash() {
+    var h = (location.hash || '').replace(/^#/, ''); if (!h) return false; var parts = h.split('/'); var vid = decodeURIComponent(parts[0]);
+    var ok = (vid === 'who' && C.interviewer) || (vid === 'glossary' && GLOSSARY.length) || TOPICS.some(function (t) { return t.id === vid; });
+    if (!ok) return false; state.view = vid; state.pendingScroll = parts[1] ? 'sec-' + decodeURIComponent(parts[1]) : null; return true;
+  }
+  applyHash();
+  if (!state.view) state.view = (orderedTopics()[0] || {}).id;
   renderAll();
   if (state.pendingScroll) { var ps0 = document.getElementById(state.pendingScroll); if (ps0) ps0.scrollIntoView({ block: 'start' }); state.pendingScroll = null; }
+  window.addEventListener('hashchange', function () { if (applyHash()) { renderAll(); if (state.pendingScroll) { var e = document.getElementById(state.pendingScroll); if (e) e.scrollIntoView({ block: 'start' }); state.pendingScroll = null; } else window.scrollTo({ top: 0 }); } });
 
+  // ---------- optional server sync (Claude-published copies) ----------
   (async function () {
+    if (!graded()) { setSync('local'); return; }
+    setSync('connecting');
     try {
       db = await claude.use('db');
       if (!db) { setSync('local'); return; }

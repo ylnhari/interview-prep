@@ -7,7 +7,7 @@ __pycache__/
 Thumbs.db
 node_modules/
 
-# Personal / company-specific packs stay local. Only the template and the public example are tracked.
+# Personal / company-specific packs stay local. Only the template and the public course are tracked.
 packs/*
 !packs/_template/
-!packs/example/
+!packs/course/

@@ -17,8 +17,14 @@ if (isHtml) {
   console.log('app script syntax OK');
 } else {
   new Function('window', scripts[0])(w);
-  const coreFile = path.join(path.dirname(file), '..', '..', '..', 'core', 'library.js');
-  if (fs.existsSync(coreFile)) new Function('window', fs.readFileSync(coreFile, 'utf8'))(w);
+  // Walk up from the content file to the repository root, so a pack may sit at any depth.
+  let dir = path.resolve(path.dirname(file)), coreFile = null;
+  for (let i = 0; i < 6 && !coreFile; i++) {
+    const c = path.join(dir, 'core', 'library.js');
+    if (fs.existsSync(c)) coreFile = c;
+    dir = path.dirname(dir);
+  }
+  if (coreFile) new Function('window', fs.readFileSync(coreFile, 'utf8'))(w);
   const ovFile = path.join(path.dirname(file), 'overlays.js');
   if (fs.existsSync(ovFile)) new Function('window', fs.readFileSync(ovFile, 'utf8'))(w);
 }
@@ -27,17 +33,16 @@ if (!C || !Array.isArray(C.topics)) { console.log('FAIL: no PREP_CONTENT.topics'
 if (C.useCore && w.PREP_CORE) C.useCore.forEach(id => { if (w.PREP_CORE[id] && !C.topics.some(t => t.id === id)) C.topics.push(w.PREP_CORE[id]); });
 
 const src = scripts.join('\n');
-let badMcq = 0, noRoom = 0, vizIds = new Set(), missingViz = [];
+let badMcq = 0, vizIds = new Set(), missingViz = [];
 if (w.VIZLIB) Object.keys(w.VIZLIB).forEach(k => vizIds.add(k));
 C.topics.forEach(t => t.learn.forEach(c => {
   if (c.check && (c.check.answer < 0 || c.check.answer >= c.check.options.length)) badMcq++;
-  if (!/In the room:/.test(c.body || '')) noRoom++;
   if (c.viz && vizIds.size && !vizIds.has(c.viz)) missingViz.push(t.id + '/' + c.id + ':' + c.viz);
 }));
 const rubrics = (src.match(/rubric: `/g) || []).length + (src.match(/"rubric": "/g) || []).length;
 const honesty = (src.match(/Honesty rule/g) || []).length;
 console.log('topics', C.topics.length, '| groups', (C.groups || []).map(g => g.id + ':' + g.ids.length).join(' '));
-console.log('bad MCQ answers', badMcq, '| chunks without In-the-room', noRoom, '| rubrics', rubrics, '| honesty mentions', honesty, '| viz ids known', vizIds.size, '| unknown viz refs', missingViz.length);
+console.log('bad MCQ answers', badMcq, '| rubrics', rubrics, '| honesty mentions', honesty, '| viz ids known', vizIds.size, '| unknown viz refs', missingViz.length);
 if (missingViz.length) console.log('  ', missingViz.slice(0, 10).join(', '));
 let fail = badMcq > 0;
 if (C.groups) {

@@ -16,8 +16,8 @@ window.PREP_CONTENT = {
       id: "round-intel", title: "The round", level: "warning", levelLabel: "Read first",
       why: `One sentence on what this round is and why it matters.`,
       learn: [
-        { id: "ri-0", part: "field", title: "Foundations: the words you need first",
-          body: `<p>Define every term this chapter uses.</p><ul><li><b>term</b> — definition. <i>Example.</i></li></ul><p><b>In the room:</b> …</p>`,
+        { id: "ri-0", part: "field", title: "Key terms",
+          body: `<p>Define every term this chapter uses, before it is used.</p><ul><li><b>term</b> — definition. <i>Example.</i></li></ul>`,
           deeper: null, check: null }
       ],
       connect: null,
