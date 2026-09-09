@@ -55,6 +55,12 @@ All HTML strings are backtick template literals. Never write the two characters 
 - Candidate voice (first person, spoken to the interviewer): `sayItOutLoud`, `connect.model`, and `model` of `followup`/`story` activities. These are words the candidate would actually say. No commentary about the answer, no references to the document, no second-person coaching inside quotes. 140–250 words for a 60–90-second answer.
 - `sayQuestion` states the interviewer question the spoken answer answers; every exercise prompt states the question in the interviewer's words.
 
+## Plain English
+
+- Use the words a normal engineer uses in conversation. No coach idioms or figurative shorthand: not "loop" for the interview rounds, "shape" for a format, "spine", "seam", "in flight", "lever", "rung", "movement", "beat", "cadence" (outside control theory and scheduling), "frame", "narrative", "anchor", "hook", "land", "surface" as a verb, "the room", "muscle", "crisp", "tight", "unpack", "dig into", "under the hood", "north star", "table stakes", "double-click", "zoom out", "move the needle". Say "the interview rounds", "the format", "the structure", "while it is running", "the setting", "the step", "the part", "the point", "how often", "describe", "the story", "base on", "an opening for a follow-up question", "come across clearly", "show", "the interview".
+- Keep a word when it is the correct technical name (control loop, feedback loop, training loop, loop frequency, API surface area, tensor shape, latency budget). Test: would a textbook use it?
+- Short, direct sentences. A reader should never have to guess what a word stands for.
+
 ## Honesty rule
 
 Each pack defines one sentence in `honesty`, naming the candidate's verified record and the claims that are automatic retries (tools, methods or experience not in the record). Every `rubric` and `connect.rubric` ends with the placeholder `{{HONESTY}}`, which the engine replaces with that sentence at render time; a pack that omits `honesty` gets a neutral fallback that grades on correctness only. Graders receive the sentence with every attempt; overclaims are named in feedback.

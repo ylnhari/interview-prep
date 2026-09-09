@@ -78,7 +78,7 @@ window.PREP_CONTENT = {
     "ml-lifecycle-platform": [
       { l: "Google: Rules of Machine Learning", u: "https://developers.google.com/machine-learning/guides/rules-of-ml", w: "The canonical checklist for shipping and operating ML. Rules 1 to 15 carry the pipeline-before-model argument.", m: 35 },
       { l: "Hidden Technical Debt in Machine Learning Systems (NeurIPS 2015)", u: "https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html", w: "Where \"the model is a small box in a large diagram\" comes from. Read it for glue code, pipeline jungles and entanglement.", m: 25 },
-      { l: "MLOps: continuous delivery and automation pipelines in machine learning", u: "https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning", w: "The standard maturity-level framing for the lifecycle, and a good source for stage names.", m: 30 },
+      { l: "MLOps: continuous delivery and automation pipelines in machine learning", u: "https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning", w: "The standard maturity-level model for the lifecycle, and a good source for stage names.", m: 30 },
       { l: "Argo CD documentation", u: "https://argo-cd.readthedocs.io/en/stable/", w: "What a GitOps reconciliation controller actually does, in the words of the controller itself.", m: 15 }
     ],
     "data-features": [
@@ -134,11 +134,11 @@ window.PREP_CONTENT = {
     ],
     "genai-platform": [
       { l: "OWASP Top 10 for LLM Applications", u: "https://owasp.org/www-project-top-10-for-large-language-model-applications/", w: "The guardrail vocabulary: prompt injection, insecure output handling, data leakage.", m: 20 },
-      { l: "vLLM documentation", u: "https://docs.vllm.ai/en/latest/", w: "Continuous batching and paged attention, the two levers behind most LLM throughput answers.", m: 15 },
+      { l: "vLLM documentation", u: "https://docs.vllm.ai/en/latest/", w: "Continuous batching and paged attention, the two main factors behind most LLM throughput answers.", m: 15 },
       { l: "Google: Rules of Machine Learning", u: "https://developers.google.com/machine-learning/guides/rules-of-ml", w: "Nothing in it is about LLMs, which is the point: the platform obligations do not change when the model changes.", m: 15 }
     ],
     "scenario-questions": [
-      { l: "Google SRE book: table of contents", u: "https://sre.google/sre-book/table-of-contents/", w: "Read effective troubleshooting, emergency response and postmortem culture. Scenario answers score on that shape: contain, diagnose, fix, prevent.", m: 40 },
+      { l: "Google SRE book: table of contents", u: "https://sre.google/sre-book/table-of-contents/", w: "Read effective troubleshooting, emergency response and postmortem culture. Scenario answers score on that structure: contain, diagnose, fix, prevent.", m: 40 },
       { l: "Amazon Builders' Library", u: "https://aws.amazon.com/builders-library/", w: "Concrete accounts of what actually goes wrong under load, which is where scenario prompts come from.", m: 25 }
     ],
     "coding-drills": [
@@ -198,7 +198,7 @@ window.PREP_CONTENT = {
         ["Cadence and staleness", "How often the loop re-solves, and how old its inputs may get before the decision stops being defensible.", "The first design question about any loop.", "\"cadence comes from how fast the inputs move, not from how fast the solver runs\""],
         ["Damping and hysteresis", "Deliberately slowing the reaction, and requiring a bigger change to switch back than to switch in.", "Autoscalers, and any plan people live under.", "\"stability belongs in the objective, not in a config file\""],
         ["Thrash / churn", "The plan changing every time it is recomputed, until the people living under it stop trusting it.", "The classic complaint about a re-solving planner.", "\"penalise deviation from the published plan, and re-solving more often makes it worse\""],
-        ["MDP / policy / reward", "States, actions, rewards and transitions; a policy maps a state to an action; reinforcement learning learns the policy.", "Framing a sequential decision problem.", "\"I would frame it as an MDP, and still start with the optimizer\""],
+        ["MDP / policy / reward", "States, actions, rewards and transitions; a policy maps a state to an action; reinforcement learning learns the policy.", "Describing a sequential decision problem.", "\"I would describe it as an MDP, and still start with the optimizer\""],
         ["Contextual bandit", "See a context, choose one action, observe only that action's reward - and your choice does not change the next context.", "Most decisions people call reinforcement learning.", "\"a bandit before full RL, because there is no carry-over\""],
         ["Off-policy evaluation", "Estimating a new policy's value from decisions logged under an old one. Needs the logged action probabilities.", "Before any learned policy touches traffic.", "\"off-policy evaluation on logs, then shadow, then a guarded ramp\""],
         ["Reward hacking", "The policy optimising the number you wrote instead of the outcome you meant, by finding a degenerate case.", "Every reward-design question.", "\"reward completions and it starves the hard jobs - so watch the tail, not the mean\""]
@@ -208,7 +208,7 @@ window.PREP_CONTENT = {
       g: "Production ML systems",
       sub: "The platform vocabulary. Column three says where each term typically shows up.",
       rows: [
-        ["ML lifecycle", "Nine stages: ingestion, features, training, evaluation, registration, approval, deployment, serving and monitoring, retraining.", "The spine of almost every ML design answer.", "\"the full lifecycle, data through retraining, not just the training half\""],
+        ["ML lifecycle", "Nine stages: ingestion, features, training, evaluation, registration, approval, deployment, serving and monitoring, retraining.", "The basis of almost every ML design answer.", "\"the full lifecycle, data through retraining, not just the training half\""],
         ["Paved road", "A supported default path with guardrails built in, that a team can take without asking permission.", "Any adoption or standards question.", "\"we made the safe path the fast path\""],
         ["GitOps", "Desired state declared in Git; a controller reconciles the running system to it. Rollback is a revert.", "Delivery, audit and rollback in one mechanism.", "\"Git is the source of truth, and the controller reconciles\""],
         ["Model registry", "A versioned store of artefacts with metrics, lineage, approval state and a stage label. Deployments reference a version, not a path.", "The first thing worth building in an immature setup.", "\"a registry entry with lineage and an approval state\""],
@@ -231,7 +231,7 @@ window.PREP_CONTENT = {
         ["Load balancer (L4 / L7)", "Spreads requests over healthy replicas. Layer 4 routes by address and port; layer 7 reads the request and routes by path, header or host.", "The first box on almost every diagram.", "\"layer 7 at the edge, so I can route by path and shift traffic by header\""],
         ["Health check", "A probe deciding whether a replica takes traffic. Readiness gates traffic; liveness restarts the process.", "How a service stays up during a release.", "\"readiness gates traffic, liveness restarts - not the same probe\""],
         ["Stateless service", "No per-client state between requests, so any replica can serve any request. State lives in a store or in the request.", "The precondition for horizontal scaling.", "\"stateless, which is why it scales flat\""],
-        ["Read-through / write-through / write-back cache", "The cache loads on a miss; every write goes to both; writes land in cache and flush later. Only the last can lose data.", "The standard caching follow-up.", "\"how stale is too stale - that number chooses the pattern\""],
+        ["Read-through / write-through / write-back cache", "The cache loads on a miss; every write goes to both; writes go into the cache and flush later. Only the last can lose data.", "The standard caching follow-up.", "\"how stale is too stale - that number chooses the pattern\""],
         ["Cache invalidation and TTL", "How a cached value stops being used: explicit invalidation, or expiry after a time to live. Consistency lives here.", "Every caching question, one level down.", "\"either the writer invalidates, or you accept staleness bounded by the TTL\""],
         ["Cache stampede", "Many requests miss at once because a popular key expired, and all hit the store together.", "The failure mode behind a sudden database spike.", "\"stagger the expiry and let one caller refresh while the rest serve stale\""],
         ["Index, replication, sharding", "An auxiliary lookup structure; copies on more than one node; splitting data across nodes by a key.", "Any \"how would you scale that table\" question.", "\"pick a shard key with even cardinality and no hot entity\""],
@@ -241,7 +241,7 @@ window.PREP_CONTENT = {
         ["Rate limiting and backpressure", "Capping what a caller may send, and letting a saturated component slow or reject callers rather than queue without bound.", "Overload behaviour.", "\"a bounded queue with rejection beats an unbounded queue with silence\""],
         ["Circuit breaker", "Stop calling a failing dependency after a threshold, fail fast for a cooldown, then probe with a trial request.", "The answer to \"what if that dependency is down\".", "\"open on failure, fail fast, half-open to probe\""],
         ["Retry with jitter", "Exponential backoff with randomness, so retries do not synchronise into a second outage.", "Any retry policy.", "\"backoff with jitter and a retry budget, or the retries are the outage\""],
-        ["Pagination (offset against cursor)", "Returning a large result in bounded pages. Cursors are stable under concurrent writes; offsets are not.", "A direct recognition question in many loops.", "\"cursor-based, because offsets skip and repeat rows when the data moves\""],
+        ["Pagination (offset against cursor)", "Returning a large result in bounded pages. Cursors are stable under concurrent writes; offsets are not.", "A direct recognition question in many interview processes.", "\"cursor-based, because offsets skip and repeat rows when the data moves\""],
         ["Observability: metrics, logs, traces", "Aggregated numbers over time; individual event records; the causal path of one request across services.", "How you know anything is wrong.", "\"metrics say something is wrong, traces say where\""]
       ]
     },
@@ -271,7 +271,7 @@ window.PREP_CONTENT = {
       title: "Start here: what this course is and how to work through it",
       level: "good",
       levelLabel: "Five minutes, then Track 1",
-      why: `A course-shaped syllabus for machine learning and software engineering interviews: fourteen chapters in five tracks, each with definitions, diagrams, primary-source readings, quick checks and graded exercises.`,
+      why: `A course-style syllabus for machine learning and software engineering interviews: fourteen chapters in five tracks, each with definitions, diagrams, primary-source readings, quick checks and graded exercises.`,
       learn: [
         {
           id: "sh-1",
@@ -279,7 +279,7 @@ window.PREP_CONTENT = {
           title: "What this is",
           viz: null,
           body: `<p>Fourteen chapters, grouped into five tracks, covering the material that production machine learning and backend engineering interviews actually draw on. It is written as a course rather than as a checklist: every chapter opens with the terms it uses, defines them before use, and then builds.</p>
-<p>Each chapter has the same shape.</p>
+<p>Each chapter has the same structure.</p>
 <ul>
 <li><b>Key terms</b> - every word the chapter uses, defined once with an example. Later sections use them freely.</li>
 <li><b>Sections</b> - the subject, one idea at a time, with an animated diagram where the diagram shows a mechanism rather than decorating the page.</li>
@@ -299,7 +299,7 @@ window.PREP_CONTENT = {
               "The answers to the quick checks"
             ],
             answer: 1,
-            explain: "It is the follow-up layer. The section body gives the idea; the deeper block gives the refinement an interviewer reaches for once the first answer lands."
+            explain: "It is the follow-up layer. The section body gives the idea; the deeper block gives the refinement an interviewer reaches for once the first answer is given."
           }
         },
         {
@@ -309,7 +309,7 @@ window.PREP_CONTENT = {
           viz: null,
           body: `<p>Take the tracks in order. Each one assumes the previous, and the estimates below are reading plus exercises, not reading alone.</p>
 <ul>
-<li><b>Track 1 - System design fundamentals</b> (about 6 hours). Balancers, caching, stores, queues, idempotency, overload and failure, APIs. Every later track assumes this vocabulary, and in most loops the generic questions arrive before the machine-learning ones.</li>
+<li><b>Track 1 - System design fundamentals</b> (about 6 hours). Balancers, caching, stores, queues, idempotency, overload and failure, APIs. Every later track assumes this vocabulary, and in most interview processes the generic questions arrive before the machine-learning ones.</li>
 <li><b>Track 2 - Production ML systems</b> (about 10 hours, four chapters). The lifecycle and the platform around it, the feature and data layer, the latency budget and the autoscaler, and the two health questions - is it up, and is it right.</li>
 <li><b>Track 3 - Decision systems</b> (about 10 hours, four chapters). Forecasting with intervals, constrained optimisation, the control loop that wires them together, and the judgement call about when to learn a policy instead.</li>
 <li><b>Track 4 - GenAI in production</b> (about 3 hours). Serving economics, guardrails, retrieval, and the short conceptual answers a fast AI round wants.</li>
@@ -336,7 +336,7 @@ window.PREP_CONTENT = {
           viz: null,
           body: `<p><b>Exercises.</b> Each one gives a prompt, a timebox and a rubric. Write your answer, or say it out loud where the type calls for it, before you open anything else. Then compare it against the model answer and the rubric's must-have list.</p>
 <p>On this public site, grading is a self-check: you write, you reveal the model answer, and you score yourself against the must-haves and the common mistakes. Automatic grading by Claude exists only in a copy of a page published as a Claude artifact, which is a private workflow rather than part of this site. The rubrics are written to be usable either way - they are checklists, not hidden keys.</p>
-<p>Two habits make the exercises worth far more than reading. Answer before you look, even badly: a rubric read after a genuine attempt teaches what you missed, while a rubric read first teaches you to copy. And respect the timebox, because an answer that runs long in practice runs long in the room.</p>
+<p>Two habits make the exercises worth far more than reading. Answer before you look, even badly: a rubric read after a genuine attempt teaches what you missed, while a rubric read first teaches you to copy. And respect the timebox, because an answer that runs long in practice runs long in the interview.</p>
 <p><b>Progress.</b> Everything you write, every check you answer and every section you tick off is stored in this browser only. Nothing is sent anywhere by the page itself. That means progress is per browser and per device: a different browser, a private window, or cleared site data starts empty.</p>
 <p>To move it, use the export control in the header. Export writes your progress to a file; import reads it back on another device or another browser. Export before you clear site data, and export before an interview if you want your notes on a second machine.</p>`,
           deeper: `<p>If you want to build your own version of this: the course is a content pack like any other, and the chapters it uses live in a shared core library. A private pack lists the same chapter ids and adds an overlay - extra sections describing your own systems, extra exercises about them, and a one-sentence honesty rule naming what you have actually done, which every rubric then grades against. That is the mechanism that keeps a personal record out of a public repository while still using the same chapters.</p>`,
