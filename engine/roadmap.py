@@ -41,7 +41,7 @@ def summarise(rdir):
     js = r"""
 const fs=require('fs');const path=require('path');const w={};
 const root=process.argv[1], rdir=process.argv[2];
-try{new Function('window',fs.readFileSync(path.join(root,'core','library.js'),'utf8'))(w);}catch(e){}
+try{const cd=path.join(root,'core');['library.js'].concat(fs.readdirSync(cd).filter(n=>n.endsWith('.js')&&n!=='library.js').sort()).forEach(n=>{new Function('window',fs.readFileSync(path.join(cd,n),'utf8'))(w);});}catch(e){}
 new Function('window',fs.readFileSync(path.join(rdir,'content.js'),'utf8'))(w);
 const ovp=path.join(rdir,'overlays.js'); if(fs.existsSync(ovp)) new Function('window',fs.readFileSync(ovp,'utf8'))(w);
 const C=w.PREP_CONTENT; if(C.useCore&&w.PREP_CORE) C.useCore.forEach(id=>{ if(w.PREP_CORE[id]&&!C.topics.some(t=>t.id===id)) C.topics.push(JSON.parse(JSON.stringify(w.PREP_CORE[id])));});
@@ -171,10 +171,10 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 footer{max-width:1120px;margin:0 auto;padding:16px 20px 48px;border-top:1px solid var(--border);font-size:12px;line-height:1.5;color:var(--ink-dim);font-family:var(--font-mono)}
 """
 
-PROMISE = ("A structured course for technical interview preparation. Work through the tracks in order: each chapter "
-           "teaches the subject, defines every term before it is used, shows the mechanism in a diagram, points to primary "
-           "sources, and ends with exercises and a spoken answer to rehearse. Progress is saved in this browser; "
-           "export it from any chapter page to carry it to another device.")
+PROMISE = ("A course for technical interview preparation. Work through the tracks in order. Each chapter teaches the "
+           "subject, explains every term before it uses it, shows how the thing works in a diagram, links to good "
+           "reading, and ends with exercises and an answer to practise saying out loud. Your progress is saved in this "
+           "browser; you can save it to a file from any chapter page and load it on another device.")
 
 
 def render_pack(e, n_packs):
@@ -195,7 +195,7 @@ def render_pack(e, n_packs):
     pm = ['<span><b>%d</b> tracks</span><span><b>%d</b> chapters</span><span><b>%d</b> sections</span><span><b>%d</b> exercises</span>'
           % (len(s["groups"]), n_ch, n_sec, n_ex), '<span class="pp"><b class="pv">0%</b> done</span>']
     if prereq:
-        pm.append('<span class="pre" data-prereq="%s">Prerequisites: <b>0</b> of %d generic chapters done</span>' % (esc(prereq[0]["id"]), len(prereq[0]["sections"])))
+        pm.append('<span class="pre" data-prereq="%s">Before you start: <b>0</b> of %d course chapters done</span>' % (esc(prereq[0]["id"]), len(prereq[0]["sections"])))
     out.append('<div class="pm">%s</div>' % "".join(pm))
     out.append('<div class="path">')
     for gi, g in enumerate(s["groups"]):
@@ -243,7 +243,7 @@ SCRIPT = r"""
         else if (!first) first = { href: page + '#' + tid + '/' + sid, chapter: ch.querySelector('.hd a').textContent, section: li.querySelector('a').textContent };
         if (!firstAny) firstAny = { href: page + '#' + tid + '/' + sid, chapter: ch.querySelector('.hd a').textContent, section: li.querySelector('a').textContent };
       });
-      var xc = ch.querySelector('.xc'); if (xc && t && t.acts) { var passed = 0, total = parseInt(xc.textContent, 10) || 0; Object.keys(t.acts).forEach(function (k) { if (t.acts[k] && t.acts[k].status === 'pass') passed++; }); if (passed) xc.textContent = passed + '/' + total + ' exercises passed'; }
+      var xc = ch.querySelector('.xc'); if (xc && t && t.acts) { var passed = 0, total = parseInt(xc.textContent, 10) || 0; Object.keys(t.acts).forEach(function (k) { if (t.acts[k] && t.acts[k].status === 'pass') passed++; }); if (passed) xc.textContent = passed + '/' + total + ' exercises done'; }
       var pct = lis.length ? Math.round(100 * done / lis.length) : 0;
       var bar = ch.querySelector('.bar i'); if (bar) bar.style.width = pct + '%';
       var pc = ch.querySelector('.pc'); if (pc) pc.textContent = lis.length ? done + '/' + lis.length : '';
@@ -259,7 +259,7 @@ SCRIPT = r"""
   var tgt = first || firstAny; if (!tgt) { cta.hidden = true; return; }
   var started = false; document.querySelectorAll('section.pack').forEach(function (sec) { if (read(sec.getAttribute('data-key'))) started = true; });
   cta.href = tgt.href;
-  cta.querySelector('.k').textContent = first ? (started ? 'Continue where you left off' : 'Start the course') : 'Everything is done; start again from';
+  cta.querySelector('.k').textContent = first ? (started ? 'Continue where you left off' : 'Start the course') : 'Everything is done. Start again from';
   cta.querySelector('.v').textContent = tgt.chapter + ' · ' + tgt.section;
   var tabs = document.querySelectorAll('.tabs a'); if (tabs.length) { function mark() { var h = location.hash; tabs.forEach(function (a) { a.classList.toggle('cur', a.getAttribute('href') === h); }); } mark(); window.addEventListener('hashchange', mark); }
 })();
@@ -285,7 +285,7 @@ def render_index(entries):
              "<style>" + CSS + "</style>"]
     tabs = ""
     if multi:
-        tabs = '<nav class="tabs" aria-label="Packs">%s</nav>' % "".join(
+        tabs = '<nav class="tabs" aria-label="Courses">%s</nav>' % "".join(
             '<a href="#pack-%s">%s</a>' % (esc(e["slug"]), esc(e["summary"].get("meta", {}).get("title") or e["pack"])) for e in entries)
     parts.append('<header class="top"><div class="top-inner"><a class="site" href="index.html">Interview prep</a>%s</div></header>' % tabs)
     parts.append('<main class="wrap">')
@@ -297,14 +297,14 @@ def render_index(entries):
                  '<span class="lg"><span class="sw danger"></span> asked most often</span>'
                  '<span class="lg"><span class="sw warning"></span> asked regularly</span>'
                  '<span class="lg"><span class="sw good"></span> asked less often</span>'
-                 '<span class="lg"><span class="tk">&#10003;</span> section marked understood</span>'
-                 '<span class="lg"><span class="bar"><i style="width:60%"></i></span> sections read in the chapter</span></div>')
+                 '<span class="lg"><span class="tk">&#10003;</span> section you have marked as read</span>'
+                 '<span class="lg"><span class="bar"><i style="width:60%"></i></span> how much of the chapter you have read</span></div>')
     if not entries:
-        parts.append('<p class="stats">No packs are built yet. Add a pack under packs/ and run python engine/roadmap.py.</p>')
+        parts.append('<p class="stats">Nothing is built yet. Add a course under packs/ and run python engine/roadmap.py.</p>')
     for e in entries:
         parts.append(render_pack(e, len(entries)))
     parts.append("</main>")
-    parts.append("<footer>Built by engine/roadmap.py. Progress is read from this browser's saved page state; open a chapter page once to see its ticks here, or import a progress file on that page.</footer>")
+    parts.append("<footer>Your progress is read from what this browser has saved. Open a chapter page once and it will show up here, or load a saved progress file on that page.</footer>")
     parts.append("<script>" + SCRIPT + "</script>")
     return ascii_only("\n".join(parts))
 

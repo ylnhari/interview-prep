@@ -359,11 +359,11 @@
     </div>
     <button class="menu" id="menu-btn" type="button" aria-expanded="false" aria-controls="rail">Contents</button>
     <div class="sync" id="sync" hidden></div>
-    <div class="stat" title="Overall progress across chapters"><div class="ring" id="ring" style="--pct:0" aria-hidden="true"></div><span><b id="pct">0%</b> done</span></div>
+    <div class="stat" title="How much of the course you have finished"><div class="ring" id="ring" style="--pct:0" aria-hidden="true"></div><span><b id="pct">0%</b> done</span></div>
     <div class="stat accent" id="countdown-wrap" hidden><span>interview in</span><b id="countdown"></b></div>
     <div class="io">
-      <button class="btn sm" id="export-btn" type="button" title="Download this page's progress as a JSON file">Export progress</button>
-      <label class="btn sm" for="import-file" tabindex="0" title="Replace this page's progress with a previously exported file">Import progress</label>
+      <button class="btn sm" id="export-btn" type="button" title="Save your progress on this page to a file">Export progress</button>
+      <label class="btn sm" for="import-file" tabindex="0" title="Load progress from a file you saved earlier">Import progress</label>
       <input type="file" id="import-file" accept="application/json,.json" hidden>
     </div>
   </div>
@@ -373,7 +373,7 @@
   <nav class="rail" id="rail" aria-label="Course outline"></nav>
   <main class="book" id="book"></main>
 </div>
-<footer>Progress is saved in this browser. Use Export progress in the header to carry it to another device, and Import progress to load it there.</footer>
+<footer>Your progress is saved in this browser. Use Export progress at the top to save it to a file, and Import progress to load that file on another device.</footer>
 
 <script>
 /*__VIZLIB__*/
@@ -402,7 +402,7 @@ window.PREP_IO = (function () {
     var doc = JSON.parse(text);
     var wrapped = !!doc && typeof doc === 'object' && doc.format === FORMAT;
     var st = wrapped ? doc.state : doc;
-    if (!validState(st)) throw new Error('This file is not an interview-prep progress export.');
+    if (!validState(st)) throw new Error('That file is not a saved progress file from this course.');
     return { state: st, key: wrapped && typeof doc.key === 'string' ? doc.key : null };
   }
   function filename(key, now) {
@@ -469,7 +469,7 @@ window.PREP_IO = (function () {
   var draftTimer = null;
   function persistDraft(tid) { clearTimeout(draftTimer); draftTimer = setTimeout(function () { persist(tid); }, 600); }
   function logAttempt(rec) { if (!db) return; rec.at = new Date().toISOString(); db.collection('attempts').add(rec).catch(function () {}); }
-  function setSync(mode) { var e = document.getElementById('sync'); e.hidden = false; e.className = 'sync ' + (mode === 'on' ? 'on' : mode === 'local' ? 'local' : ''); e.textContent = mode === 'on' ? 'progress synced' : mode === 'local' ? 'saved in this browser' : 'connecting'; }
+  function setSync(mode) { var e = document.getElementById('sync'); e.hidden = false; e.className = 'sync ' + (mode === 'on' ? 'on' : mode === 'local' ? 'local' : ''); e.textContent = mode === 'on' ? 'progress saved online' : mode === 'local' ? 'saved in this browser' : 'connecting'; }
 
   // progress: weights count only the components a chapter actually has
   function topicProgress(topic) {
@@ -487,8 +487,8 @@ window.PREP_IO = (function () {
     var label = 'Not started';
     if (rL > 0 || pA > 0 || (hasConnect && t.connect.status !== 'none') || (hasSay && t.said)) label = 'In progress';
     if (nL && rL === nL) label = nA || hasConnect || hasSay ? 'Practising' : 'Done';
-    if (rL === nL && pA === nA && (!hasConnect || cd) && (!hasSay || t.said)) label = nA || hasConnect || hasSay ? 'Verified' : 'Done';
-    return { pct: Math.min(100, Math.round(pct * 100)), label: label, rL: rL, nL: nL, pA: pA, nA: nA, complete: label === 'Verified' || label === 'Done' };
+    if (rL === nL && pA === nA && (!hasConnect || cd) && (!hasSay || t.said)) label = 'Done';
+    return { pct: Math.min(100, Math.round(pct * 100)), label: label, rL: rL, nL: nL, pA: pA, nA: nA, complete: label === 'Done' };
   }
   function overall() { if (!TOPICS.length) return 0; var s = 0; TOPICS.forEach(function (tp) { s += topicProgress(tp).pct; }); return Math.round(s / TOPICS.length); }
   function nextUnfinished() {
@@ -513,18 +513,18 @@ window.PREP_IO = (function () {
   function extLink(link) { var a = txt('a', 'ext', (link && link.label) || 'Open in the course'); a.href = link.url; a.target = '_blank'; a.rel = 'noopener'; return a; }
 
   // ---------- rail: course outline ----------
-  var PART_SHORT = { field: 'The field', experience: 'Your experience', role: 'In this role' };
+  var PART_SHORT = { field: 'The basics', experience: 'Your experience', role: 'In this role' };
   function viewOrder() { var v = []; if (C.interviewer) v.push('who'); orderedTopics().forEach(function (t) { v.push(t.id); }); if (GLOSSARY.length) v.push('glossary'); return v; }
   function renderRail() {
     var rail = document.getElementById('rail'); rail.innerHTML = '';
     var nxt = nextUnfinished();
     var cont = el('button', 'continue'); cont.type = 'button';
-    cont.appendChild(txt('div', 'k', nxt ? (overall() ? 'Continue' : 'Start here') : 'Course complete'));
+    cont.appendChild(txt('div', 'k', nxt ? (overall() ? 'Continue' : 'Start here') : 'Course finished'));
     cont.appendChild(txt('div', 'v', nxt ? nxt.topic.title : 'Every chapter is done'));
     if (nxt && nxt.section) cont.appendChild(txt('div', 's', nxt.section.title));
     if (nxt) cont.addEventListener('click', function () { go(nxt.topic.id, nxt.section ? nxt.section.id : null); });
     rail.appendChild(cont);
-    if (C.interviewer) { var w = el('div', 'toc'); var a = el('button', 'ti gl' + (state.view === 'who' ? ' cur' : '')); a.type = 'button'; a.appendChild(el('span', 't', '<span>Interviewer profile</span>')); a.addEventListener('click', function () { go('who'); }); w.appendChild(a); rail.appendChild(w); }
+    if (C.interviewer) { var w = el('div', 'toc'); var a = el('button', 'ti gl' + (state.view === 'who' ? ' cur' : '')); a.type = 'button'; a.appendChild(el('span', 't', '<span>Who is interviewing you</span>')); a.addEventListener('click', function () { go('who'); }); w.appendChild(a); rail.appendChild(w); }
     var groupsToRender = GROUPS.length ? GROUPS : [{ id: 'all', label: 'Chapters', sub: '', ids: TOPICS.map(function (t) { return t.id; }) }];
     groupsToRender.forEach(function (grp) {
       var g = el('div', 'toc'); var dh = el('div', 'dh'); dh.appendChild(txt('span', null, grp.label)); if (grp.sub) dh.appendChild(txt('span', null, grp.sub)); g.appendChild(dh);
@@ -565,7 +565,7 @@ window.PREP_IO = (function () {
   // ---------- book: one view at a time ----------
   function renderBook() {
     book.innerHTML = '';
-    var order = viewOrder(); if (!order.length) { book.appendChild(el('div', 'empty', 'This pack has no chapters yet.')); return; }
+    var order = viewOrder(); if (!order.length) { book.appendChild(el('div', 'empty', 'This course has no chapters yet.')); return; }
     if (order.indexOf(state.view) < 0) state.view = order[0];
     if (state.view === 'who') { book.appendChild(renderWho(C.interviewer)); book.appendChild(renderNav('who')); return; }
     if (state.view === 'glossary') { book.appendChild(renderGlossary()); book.appendChild(renderNav('glossary')); return; }
@@ -574,7 +574,7 @@ window.PREP_IO = (function () {
     book.appendChild(renderChapter(t, n)); book.appendChild(renderNav(t.id));
   }
   function rerenderChapter(topic) { if (state.view !== topic.id) { renderRail(); return; } var y = window.scrollY; renderBook(); renderRail(); window.scrollTo({ top: y }); }
-  function titleOf(v) { if (v === 'who') return 'Interviewer profile'; if (v === 'glossary') return 'Glossary'; var t = topicById(v); return t ? t.title : v; }
+  function titleOf(v) { if (v === 'who') return 'Who is interviewing you'; if (v === 'glossary') return 'Glossary'; var t = topicById(v); return t ? t.title : v; }
   function renderNav(cur) {
     var order = viewOrder(), i = order.indexOf(cur); var nav = el('div', 'chnav');
     if (i > 0) { var pb = el('button', 'navbtn prev'); pb.type = 'button'; pb.appendChild(txt('span', 'k', 'Previous')); pb.appendChild(txt('span', 'v', titleOf(order[i - 1]))); pb.addEventListener('click', function () { go(order[i - 1]); }); nav.appendChild(pb); } else nav.appendChild(el('span'));
@@ -586,9 +586,9 @@ window.PREP_IO = (function () {
     var d = el('section', 'who'); d.id = 'who';
     var wh = el('div', 'wh');
     var initials = (w.name || '?').replace(/\(.*?\)/g, '').trim().split(/\s+/).map(function (x) { return x[0]; }).join('').slice(0, 2).toUpperCase();
-    wh.appendChild(txt('div', 'av', initials)); wh.appendChild(txt('div', 'nm', w.name)); wh.appendChild(txt('div', 'rl', (w.title ? w.title + ' ' + DOT + ' ' : '') + 'public-source profile. The role description and recruiter information set the topics (confirmed); the profile only suggests which follow-ups are likelier (inferred).')); d.appendChild(wh);
+    wh.appendChild(txt('div', 'av', initials)); wh.appendChild(txt('div', 'nm', w.name)); wh.appendChild(txt('div', 'rl', (w.title ? w.title + ' ' + DOT + ' ' : '') + 'from public sources. The job description and what the recruiter said decide the topics; the profile only hints at which follow-up questions are more likely.')); d.appendChild(wh);
     var wb = el('div', 'wb');
-    [['Background', w.background], ['Likely to probe', w.probes], ['Where your record overlaps', w.overlap], ['Avoid', w.avoid]].forEach(function (sec) {
+    [['Background', w.background], ['Questions they are likely to ask', w.probes], ['Where your experience matches', w.overlap], ['Do not say this', w.avoid]].forEach(function (sec) {
       if (!sec[1] || !sec[1].length) return; var c = el('div'); c.appendChild(txt('h4', null, sec[0])); var ul = el('ul'); sec[1].forEach(function (li) { ul.appendChild(el('li', null, li)); }); c.appendChild(ul); wb.appendChild(c);
     });
     if (w.sources && w.sources.length) { var sc = el('div', 'src'); sc.appendChild(document.createTextNode('Sources ' + DOT + ' ')); w.sources.forEach(function (sr) { var a = txt('a', null, sr.label); a.href = sr.url; a.target = '_blank'; a.rel = 'noopener'; sc.appendChild(a); }); wb.appendChild(sc); }
@@ -614,14 +614,14 @@ window.PREP_IO = (function () {
     var ms = el('div', 'mastery'); var mb = el('span', 'bar', '<i></i>'); mb.style.setProperty('--pct', p.pct); ms.appendChild(mb);
     var msText = prereqs ? p.rL + ' of ' + p.nL + ' done' : p.pct + '% ' + DOT + ' ' + p.label + ' ' + DOT + ' ' + p.rL + '/' + p.nL + ' sections read' + (p.nA ? ' ' + DOT + ' ' + p.pA + '/' + p.nA + ' exercises' : '');
     ms.appendChild(txt('span', null, msText)); hd.appendChild(ms);
-    if (qbank) { var tg = txt('button', 'btn' + (state.hideAnswers ? ' primary' : ''), state.hideAnswers ? 'Show answers' : 'Hide answers (self-test)'); tg.type = 'button'; tg.style.marginTop = '10px'; tg.addEventListener('click', function () { state.hideAnswers = !state.hideAnswers; persist(); renderBook(); }); hd.appendChild(tg); }
+    if (qbank) { var tg = txt('button', 'btn' + (state.hideAnswers ? ' primary' : ''), state.hideAnswers ? 'Show the answers' : 'Hide the answers and test yourself'); tg.type = 'button'; tg.style.marginTop = '10px'; tg.addEventListener('click', function () { state.hideAnswers = !state.hideAnswers; persist(); renderBook(); }); hd.appendChild(tg); }
     ch.appendChild(hd);
     var body = el('div', 'chb');
 
     function appendVizAndReadings() {
       if (VIZ[topic.id]) { var v = el('div', 'viz'); v.innerHTML = VIZ[topic.id].svg + '<div class="cap">' + VIZ[topic.id].cap + '</div>'; body.appendChild(v); }
       if (READINGS[topic.id] && READINGS[topic.id].length) {
-        var rd = el('div', 'reads'); var rh = el('div', 'rh'); rh.appendChild(txt('span', 'lbl', 'Primary sources')); rh.appendChild(txt('span', 'sub', 'PRIMER links first if the basics are rusty. Tick each one when read.')); rd.appendChild(rh);
+        var rd = el('div', 'reads'); var rh = el('div', 'rh'); rh.appendChild(txt('span', 'lbl', 'Where to read more')); rh.appendChild(txt('span', 'sub', 'Start with the ones marked PRIMER if the basics are rusty. Tick each one when you have read it.')); rd.appendChild(rh);
         READINGS[topic.id].forEach(function (r, ri) {
           var done = !!t.reads[ri]; var row = el('div', 'rd' + (done ? ' done' : ''));
           var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = done; cb.id = 'rd-' + topic.id + '-' + ri; cb.setAttribute('aria-label', 'Mark read: ' + r.l); cb.addEventListener('change', function () { t.reads[ri] = cb.checked; persist(topic.id); row.classList.toggle('done', cb.checked); });
@@ -647,7 +647,7 @@ window.PREP_IO = (function () {
       appendVizAndReadings();
     } else {
       // sections, grouped into parts only when the chapter has more than one part
-      var PART_LABEL = { field: ['Part 1', 'The field: what it is, the methods, the tools'], experience: ['Part 2', 'Your experience: what you did and what to call it'], role: ['Part 3', 'In this role: how it most likely applies'] };
+      var PART_LABEL = { field: ['Part 1', 'The basics: what it is, how it works, the tools'], experience: ['Part 2', 'Your experience: what you did, and what to call it'], role: ['Part 3', 'In this role: how it is likely to come up'] };
       var partsSeen = {}; topic.learn.forEach(function (c) { if (c.part) partsSeen[c.part] = 1; }); var multiPart = Object.keys(partsSeen).length > 1;
       var lastPart = null;
       topic.learn.forEach(function (c, i) {
@@ -678,12 +678,12 @@ window.PREP_IO = (function () {
         if (c.check) {
           var mq = el('div', 'mcq'); mq.appendChild(txt('div', 'q', c.check.question)); var opts = el('div', 'opts'); var chosen = t.checks[c.id];
           c.check.options.forEach(function (o, oi) { var ob = txt('button', 'opt', o); ob.type = 'button'; if (chosen != null) { ob.disabled = true; if (oi === c.check.answer) ob.classList.add('right'); else if (oi === chosen) ob.classList.add('wrong'); } ob.addEventListener('click', function () { t.checks[c.id] = oi; if (oi === c.check.answer) t.learn[c.id] = true; persist(topic.id); rerenderChapter(topic); }); opts.appendChild(ob); });
-          mq.appendChild(opts); if (chosen != null) mq.appendChild(txt('div', 'ex', (chosen === c.check.answer ? 'Right. ' : 'Not quite. ') + c.check.explain)); sec.appendChild(mq);
+          mq.appendChild(opts); if (chosen != null) mq.appendChild(txt('div', 'ex', (chosen === c.check.answer ? 'Correct. ' : 'Not quite. ') + c.check.explain)); sec.appendChild(mq);
         }
         var row = el('div', 'row');
-        var doneLabel = c.link ? 'Mark done' : 'Understood';
-        var got = txt('button', 'btn' + (read ? ' done' : ' primary'), read ? (c.link ? 'Done' : 'Understood') + ' ' + TICK : doneLabel); got.type = 'button'; got.setAttribute('aria-pressed', read ? 'true' : 'false'); got.addEventListener('click', function () { t.learn[c.id] = !read; persist(topic.id); rerenderChapter(topic); }); row.appendChild(got);
-        if (c.deeper && !qbank) { var db2 = txt('button', 'btn ghost', t.learn[c.id + ':deeper'] ? 'Hide the deeper layer' : 'Go one level deeper'); db2.type = 'button'; db2.addEventListener('click', function () { t.learn[c.id + ':deeper'] = !t.learn[c.id + ':deeper']; persist(topic.id); rerenderChapter(topic); }); row.appendChild(db2); }
+        var doneLabel = c.link ? 'Mark done' : 'Mark as read';
+        var got = txt('button', 'btn' + (read ? ' done' : ' primary'), read ? 'Done' + ' ' + TICK : doneLabel); got.type = 'button'; got.setAttribute('aria-pressed', read ? 'true' : 'false'); got.addEventListener('click', function () { t.learn[c.id] = !read; persist(topic.id); rerenderChapter(topic); }); row.appendChild(got);
+        if (c.deeper && !qbank) { var db2 = txt('button', 'btn ghost', t.learn[c.id + ':deeper'] ? 'Hide the extra detail' : 'Go one level deeper'); db2.type = 'button'; db2.addEventListener('click', function () { t.learn[c.id + ':deeper'] = !t.learn[c.id + ':deeper']; persist(topic.id); rerenderChapter(topic); }); row.appendChild(db2); }
         sec.appendChild(row); body.appendChild(sec);
         if (i === 0) appendVizAndReadings();
       });
@@ -695,39 +695,39 @@ window.PREP_IO = (function () {
     if (topic.connect) {
       var cn = topic.connect, part = el('div', 'part'); part.id = 'connect-' + topic.id;
       var ph = el('div', 'ph'); ph.appendChild(txt('span', 'lbl', 'Your experience')); ph.appendChild(txt('h3', null, 'Map it onto ' + cn.project)); part.appendChild(ph);
-      part.appendChild(txt('div', 'sub', 'Recall first, then check. Write it the way you would say it aloud.'));
+      part.appendChild(txt('div', 'sub', 'Write it from memory first, then compare. Write it the way you would say it out loud.'));
       part.appendChild(el('div', 'prose', cn.prompt));
-      var ta = document.createElement('textarea'); ta.value = t.connect.lastAnswer || ''; ta.setAttribute('aria-label', 'Your mapping'); ta.addEventListener('input', function () { t.connect.lastAnswer = ta.value; persistDraft(topic.id); }); part.appendChild(ta);
-      var row2 = el('div', 'row'); var out = el('div'); var md = revealBlock('The mapping to arrive at', cn.model);
+      var ta = document.createElement('textarea'); ta.value = t.connect.lastAnswer || ''; ta.setAttribute('aria-label', 'Your answer'); ta.addEventListener('input', function () { t.connect.lastAnswer = ta.value; persistDraft(topic.id); }); part.appendChild(ta);
+      var row2 = el('div', 'row'); var out = el('div'); var md = revealBlock('A strong answer', cn.model);
       if (G) {
-        var gb = txt('button', 'btn primary', 'Grade my mapping'); gb.type = 'button'; var rv = txt('button', 'btn ghost', 'Show the honest mapping'); rv.type = 'button'; row2.appendChild(gb); row2.appendChild(rv);
+        var gb = txt('button', 'btn primary', 'Mark my answer'); gb.type = 'button'; var rv = txt('button', 'btn ghost', 'Show a strong answer'); rv.type = 'button'; row2.appendChild(gb); row2.appendChild(rv);
         rv.addEventListener('click', function () { md.hidden = !md.hidden; });
         gb.addEventListener('click', function () { var ans = ta.value.trim(); if (ans.length < 20) { ta.focus(); return; }
           runGrade({ kind: 'connect', topic: topic, title: 'Mapping onto ' + cn.project, prompt: cn.prompt, rubric: cn.rubric, model: cn.model, answer: ans, out: out, btn: gb, onDone: function (g) { t.connect.attempts++; t.connect.last = g; t.connect.lastAnswer = ans; t.connect.status = g.verdict === 'pass' ? 'pass' : 'retry'; delete t.connect.self; persist(topic.id); renderRail(); } }); });
       } else {
-        var cmp = txt('button', 'btn primary', 'Compare with the honest mapping'); cmp.type = 'button'; cmp.addEventListener('click', function () { md.hidden = !md.hidden; cmp.textContent = md.hidden ? 'Compare with the honest mapping' : 'Hide the mapping'; }); row2.appendChild(cmp);
+        var cmp = txt('button', 'btn primary', 'Compare with a strong answer'); cmp.type = 'button'; cmp.addEventListener('click', function () { md.hidden = !md.hidden; cmp.textContent = md.hidden ? 'Compare with a strong answer' : 'Hide the strong answer'; }); row2.appendChild(cmp);
         row2.appendChild(selfMarkButton(t.connect, topic, 'Mark practised'));
       }
-      if (t.connect.attempts) row2.appendChild(txt('span', 'meta', t.connect.attempts + ' graded attempt' + (t.connect.attempts > 1 ? 's' : ''))); part.appendChild(row2);
+      if (t.connect.attempts) row2.appendChild(txt('span', 'meta', t.connect.attempts + ' marked attempt' + (t.connect.attempts > 1 ? 's' : ''))); part.appendChild(row2);
       part.appendChild(out); if (t.connect.last) out.appendChild(renderGrade(t.connect.last));
       part.appendChild(md);
-      if (!G) part.appendChild(txt('div', 'note', 'Graded mode is available in a Claude-published copy.'));
+      if (!G) part.appendChild(txt('div', 'note', 'Marking only works in a copy of this page published by Claude.'));
       body.appendChild(part);
     }
 
     // exercises
     if (topic.activities.length) {
       var px = el('div', 'part'); px.id = 'ex-' + topic.id; var ph2 = el('div', 'ph'); ph2.appendChild(txt('span', 'lbl', p.pA + '/' + p.nA)); ph2.appendChild(txt('h3', null, 'Exercises')); px.appendChild(ph2);
-      px.appendChild(txt('div', 'sub', G ? 'Graded against the chapter rubric; retry until it passes. Overclaims beyond your record are named.' : 'Write your answer first, then compare it with a strong answer and mark the exercise practised.'));
+      px.appendChild(txt('div', 'sub', G ? 'Claude marks your answer against what this chapter asks for. Try again until it passes. If you claim more than you have actually done, it tells you where.' : 'Write your answer first, then compare it with a strong answer and mark the exercise practised.'));
       topic.activities.forEach(function (a) {
         var st = AC(topic.id, a.id); var box2 = el('div', 'act' + (st.status === 'pass' ? ' pass' : ''));
-        var ah = el('div', 'ah'); ah.appendChild(txt('span', 'type', a.type)); ah.appendChild(txt('h4', null, a.title)); if (st.status !== 'none') ah.appendChild(txt('span', 'verdict ' + st.status, st.self ? 'practised' : st.status)); box2.appendChild(ah);
+        var ah = el('div', 'ah'); ah.appendChild(txt('span', 'type', a.type)); ah.appendChild(txt('h4', null, a.title)); if (st.status !== 'none') ah.appendChild(txt('span', 'verdict ' + st.status, st.self ? 'practised' : st.status === 'pass' ? 'passed' : 'try again')); box2.appendChild(ah);
         if (a.viz && window.VIZLIB && window.VIZLIB[a.viz]) { var av = el('div', 'cviz'); av.innerHTML = window.VIZLIB[a.viz]('a' + Math.random().toString(36).slice(2, 8)); box2.appendChild(av); }
         box2.appendChild(el('div', 'prose', a.prompt));
-        var ta2 = document.createElement('textarea'); ta2.placeholder = a.type === 'formulate' ? 'Decision variables, objective, constraints, problem class' : 'Answer in first person, as you would say it'; ta2.value = st.lastAnswer || ''; ta2.setAttribute('aria-label', 'Your answer'); ta2.addEventListener('input', function () { st.lastAnswer = ta2.value; persistDraft(topic.id); }); box2.appendChild(ta2);
-        var row3 = el('div', 'row'); var out2 = el('div'); var md2 = revealBlock('Strong answer', a.model);
+        var ta2 = document.createElement('textarea'); ta2.placeholder = a.type === 'formulate' ? 'Decision variables, objective, constraints, problem class' : 'Write your answer the way you would say it out loud'; ta2.value = st.lastAnswer || ''; ta2.setAttribute('aria-label', 'Your answer'); ta2.addEventListener('input', function () { st.lastAnswer = ta2.value; persistDraft(topic.id); }); box2.appendChild(ta2);
+        var row3 = el('div', 'row'); var out2 = el('div'); var md2 = revealBlock('A strong answer', a.model);
         if (G) {
-          var gb2 = txt('button', 'btn primary', st.status === 'pass' ? 'Grade again' : 'Grade with Claude'); gb2.type = 'button'; row3.appendChild(gb2);
+          var gb2 = txt('button', 'btn primary', st.status === 'pass' ? 'Mark it again' : 'Ask Claude to mark it'); gb2.type = 'button'; row3.appendChild(gb2);
           gb2.addEventListener('click', function () { var ans = ta2.value.trim(); if (ans.length < 20) { ta2.focus(); return; }
             runGrade({ kind: a.type, topic: topic, title: a.title, prompt: a.prompt, rubric: a.rubric, model: a.model, answer: ans, out: out2, btn: gb2, onDone: function (g) { st.attempts++; st.last = g; st.lastAnswer = ans; st.lastScore = g.score; st.status = g.verdict === 'pass' ? 'pass' : 'retry'; delete st.self; persist(topic.id); rerenderChapter(topic); } }); });
         } else {
@@ -737,13 +737,13 @@ window.PREP_IO = (function () {
         if (a.timeboxSec) { var tb = txt('button', 'btn', 'Start ' + Math.round(a.timeboxSec / 6) / 10 + ' min timer'); tb.type = 'button'; var tm = txt('span', 'timer', ''); var iv = null, left = a.timeboxSec;
           tb.addEventListener('click', function () { if (iv) { clearInterval(iv); iv = null; tb.textContent = 'Restart timer'; return; } left = a.timeboxSec; tb.textContent = 'Stop'; tm.classList.remove('over'); iv = setInterval(function () { left--; var mm = Math.floor(Math.abs(left) / 60), ss = Math.abs(left) % 60; tm.textContent = (left < 0 ? '-' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss; if (left < 0) tm.classList.add('over'); }, 1000); });
           row3.appendChild(tb); row3.appendChild(tm); }
-        if (G) { var rv2 = txt('button', 'btn ghost', 'Show a strong answer'); rv2.type = 'button'; row3.appendChild(rv2); rv2.addEventListener('click', function () { if (md2.hidden && !st.attempts && !confirm('You have not attempted this yet. Reveal the strong answer anyway?')) return; md2.hidden = !md2.hidden; }); }
-        if (st.attempts) row3.appendChild(txt('span', 'meta', st.attempts + ' graded attempt' + (st.attempts > 1 ? 's' : '') + (st.lastScore != null ? ' ' + DOT + ' last ' + st.lastScore : ''))); box2.appendChild(row3);
+        if (G) { var rv2 = txt('button', 'btn ghost', 'Show a strong answer'); rv2.type = 'button'; row3.appendChild(rv2); rv2.addEventListener('click', function () { if (md2.hidden && !st.attempts && !confirm('You have not tried this one yet. Show the strong answer anyway?')) return; md2.hidden = !md2.hidden; }); }
+        if (st.attempts) row3.appendChild(txt('span', 'meta', st.attempts + ' marked attempt' + (st.attempts > 1 ? 's' : '') + (st.lastScore != null ? ' ' + DOT + ' last ' + st.lastScore : ''))); box2.appendChild(row3);
         box2.appendChild(out2); if (st.last) out2.appendChild(renderGrade(st.last));
         box2.appendChild(md2);
         px.appendChild(box2);
       });
-      if (!G) px.appendChild(txt('div', 'note', 'Graded mode is available in a Claude-published copy.'));
+      if (!G) px.appendChild(txt('div', 'note', 'Marking only works in a copy of this page published by Claude.'));
       body.appendChild(px);
     }
 
@@ -751,7 +751,7 @@ window.PREP_IO = (function () {
     if (topic.sayItOutLoud) {
       var ps2 = el('div', 'part'); ps2.id = 'say-' + topic.id; var ph3 = el('div', 'ph'); ph3.appendChild(txt('span', 'lbl', 'Rehearse')); ph3.appendChild(txt('h3', null, 'Spoken answer')); ps2.appendChild(ph3);
       if (topic.sayQuestion) { var sq = el('div', 'sayq'); sq.appendChild(txt('span', 'lbl', 'The question')); sq.appendChild(txt('span', null, topic.sayQuestion)); ps2.appendChild(sq); }
-      ps2.appendChild(txt('div', 'sub', 'Your answer to the question above, in your own words. Say it unscripted, time it (60 to 90 seconds), then mark it rehearsed.'));
+      ps2.appendChild(txt('div', 'sub', 'Answer the question above in your own words. Say it without reading, time it (60 to 90 seconds), then mark it rehearsed.'));
       var sy = el('div', 'say'); sy.appendChild(txt('div', 'lbl', 'Spoken answer')); sy.appendChild(el('div', 'prose', topic.sayItOutLoud)); ps2.appendChild(sy);
       var row4 = el('div', 'row'); var sw = txt('button', 'btn', 'Start stopwatch'); sw.type = 'button'; var tm2 = txt('span', 'timer', ''); var iv2 = null, s = 0;
       sw.addEventListener('click', function () { if (iv2) { clearInterval(iv2); iv2 = null; sw.textContent = 'Start stopwatch'; return; } s = 0; sw.textContent = 'Stop'; tm2.classList.remove('over'); iv2 = setInterval(function () { s++; tm2.textContent = Math.floor(s / 60) + ':' + (s % 60 < 10 ? '0' : '') + s % 60 + (s > 100 ? ' (trim)' : ''); if (s > 100) tm2.classList.add('over'); }, 1000); });
@@ -763,11 +763,11 @@ window.PREP_IO = (function () {
 
   function renderGlossary() {
     var sec = el('section', 'chapter gloss'); sec.id = 'glossary';
-    var hd = el('div', 'chh'); hd.appendChild(el('div', 'eyebrow', '<span>Reference</span>')); hd.appendChild(txt('h2', null, 'Glossary')); hd.appendChild(txt('div', 'why', 'Interviewers grade vocabulary as a proxy for depth. Every row: the term, what it means, where it lives in your record, and a phrase you can say. Rows marked "learn / not shipped" are for recognition, not claiming.')); sec.appendChild(hd);
+    var hd = el('div', 'chh'); hd.appendChild(el('div', 'eyebrow', '<span>Reference</span>')); hd.appendChild(txt('h2', null, 'Glossary')); hd.appendChild(txt('div', 'why', 'Interviewers judge how well you know a subject partly by the words you use for it. Each row gives the term, what it means, where it shows up in your own work, and a phrase you can say out loud. Rows marked "learn / not shipped" are terms to recognise, not ones to claim you have built.')); sec.appendChild(hd);
     var body = el('div', 'chb');
     GLOSSARY.forEach(function (g) {
       var gg = el('div', 'ggroup'); gg.appendChild(txt('h3', null, g.g)); if (g.sub) gg.appendChild(txt('div', 'sub', g.sub));
-      var wrap = el('div', 'gwrap'); var tb = el('table', 'gtable'); tb.innerHTML = '<thead><tr><th>Term</th><th>Meaning</th><th>In your record</th><th>Say it as</th></tr></thead>';
+      var wrap = el('div', 'gwrap'); var tb = el('table', 'gtable'); tb.innerHTML = '<thead><tr><th>Term</th><th>Meaning</th><th>In your experience</th><th>Say it as</th></tr></thead>';
       var tbody = el('tbody'); (g.rows || []).forEach(function (r) { var tr = el('tr'); r.forEach(function (c, i) { var td = txt('td', i === 3 ? 'say' : null, c); tr.appendChild(td); }); tbody.appendChild(tr); }); tb.appendChild(tbody); wrap.appendChild(tb); gg.appendChild(wrap); body.appendChild(gg);
     });
     sec.appendChild(body); return sec;
@@ -775,21 +775,21 @@ window.PREP_IO = (function () {
 
   // ---------- grading (Claude-published copies only) ----------
   function renderGrade(g) {
-    var d = el('div', 'grade'); var gh = el('div', 'gh'); gh.appendChild(txt('span', 'verdict ' + g.verdict, g.verdict)); if (g.score != null) gh.appendChild(txt('span', 'score', 'score ' + g.score + '/100')); d.appendChild(gh);
+    var d = el('div', 'grade'); var gh = el('div', 'gh'); gh.appendChild(txt('span', 'verdict ' + g.verdict, g.verdict === 'pass' ? 'passed' : 'try again')); if (g.score != null) gh.appendChild(txt('span', 'score', 'score ' + g.score + '/100')); d.appendChild(gh);
     d.appendChild(txt('div', 'fb', g.feedback || ''));
-    if (g.missing && g.missing.length) { d.appendChild(txt('div', 'lbl', 'Missing')); var ul = el('ul'); g.missing.forEach(function (m) { ul.appendChild(txt('li', null, m)); }); d.appendChild(ul); }
-    if (g.overclaims && g.overclaims.length) { d.appendChild(txt('div', 'lbl', 'Overclaims to fix')); var ul2 = el('ul', 'over'); g.overclaims.forEach(function (m) { ul2.appendChild(txt('li', null, m)); }); d.appendChild(ul2); }
-    if (g.followup) { d.appendChild(txt('div', 'lbl', 'The interviewer would push next')); d.appendChild(txt('div', 'fb', g.followup)); }
+    if (g.missing && g.missing.length) { d.appendChild(txt('div', 'lbl', 'What was missing')); var ul = el('ul'); g.missing.forEach(function (m) { ul.appendChild(txt('li', null, m)); }); d.appendChild(ul); }
+    if (g.overclaims && g.overclaims.length) { d.appendChild(txt('div', 'lbl', 'Where you claimed more than you did')); var ul2 = el('ul', 'over'); g.overclaims.forEach(function (m) { ul2.appendChild(txt('li', null, m)); }); d.appendChild(ul2); }
+    if (g.followup) { d.appendChild(txt('div', 'lbl', 'What the interviewer would ask next')); d.appendChild(txt('div', 'fb', g.followup)); }
     return d;
   }
   function stripHtml(h) { var x = document.createElement('div'); x.innerHTML = h || ''; return x.textContent; }
   function runGrade(o) {
-    o.out.innerHTML = ''; var pend = el('div', 'grade'); pend.appendChild(txt('div', 'pending', 'Grading')); o.out.appendChild(pend); o.btn.disabled = true;
+    o.out.innerHTML = ''; var pend = el('div', 'grade'); pend.appendChild(txt('div', 'pending', 'Marking')); o.out.appendChild(pend); o.btn.disabled = true;
     (async function () {
       try {
-        if (!graded()) { pend.innerHTML = ''; pend.appendChild(txt('div', 'err', 'Graded mode is available in a Claude-published copy. Compare with the strong answer and self-assess.')); return; }
+        if (!graded()) { pend.innerHTML = ''; pend.appendChild(txt('div', 'err', 'Marking only works in a copy of this page published by Claude. Compare your answer with the strong answer instead.')); return; }
         if (!sample) sample = await claude.use('sample');
-        if (!sample) { pend.innerHTML = ''; pend.appendChild(txt('div', 'err', 'Grading is not available in this view. Compare with the strong answer and self-assess.')); return; }
+        if (!sample) { pend.innerHTML = ''; pend.appendChild(txt('div', 'err', 'Marking is not available here. Compare your answer with the strong answer instead.')); return; }
         var prompt = [
           'You are a senior engineer on the hiring panel grading a candidate\'s interview-prep answer for the role described by the rubric. Grade strictly but fairly, as you would in a live interview.',
           '', 'TOPIC: ' + o.topic.title, 'ACTIVITY: ' + o.title, 'TYPE: ' + o.kind,
@@ -811,7 +811,7 @@ window.PREP_IO = (function () {
         o.onDone(g);
       } catch (e) {
         var code = e && e.code ? e.code : 'error';
-        var msg = code === 'not_granted' ? 'Grading needs your consent: reload and allow Claude on this page.' : code === 'rate_limited' ? 'Rate limited; wait a minute and try again.' : code === 'cancelled' ? 'Cancelled.' : 'Grading failed (' + code + '). Try again.';
+        var msg = code === 'not_granted' ? 'Marking needs your permission: reload the page and allow Claude to run on it.' : code === 'rate_limited' ? 'Too many requests. Wait a minute and try again.' : code === 'cancelled' ? 'Cancelled.' : 'Marking failed (' + code + '). Try again.';
         pend.innerHTML = ''; pend.appendChild(txt('div', 'err', msg));
       } finally { o.btn.disabled = false; }
     })();
@@ -832,8 +832,8 @@ window.PREP_IO = (function () {
     reader.onload = function () {
       var parsed;
       try { parsed = window.PREP_IO.parse(String(reader.result)); } catch (e) { alert(e && e.message ? e.message : 'Could not read that file.'); return; }
-      if (parsed.key && parsed.key !== LS_KEY && !confirm('This file was exported from a different page (' + parsed.key + '). Import it here anyway? Your current progress on this page will be replaced.')) return;
-      if (!parsed.key && !confirm('Replace the progress saved on this page with the contents of this file?')) return;
+      if (parsed.key && parsed.key !== LS_KEY && !confirm('This file came from a different page (' + parsed.key + '). Load it here anyway? It will replace the progress you have on this page.')) return;
+      if (!parsed.key && !confirm('Replace the progress saved on this page with what is in this file?')) return;
       state = parsed.state; if (!state.view) state.view = null;
       persist(); TOPICS.forEach(function (t) { if (state.topics[t.id]) persist(t.id); });
       renderAll(); window.scrollTo({ top: 0 });

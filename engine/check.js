@@ -24,7 +24,11 @@ if (isHtml) {
     if (fs.existsSync(c)) coreFile = c;
     dir = path.dirname(dir);
   }
-  if (coreFile) new Function('window', fs.readFileSync(coreFile, 'utf8'))(w);
+  if (coreFile) {
+    const coreDir = path.dirname(coreFile);
+    const extra = fs.readdirSync(coreDir).filter(n => n.endsWith('.js') && n !== 'library.js').sort();
+    [coreFile, ...extra.map(n => path.join(coreDir, n))].forEach(f => new Function('window', fs.readFileSync(f, 'utf8'))(w));
+  }
   const ovFile = path.join(path.dirname(file), 'overlays.js');
   if (fs.existsSync(ovFile)) new Function('window', fs.readFileSync(ovFile, 'utf8'))(w);
 }

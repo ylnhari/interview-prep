@@ -1454,5 +1454,7 @@
 
   root.VIZLIB = V;
   root.VIZLIB_CAPTIONS = C;
+  /* Helpers for extension files (engine/viz/*.js), which add more diagrams to V and C. */
+  root.VIZLIB_HELPERS = { S: S, D: D, T: T, ML: ML, B: B, R: R, CY: CY, A: A, AP: AP, F: F, DT: DT, LN: LN, PG: PG, PL: PL, HD: HD, SQ: SQ, IX: IX, GROW: GROW, DXS: DXS, cls: cls, sty: sty };
 
 }(typeof window !== 'undefined' ? window : this));
