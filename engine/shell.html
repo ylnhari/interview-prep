@@ -818,8 +818,10 @@ window.PREP_IO = (function () {
   }
 
   // ---------- progress export / import ----------
-  function exportProgress() {
+  async function exportProgress() {
     var json = window.PREP_IO.serialise(LS_KEY, state); var name = window.PREP_IO.filename(LS_KEY);
+    /* In a Claude-published copy the viewer blocks plain download links; the downloads capability mediates the save. */
+    if (graded()) { try { var dl = await claude.use('downloads'); if (dl) { await dl.save({ filename: name, data: json }); return; } } catch (e) { if (e && e.code === 'cancelled') return; } }
     var a = document.createElement('a'); a.download = name; a.rel = 'noopener';
     try { var blob = new Blob([json], { type: 'application/json' }); a.href = URL.createObjectURL(blob); } catch (e) { a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json); }
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
