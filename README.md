@@ -9,6 +9,10 @@ Build course-style interview preparation pages from content packs: one engine, m
 - A roadmap page (`dist/index.html`) fanning out every pack → chapter → section with deep links and progress, so nothing gets missed.
 - Progress saved in the browser. When a page is published as a Claude artifact, exercises are graded by Claude in-page and progress syncs server-side; served locally, the page works without grading.
 
+## See it online
+
+The public example course and the roadmap are published from this repository with GitHub Pages: **https://ylnhari.github.io/interview-prep/** (rebuilt on every push by `.github/workflows/pages.yml`). Online, exercises show a strong answer to self-check against; in-page grading by Claude is available only when a built page is published as a Claude artifact.
+
 ## Quick start
 
 ```
