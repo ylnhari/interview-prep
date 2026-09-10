@@ -43,6 +43,25 @@ All HTML strings are backtick template literals. Never write the two characters 
 - A chapter whose chunks all share one `part` shows no part headers; the "Part 1 / 2 / 3" movements appear only when a chapter mixes `field`, `experience` and `role` chunks.
 - Question-bank chapters: id containing `question-bank` (`question-bank-fundamentals`, `question-bank-mle`, or a pack's own `mle-question-bank`); body lists `<li><b>Qn.</b> …</li>`, deeper lists `<li><b>An.</b> …</li>` in the same order; the shell pairs them and adds a hide/show toggle.
 
+## Two kinds of chapter
+
+Not every chapter is a lesson. Decide which kind a chapter is before writing it, and do not apply the teaching format to the other kind.
+
+- **A teaching chapter** explains a subject the reader must be able to use: Key terms first, sections that build, a quick check per section, exercises with a marking guide, a spoken answer. Core chapters are all of this kind.
+- **A reading chapter** gives context the reader needs to have in mind: what the interview day looks like, what a company builds, what its engineering writing says, what other people reported. It is written as a briefing. It carries no quizzes (`check: null` throughout) and no exercises (`activities: []`); if an exercise is worth doing, it belongs in a practice chapter. It ends with one short section, "What this means for you", which is the only place that advises what to say. Explain the subject before advising on it: a chapter about a company's systems opens with what the company builds, never with what not to claim.
+
+A quiz belongs only where the chapter teaches something the reader must be able to use under pressure. Chapters that describe an interview, a company, its published values, other candidates' reports, or a plan for the day carry none. The orientation chapter of a course carries none either: never quiz the reader on how the site works.
+
+Every term that points at a concept the reader has not met must be explained where it is used, or the chapter that explains it must be named. Writing "layer 4" without first saying that network software is described in layers, that layer 4 is the transport layer of addresses and ports and layer 7 is the application layer where the request itself is visible, leaves the term pointing at nothing.
+
+Do not teach the vocabulary of the hiring process as if it were a subject. Name the terms the reader will actually hear, in one paragraph, inside the chapter that describes the day.
+
+Material drawn from other people's reported interviews is good-to-have. Say so in its opening sentence, say that their role may differ from the reader's, and use "worth skimming" rather than "you must know". Such a chapter's `levelLabel` is "Good to have".
+
+Never pose a question without answering it. Any question in a body, list or prompt carries its answer within a few sentences, unless it is a question-bank chapter, where the answers live in `deeper` and the reader reveals them.
+
+Extra detail is part of the reading. Outside question banks the engine appends `deeper` to `body` and renders one continuous piece, so write it as a continuation, not as an aside the reader might skip. The engine also rotates each quiz's options at render time, so the correct answer never sits in the same place twice; never refer to an option by letter or position.
+
 ## Packs: the public course and private packs
 
 - `packs/course/content.js` is the public course: it uses every chapter in `core/library.js` through `useCore`, carries a neutral `honesty` sentence, `overlays: {}`, `interviewer: null` and `interviewAt: null`, and its `groups` are reading-order tracks rather than a round's agenda. It contains no candidate record and no employer research, and it is the pack the published site is built from. Its own `start-here` topic explains the course, the recommended path and how progress is exported.

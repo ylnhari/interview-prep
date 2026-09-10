@@ -17,48 +17,55 @@ window.PREP_CONTENT = {
 
   groups: [
     { id: "start", label: "Start here", sub: "what the course covers, and the order to work through it", ids: ["start-here"] },
-    {
-      id: "track1", label: "Track 1 · System design fundamentals",
-      sub: "load balancers, caches, databases, queues, and what happens when a service is overloaded",
-      ids: ["system-design-fundamentals"]
-    },
-    {
-      id: "track2", label: "Track 2 · Production ML systems",
-      sub: "how a model gets built and shipped, where its features come from, how fast it has to answer, and how you keep it up and correct",
-      ids: ["ml-lifecycle-platform", "data-features", "serving-and-scale", "reliability-ops"]
-    },
-    {
-      id: "track3", label: "Track 3 · Decision systems",
-      sub: "forecasting when the future is uncertain, optimisation with constraints, feedback loops that re-plan, and when to let a model learn the decision",
-      ids: ["forecasting-uq", "or-tooling", "control-theory", "rl-judgment"]
-    },
-    {
-      id: "track4", label: "Track 4 · GenAI in production",
-      sub: "what it costs to serve a large language model, guardrails, retrieval, and the quick questions in an AI round",
-      ids: ["genai-platform"]
-    },
-    {
-      id: "track5", label: "Track 5 · Practice",
-      sub: "scenarios, coding drills, and a hundred questions to test yourself on",
-      ids: ["scenario-questions", "coding-drills", "question-bank-fundamentals", "question-bank-mle"]
-    }
+    { id: "track1", label: "Track 1 \u00b7 System design", sub: "requirements, APIs, databases, caching, distributed systems, storage, queues, search, counting, realtime, reliability, and ten worked cases", ids: ["system-design-fundamentals", "requirements-and-capacity", "apis-and-communication", "sql-databases", "nosql-partitioning-ids", "caching", "distributed-coordination", "storage-engines", "queues-and-streams", "search-and-retrieval", "counting-and-sketches", "realtime-and-feeds", "sre-practices", "system-design-cases"] },
+    { id: "track2", label: "Track 2 \u00b7 Production ML systems", sub: "how a model gets built and shipped, features, serving, reliability, the tools, and training on GPUs at scale", ids: ["ml-lifecycle-platform", "data-features", "serving-and-scale", "reliability-ops", "mlops-tooling", "training-at-scale"] },
+    { id: "track3", label: "Track 3 \u00b7 LLMs in production", sub: "serving and cost, inference engineering, fine-tuning and alignment, retrieval and agents", ids: ["genai-platform", "llm-inference-engineering", "llm-fine-tuning-and-alignment", "rag-and-agents"] },
+    { id: "track4", label: "Track 4 \u00b7 Maths and ML foundations", sub: "the maths, data and generalisation, classical models, evaluation, and deep learning", ids: ["ml-math-essentials", "data-and-generalization", "classical-models", "evaluation-and-selection", "deep-learning-essentials"] },
+    { id: "track5", label: "Track 5 \u00b7 Decision systems", sub: "forecasting with uncertainty, optimisation, feedback loops that re-plan, and when to let a model learn the decision", ids: ["forecasting-uq", "or-tooling", "control-theory", "rl-judgment"] },
+    { id: "track6", label: "Track 6 \u00b7 Practice", sub: "scenario questions, coding drills, and about three hundred questions with the answers hidden", ids: ["scenario-questions", "coding-drills", "question-bank-system-design", "question-bank-mle", "question-bank-ml-foundations", "question-bank-llm", "question-bank-fundamentals"] }
   ],
 
   useCore: [
     "system-design-fundamentals",
+    "requirements-and-capacity",
+    "apis-and-communication",
+    "sql-databases",
+    "nosql-partitioning-ids",
+    "caching",
+    "distributed-coordination",
+    "storage-engines",
+    "queues-and-streams",
+    "search-and-retrieval",
+    "counting-and-sketches",
+    "realtime-and-feeds",
+    "sre-practices",
+    "system-design-cases",
     "ml-lifecycle-platform",
     "data-features",
     "serving-and-scale",
     "reliability-ops",
+    "mlops-tooling",
+    "training-at-scale",
+    "genai-platform",
+    "llm-inference-engineering",
+    "llm-fine-tuning-and-alignment",
+    "rag-and-agents",
+    "ml-math-essentials",
+    "data-and-generalization",
+    "classical-models",
+    "evaluation-and-selection",
+    "deep-learning-essentials",
     "forecasting-uq",
     "or-tooling",
     "control-theory",
     "rl-judgment",
-    "genai-platform",
     "scenario-questions",
     "coding-drills",
-    "question-bank-fundamentals",
-    "question-bank-mle"
+    "question-bank-system-design",
+    "question-bank-mle",
+    "question-bank-ml-foundations",
+    "question-bank-llm",
+    "question-bank-fundamentals"
   ],
 
   // The public course adds nothing on top of the shared chapters: nothing personal, no employer research.
@@ -270,64 +277,42 @@ window.PREP_CONTENT = {
       id: "start-here",
       title: "Start here",
       level: "good",
-      levelLabel: "Five minutes, then Track 1",
-      why: `Fourteen chapters in five tracks, for machine learning and software engineering interviews. Every chapter defines its terms, draws the diagrams, points you at the best pages to read, asks you a quick question after each section, and gives you exercises to answer and mark.`,
+      levelLabel: "Five minutes, then pick a track",
+      why: `Forty chapters in six tracks, for machine learning and software engineering interviews. Every chapter defines its terms before it uses them, draws the diagrams, points you at the best pages and videos on the subject, and gives you exercises to answer.`,
       learn: [
         {
           id: "sh-1",
           part: "field",
           title: "What this is",
           viz: null,
-          body: `<p>Fourteen chapters in five tracks, covering what machine learning and backend engineering interviews really draw on. It is written as a course, not a checklist: every chapter starts by defining the words it uses, and builds from there.</p>
+          body: `<p>Forty chapters in six tracks, covering what machine learning and backend engineering interviews really draw on. It is written as a course, not a checklist: every chapter starts by defining the words it uses, and builds from there.</p>
 <p>Every chapter is laid out the same way.</p>
 <ul>
 <li><b>Key terms</b> - every word the chapter uses, defined once with an example. After that, later sections use those words freely.</li>
 <li><b>Sections</b> - the subject itself, one idea at a time, with a moving diagram wherever a diagram shows how something works rather than just decorating the page. Read a section, then press Mark as read.</li>
-<li><b>Go one level deeper</b> - the next layer on each section: the refinement, the way it goes wrong, or the thing you get asked straight after your first answer.</li>
-<li><b>Quick checks</b> - the quick question at the end of a section checks you took it in. It is not there to teach you anything new.</li>
+<li><b>Quick checks</b> - a short question at the end of most sections, so you can tell whether it went in. Chapters that exist to give you context carry none.</li>
 <li><b>Readings</b> - original sources only, each with how long it takes and one sentence on why that particular page.</li>
 <li><b>Exercises</b> - explain something, design something, write a model, write code, drill, or say a follow-up answer out loud. Each one gives you a time limit, a list of what a good answer has to contain, the mistakes people usually make, and the answer you practise saying out loud.</li>
 </ul>
 <p>None of this is about one person or one employer. The chapters teach the subject, and adding your own systems on top is up to you.</p>`,
-          deeper: `<p>Two things about the layout are worth knowing, because they change how you read it. First, the order means something: chapters, exercises and questions are listed most important first, so the thing you see first is the thing you are most likely to be asked. Second, the chapters are meant to be shared - there is nothing about you in them and nothing about a particular employer - so the marking is on whether an answer is correct and well reasoned, and any claim of specific production experience is treated as unchecked.</p>`,
-          check: {
-            question: "What is in the \"Go one level deeper\" part of each section?",
-            options: [
-              "The same thing said again, more simply",
-              "The next layer: the refinement, the way it goes wrong, or the follow-up you usually get",
-              "A list of links to read next",
-              "The answers to the quick questions"
-            ],
-            answer: 1,
-            explain: "It is the follow-up layer. The section gives you the idea. Going one level deeper gives you the refinement an interviewer reaches for once you have given your first answer."
-          }
+          deeper: `<p>Two things about the layout are worth knowing, because they change how you read it. First, the order means something: chapters, exercises and questions are listed most important first, so the thing you see first is the thing you are most likely to be asked. Second, the chapters are meant to be shared - there is nothing about you in them and nothing about a particular employer - so the marking is on whether an answer is correct and well reasoned, and any claim of specific production experience is treated as unchecked.</p>`
         },
         {
           id: "sh-2",
           part: "field",
           title: "The order to work through it",
           viz: null,
-          body: `<p>Take the tracks in order. Each one assumes you have done the one before it. The hours below are reading plus exercises, not reading on its own.</p>
+          body: `<p>Take the tracks in order if you are starting from scratch. If you are preparing for a specific interview, start with the track it will test most. The hours are reading plus exercises.</p>
 <ul>
-<li><b>Track 1 - System design fundamentals</b> (about 6 hours). Load balancers, caching, stores, queues, idempotency, overload and failure, and APIs. Every later track uses these words, and in most interview processes the general questions come before the machine learning ones.</li>
-<li><b>Track 2 - Production ML systems</b> (about 10 hours, four chapters). How a model gets built and shipped and the platform around it, the feature and data layer, the time budget and the autoscaler, and the two questions about health - is it up, and is it right.</li>
-<li><b>Track 3 - Decision systems</b> (about 10 hours, four chapters). Forecasting with a range instead of a single number, optimisation under constraints, the feedback loop that joins the two, and how to judge when to learn a policy instead.</li>
-<li><b>Track 4 - GenAI in production</b> (about 3 hours). What it costs to serve, guardrails, retrieval, and the short answers a fast AI round is looking for.</li>
-<li><b>Track 5 - Practice</b> (about 8 hours). Scenario questions, coding drills, and a hundred questions with the answers hidden, to test yourself on rather than to read.</li>
+<li><b>Track 1 - System design</b> (about 30 hours, fourteen chapters). The fundamentals first, then requirements and capacity, APIs and load balancing, relational and NoSQL databases, caching, distributed systems, storage engines, queues and streams, search, counting at scale, realtime delivery, reliability practices, and ten worked cases. Most interview processes ask these before the machine learning questions.</li>
+<li><b>Track 2 - Production ML systems</b> (about 14 hours, six chapters). How a model gets built and shipped, the feature and data layer, serving and autoscaling, keeping it up and correct, the tools you would use, and training on GPUs at scale.</li>
+<li><b>Track 3 - LLMs in production</b> (about 10 hours, four chapters). What it costs to serve a large language model, inference engineering from the KV cache to quantization, fine-tuning and alignment, and retrieval and agents.</li>
+<li><b>Track 4 - Maths and ML foundations</b> (about 12 hours, five chapters). The maths every interviewer expects, data and generalisation, classical models, evaluation and metrics, and deep learning essentials. Read this track first if the maths and the classical models feel rusty.</li>
+<li><b>Track 5 - Decision systems</b> (about 10 hours, four chapters). Forecasting with a range instead of a single number, optimisation under constraints, the feedback loop that joins the two, and when to learn a policy instead.</li>
+<li><b>Track 6 - Practice</b> (about 12 hours). Scenario questions, coding drills, and about three hundred questions with the answers hidden, to test yourself on rather than to read.</li>
 </ul>
-<p>Two shortcuts, if you do not have the time. If you have a week, read the key terms of every chapter in Tracks 1 and 2 first, then work through Track 5 and let the questions you cannot answer decide what you read next. If you have two days, do Track 5 only, and read the chapter behind every question that went badly.</p>`,
-          deeper: `<p>The tracks are ordered by what depends on what, not by how hard they are. Track 3 is not harder than Track 2. It is separate, and it matters most for jobs built on forecasting, scheduling, routing, capacity or pricing. If the job you are preparing for has none of those, Track 3 is extra depth you can skip, and those hours are better spent on Track 5. The other way round, a job about decision systems can treat Track 4 as optional, and should not skip Track 3.</p>`,
-          check: {
-            question: "You have two days before the interview. What does the course suggest?",
-            options: [
-              "Read all fourteen chapters quickly, in order",
-              "Do Track 5 first, and read the chapter behind each question that went badly",
-              "Read only the key terms of every chapter and stop there",
-              "Skip the exercises and just read the answers"
-            ],
-            answer: 1,
-            explain: "With very little time, what you are short of is being able to recall things under pressure, not reading. Testing yourself first tells you which chapters are worth the hours you have left."
-          }
+<p>Two shortcuts, if you do not have the time. If you have a week, read the Key terms section of every chapter in Tracks 1 and 2, then work through the question banks in Track 6 and let the questions you cannot answer decide what you read next. If you have two days, do Track 6 only, and read the chapter behind every question that went badly.</p>`,
+          deeper: `<p>The tracks are ordered by what depends on what, not by how hard they are. Track 3 is not harder than Track 2. It is separate, and it matters most for jobs built on forecasting, scheduling, routing, capacity or pricing. If the job you are preparing for has none of those, Track 3 is extra depth you can skip, and those hours are better spent on Track 5. The other way round, a job about decision systems can treat Track 4 as optional, and should not skip Track 3.</p>`
         },
         {
           id: "sh-3",

@@ -7,16 +7,16 @@ Read this file, then `README.md`, then the pack you are working on.
 ## Layout
 
 - `engine/shell.html` — the page template. Everything shown is driven by the content object it is built with; do not put pack-specific text here.
-- `engine/viz-lib.js` — the animated inline-SVG concept-diagram library (`window.VIZLIB`, `window.VIZLIB_CAPTIONS`), referenced from content by `viz: "<id>"`. `engine/viz-catalog.md` lists the ids.
+- `engine/viz-lib.js` plus `engine/viz/*.js` — the animated inline-SVG concept-diagram library (`window.VIZLIB`, `window.VIZLIB_CAPTIONS`), referenced from content by `viz: "<id>"`. `engine/viz-catalog.md` lists the ids. New diagrams go in a new file under `engine/viz/` using `window.VIZLIB_HELPERS` (see `docs/extending.md`).
 - `engine/build.py` — builds one pack round into `dist/<pack>__<round>.html` (inlines viz library, core chapters and the pack content; escapes the output to pure ASCII so it renders correctly regardless of host charset). Usage: `python engine/build.py packs/<pack>/<round>`.
 - `engine/serve.py` — loopback-only static server for `dist/` (see Local server below).
 - `engine/check.js` — schema validation for a built page or a content file (`node engine/check.js dist/<file>.html`).
 - `engine/roadmap.py` — builds every pack round and `dist/index.html`, the course home page: each pack as a card, its tracks as a vertical path of chapters and sections with deep links and progress; packs with a `kind: "prereqs"` chapter are listed after the course with a "Prerequisites: n of m" line. Change only `render_index`, its CSS and its script; standard library only.
 - `engine/test_io.js` — unit test for the progress export/import functions in the shell (`node engine/test_io.js`). Progress lives in `localStorage` under `prep-state-<meta.id>-v1`; the header's Export/Import buttons move it between devices as a JSON file.
-- `core/library.js` — shared GENERIC chapters (`window.PREP_CORE = { <topicId>: topic }`), field-level only: no candidate, employer or role-specific text; rubrics carry the placeholder `{{HONESTY}}` which the engine replaces with the pack's sentence. A pack lists the chapters it uses in `useCore`.
+- `core/library.js` plus `core/<track>.js` — shared GENERIC chapters (`window.PREP_CORE[<topicId>] = topic`; the build loads `library.js` first, then the rest in name order), field-level only: no candidate, employer or role-specific text; rubrics carry the placeholder `{{HONESTY}}` which the engine replaces with the pack's sentence. A pack lists the chapters it uses in `useCore`.
 - `packs/<pack>/<round>/content.js` — one round's content (`window.PREP_CONTENT = {...}`) with `honesty`, `useCore`, and optional `overlays.js` (`window.PREP_OVERLAYS = { topicId: { learn, activities, connect, sayQuestion, sayItOutLoud } }`) that splices candidate-specific material into core chapters at runtime. `notes*.md` hold the round's intel and sources. Only `packs/_template/` and `packs/course/` are tracked; every other pack is ignored and private.
 - `packs/course/content.js` — the public course (tracked): every core chapter, grouped into five reading-order tracks, with a neutral honesty rule, public readings, a generic glossary and no overlay. It is what the published site is built from.
-- `docs/content-schema.md` — the content object schema and authoring rules (voice, honesty rule, define-before-use, diagrams).
+- `docs/content-schema.md` — the content object schema and authoring rules (voice, plain English, honesty rule, define-before-use, diagrams). `docs/extending.md` — how to add chapters and diagrams in separate files.
 - `local/` (ignored) — machine-specific settings, published-artifact URLs, scratch builds.
 - `dist/` (ignored) — built pages.
 

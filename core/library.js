@@ -2013,10 +2013,10 @@ window.PREP_CORE = {
     "id": "qb-a1",
     "type": "drill",
     "title": "Five questions at random, in writing, in ten minutes",
-    "prompt": "Pick five questions at random from the bank, from at least three different areas, and answer them in writing in 10 minutes. Do not reveal the answers first. Then open \"Go one level deeper\" on each and compare.",
+    "prompt": "Pick five questions at random from the bank, from at least three different areas, and answer them in writing in 10 minutes. Do not reveal the answers first. Then reveal the answers and compare.",
     "timeboxSec": 600,
     "rubric": "Must-haves, applied to each of the five answers: (1) substantively correct; (2) concise enough to say aloud in under a minute — a spoken answer, not an essay; (3) it names what the answer changes about a decision, rather than stopping at a definition; (4) it includes the follow-up trap wherever the bank's answer flags one, for example why integer variables make a problem hard, why MAPE breaks near zero, confidence versus prediction interval, or stale inputs at solve time; (5) a sentence saying plainly what you have and have not done, wherever the question touches something you have read about rather than run yourself. Common mistakes: writing an essay instead of something you could say out loud; reciting a definition with no consequence attached; leaving out that sentence where it is needed; drawing all five questions from one area. {{HONESTY}}",
-    "model": "<p>There is no single model answer for this exercise — the reference answers are the ones behind \"Go one level deeper\" in each section. Check yourself against those, mark each of the five as solid, shaky or wrong, then answer the two weakest again out loud, without notes.</p>\n<p>A useful pass mark: three of five solid on the first attempt, and every boundary sentence present where it was needed. If a whole area comes back shaky, that area is the next thing to study rather than the next thing to re-drill.</p>"
+    "model": "<p>There is no single model answer for this exercise — the reference answers are the ones you reveal in each section. Check yourself against those, mark each of the five as solid, shaky or wrong, then answer the two weakest again out loud, without notes.</p>\n<p>A useful pass mark: three of five solid on the first attempt, and every boundary sentence present where it was needed. If a whole area comes back shaky, that area is the next thing to study rather than the next thing to re-drill.</p>"
    },
    {
     "id": "qb-a2",

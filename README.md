@@ -1,6 +1,8 @@
 # Interview Prep
 
-Build course-style interview preparation pages from content packs: one engine, many packs. Each pack is one interview process (company, role, round). Generic chapters that every ML/software engineering loop needs live in `core/` and are reused by every pack; the company-specific material — your own story, the role's expectations, the interviewer, the reported questions — is yours and stays out of this repository.
+A free, open course for machine learning and software engineering interviews, plus the engine that renders it. Forty chapters in six tracks: system design (fourteen chapters from requirements and APIs through databases, caching, distributed systems, storage engines, queues, search, counting, realtime delivery and reliability, to ten worked cases), production ML systems, LLMs in production (inference engineering, fine-tuning, retrieval and agents), maths and ML foundations, decision systems (forecasting, optimisation, control, reinforcement learning), and practice (scenarios, coding drills, five question banks with about three hundred questions). Every chapter defines its terms first, has animated concept diagrams, exercises with a marking guide, and a short list of the best videos and articles on the subject.
+
+The same engine renders private packs: one per interview process (company, role, round), holding your own story, the role's expectations, the interviewer and the reported questions. Those stay out of this repository.
 
 **What a page gives you**
 
@@ -30,13 +32,13 @@ Python 3.9+ and Node 18+ (Node is used only for validation and the roadmap summa
 
 ## Authoring
 
-`docs/content-schema.md` is the contract: the content object, the two voices (coach vs candidate), define-before-use, the honesty rule, diagrams by id, importance ordering. `engine/viz-catalog.md` lists the sixty diagrams. Add a diagram to `engine/viz-lib.js` following its helper conventions (CSS-variable colours only, `uid`-prefixed ids, the shell's animation classes).
+`docs/extending.md` explains how to add a chapter or a diagram in its own file. `docs/content-schema.md` is the contract: the content object, the two voices (coach vs candidate), define-before-use, the honesty rule, diagrams by id, importance ordering. `engine/viz-catalog.md` lists the diagrams (about 170). Add a diagram to `engine/viz-lib.js` following its helper conventions (CSS-variable colours only, `uid`-prefixed ids, the shell's animation classes).
 
 ## Layout
 
 ```
-engine/    shell.html, viz-lib.js, viz-catalog.md, build.py, roadmap.py, check.js, serve.py, portlib.py
-core/      library.js  — shared generic chapters (window.PREP_CORE)
+engine/    shell.html, viz-lib.js + viz/*.js (diagrams), viz-catalog.md, build.py, roadmap.py, check.js, serve.py, portlib.py
+core/      library.js + one file per track — the shared chapters (window.PREP_CORE)
 packs/     _template/  course/  <your private packs, ignored>
 docs/      content-schema.md
 dist/      built pages (ignored)

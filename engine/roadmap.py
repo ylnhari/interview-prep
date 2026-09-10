@@ -171,10 +171,12 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 footer{max-width:1120px;margin:0 auto;padding:16px 20px 48px;border-top:1px solid var(--border);font-size:12px;line-height:1.5;color:var(--ink-dim);font-family:var(--font-mono)}
 """
 
-PROMISE = ("A course for technical interview preparation. Work through the tracks in order. Each chapter teaches the "
-           "subject, explains every term before it uses it, shows how the thing works in a diagram, links to good "
-           "reading, and ends with exercises and an answer to practise saying out loud. Your progress is saved in this "
-           "browser; you can save it to a file from any chapter page and load it on another device.")
+PROMISE = ("A free course for machine learning and software engineering interviews. Each chapter teaches one "
+           "subject: it defines every term before using it, draws the mechanism in a diagram, points you at the "
+           "best pages and videos on that subject, and gives you exercises with a list of what a good answer "
+           "contains. Take the tracks in order, or start with the one your interview will test most. Your "
+           "progress is saved in this browser, and you can save it to a file from any chapter and load it on "
+           "another device.")
 
 
 def render_pack(e, n_packs):

@@ -432,6 +432,21 @@ window.PREP_IO = (function () {
   // honesty sentence substitution
   var HON = C.honesty || 'Honesty rule: no candidate record was supplied; grade on correctness and reasoning and flag any claim of specific production experience as unverified.';
   C.topics.forEach(function (t) { if (t.connect && t.connect.rubric) t.connect.rubric = t.connect.rubric.split('{{HONESTY}}').join(HON); t.activities.forEach(function (a) { if (a.rubric) a.rubric = a.rubric.split('{{HONESTY}}').join(HON); }); });
+  // Reading normalisation, applied once after merging:
+  //  - extra detail is part of the reading, not a button (question banks keep it: body holds the questions, deeper the answers);
+  //  - quiz options are rotated per section so the correct one is not always in the same place.
+  function idHash(str) { var h = 0, i; for (i = 0; i < str.length; i++) { h = (h * 31 + str.charCodeAt(i)) | 0; } return Math.abs(h); }
+  C.topics.forEach(function (t) {
+    var bank = /question-bank/.test(t.id);
+    t.learn.forEach(function (c) {
+      if (c.deeper && !bank) { c.body = (c.body || '') + c.deeper; c.deeper = null; }
+      if (c.check && c.check.options && c.check.options.length > 1) {
+        var n = c.check.options.length, k = idHash(t.id + '/' + c.id) % n, opts = [], map = [], i;
+        for (i = 0; i < n; i++) { var j = (i + k) % n; opts.push(c.check.options[j]); map.push(j); }
+        c.check = { question: c.check.question, options: opts, answer: map.indexOf(c.check.answer), explain: c.check.explain };
+      }
+    });
+  });
   var META = C.meta || {};
   if (META.title) document.title = META.title;
   (function () { var eb = document.querySelector('.brand .eyebrow'), h1 = document.querySelector('.brand h1'); if (eb && META.eyebrow) eb.textContent = META.eyebrow; if (h1 && META.heading) h1.textContent = META.heading; var ft = document.querySelector('footer'); if (ft && META.footer) ft.textContent = META.footer; })();
@@ -449,6 +464,8 @@ window.PREP_IO = (function () {
   var LS_KEY = 'prep-state-' + ((C.meta && C.meta.id) || 'pack') + '-v1';
   var GLOSSARY = C.glossary || [];
   var READINGS = C.readings || {};
+  // a chapter may carry its own readings and glossary groups (used by core chapters kept in separate files)
+  C.topics.forEach(function (t) { if (t.readings && t.readings.length && !READINGS[t.id]) READINGS[t.id] = t.readings; if (t.glossary && t.glossary.length) GLOSSARY = GLOSSARY.concat(t.glossary); });
   var VIZ = C.topicViz || {};
 
   // ---------- state ----------
@@ -674,7 +691,6 @@ window.PREP_IO = (function () {
         } else if (c.body) {
           sec.appendChild(el('div', 'prose', c.body));
         }
-        if (c.deeper && !qbank) { var dp = el('div', 'deeper'); dp.hidden = !t.learn[c.id + ':deeper']; dp.appendChild(txt('div', 'lbl', 'One level deeper')); dp.appendChild(el('div', 'prose', c.deeper)); sec.appendChild(dp); }
         if (c.check) {
           var mq = el('div', 'mcq'); mq.appendChild(txt('div', 'q', c.check.question)); var opts = el('div', 'opts'); var chosen = t.checks[c.id];
           c.check.options.forEach(function (o, oi) { var ob = txt('button', 'opt', o); ob.type = 'button'; if (chosen != null) { ob.disabled = true; if (oi === c.check.answer) ob.classList.add('right'); else if (oi === chosen) ob.classList.add('wrong'); } ob.addEventListener('click', function () { t.checks[c.id] = oi; if (oi === c.check.answer) t.learn[c.id] = true; persist(topic.id); rerenderChapter(topic); }); opts.appendChild(ob); });
@@ -683,7 +699,6 @@ window.PREP_IO = (function () {
         var row = el('div', 'row');
         var doneLabel = c.link ? 'Mark done' : 'Mark as read';
         var got = txt('button', 'btn' + (read ? ' done' : ' primary'), read ? 'Done' + ' ' + TICK : doneLabel); got.type = 'button'; got.setAttribute('aria-pressed', read ? 'true' : 'false'); got.addEventListener('click', function () { t.learn[c.id] = !read; persist(topic.id); rerenderChapter(topic); }); row.appendChild(got);
-        if (c.deeper && !qbank) { var db2 = txt('button', 'btn ghost', t.learn[c.id + ':deeper'] ? 'Hide the extra detail' : 'Go one level deeper'); db2.type = 'button'; db2.addEventListener('click', function () { t.learn[c.id + ':deeper'] = !t.learn[c.id + ':deeper']; persist(topic.id); rerenderChapter(topic); }); row.appendChild(db2); }
         sec.appendChild(row); body.appendChild(sec);
         if (i === 0) appendVizAndReadings();
       });
