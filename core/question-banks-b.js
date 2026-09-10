@@ -37,7 +37,7 @@
         part: 'field',
         title: 'APIs, load balancing and communication — 6 questions',
         body: `<ul>
-<li><b>Q7.</b> What is the difference between L4 and L7 load balancing?</li>
+<li><b>Q7.</b> What is the difference between <a href="#networking-basics/nb-layers">L4 and L7</a> load balancing?</li>
 <li><b>Q8.</b> What load balancing algorithms exist and when do you use each?</li>
 <li><b>Q9.</b> REST vs gRPC vs GraphQL — when do you pick each?</li>
 <li><b>Q10.</b> How does a CDN reduce latency and load?</li>
@@ -45,7 +45,7 @@
 <li><b>Q12.</b> How do you design pagination for a large, frequently updated dataset?</li>
 </ul>`,
         deeper: `<ul>
-<li><b>A7.</b> A layer 4 (transport layer) balancer routes on IP address and port without reading the request, so it is fast and protocol-agnostic but cannot route on content. A layer 7 (application layer) balancer reads the HTTP request - path, header, cookie, hostname - so it can route by URL, terminate TLS, retry a failed request, and rate-limit before the request reaches a service. The trade-off is cost: L7 does more work per request, which is why very high-throughput or non-HTTP traffic is often balanced at L4.</li>
+<li><b>A7.</b> A <a href="#networking-basics/nb-layers">layer 4</a> (transport layer) balancer routes on IP address and port without reading the request, so it is fast and protocol-agnostic but cannot route on content. A <a href="#networking-basics/nb-layers">layer 7</a> (application layer) balancer reads the HTTP request - path, header, cookie, hostname - so it can route by URL, terminate TLS, retry a failed request, and rate-limit before the request reaches a service. The trade-off is cost: <a href="#networking-basics/nb-layers">L7</a> does more work per request, which is why very high-throughput or non-HTTP traffic is often balanced at L4.</li>
 <li><b>A8.</b> Round robin sends requests to replicas in turn, simplest but ignorant of how busy each replica is. Least connections sends the next request to whichever replica has the fewest open connections, better when requests take very different amounts of time. Consistent hashing routes a given key to the same replica every time, the right choice whenever a replica holds warm state - a cache, a loaded model, a sticky session - because it minimises how much state moves when replicas change. Weighted versions of any of these send more traffic to bigger machines.</li>
 <li><b>A9.</b> REST is the default for a public or browser-facing API: it maps onto HTTP verbs, is cacheable with ordinary HTTP caching, and has the widest client support. gRPC is the default between your own services: Protocol Buffers give a typed schema checked at compile time and it runs over HTTP/2, at the cost of not being natively callable from a browser. GraphQL fits when one API must serve several very different client views of the same data, since the caller asks for exactly the fields it needs - the cost is that a flexible query is much harder to cache.</li>
 <li><b>A10.</b> A CDN (content delivery network) caches content at edge locations physically close to users, so a static asset is served from a nearby point of presence instead of crossing continents to the origin - cutting a 150 millisecond transcontinental round trip to single-digit milliseconds. It also shields the origin: a popular file might be requested millions of times but fetched from the origin only once per edge location per TTL (time to live) window. The core win is always moving bytes physically closer to the reader.</li>

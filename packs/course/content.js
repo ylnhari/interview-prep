@@ -17,7 +17,7 @@ window.PREP_CONTENT = {
 
   groups: [
     { id: "start", label: "Start here", sub: "what the course covers, and the order to work through it", ids: ["start-here"] },
-    { id: "track1", label: "Track 1 \u00b7 System design", sub: "requirements, APIs, databases, caching, distributed systems, storage, queues, search, counting, realtime, reliability, and ten worked cases", ids: ["system-design-fundamentals", "requirements-and-capacity", "apis-and-communication", "sql-databases", "nosql-partitioning-ids", "caching", "distributed-coordination", "storage-engines", "queues-and-streams", "search-and-retrieval", "counting-and-sketches", "realtime-and-feeds", "sre-practices", "system-design-cases"] },
+    { id: "track1", label: "Track 1 \u00b7 System design", sub: "how networks work, requirements, APIs, databases, caching, distributed systems, storage, queues, search, counting, realtime, reliability, and ten worked cases", ids: ["system-design-fundamentals", "networking-basics", "requirements-and-capacity", "apis-and-communication", "sql-databases", "nosql-partitioning-ids", "caching", "distributed-coordination", "storage-engines", "queues-and-streams", "search-and-retrieval", "counting-and-sketches", "realtime-and-feeds", "sre-practices", "system-design-cases"] },
     { id: "track2", label: "Track 2 \u00b7 Production ML systems", sub: "how a model gets built and shipped, features, serving, reliability, the tools, and training on GPUs at scale", ids: ["ml-lifecycle-platform", "data-features", "serving-and-scale", "reliability-ops", "mlops-tooling", "training-at-scale"] },
     { id: "track3", label: "Track 3 \u00b7 LLMs in production", sub: "serving and cost, inference engineering, fine-tuning and alignment, retrieval and agents", ids: ["genai-platform", "llm-inference-engineering", "llm-fine-tuning-and-alignment", "rag-and-agents"] },
     { id: "track4", label: "Track 4 \u00b7 Maths and ML foundations", sub: "the maths, data and generalisation, classical models, evaluation, and deep learning", ids: ["ml-math-essentials", "data-and-generalization", "classical-models", "evaluation-and-selection", "deep-learning-essentials"] },
@@ -27,6 +27,7 @@ window.PREP_CONTENT = {
 
   useCore: [
     "system-design-fundamentals",
+    "networking-basics",
     "requirements-and-capacity",
     "apis-and-communication",
     "sql-databases",
@@ -296,7 +297,7 @@ window.PREP_CONTENT = {
           viz: null,
           body: `<p>Take the tracks in order if you are starting from scratch. If you are preparing for a specific interview, start with the track it will test most. The hours are reading plus exercises.</p>
 <ul>
-<li><b>Track 1 - System design</b> (about 30 hours, fourteen chapters). The fundamentals first, then requirements and capacity, APIs and load balancing, relational and NoSQL databases, caching, distributed systems, storage engines, queues and streams, search, counting at scale, realtime delivery, reliability practices, and ten worked cases. Most interview processes ask these before the machine learning questions.</li>
+<li><b>Track 1 - System design</b> (about 32 hours, fifteen chapters). The fundamentals first, then how networks actually work, requirements and capacity, APIs and load balancing, relational and NoSQL databases, caching, distributed systems, storage engines, queues and streams, search, counting at scale, realtime delivery, reliability practices, and ten worked cases. Most interview processes ask these before the machine learning questions.</li>
 <li><b>Track 2 - Production ML systems</b> (about 14 hours, six chapters). How a model gets built and shipped, the feature and data layer, serving and autoscaling, keeping it up and correct, the tools you would use, and training on GPUs at scale.</li>
 <li><b>Track 3 - LLMs in production</b> (about 10 hours, four chapters). What it costs to serve a large language model, inference engineering from the KV cache to quantization, fine-tuning and alignment, and retrieval and agents.</li>
 <li><b>Track 4 - Maths and ML foundations</b> (about 12 hours, five chapters). The maths every interviewer expects, data and generalisation, classical models, evaluation and metrics, and deep learning essentials. Read this track first if the maths and the classical models feel rusty.</li>
