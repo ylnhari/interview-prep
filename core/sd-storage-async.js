@@ -29,6 +29,7 @@
 <li><b>Sparse index.</b> An index recording the position of only every few hundred or few thousand keys in a sorted file, relying on the file's sort order to scan the short gap between two known positions.</li>
 <li><b>Write amplification, read amplification, space amplification.</b> How many bytes are actually written to disk for every byte the application wrote; how many separate disk reads one logical read needs in the worst case; how much bigger the data on disk is than its logical size.</li>
 <li><b>B-tree.</b> A balanced tree structure that updates a value in place, at its existing position on disk, keeping every path from root to leaf the same short length.</li>
+<li><b>LSM tree (log-structured merge-tree).</b> A storage engine design that never edits a file in place: it only appends new writes and periodically merges older files together in the background. Covered in detail later in this chapter.</li>
 <li><b>Checksum.</b> A value computed from a block of bytes that changes if even one bit of those bytes changes, used to detect corruption.</li>
 <li><b>Object storage.</b> A system that stores whole, immutable objects under a flat key, rather than mutable rows a query can filter and update in place. Amazon S3 is the common example.</li>
 <li><b>Erasure coding.</b> Splitting an object into data pieces plus extra parity pieces, so the whole object can be rebuilt from a subset of the pieces, using less extra space than keeping full copies.</li>

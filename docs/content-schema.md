@@ -6,7 +6,7 @@ A pack round is one file, `content.js`, containing a single statement:
 window.PREP_CONTENT = { meta, honesty, interviewAt, groups, useCore, overlays, interviewer, readings, glossary, topics };
 ```
 
-All HTML strings are backtick template literals. Never write the two characters `${` inside them (the file is inlined as JavaScript). Allowed tags: `p b i ul li code`. The build escapes the page to ASCII, so any character is safe in source.
+All HTML strings are backtick template literals. Never write the two characters `${` inside them (the file is inlined as JavaScript). Allowed tags: `p b i ul li code a`; `a` is for deep links to other chapters (`href="#<chapter-id>"`) and for outside sources. The build escapes the page to ASCII, so any character is safe in source.
 
 ## Top level
 
@@ -52,7 +52,7 @@ Not every chapter is a lesson. Decide which kind a chapter is before writing it,
 
 A quiz belongs only where the chapter teaches something the reader must be able to use under pressure, and only when it tests substance. A question about how a mechanism works, what a service does, a number or a trade-off earns its place. A question about how to present, what to say, how a panel scores, or how to lay out a deck does not: leave that as reading and let the exercises be the practice. Chapters that describe an interview, a company, its published values, other candidates' reports, or a plan for the day carry none. The orientation chapter of a course carries none either: never quiz the reader on how the site works.
 
-Every term that points at a concept the reader has not met must be explained where it is used, or the chapter that explains it must be named. Writing "layer 4" without first saying that network software is described in layers, that layer 4 is the transport layer of addresses and ports and layer 7 is the application layer where the request itself is visible, leaves the term pointing at nothing.
+Every term that points at a concept the reader has not met must be explained where it is used, or the chapter that explains it must be named. This covers abbreviations, initialisms and notation, not only ideas: SLO, TTL, CAP, PACELC, LRU, NDCG, PII, p99, N+1 and O(1) all have to be expanded at first use in the chapter that uses them. Three ways to resolve one, in order of preference: expand it in a single clause where it first appears; expand it and link to the chapter that teaches it, using an inline deep link such as `<a href="#sre-practices">Site reliability practices</a>`; or, when the term runs through the whole chapter, give it an entry in that chapter's Key terms. Product and library names, SQL keywords and HTTP methods are names rather than abbreviations and need no expansion, though a method like PATCH still needs one clause saying what it does. `node local/tools/abbrev-audit.js` checks this mechanically and must come back clean apart from documented false positives. Writing "layer 4" without first saying that network software is described in layers, that layer 4 is the transport layer of addresses and ports and layer 7 is the application layer where the request itself is visible, leaves the term pointing at nothing.
 
 Do not teach the vocabulary of the hiring process as if it were a subject. Name the terms the reader will actually hear, in one paragraph, inside the chapter that describes the day.
 

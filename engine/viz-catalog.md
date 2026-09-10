@@ -244,3 +244,7 @@ Column key: **id** — what the picture shows (and what moves) — concepts it f
 - `fastapi-serving` — a request validated by a Pydantic model, batched, scored, and returned, with a bad request short-circuited straight to an error. Fits: FastAPI serving, request/response validation, batching, timeouts, health checks.
 - `k8s-ml-service` — an Ingress and Service fronting a Deployment's Pods on a GPU node pool, with an HPA watching a load metric. Fits: Kubernetes for ML services, Pods/Deployments/Services/Ingress, HPA, GPU node pools, resource requests and limits.
 - `ci-cd-ml` — commit to CI (tests plus a data-validation gate) to training to a registry version, then GitOps reconciling the cluster to match. Fits: CI/CD for ML, data validation gates, model promotion, GitOps deployment.
+
+## Streaming feature pipelines
+
+- `streaming-feature-pipeline` — producers and an input topic owned upstream, a stream processing job (ingest, window, key, batch, generate) publishing features, logging and error topics, a feature store loaded by another team, and a scoring service that reads it and answers a caller; the handoffs are marked and the path through the job flows. Fits: streaming feature pipelines, message brokers and topics as team interfaces, ownership boundaries in a data platform, publish-then-consume feature loading, read-only feature serving.
