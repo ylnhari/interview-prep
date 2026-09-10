@@ -14,8 +14,7 @@
         id: 'dle-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>One pass through the words this chapter uses. Read it once, then use the rest of the chapter to see the words in action.</p>
-<ul>
+        body: `<ul>
 <li><b>Neuron</b> - the smallest unit of a network: it multiplies each input by a learned weight, adds up the results plus a bias, and passes that sum through an activation function.</li>
 <li><b>Weight, bias</b> - a weight scales one input's contribution; a bias shifts the sum before the activation function is applied, so a neuron can fire even when every input is zero.</li>
 <li><b>Activation function</b> - the non-linear function applied to a neuron's weighted sum. Without it, stacking layers still only computes a straight line.</li>
@@ -339,8 +338,7 @@
         id: 'mot-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>One pass through the tools this chapter names. Read it once, then use the rest of the chapter to see each one in context.</p>
-<ul>
+        body: `<ul>
 <li><b>Git workflow</b> - branching, committing, and merging changes through pull requests, with review before code reaches the main branch.</li>
 <li><b>Environment pinning</b> - recording the exact versions of every dependency a project uses, so "it works on my machine" becomes "it works on any machine that installs the same pin file."</li>
 <li><b>Virtual environment</b> - an isolated Python installation for one project, so its dependencies cannot clash with another project's.</li>

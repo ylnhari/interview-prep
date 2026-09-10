@@ -14,8 +14,7 @@
         id: 'sql-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>One pass through the words this chapter uses. Read it once, then use the words freely.</p>
-<ul>
+        body: `<ul>
 <li><b>Table, row, column.</b> A table holds rows of the same shape; each row is one record; each column is one named field of it.</li>
 <li><b>Primary key.</b> The column, or set of columns, that identifies one row uniquely. An <b>order_id</b> column is a typical primary key for an orders table.</li>
 <li><b>Foreign key.</b> A column that holds the primary key of a row in another table, linking the two. An order's <b>customer_id</b> column pointing at a row in a customers table is a foreign key.</li>
@@ -356,8 +355,7 @@ The real cost is on the database side: holding a snapshot open for ten-plus minu
         id: 'npi-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>One pass through the words this chapter uses. Read it once, then use the words freely.</p>
-<ul>
+        body: `<ul>
 <li><b>NoSQL.</b> A loose umbrella term for non-relational stores - document, key-value, wide-column and graph databases are the four families this chapter covers.</li>
 <li><b>Key-value store.</b> A store where every value is looked up by a single key and nothing else; there is no query language beyond get and put.</li>
 <li><b>Document store.</b> A store where each record is a nested, self-contained document (commonly JSON-like), and queries can filter or sort on any field inside it.</li>

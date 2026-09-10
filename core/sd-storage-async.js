@@ -14,8 +14,7 @@
         id: 'se-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>One pass through the words this chapter uses. Read it once, then use the words freely.</p>
-<ul>
+        body: `<ul>
 <li><b>Storage engine.</b> The part of a database that decides how bytes are laid out on disk and how they are found again. InnoDB inside MySQL, Postgres's own heap-plus-index engine, and RocksDB are all storage engines.</li>
 <li><b>Durability.</b> A write that has been acknowledged survives a crash or power loss. The usual mechanism is writing a description of the change to a log and forcing it to disk before replying to the caller.</li>
 <li><b>Write path, read path.</b> The exact sequence of steps a write, or a read, takes through the engine, from the caller's call to bytes on disk and back.</li>
@@ -312,8 +311,7 @@ The honest way to answer this in an interview is to give the mechanism-based int
         id: 'qs-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>One pass through the words this chapter uses. Read it once, then use the words freely.</p>
-<ul>
+        body: `<ul>
 <li><b>Asynchronous processing.</b> Doing work after replying to whoever asked for it, instead of making them wait for it to finish. Sending a welcome email after account creation, rather than during it, is a small example.</li>
 <li><b>Producer, consumer.</b> The producer creates a unit of work or an event and hands it off; the consumer picks it up and does something with it. The same process can be both, for different pieces of work.</li>
 <li><b>Broker.</b> The server, or cluster, that sits between producers and consumers, holding work until a consumer takes it. RabbitMQ, Amazon SQS and Apache Kafka are all brokers, built around different models.</li>

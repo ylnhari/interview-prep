@@ -14,8 +14,7 @@
         id: 'cache-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>One pass through the words this chapter uses. Read it once, then use the words freely.</p>
-<ul>
+        body: `<ul>
 <li><b>Cache.</b> A smaller, faster copy of data kept close to where it is read, so most reads never have to reach the slower system behind it. A page of search results kept in memory instead of re-querying a database is a cache.</li>
 <li><b>Origin (source of truth).</b> The system that holds the real, authoritative data - usually a database. The cache is never the source of truth; it is a copy that can, in principle, be rebuilt from the origin.</li>
 <li><b>Hit and miss.</b> A <b>hit</b> is a request the cache can answer by itself. A <b>miss</b> is a request the cache cannot answer, so the origin must be asked.</li>
@@ -356,8 +355,7 @@ I'd treat 17 to 18 gigabytes as the number to provision against today, and I'd w
         id: 'dc-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>One pass through the words this chapter uses. Read it once, then use the words freely.</p>
-<ul>
+        body: `<ul>
 <li><b>Node.</b> One running instance in a distributed system - one server, one process participating in the system.</li>
 <li><b>Partial failure.</b> Some nodes or some parts of a request fail while others keep working, unlike a single machine, which either runs or is down as a whole.</li>
 <li><b>Network partition.</b> A break in communication between groups of nodes, so each side can still run but cannot reach the other side.</li>

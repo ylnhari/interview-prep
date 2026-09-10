@@ -24,8 +24,7 @@
         id: 'mfe-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>Every word this chapter uses, defined once, plainly.</p>
-<ul>
+        body: `<ul>
 <li><b>Scalar, vector, matrix, tensor</b> -- a single number; an ordered list of numbers; a 2-D grid of numbers; the general word for a grid of any number of dimensions. A colour image is a 3-D tensor: height, width, and three colour channels.</li>
 <li><b>Dot product</b> -- multiply two vectors' matching entries and add up the results. It turns two vectors into one number.</li>
 <li><b>Norm</b> -- a single number measuring a vector's size. <b>L2 norm</b> is the ordinary straight-line length; <b>L1 norm</b> is the sum of the absolute values of the entries.</li>
@@ -298,8 +297,7 @@
         id: 'dag-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>Every word this chapter uses, defined once, plainly.</p>
-<ul>
+        body: `<ul>
 <li><b>Population, sample</b> -- everything you could in principle observe, and the finite subset you actually collected. A model is trained on a sample and hopefully works on the population.</li>
 <li><b>Data-generating process</b> -- the real-world mechanism that produced your data, including whatever made some things more likely to be observed than others.</li>
 <li><b>i.i.d.</b> -- independent and identically distributed: each observation is drawn from the same distribution, and drawing one tells you nothing about the next. Most standard ML theory assumes it.</li>

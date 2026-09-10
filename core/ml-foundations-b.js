@@ -24,8 +24,7 @@
         id: 'cm-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>Every word this chapter uses, defined once, plainly.</p>
-<ul>
+        body: `<ul>
 <li><b>Feature, label</b> -- an input a model uses to predict (a customer's age); the value it is trying to predict (whether they churn).</li>
 <li><b>Residual</b> -- actual value minus predicted value, for one row.</li>
 <li><b>Least squares, normal equation</b> -- fitting a line by minimising the sum of squared residuals; the closed-form formula that solves this directly instead of searching for it.</li>
@@ -340,8 +339,7 @@
         id: 'es-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>Every word this chapter uses, defined once, plainly.</p>
-<ul>
+        body: `<ul>
 <li><b>Train, validation, test split</b> -- the portion a model fits its parameters on; the portion used to choose between models or hyperparameters; the portion touched exactly once, at the end, for an unbiased final read.</li>
 <li><b>Stratified split</b> -- a split that preserves the proportion of each class, so a rare class is not accidentally missing from one side.</li>
 <li><b>Grouped split</b> -- a split that keeps every row belonging to one entity (one customer, one patient, one device) entirely on one side, so no information about that entity leaks across.</li>

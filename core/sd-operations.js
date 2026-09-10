@@ -14,8 +14,7 @@
         id: 'srep-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>One pass through the words this chapter uses. Read it once, then use the words freely.</p>
-<ul>
+        body: `<ul>
 <li><b>SLI (service level indicator).</b> A measured number describing quality, such as the fraction of requests served under 200 milliseconds.</li>
 <li><b>SLO (service level objective).</b> The target for an SLI, stated as a percentile, a threshold and a window: "99.9% of requests under 200ms over 30 days."</li>
 <li><b>SLA (service level agreement).</b> An SLO with a contractual consequence attached. Most internal targets are objectives, not agreements.</li>

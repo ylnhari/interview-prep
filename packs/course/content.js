@@ -286,16 +286,8 @@ window.PREP_CONTENT = {
           title: "What this is",
           viz: null,
           body: `<p>Forty chapters in six tracks, covering what machine learning and backend engineering interviews really draw on. It is written as a course, not a checklist: every chapter starts by defining the words it uses, and builds from there.</p>
-<p>Every chapter is laid out the same way.</p>
-<ul>
-<li><b>Key terms</b> - every word the chapter uses, defined once with an example. After that, later sections use those words freely.</li>
-<li><b>Sections</b> - the subject itself, one idea at a time, with a moving diagram wherever a diagram shows how something works rather than just decorating the page. Read a section, then press Mark as read.</li>
-<li><b>Quick checks</b> - a short question at the end of most sections, so you can tell whether it went in. Chapters that exist to give you context carry none.</li>
-<li><b>Readings</b> - original sources only, each with how long it takes and one sentence on why that particular page.</li>
-<li><b>Exercises</b> - explain something, design something, write a model, write code, drill, or say a follow-up answer out loud. Each one gives you a time limit, a list of what a good answer has to contain, the mistakes people usually make, and the answer you practise saying out loud.</li>
-</ul>
 <p>None of this is about one person or one employer. The chapters teach the subject, and adding your own systems on top is up to you.</p>`,
-          deeper: `<p>Two things about the layout are worth knowing, because they change how you read it. First, the order means something: chapters, exercises and questions are listed most important first, so the thing you see first is the thing you are most likely to be asked. Second, the chapters are meant to be shared - there is nothing about you in them and nothing about a particular employer - so the marking is on whether an answer is correct and well reasoned, and any claim of specific production experience is treated as unchecked.</p>`
+          deeper: `<p>The order means something: chapters, exercises and questions are listed most important first, so what you see first is what you are most likely to be asked.</p>`
         },
         {
           id: "sh-2",
@@ -317,14 +309,11 @@ window.PREP_CONTENT = {
         {
           id: "sh-3",
           part: "field",
-          title: "Exercises, and how your progress is saved",
+          title: "Your progress",
           viz: null,
-          body: `<p><b>Exercises.</b> Each one gives you a question, a time limit, and a list of what a good answer has to contain. Write your answer, or say it out loud where the exercise asks for that, before you open anything else. Then compare it with the answer you practise saying out loud, and with the list of what a good answer has to contain.</p>
-<p>On this public site you mark yourself: you write your answer, you press Show a strong answer, and you score yourself against the must-haves and the common mistakes. Having Claude mark it for you exists only in a copy of a page published through Claude, which is a private setup rather than part of this site. The must-have lists are written to work either way - they are checklists, not hidden answer keys.</p>
-<p>Two habits make the exercises worth far more than reading. Answer before you look, even badly: a list of must-haves read after a real attempt shows you what you missed, while the same list read first only teaches you to copy. And stick to the time limit, because an answer that runs long in practice runs long in the interview.</p>
-<p><b>Progress.</b> Everything you write, every question you answer and every section you press Mark as read on is stored in this browser and nowhere else. The page itself sends nothing anywhere. So your progress is per browser and per device: a different browser, a private window, or cleared site data starts you empty.</p>
-<p>To move it, press Export progress in the header. That writes your progress to a file, and Import progress reads it back on another computer or in another browser. Export before you clear site data, and export before an interview if you want your notes on a second machine.</p>`,
-          deeper: `<p>If you want to build your own version of this: the course is just one set of content files, and the chapters it uses live in a shared library. A private copy names the same chapter ids and adds its own material on top - extra sections about the systems you have worked on, extra exercises about them, and a one-sentence honesty rule saying what you have actually done, which the marking then holds every answer to. That is what keeps your own experience out of a public repository while still using the same chapters.</p>`,
+          body: `<p>Everything you write, every question you answer and every section you mark as read is stored in this browser and nowhere else. The page sends nothing anywhere, so progress is per browser and per device.</p>
+<p>Press Export progress in the header to write it to a file, and Import progress to read it back on another machine. On this site you mark your own exercises against the list of what a good answer contains; a copy published through Claude marks them for you.</p>`,
+          deeper: null,
           check: null
         }
       ],

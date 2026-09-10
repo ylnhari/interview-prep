@@ -14,8 +14,7 @@
         id: 'rac-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>One pass through the words this chapter uses. Read it once, then use the words freely.</p>
-<ul>
+        body: `<ul>
 <li><b>Functional requirement.</b> Something the system must do - "a user can upload a photo," "a driver can accept a ride."</li>
 <li><b>Non-functional requirement (quality attribute).</b> How well the system must do it - how fast, how available, how durable, how much it may cost. "Uploads succeed 99.9% of the time" is non-functional.</li>
 <li><b>Availability.</b> The fraction of time a system is able to answer requests correctly, usually stated as a percentage.</li>
@@ -347,8 +346,7 @@ Yes, I'd still scale up today, and I think it's actually the right senior instin
         id: 'apc-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>One pass through the words this chapter uses. Read it once, then use the words freely.</p>
-<ul>
+        body: `<ul>
 <li><b>Resource.</b> The noun an API exposes, addressed by a URL in REST - for example <code>/orders/42</code>.</li>
 <li><b>Endpoint.</b> One addressable operation on a resource, such as <code>GET /orders/42</code>.</li>
 <li><b>HTTP method (verb).</b> GET, POST, PUT, PATCH, DELETE - the standard vocabulary for what a request does to a resource.</li>

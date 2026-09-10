@@ -14,8 +14,7 @@
         id: 'sr-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>One pass through the words this chapter uses. Read it once, then use the words freely.</p>
-<ul>
+        body: `<ul>
 <li><b>Term.</b> One unit of text a search engine matches on, usually a word after it has been cleaned up - "running" and "run" might become the same term.</li>
 <li><b>Token / tokenisation.</b> A token is one piece produced by splitting raw text; tokenisation is that splitting step, deciding where one word ends and the next begins.</li>
 <li><b>Stop word.</b> A very common word ("the," "a," "is") that is often dropped before indexing because it carries little meaning and would otherwise appear in almost every posting list.</li>
@@ -354,8 +353,7 @@ If instead the delay is upstream of indexing entirely - a slow ingestion or batc
         id: 'cs-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>One pass through the words this chapter uses. Read it once, then use the words freely.</p>
-<ul>
+        body: `<ul>
 <li><b>Cardinality.</b> The number of distinct values in a set or column - for example, the number of distinct user ids who visited a page.</li>
 <li><b>Raw event.</b> One individual occurrence as it happened - one view, one click, one reaction - usually with a timestamp and an identifier.</li>
 <li><b>Derived aggregate.</b> A summary computed from raw events, such as a running total or a distinct count, kept up to date so a read does not have to recompute it from scratch.</li>
@@ -645,8 +643,7 @@ To get a real answer, I'd need the underlying distributions from both regions, o
         id: 'rf-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>One pass through the words this chapter uses. Read it once, then use the words freely.</p>
-<ul>
+        body: `<ul>
 <li><b>Polling.</b> A client repeatedly asking the server "is there anything new?" on a fixed interval, whether or not the server actually has new data.</li>
 <li><b>Long polling.</b> A client asks the server for new data, and the server holds that request open until new data exists or a timeout passes, instead of answering immediately with "nothing yet."</li>
 <li><b>Server-Sent Events (SSE).</b> A single, long-lived HTTP connection over which the server streams events to the client as plain text, flowing in one direction only, server to client.</li>

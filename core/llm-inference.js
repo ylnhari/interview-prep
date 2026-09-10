@@ -14,8 +14,7 @@
         id: 'lft-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>One pass through the words this chapter uses. Later sections use them without redefining them.</p>
-<ul>
+        body: `<ul>
 <li><b>Fine-tuning</b> - continuing to train a pretrained model on new, usually smaller, task-specific data so its weights shift toward that task. Example: training a base model on a company's support tickets so it answers in that voice.</li>
 <li><b>Prompt engineering</b> - getting a model to behave the way you want purely through how you phrase the request, with no training at all. Example: adding "answer in three bullet points" to the instruction text.</li>
 <li><b>Retrieval-augmented generation (RAG)</b> - looking up relevant documents at request time and putting them in the prompt, so the model answers from that supplied text instead of only from what it memorised during training.</li>
@@ -265,8 +264,7 @@
         id: 'lie-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>One pass through the words this chapter uses, before the mechanisms that connect them.</p>
-<ul>
+        body: `<ul>
 <li><b>Token</b> - the unit a language model reads and writes, roughly a word fragment. Cost, latency, and memory are all usually measured per token.</li>
 <li><b>Prefill</b> - processing every token of the input prompt in one pass, before the first output token is produced.</li>
 <li><b>Decode</b> - generating output tokens one at a time, each one depending on every token that came before it.</li>

@@ -14,8 +14,7 @@
         id: 'raa-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>Every word this chapter uses, defined once, in order.</p>
-<ul>
+        body: `<ul>
 <li><b>Retrieval-augmented generation (RAG)</b> - fetching relevant text at request time and placing it in the prompt, so the model answers from that text instead of only from what it memorised in training.</li>
 <li><b>Chunk</b> - one small piece a source document is cut into before it is stored, sized so a search can return something small enough to fit in a prompt.</li>
 <li><b>Embedding</b> - a list of numbers (a vector) produced by a trained model that represents the meaning of a piece of text.</li>
@@ -355,8 +354,7 @@
         id: 'tas-0',
         part: 'field',
         title: 'Key terms',
-        body: `<p>Every word this chapter uses, defined once, in order.</p>
-<ul>
+        body: `<ul>
 <li><b>GPU</b> (graphics processing unit) - a chip built from thousands of simple cores that all run the same instruction on different pieces of data at once, unlike a CPU's smaller number of cores built to run different instructions well.</li>
 <li><b>FLOPs</b> - floating-point operations; a count of arithmetic operations, or, per second (FLOPs/s), a chip's raw compute speed.</li>
 <li><b>Memory bandwidth</b> - how many bytes per second a chip can move between its memory and its compute cores.</li>
