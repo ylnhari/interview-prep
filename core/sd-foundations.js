@@ -19,10 +19,10 @@
 <li><b>Non-functional requirement (quality attribute).</b> How well the system must do it - how fast, how available, how durable, how much it may cost. "Uploads succeed 99.9% of the time" is non-functional.</li>
 <li><b>Availability.</b> The fraction of time a system is able to answer requests correctly, usually stated as a percentage.</li>
 <li><b>Nines.</b> Shorthand for an availability target: two nines is 99% (about 3.7 days of downtime a year), three nines is 99.9% (about 9 hours a year), five nines is 99.999% (about 5 minutes a year).</li>
-<li><b>Durability.</b> The probability that data, once accepted, is never lost - independent of whether the system is reachable right now. A store can be durable and briefly unavailable at the same time.</li>
+<li><b>Durability</b> (<a href="#storage-engines/se-f1">What a storage engine must do</a>) - the probability that data, once accepted, is never lost, independent of whether the system is reachable right now.</li>
 <li><b>Consistency.</b> How up to date a read is guaranteed to be relative to the latest write. <b>Strong</b> consistency guarantees the latest write; <b>eventual</b> consistency only guarantees that copies converge in time.</li>
 <li><b>Latency.</b> The time between sending a request and getting a response.</li>
-<li><b>Percentile (p50, p99).</b> p50 is the median request. p99 means 99 out of 100 requests were at least this fast - it captures the slow tail that an average hides.</li>
+<li><b>Percentile (p50, p99)</b> (<a href="#counting-and-sketches/cs-f7">Quantile sketches</a>) - p50 is the median request; p99 means 99 out of 100 requests were at least this fast, so it captures the slow tail that an average hides.</li>
 <li><b>Throughput.</b> How much work a system completes per unit time.</li>
 <li><b>QPS / RPS.</b> Queries per second / requests per second - the standard unit for how busy a service is.</li>
 <li><b>DAU / MAU.</b> Daily active users / monthly active users - the standard way a product states how many people use it in a period.</li>
@@ -366,14 +366,14 @@ Yes, I'd still scale up today, and I think it's actually the right senior instin
 <li><b>HTTP/2.</b> The HTTP version that multiplexes many requests over one TCP connection, removing the need for many parallel connections.</li>
 <li><b>Multiplexing.</b> Running several logical streams over one shared connection at once.</li>
 <li><b>Head-of-line blocking.</b> One lost or slow item blocking everything queued behind it on the same channel, even though the items are otherwise unrelated.</li>
-<li><b>WebSocket.</b> A protocol that upgrades an HTTP connection into a persistent, full-duplex channel, so either side can send at any time without a new request.</li>
+<li><b>WebSocket</b> (<a href="#realtime-and-feeds/rf-f1">Short polling, long polling, server-sent events and WebSockets</a>) - a protocol that upgrades an HTTP connection into a persistent, full-duplex channel, so either side can send at any time without a new request.</li>
 <li><b>Full-duplex.</b> Both sides of a connection can send and receive at the same time.</li>
 <li><b>API gateway.</b> A single entry point that terminates client traffic and applies cross-cutting concerns - authentication, rate limiting, routing to the right backend service.</li>
 <li><b>Load balancer.</b> The component that spreads incoming connections or requests across healthy replicas of one service.</li>
 <li><b>Round robin.</b> A load-balancing algorithm that sends each new request to the next replica in a fixed rotation.</li>
 <li><b>Least connections.</b> A load-balancing algorithm that sends a request to whichever replica currently has the fewest open connections.</li>
 <li><b>Weighted.</b> A variant of round robin or least connections where each replica gets a per-machine weight, so a bigger machine gets a proportionally larger share.</li>
-<li><b>Consistent hashing.</b> A hashing scheme mapping requests and replicas onto a ring, so adding or removing one replica reshuffles only a small fraction of the keys.</li>
+<li><b>Consistent hashing</b> (<a href="#nosql-partitioning-ids/npi-f5">Consistent hashing: the ring, virtual nodes, and why it limits data movement</a>) - a hashing scheme mapping requests and replicas onto a ring, so adding or removing one replica reshuffles only a small fraction of the keys.</li>
 <li><b>Network layers.</b> Network software is described as a stack of layers; the two named constantly here are <b>layer 4</b>, where a connection is only an address and a port, and <b>layer 7</b>, where the message itself is visible (see <a href="#networking-basics/nb-layers">The network layers, all seven of them</a>).</li>
 <li><b>Layer 4 (L4) / Layer 7 (L7) load balancing.</b> An <a href="#networking-basics/nb-layers">L4</a> balancer picks a replica from the address and port alone, without reading the request; an L7 balancer reads the request and can route on path, header or hostname, and can terminate TLS.</li>
 <li><b>Health check (readiness / liveness).</b> A probe deciding whether a replica should receive traffic. A readiness check controls whether it gets traffic; a liveness check controls whether it gets restarted.</li>
@@ -491,22 +491,22 @@ Yes, I'd still scale up today, and I think it's actually the right senior instin
       {
         id: 'apc-f5',
         part: 'field',
-        title: 'Load balancing algorithms: round robin, least connections, weighted, consistent hashing, layer 4 vs layer 7, health checks',
+        title: 'Load balancing algorithms: round robin, least connections, weighted, consistent hashing, how much of a request the balancer reads, and health checks',
         viz: 'l4-vs-l7-lb',
         body: `<p><b>Round robin</b> sends each new request to the next replica in a fixed rotation. It is simple and works well when replicas are the same size and requests cost about the same to serve; it works poorly when either assumption breaks, since a replica already stuck on an expensive request keeps receiving new ones at the same rate as an idle one.</p>
 <p><b>Least connections</b> sends a request to whichever replica currently has the fewest open connections, adapting automatically to uneven request cost - at the price of the balancer having to track live connection counts per replica rather than just a rotation pointer.</p>
 <p><b>Weighted</b> variants of either algorithm add a per-replica weight, so a bigger machine in a mixed fleet gets a proportionally larger share of requests or connections instead of an equal one.</p>
-<p><b>Consistent hashing</b> maps both requests (by some key - a user id, a cache key) and replicas onto a hash ring, and sends each request to the nearest replica going around the ring. Its value shows up when replicas change: adding or removing one replica only reshuffles the small slice of keys near it on the ring, instead of remapping almost everything the way a plain hash-modulo-replica-count scheme would. It is the standard choice when the same key should keep going to the same replica, for cache locality or for a stateful connection like a WebSocket.</p>
+<p><b>Consistent hashing</b> picks the replica from a hash of some key - a user id, a cache key - in a way that survives replicas being added and removed, so the same key keeps arriving at the same replica. That is what you want when locality matters: a warm cache on that replica, or a stateful connection such as a <a href="#realtime-and-feeds/rf-f1">WebSocket</a>. The ring itself, the virtual nodes that make it spread evenly, and the arithmetic of how little data moves are in <a href="#nosql-partitioning-ids/npi-f5">Consistent hashing: the ring, virtual nodes, and why it limits data movement</a>.</p>
 <p><b>Layer 4 vs layer 7</b> is about how much of the request the balancer is allowed to see: a layer 4 balancer sees only the address and port, a layer 7 balancer sees the request itself (see <a href="#networking-basics/nb-layers">The network layers, all seven of them</a>). An <a href="#networking-basics/nb-layers">L4</a> balancer is fast and protocol-agnostic but cannot route on anything inside the request. An <a href="#networking-basics/nb-layers">L7</a> balancer reads the actual request - path, header, cookie - and can route different paths to different backends, retry a failed request itself, and terminate TLS, at the cost of doing real CPU work per request instead of just forwarding packets.</p>
 <p><b>Health checks</b> decide which replicas are even eligible to receive traffic in the first place, regardless of algorithm: a <b>readiness</b> check controls whether a replica currently gets new traffic, and a <b>liveness</b> check controls whether the replica should be restarted outright - they answer different questions and should be different endpoints, since a replica that is temporarily unable to serve is not necessarily a replica that is broken.</p>`,
-        deeper: `<p>Consistent hashing is usually implemented with several virtual nodes per physical replica scattered around the ring, rather than one point per replica, specifically so that the keys going to any one replica are spread evenly rather than clumped - without virtual nodes, a replica can end up owning an unfairly large or small arc of the ring purely by the luck of where its one hash fell.</p>`,
+        deeper: `<p>One practical warning about least connections: it counts connections, not work. Over HTTP/2 or gRPC many requests share a single connection, so a replica holding one connection that carries fifty requests at once looks idle to a balancer that is counting connections. That is why a balancer in front of a multiplexed protocol usually balances per request rather than per connection, or uses a load figure the replica reports about itself instead of a connection count.</p>`,
         check: {
           question: 'A cache-serving fleet needs the same request key to keep going to the same replica, so the cache stays warm, but replicas are added and removed as load changes. Which load-balancing approach fits best?',
           options: [
             'Plain round robin, since it is simplest',
             'Consistent hashing, since it keeps the same key mapped to (nearly) the same replica and only reshuffles a small fraction of keys when the replica count changes',
             'Least connections, since it reacts fastest to load',
-            'Layer 4 balancing, since it is the fastest option'
+            'Balancing on address and port alone, since that is the fastest option'
           ],
           answer: 1,
           explain: 'Consistent hashing is specifically designed for this: a key keeps going to the same replica for cache locality, and adding or removing a replica only reshuffles the keys near it on the ring rather than remapping almost everything.'
@@ -654,7 +654,7 @@ In practice I've seen these combined - gRPC internally, with REST or GraphQL at 
           ['GraphQL', 'A query language letting the caller ask for exactly the fields it needs from one endpoint', 'API styles'],
           ['Head-of-line blocking', 'One lost or slow item blocks everything queued behind it on the same channel', 'transport'],
           ['Consistent hashing', 'Maps requests and replicas onto a ring so scaling reshuffles only a small fraction of keys', 'load balancing'],
-          ['Layer 4 vs layer 7', 'L4 sees only IP and port; L7 reads the request and can route, retry, or terminate TLS', 'load balancing'],
+          ['Layer 4 vs layer 7 balancing', 'Network software is described in layers: a layer 4 balancer sees only the address and port, while a layer 7 balancer reads the request itself and can route by path, retry, or terminate TLS', 'load balancing'],
           ['Idempotency key', 'A caller-supplied value letting a retried request be recognised and never applied twice', 'reliability'],
           ['Exponential backoff', 'Waiting longer, typically doubling, after each failed retry', 'reliability'],
           ['Jitter', 'Randomising the exact backoff delay so synchronised clients do not retry in lockstep', 'reliability'],
