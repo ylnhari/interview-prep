@@ -99,14 +99,14 @@ a{color:var(--accent)}
 a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 [hidden]{display:none!important}
 .top{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--border)}
-.top-inner{max-width:1120px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.top-inner{max-width:1680px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .top .site{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim);text-decoration:none;margin-right:auto}
 .tabs{display:flex;gap:4px;flex-wrap:wrap}
 .tabs a{font-size:12.5px;font-weight:600;text-decoration:none;color:var(--ink-dim);padding:5px 10px;border-radius:999px;border:1px solid transparent}
 .tabs a:hover{color:var(--accent);background:var(--accent-weak)}
 .tabs a.cur{color:var(--accent-ink);background:var(--accent-weak)}
-.wrap{max-width:1120px;margin:0 auto;padding:36px 20px 64px}
-.hero{max-width:70ch;margin-bottom:28px}
+.wrap{max-width:1680px;margin:0 auto;padding:36px 20px 64px}
+.hero{max-width:none;margin-bottom:28px}
 .hero .eb{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink)}
 .hero h1{font-family:var(--font-display);font-size:clamp(28px,2.6vw+14px,40px);line-height:1.12;letter-spacing:-.025em;margin:8px 0 12px;text-wrap:balance}
 .hero p{font-size:16.5px;line-height:1.6;color:var(--ink-dim);margin:0 0 18px}
@@ -147,6 +147,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .track .th .ts{font-size:13px;color:var(--ink-dim);margin-top:2px}
 .chs{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
 @media (min-width:860px){.chs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1400px){.chs{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .ch{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px 12px;box-shadow:var(--shadow);min-width:0;max-width:100%}
 .ch .hd{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap}
 .ch .hd .pill{max-width:100%;white-space:normal;margin-left:30px}
@@ -168,7 +169,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .secs li.done a{color:var(--good)}.secs li.done .n{color:var(--good)}
 .secs li.x a{color:var(--accent-ink)}
 .secs li.x .n{color:var(--accent-ink)}
-footer{max-width:1120px;margin:0 auto;padding:16px 20px 48px;border-top:1px solid var(--border);font-size:12px;line-height:1.5;color:var(--ink-dim);font-family:var(--font-mono)}
+footer{max-width:1680px;margin:0 auto;padding:16px 20px 48px;border-top:1px solid var(--border);font-size:12px;line-height:1.5;color:var(--ink-dim);font-family:var(--font-mono)}
 """
 
 PROMISE = ("A free course for machine learning and software engineering interviews. Each chapter teaches one "

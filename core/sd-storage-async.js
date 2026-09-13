@@ -21,9 +21,9 @@
 <li><b>Sequential write, random write.</b> Writing bytes one after another to a growing file, versus writing to scattered locations across a file. Both hard disks and, to a lesser extent, SSDs are far faster at the sequential kind.</li>
 <li><b>Append-only log.</b> A file that is only ever added to at the end and never edited in place, which turns every write into a sequential write.</li>
 <li><b>In-memory index.</b> A lookup structure kept in RAM that maps a key to where its value lives on disk, rebuilt from disk if the process restarts.</li>
-<li><b>Write-ahead log (WAL).</b> A change log written first; see <a href="#sql-databases/sql-f7">The write-ahead log and crash recovery</a>.</li>
-<li><b>Memtable.</b> An in-memory sorted structure that holds the most recent writes before they are flushed to disk.</li>
-<li><b>SSTable (sorted string table).</b> An immutable on-disk file holding key-value pairs sorted by key, written once and never modified again.</li>
+<li><b>Write-ahead log (WAL).</b> A change log written and forced to disk before the change itself, so a crash mid-write can be recovered by replaying it; see <a href="#sql-databases/sql-f7">The write-ahead log and crash recovery</a>.</li>
+<li><b>Memtable.</b> An in-memory sorted structure that holds the most recent writes before they are flushed to disk, typically once it has grown to a few tens of megabytes.</li>
+<li><b>SSTable (sorted string table).</b> An immutable on-disk file holding key-value pairs sorted by key, written once and never modified again. Changing a key means a new entry in a newer file, not an edit to this one.</li>
 <li><b>Compaction.</b> A background process that merges older files into fewer, larger ones, dropping any key value that a later write has since overwritten.</li>
 <li><b>Bloom filter.</b> A cheap "definitely not here" test; see <a href="#nosql-partitioning-ids/npi-f8">Bloom filters: how they work</a>.</li>
 <li><b>Sparse index.</b> An index recording the position of only every few hundred or few thousand keys in a sorted file, relying on the file's sort order to scan the short gap between two known positions.</li>
@@ -314,25 +314,25 @@ The honest way to answer this in an interview is to give the mechanism-based int
         title: 'Key terms',
         body: `<ul>
 <li><b>Asynchronous processing.</b> Doing work after replying to whoever asked for it, instead of making them wait for it to finish. Sending a welcome email after account creation, rather than during it, is a small example.</li>
-<li><b>Producer, consumer.</b> The producer creates a unit of work or an event and hands it off; the consumer picks it up and does something with it. The same process can be both, for different pieces of work.</li>
+<li><b>Producer, consumer.</b> The producer creates a unit of work or an event and hands it off; the consumer picks it up and does something with it - a web server that enqueues an image resize is the producer, the worker that resizes the image is the consumer. The same process can be both, for different pieces of work.</li>
 <li><b>Broker.</b> The server, or cluster, that sits between producers and consumers, holding work until a consumer takes it. RabbitMQ, Amazon SQS and Apache Kafka are all brokers, built around different models.</li>
 <li><b>Task queue.</b> A model where each unit of work is meant to be handled once, by one consumer, and then it is gone. Good for "send this email," "resize this image," "charge this card."</li>
 <li><b>Event stream (log).</b> A model where every event is appended to a durable, ordered log and kept for a retention period, and many independent consumers can each read the same events at their own pace. Good for "every service that cares about orders happening needs to know."</li>
 <li><b>Publish/subscribe (pub/sub).</b> A model where a publisher sends a message to a named channel and the broker copies it to every subscriber listening to that channel at that moment, without the publisher knowing who they are. Redis pub/sub and Google Cloud Pub/Sub are common examples.</li>
 <li><b>Partition.</b> One ordered, independent slice of a stream's log. A topic with several partitions can be written to and read from in parallel, at the cost of ordering being guaranteed only within one partition, not across the whole topic.</li>
-<li><b>Consumer group.</b> A set of consumers sharing the work of reading one stream, where each partition is read by exactly one consumer in the group at a time.</li>
+<li><b>Consumer group.</b> A set of consumers sharing the work of reading one stream, where each partition is read by exactly one consumer in the group at a time, so a four-partition topic keeps at most four of them busy however many you add.</li>
 <li><b>Offset.</b> A number marking a consumer's position in one partition: which record it should read next. Committing an offset says "everything up to here is done."</li>
 <li><b>Retention.</b> How long a stream keeps old events before discarding them, regardless of whether every consumer has read them yet.</li>
 <li><b>Replay.</b> Resetting a consumer's offset backward and reading events again, something a durable log allows and a task queue that removes work after it is handled does not.</li>
 <li><b>At-most-once, at-least-once, exactly-once.</b> How many times a piece of work might actually run: possibly zero, possibly more than once but never zero, or - in practice, achieved by combining at-least-once delivery with an idempotent consumer - effectively exactly once from the outside.</li>
 <li><b>Idempotent consumer.</b> A consumer written so that processing the same message twice has the same effect as processing it once, usually by checking an idempotency key against work already done before doing it again.</li>
-<li><b>Backpressure.</b> Slowing down or rejecting new work because a downstream consumer, or the queue itself, cannot keep up.</li>
+<li><b>Backpressure.</b> Slowing down or rejecting new work because a downstream consumer, or the queue itself, cannot keep up. Without it the backlog grows until the broker runs out of memory or disk and fails everyone at once.</li>
 <li><b>Consumer lag.</b> How far behind a consumer is: how many messages, or how much time, sit unread on the queue or stream behind its current position.</li>
 <li><b>Dead-letter queue.</b> A separate queue that a message is moved to after failing processing some number of times, so it stops blocking, or repeatedly failing, the main queue.</li>
 <li><b>Poison message.</b> A message that will never process successfully no matter how many times it is retried, because of a bug or bad data, and needs a dead-letter queue rather than endless retries.</li>
 <li><b>Lease.</b> A time-limited claim a worker takes on a piece of work, after which, if the worker has not finished or renewed it, another worker is allowed to take over.</li>
 <li><b>SKIP LOCKED.</b> A database clause that lets a query skip rows another transaction already has locked, instead of waiting for them, which is what turns an ordinary table into a usable queue.</li>
-<li><b>DAG (directed acyclic graph).</b> A set of tasks with dependencies between them and no cycles, so a valid order to run them in always exists.</li>
+<li><b>DAG (directed acyclic graph).</b> A set of tasks with dependencies between them and no cycles, so a valid order to run them in always exists - a nightly pipeline where the load step must finish before the aggregation step is the everyday case.</li>
 <li><b>Orchestrator.</b> A system that runs a DAG of tasks, tracking which have run, retrying failures, and re-running a past date range on demand.</li>
 <li><b>Backfill.</b> Running an orchestrated pipeline again over a past date range, usually after a bug fix or a schema change, to bring old output in line with the corrected logic.</li>
 <li><b>Fan-out.</b> Turning one event into many pieces of follow-up work, one per interested party - for example, one new post triggering a write into every follower's own feed.</li>

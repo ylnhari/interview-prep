@@ -17,11 +17,11 @@
         body: `<ul>
 <li><b>Cache.</b> A smaller, faster copy of data kept close to where it is read, so most reads never have to reach the slower system behind it. A page of search results kept in memory instead of re-querying a database is a cache.</li>
 <li><b>Origin (source of truth).</b> The system that holds the real, authoritative data - usually a database. The cache is never the source of truth; it is a copy that can, in principle, be rebuilt from the origin.</li>
-<li><b>Hit and miss.</b> A <b>hit</b> is a request the cache can answer by itself. A <b>miss</b> is a request the cache cannot answer, so the origin must be asked.</li>
+<li><b>Hit and miss.</b> A <b>hit</b> is a request the cache can answer by itself. A <b>miss</b> is a request the cache cannot answer, so the origin must be asked. A miss is slightly slower than having no cache at all, because it pays for the failed lookup and then the full origin read anyway.</li>
 <li><b>Hit rate.</b> The share of requests that are hits: hits divided by (hits plus misses). It is the single number that tells you whether a cache is earning its complexity.</li>
 <li><b>Working set.</b> The set of keys actually being read often enough to matter right now. A cache only helps if it can hold the working set; a cache smaller than the working set behaves close to having no cache at all.</li>
 <li><b>Cold cache.</b> A cache that is empty or nearly empty, right after a restart or a deploy, so almost every request is a miss until it fills back up. A <b>warm</b> cache is one that already holds the working set.</li>
-<li><b>TTL (time to live), plural TTLs.</b> How long a cached value is allowed to be served before it must be treated as too old and refetched from the origin.</li>
+<li><b>TTL (time to live), plural TTLs.</b> How long a cached value is allowed to be served before it must be treated as too old and refetched from the origin. Values run from a few seconds for something like a price to a day or more for a profile photo.</li>
 <li><b>Eviction.</b> Removing an entry from the cache to make room for another, chosen by an <b>eviction policy</b> such as LRU (least recently used) or LFU (least frequently used).</li>
 <li><b>Cache-aside (lazy loading).</b> The application checks the cache first; on a miss, it reads the origin itself and writes the result into the cache for next time.</li>
 <li><b>Read-through.</b> The same idea as cache-aside, except the cache (or a library sitting in front of it) does the origin read on a miss itself, so the application only ever talks to the cache.</li>
@@ -34,7 +34,7 @@
 <li><b>Jitter</b> (<a href="#apis-and-communication/apc-f6">Retries, timeouts, idempotency keys, and backoff with jitter</a>) - randomness added to a TTL or a retry delay so that many entries or many clients do not all act at the exact same moment.</li>
 <li><b>Invalidation.</b> Telling the cache that a value is no longer good, before its TTL would otherwise have expired it, usually because the origin just changed.</li>
 <li><b>Cache key.</b> The string a value is stored and looked up under. A <b>versioned key</b> bakes a version number into the key itself, so a changed value gets a new key instead of overwriting the old one.</li>
-<li><b>Sharding.</b> Splitting a cache's keys across more than one node, so no single node has to hold or serve everything.</li>
+<li><b>Sharding.</b> Splitting a cache's keys across more than one node, so no single node has to hold or serve everything - a 500 GB working set can live as ten nodes holding 50 GB each.</li>
 <li><b>Consistent hashing</b> (<a href="#nosql-partitioning-ids/npi-f5">Consistent hashing: the ring, virtual nodes, and why it limits data movement</a>) - a way of assigning keys to nodes so that adding or removing one node only moves the keys near it, instead of reshuffling almost every key in the cache.</li>
 <li><b>Hot key.</b> One key that gets far more traffic than the others, enough to overload the single node or shard that holds it even while the cluster as a whole has spare capacity.</li>
 <li><b>Circuit breaker</b> (<a href="#distributed-coordination/dc-8">Circuit breakers and timeouts</a>) - a guard in front of a dependency that stops sending it calls once it is clearly failing, so a struggling origin is not also buried under the traffic a dead cache would have absorbed.</li>
@@ -356,25 +356,25 @@ I'd treat 17 to 18 gigabytes as the number to provision against today, and I'd w
         part: 'field',
         title: 'Key terms',
         body: `<ul>
-<li><b>Node.</b> One running instance in a distributed system - one server, one process participating in the system.</li>
+<li><b>Node.</b> One running instance in a distributed system - one server, one process participating in the system. A five-node cluster means five such instances, which need not be five separate machines.</li>
 <li><b>Partial failure.</b> Some nodes or some parts of a request fail while others keep working, unlike a single machine, which either runs or is down as a whole.</li>
-<li><b>Network partition.</b> A break in communication between groups of nodes, so each side can still run but cannot reach the other side.</li>
+<li><b>Network partition.</b> A break in communication between groups of nodes, so each side can still run but cannot reach the other side. One failed switch between two racks can do it, and each side may keep accepting writes the other never sees.</li>
 <li><b>Consistency model.</b> A precise promise about what a reader is guaranteed to see, and in what order, relative to writes happening elsewhere in the system.</li>
 <li><b>Linearizability.</b> The strongest common consistency model: every operation appears to happen instantly at one point in time, and every reader agrees on that same order, matching real time.</li>
 <li><b>Eventual consistency.</b> The weakest common promise: if writes stop, every replica will eventually converge to the same value, with no guarantee about how long that takes or what you see in the meantime.</li>
 <li><b>Read-your-writes.</b> A guarantee that the client who just made a write will see that write on their own next read, even if other clients might not yet.</li>
 <li><b>Monotonic reads.</b> A guarantee that once a client has seen a value, a later read by that same client never shows them something older.</li>
-<li><b>Replication.</b> Keeping copies of the same data on more than one node, for durability and for spreading out read load.</li>
+<li><b>Replication.</b> Keeping copies of the same data on more than one node, for durability and for spreading out read load. Three copies is the common default, so any two machines can be lost without losing the data.</li>
 <li><b>Leader (primary).</b> The one replica a system designates to accept writes in a leader-based scheme; the others are <b>followers (replicas)</b>.</li>
-<li><b>Quorum.</b> A minimum number of nodes that must agree, or acknowledge, before an operation counts as done.</li>
+<li><b>Quorum.</b> A minimum number of nodes that must agree, or acknowledge, before an operation counts as done. In a five-node cluster a majority quorum is three.</li>
 <li><b>CAP theorem.</b> Its name spells out the three properties it is about - Consistency, Availability, Partition tolerance. During a network partition, a system must choose between staying consistent and staying available; it says nothing about normal operation when there is no partition.</li>
 <li><b>Logical clock.</b> A counter used to order events without relying on physical, wall-clock time. A <b>Lamport clock</b> is the simplest one; a <b>vector clock</b> is a richer version that can detect when two events are concurrent rather than ordered.</li>
 <li><b>Happens-before.</b> The relation saying one event causally influenced another - for example, a message being sent happens-before it being received.</li>
-<li><b>Consensus.</b> Getting a group of nodes to agree on one value or one sequence of operations, even if some of them fail or messages are delayed.</li>
+<li><b>Consensus.</b> Getting a group of nodes to agree on one value or one sequence of operations, even if some of them fail or messages are delayed. Raft and Paxos are the algorithms usually named for it.</li>
 <li><b>Two-phase commit.</b> A protocol that commits one transaction across several databases by asking each to prepare, then telling them all to commit.</li>
 <li><b>Saga.</b> A sequence of local transactions, one per service, each with a compensating action that undoes it if a later step fails.</li>
 <li><b>Compensating action.</b> A new business action that offsets an earlier one - a refund, a cancellation - used where a real rollback is not available.</li>
-<li><b>Leader election.</b> The process by which nodes agree on which one of them is currently the leader, especially after the previous leader has failed.</li>
+<li><b>Leader election.</b> The process by which nodes agree on which one of them is currently the leader, especially after the previous leader has failed. Writes usually stall until it finishes, so how many seconds it takes shows up directly in the system's availability.</li>
 <li><b>Distributed lock.</b> A mechanism letting only one client at a time hold exclusive access to some resource, enforced by a shared coordination service rather than by one machine's own memory.</li>
 <li><b>Lease.</b> A lock that expires automatically after a set time, so a crashed or unreachable holder does not block everyone else forever.</li>
 <li><b>Fencing token.</b> A number that increases every time a lock or lease is granted, which the protected resource can use to reject a stale holder even if that holder still believes it owns the lock.</li>

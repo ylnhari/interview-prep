@@ -17,42 +17,42 @@
         body: `<ul>
 <li><b>SLI (service level indicator).</b> A measured number describing quality, such as the fraction of requests served under 200 milliseconds.</li>
 <li><b>SLO (service level objective).</b> The target for an SLI, stated as a percentile, a threshold and a window: "99.9% of requests under 200ms over 30 days."</li>
-<li><b>SLA (service level agreement).</b> An SLO with a contractual consequence attached. Most internal targets are objectives, not agreements.</li>
-<li><b>Error budget.</b> The amount of failure an SLO already permits, spent on risk and releases rather than avoided entirely.</li>
-<li><b>Burn rate.</b> How fast the error budget is being spent, as a multiple of the sustainable rate.</li>
+<li><b>SLA (service level agreement).</b> An SLO with a contractual consequence attached, usually a service credit or refund when it is missed. Most internal targets are objectives, not agreements.</li>
+<li><b>Error budget.</b> The amount of failure an SLO already permits, spent on risk and releases rather than avoided entirely - a 99.9% target over 30 days leaves about 43 minutes of it.</li>
+<li><b>Burn rate.</b> How fast the error budget is being spent, as a multiple of the sustainable rate - at 10x, a 30-day budget is gone in three days.</li>
 <li><b>Golden signals.</b> Latency, traffic, errors and saturation - the four numbers worth a dashboard on any service.</li>
 <li><b>Structured logging.</b> Writing each log line as named fields (user_id, latency_ms, status) instead of a sentence, so it can be queried like data.</li>
 <li><b>Cardinality.</b> Distinct values a label can take; see <a href="#counting-and-sketches/cs-f1">Why exact counting breaks at scale</a>. A label with millions of distinct values is high-cardinality and expensive to store.</li>
 <li><b>Sampling.</b> Recording only a share of traces to keep tracing affordable at volume, usually keeping every error and slow request.</li>
 <li><b>Correlation id (trace id).</b> An identifier passed through every service a request touches, so its logs and spans can be joined into one story.</li>
-<li><b>Span.</b> One hop of a distributed trace - one service's part of handling one request.</li>
-<li><b>Feature flag.</b> A runtime switch that turns a code path on or off independently of deploying it.</li>
+<li><b>Span.</b> One hop of a distributed trace - one service's part of handling one request, so a request crossing five services produces at least five spans.</li>
+<li><b>Feature flag.</b> A runtime switch that turns a code path on or off independently of deploying it, so a broken feature can be switched off in seconds rather than waiting for a rollback to ship.</li>
 <li><b>Canary release.</b> Sending a small slice of traffic to a new version while comparing its metrics to the old one, before ramping further.</li>
 <li><b>Blue-green deployment.</b> Running two full environments and switching all traffic at once, with the previous one kept warm for an instant rollback.</li>
 <li><b>Progressive delivery.</b> The umbrella term for canary, blue-green and staged rollout with a check at each step.</li>
 <li><b>Expand and contract.</b> A four-stage pattern for changing a schema with no downtime: add the new structure, write to both, switch reads, then remove the old one.</li>
-<li><b>Dual write.</b> Writing the same change to two places at once - typically an old and a new schema - during a migration.</li>
+<li><b>Dual write.</b> Writing the same change to two places at once - typically an old and a new schema - during a migration; if one write succeeds and the other fails, the two copies disagree with nothing to announce it.</li>
 <li><b>Backfill (during a migration).</b> Copying or recomputing existing rows into a new structure after that structure has started accepting live writes. Re-running a pipeline over past dates carries the same name; see <a href="#queues-and-streams/qs-f7">Workflow orchestration</a>.</li>
 <li><b>Parallel read-drain.</b> Pointing a new service's reads at the old system first, proving correctness, then gradually moving read traffic away from the old path.</li>
-<li><b>RPO (recovery point objective).</b> How much data a restore may lose, measured backward in time from the failure.</li>
-<li><b>RTO (recovery time objective).</b> How long a recovery may take, measured forward from the failure to full restoration.</li>
-<li><b>Failover drill.</b> A scheduled, deliberate rehearsal of shifting traffic to a standby region or replica.</li>
-<li><b>Token bucket.</b> A rate-limiting algorithm that refills tokens at a fixed rate and allows a burst up to the bucket's capacity.</li>
+<li><b>RPO (recovery point objective).</b> How much data a restore may lose, measured backward in time from the failure - hourly backups and nothing else means an RPO of up to an hour of writes.</li>
+<li><b>RTO (recovery time objective).</b> How long a recovery may take, measured forward from the failure to full restoration - an RTO of 15 minutes rules out restoring a large database from cold backup.</li>
+<li><b>Failover drill.</b> A scheduled, deliberate rehearsal of shifting traffic to a standby region or replica; a standby nobody has ever exercised is usually broken on the day it is needed.</li>
+<li><b>Token bucket.</b> A rate-limiting algorithm that refills tokens at a fixed rate and allows a burst up to the bucket's capacity - 10 tokens a second into a 100-token bucket permits a burst of 100, then 10 a second.</li>
 <li><b>Leaky bucket.</b> A rate-limiting algorithm that queues requests and drains them at a fixed rate, smoothing bursts into steady output.</li>
-<li><b>Fixed window (rate limiting).</b> Counting requests in a fixed calendar interval that resets fully at the boundary.</li>
+<li><b>Fixed window (rate limiting).</b> Counting requests in a fixed calendar interval that resets fully at the boundary, which lets a client spend a full limit just before the reset and another full limit straight after it.</li>
 <li><b>Sliding window counter.</b> A rate limit that blends the current and previous window's counts to avoid the fixed-window boundary burst. The stream-processing window of the same name is a different thing; see <a href="#counting-and-sketches/cs-f2">Bucketed time-window aggregation</a>.</li>
-<li><b>Data retention schedule.</b> A stated rule for how long a category of data is kept before it is deleted or archived.</li>
+<li><b>Data retention schedule.</b> A stated rule for how long a category of data is kept before it is deleted or archived - raw request logs deleted after 30 days, say.</li>
 <li><b>Right to erasure.</b> A legal right, most known from GDPR (the General Data Protection Regulation, the European Union's data-privacy law), for a person to have their personal data deleted on request.</li>
 <li><b>PII (personally identifiable information).</b> Data that identifies a specific person: name, email, government id, precise location.</li>
 <li><b>Encryption at rest / in transit.</b> Protecting stored data from anyone who reaches the disk directly, and protecting data moving over the network, respectively.</li>
-<li><b>Audit log.</b> A separate, append-only record of who accessed or changed what and when.</li>
-<li><b>Authentication.</b> Proving who a caller is.</li>
-<li><b>Authorization.</b> Deciding what an already-identified caller is allowed to do.</li>
+<li><b>Audit log.</b> A separate, append-only record of who accessed or changed what and when, kept out of the main database so that whoever changed the data cannot quietly edit the evidence.</li>
+<li><b>Authentication.</b> Proving who a caller is - a password, an API token or a client certificate.</li>
+<li><b>Authorization.</b> Deciding what an already-identified caller is allowed to do - a perfectly valid login that still may not delete someone else's record.</li>
 <li><b>OAuth.</b> A protocol letting a user grant one application limited, revocable access to their data on another service, without sharing a password.</li>
 <li><b>Secrets management.</b> Storing API keys, passwords and signing keys in a dedicated, access-controlled system rather than in code or config files.</li>
-<li><b>Tenant.</b> One customer or organisation being served from shared infrastructure in a multi-tenant system.</li>
+<li><b>Tenant.</b> One customer or organisation being served from shared infrastructure in a multi-tenant system, whose data has to stay separated from every other tenant's even though the database is shared.</li>
 <li><b>Noisy neighbour.</b> One tenant's load degrading shared infrastructure for every other tenant on it.</li>
-<li><b>Tenant quota.</b> A cap on how much of a shared resource one tenant may consume.</li>
+<li><b>Tenant quota.</b> A cap on how much of a shared resource one tenant may consume, such as 100 requests a second or 50 GB of storage.</li>
 </ul>`,
         deeper: `<p>Almost everything in this list exists to answer one of two questions faster: "is something wrong right now" and "should we be worried about this specific change." The golden signals and observability tooling answer the first. SLOs, error budgets and safe rollout patterns answer the second. Keeping that split in mind is what stops the vocabulary from feeling like a random list - each term is a tool built for one of those two jobs.</p>`,
         check: {
@@ -366,7 +366,7 @@ Once it's back to baseline, the incident isn't done - I'd open a postmortem, bec
 <li><b>Trie (prefix tree).</b> A tree for prefix lookup; see <a href="#search-and-retrieval/sr-f8">Autocomplete and typeahead</a>.</li>
 <li><b>Chunked (resumable) upload.</b> Splitting a large file into pieces the client can upload independently and resume from the first missing piece after a dropped connection.</li>
 <li><b>Transcoding.</b> Re-encoding a video into other resolutions, bitrates or codecs so it plays well on different devices and networks.</li>
-<li><b>Adaptive bitrate streaming.</b> Serving a video at a resolution the viewer's current bandwidth can sustain, switching as bandwidth changes.</li>
+<li><b>Adaptive bitrate streaming.</b> Serving a video at a resolution the viewer's current bandwidth can sustain, switching as bandwidth changes - dropping from 1080p to 480p mid-play rather than stalling.</li>
 <li><b>Candidate generation.</b> A cheap first stage that narrows a huge catalog down to a few hundred plausible items.</li>
 <li><b>Ranking.</b> A second, heavier stage that scores and orders only the shortlist candidate generation produced.</li>
 <li><b>Embedding.</b> A vector standing for an item; see <a href="#deep-learning-essentials/dle-f9">Embeddings, generative models, and choosing an architecture</a>.</li>
@@ -376,8 +376,8 @@ Once it's back to baseline, the incident isn't done - I'd open a postmortem, bec
 <li><b>Reconciliation.</b> Comparing an internal record against an external source of truth, such as a processor's settlement report, to catch drift.</li>
 <li><b>Chargeback.</b> A card payment reversed by the customer's bank after the fact, often the first real evidence that a transaction was fraudulent.</li>
 <li><b>Exactly-once effect.</b> One outcome from retried calls; see <a href="#queues-and-streams/qs-f4">Delivery guarantees and ordering</a>.</li>
-<li><b>Streaming features.</b> Features kept fresh from a stream; see <a href="#data-features/df-f5">Streaming mechanics: windows, watermarks, duplicates, backfills</a>.</li>
-<li><b>Label latency.</b> The wait for ground truth; see <a href="#data-features/df-f4">Label latency in fraud and tax models</a>.</li>
+<li><b>Streaming features.</b> Features kept fresh from a stream; see <a href="#data-features/df-f5">Features computed on a stream: freshness, duplicates and backfills</a>.</li>
+<li><b>Label latency.</b> The wait for ground truth; see <a href="#data-features/df-f4">Label latency: when the answer arrives long after the prediction</a>.</li>
 <li><b>Retrieval-augmented generation (RAG).</b> Answering from fetched text; see <a href="#rag-and-agents/raa-f1">When to use retrieval versus fine-tuning</a>.</li>
 <li><b>Context window.</b> A model's input size limit; see <a href="#rag-and-agents/raa-f6">How a model's memory works in practice</a>.</li>
 <li><b>Token (LLM).</b> The unit a model reads and writes; see <a href="#llm-inference-engineering/lie-f1">How a token is generated: prefill versus decode</a>.</li>

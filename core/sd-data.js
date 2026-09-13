@@ -22,7 +22,7 @@
 <li><b>Normalisation.</b> Organising a schema so each fact is stored in exactly one place, to avoid the same fact going out of sync when it is updated in one row but not another.</li>
 <li><b>Index.</b> A structure built on one or more columns that lets the database find matching rows without reading every row. Paid for with slower writes and extra storage.</li>
 <li><b>B-tree.</b> The balanced tree structure most relational indexes use: every path from the root to a leaf is the same length, so a lookup takes a small, predictable number of steps even over billions of rows.</li>
-<li><b>Composite index.</b> An index built on more than one column, in a fixed order.</li>
+<li><b>Composite index.</b> An index built on more than one column, in a fixed order. An index on customer_id then created_at helps a query filtering on customer_id alone, but not one filtering on created_at alone.</li>
 <li><b>Covering index.</b> An index that already holds every column a query needs, so the database never has to fetch the full row.</li>
 <li><b>Query planner (optimizer).</b> The part of the database that decides how to execute a query - which indexes to use, which order to join tables in - based on estimated row counts and cost.</li>
 <li><b>EXPLAIN.</b> The SQL command that shows the plan the optimizer chose, without running the query. Adding <b>ANALYZE</b> makes it actually run the query too, and report the real row counts and timings next to the estimates.</li>
@@ -39,9 +39,9 @@
 <li><b>Checkpoint.</b> A point the database records showing that everything before it in the log is safely reflected in the data files, so crash recovery only has to replay the log after that point.</li>
 <li><b>Connection pool.</b> A small set of open database connections that many application threads share, instead of opening a new one per request.</li>
 <li><b>Read replica.</b> A copy of the database kept up to date from the primary, used to serve reads and take load off the primary.</li>
-<li><b>Replication lag.</b> How far behind the primary a replica's data currently is.</li>
+<li><b>Replication lag.</b> How far behind the primary a replica's data currently is - usually milliseconds, but seconds or worse under a heavy write burst, long enough for a user to reload a page and not see the change they just saved.</li>
 <li><b>Partitioning.</b> Splitting one logical table's storage into pieces, by row (<b>horizontal</b>) or by column (<b>vertical</b>); it can happen on one server or be spread across several, and "sharding" is the name usually used when the pieces sit on separate servers.</li>
-<li><b>Migration.</b> A change to the schema, applied to a running database without an unacceptable interruption.</li>
+<li><b>Migration.</b> A change to the schema, applied to a running database without an unacceptable interruption. Adding a nullable column is usually instant; building an index or changing a column's type can hold a large table for minutes.</li>
 <li><b>Soft delete.</b> Marking a row as deleted with a flag or timestamp instead of removing it, so the row can still be found, audited or restored.</li>
 </ul>`,
         deeper: `<p>Most of these words describe trade-offs, not rules. An index trades write speed for read speed; a looser isolation level trades correctness guarantees for concurrency; a read replica trades freshness for read capacity. Interviewers are rarely checking whether you know the definition - they are checking whether you can say which side of the trade-off your situation needs and why, because that is what separates a memorised glossary from someone who has actually reasoned about a live database.</p>`,
@@ -361,10 +361,10 @@ The real cost is on the database side: holding a snapshot open for ten-plus minu
 <li><b>Document store.</b> A store where each record is a nested, self-contained document (commonly JSON-like), and queries can filter or sort on any field inside it.</li>
 <li><b>Wide-column (column-family) store.</b> A store where each row has a key and a flexible set of named columns, grouped into families, and different rows can have entirely different columns.</li>
 <li><b>Graph database.</b> A store built around nodes and the relationships between them, optimised for traversing connections rather than for filtering flat rows.</li>
-<li><b>Shard key (partition key).</b> The value used to decide which node a given piece of data lives on.</li>
-<li><b>Range partitioning.</b> Assigning contiguous ranges of the shard key's sorted values to each node.</li>
+<li><b>Shard key (partition key).</b> The value used to decide which node a given piece of data lives on - user_id or tenant_id, say - and the hardest choice to reverse later, because changing it means moving every row that already exists.</li>
+<li><b>Range partitioning.</b> Assigning contiguous ranges of the shard key's sorted values to each node. A scan over one date range then reads one node, but a key that climbs with time sends every new write to the same node.</li>
 <li><b>Hash partitioning.</b> Assigning data to a node based on a hash of the shard key, spreading similar keys apart.</li>
-<li><b>Hot partition (hot key).</b> One partition, or one especially popular key inside it, that receives far more traffic than the others.</li>
+<li><b>Hot partition (hot key).</b> One partition, or one especially popular key inside it, that receives far more traffic than the others, so that one node saturates and starts failing while the cluster's average utilisation still looks comfortable.</li>
 <li><b>Rebalancing.</b> Moving data between nodes after nodes are added or removed, so load stays roughly even.</li>
 <li><b>Consistent hashing.</b> A hashing scheme, usually visualised as a ring, that keeps most keys mapped to the same node even as nodes join or leave, so rebalancing only moves a small fraction of the data.</li>
 <li><b>Virtual node.</b> One physical node represented by several points on a consistent-hashing ring, so load spreads more evenly than one point per node would.</li>
@@ -372,7 +372,7 @@ The real cost is on the database side: holding a snapshot open for ten-plus minu
 <li><b>Snowflake-style id.</b> A 64-bit identifier packed from a timestamp, a machine id, and a per-millisecond sequence number, so ids are both unique and roughly sortable by creation time.</li>
 <li><b>Clock skew.</b> A machine's clock disagreeing with real time, or with another machine's clock, which threatens any id scheme that leans on the clock for ordering.</li>
 <li><b>Offset pagination.</b> Returning page N by skipping the first (N-1) times the page size rows.</li>
-<li><b>Keyset (seek) pagination.</b> Returning the next page by asking for rows after the last key seen on the previous page.</li>
+<li><b>Keyset (seek) pagination.</b> Returning the next page by asking for rows after the last key seen on the previous page, so page 10,000 costs the same as page 2 instead of getting steadily slower.</li>
 <li><b>Bloom filter.</b> A compact, probabilistic structure that can say "definitely not present" for free, and "probably present" with a small, tunable chance of being wrong.</li>
 <li><b>False positive rate.</b> How often a Bloom filter wrongly claims an absent item is present; it never has false negatives.</li>
 <li><b>Hot and cold storage.</b> Keeping frequently accessed data on fast, expensive storage and rarely accessed data on slow, cheap storage, moving data between the two as its access pattern changes.</li>

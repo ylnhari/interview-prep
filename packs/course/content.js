@@ -279,16 +279,16 @@ window.PREP_CONTENT = {
       title: "Start here",
       level: "good",
       levelLabel: "Five minutes, then pick a track",
-      why: `Forty chapters in six tracks, for machine learning and software engineering interviews. Every chapter defines its terms before it uses them, draws the diagrams, points you at the best pages and videos on the subject, and gives you exercises to answer.`,
+      why: `Forty-one chapters in six tracks, for machine learning and software engineering interviews. Every chapter defines its terms before it uses them, draws the diagrams, points you at the best pages and videos on the subject, and gives you exercises to answer.`,
       learn: [
         {
           id: "sh-1",
           part: "field",
           title: "What this is",
           viz: null,
-          body: `<p>Forty chapters in six tracks, covering what machine learning and backend engineering interviews really draw on. It is written as a course, not a checklist: every chapter starts by defining the words it uses, and builds from there.</p>
+          body: `<p>Forty-one chapters in six tracks, covering what machine learning and backend engineering interviews really draw on. It is written as a course, not a checklist: every chapter starts by defining the words it uses, and builds from there.</p>
 <p>None of this is about one person or one employer. The chapters teach the subject, and adding your own systems on top is up to you.</p>`,
-          deeper: `<p>The order means something: chapters, exercises and questions are listed most important first, so what you see first is what you are most likely to be asked.</p>`
+          deeper: `<p>The order means something: chapters, exercises and questions are listed most important first, so what you see first is what you are most likely to be asked. The coloured label on each chapter says the same thing in words - how often that subject comes up in interviews, not how hard it is and not how much you already know about it.</p>`
         },
         {
           id: "sh-2",
@@ -305,7 +305,7 @@ window.PREP_CONTENT = {
 <li><b>Track 6 - Practice</b> (about 12 hours). Scenario questions, coding drills, and about three hundred questions with the answers hidden, to test yourself on rather than to read.</li>
 </ul>
 <p>Two shortcuts, if you do not have the time. If you have a week, read the Key terms section of every chapter in Tracks 1 and 2, then work through the question banks in Track 6 and let the questions you cannot answer decide what you read next. If you have two days, do Track 6 only, and read the chapter behind every question that went badly.</p>`,
-          deeper: `<p>The tracks are ordered by what depends on what, not by how hard they are. Track 3 is not harder than Track 2. It is separate, and it matters most for jobs built on forecasting, scheduling, routing, capacity or pricing. If the job you are preparing for has none of those, Track 3 is extra depth you can skip, and those hours are better spent on Track 5. The other way round, a job about decision systems can treat Track 4 as optional, and should not skip Track 3.</p>`
+          deeper: `<p>The tracks are ordered by what depends on what, not by how hard they are. Track 5 is not harder than Track 4; it is separate, and it matters most for jobs built on forecasting, scheduling, routing, capacity or pricing. If the job you are preparing for has none of those, Track 5 is extra depth you can leave until last. The other way round, a job that is mostly decision systems can treat Track 3 as optional and should not skip Track 5. Tracks 1 and 2 are the two nobody should skip, whatever the role.</p>`
         },
         {
           id: "sh-3",

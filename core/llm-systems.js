@@ -23,17 +23,17 @@
 <li><b>Sparse retrieval</b> - finding text by comparing exact words, typically scored with <b>BM25</b> (best matching 25, a formula name plus its version number), which rewards a document for matching rare words more than common ones.</li>
 <li><b>Hybrid retrieval</b> - <a href="#rag-and-agents/raa-f3">explained below</a>: dense and sparse retrieval run together, their two rankings combined into one.</li>
 <li><b>Reranking</b> - taking the shortlist a first search already returned and scoring it again with a slower, more accurate model, keeping only the best few.</li>
-<li><b>Query rewriting</b> - changing or expanding a user's question before searching, to raise the chance the right chunk gets found.</li>
+<li><b>Query rewriting</b> - changing or expanding a user's question before searching, to raise the chance the right chunk gets found. Example: turning a follow-up like "what about last year" into a standalone question that names the topic.</li>
 <li><b>Approximate nearest neighbour (ANN) search</b> - finding vectors that are very likely, though not certain, to be the closest matches, in exchange for being far faster than checking every vector.</li>
 <li><b>HNSW</b> - <a href="#rag-and-agents/raa-f4">hierarchical navigable small world</a>, an ANN index built as layered graphs and searched from a sparse top layer down to a dense bottom layer.</li>
 <li><b>IVF</b> (inverted file index) - an ANN index that clusters vectors into groups first, then searches only inside the groups nearest the query.</li>
-<li><b>Groundedness</b> (also <b>faithfulness</b>) - whether an answer's claims are actually supported by the text the model was given, rather than invented.</li>
+<li><b>Groundedness</b> (also <b>faithfulness</b>) - whether an answer's claims are actually supported by the text the model was given, rather than invented. An answer can be correct and still ungrounded, if the retrieved text never actually said it.</li>
 <li><b>Hallucination</b> - a confident answer not supported by the model's training or by anything it was given, stated with no sign that it might be wrong.</li>
 <li><b>Golden set</b> - a small, carefully checked set of questions with known correct answers and sources, used to measure a RAG system's real accuracy.</li>
 <li><b>LLM-as-judge</b> - <a href="#llm-fine-tuning-and-alignment/lft-f5">taught in Fine-tuning and alignment</a>: a model (LLM is short for large language model) scoring or comparing other models' answers at scale, instead of a person doing it by hand.</li>
 <li><b>Agent</b> - a system in which a model decides, on its own, which steps and tools to use to complete a task, rather than following a fixed script.</li>
 <li><b>Tool calling</b> (also <b>function calling</b>) - a model producing a structured request to run a specific function, which the surrounding program then actually executes.</li>
-<li><b>Context window</b> - the maximum number of tokens a model can read and generate in one request; anything before it falls outside is simply not seen.</li>
+<li><b>Context window</b> - the maximum number of tokens a model can read and generate in one request; anything before it falls outside is simply not seen. Current models range from a few thousand tokens to over a million.</li>
 <li><b>Prompt caching</b> - reusing the internal computation for a prompt's unchanged opening portion across requests, instead of recomputing it every time.</li>
 <li><b>Guardrail</b> - <a href="#rag-and-agents/raa-f9">explained below</a>: a check placed before or after a model call that blocks or fixes an unsafe or unwanted input or output.</li>
 <li><b>Prompt injection</b> - text, often hidden inside a document the model retrieves, written to make the model follow a new instruction instead of the one it was actually given.</li>
@@ -357,21 +357,21 @@
         body: `<ul>
 <li><b>GPU</b> (graphics processing unit) - a chip built from thousands of simple cores that all run the same instruction on different pieces of data at once, unlike a CPU's smaller number of cores built to run different instructions well.</li>
 <li><b>FLOPs</b> - floating-point operations; a count of arithmetic operations, or, per second (FLOPs/s), a chip's raw compute speed.</li>
-<li><b>Memory bandwidth</b> - how many bytes per second a chip can move between its memory and its compute cores.</li>
+<li><b>Memory bandwidth</b> - how many bytes per second a chip can move between its memory and its compute cores. An NVIDIA A100 moves up to 2,039 gigabytes per second.</li>
 <li><b>Arithmetic intensity</b> - the number of FLOPs an operation performs for every byte it reads from and writes to memory; it decides whether an operation is limited by compute or by memory movement.</li>
 <li><b>Compute-bound vs memory-bound</b> - an operation is compute-bound if its speed is capped by how fast the chip can do arithmetic, and memory-bound if its speed is instead capped by how fast data can be moved.</li>
-<li><b>Roofline model</b> - a chart of the two limits above, used to read off which one caps a given operation.</li>
+<li><b>Roofline model</b> - a chart of the two limits above, used to read off which one caps a given operation. On an A100 the crossover between them sits around 153 FLOPs per byte.</li>
 <li><b>Tensor</b> - the general name, in a deep learning framework, for an array of numbers of any number of dimensions - a scalar, a vector, and a matrix are all tensors of 0, 1, and 2 dimensions.</li>
 <li><b>Autograd</b> - a framework's system for automatically computing gradients, by recording every operation performed on a tensor and reversing through them with the chain rule.</li>
 <li><b>DataLoader</b> - the component that reads training examples from storage, batches and shuffles them, and hands them to the training loop, usually using several worker processes so this happens in parallel with the GPU's own work.</li>
 <li><b>Mixed precision</b> - doing most training arithmetic in a lower-precision number format (commonly bf16) while keeping a small number of values in full precision (fp32) where precision actually matters.</li>
 <li><b>Gradient accumulation</b> - running several small forward-and-backward passes and adding their gradients together before taking one optimiser step, to reach a larger effective batch size than fits in memory at once.</li>
 <li><b>Activation checkpointing</b> - discarding some intermediate values from the forward pass and recomputing them during the backward pass instead of storing them, trading extra computation for less memory used.</li>
-<li><b>Optimizer state</b> - the extra numbers an optimiser like Adam keeps per parameter, beyond the parameter and its gradient, to decide how to update it.</li>
-<li><b>Data parallelism</b> - copying the whole model onto every GPU and giving each GPU a different slice of the batch to process.</li>
+<li><b>Optimizer state</b> - the extra numbers an optimiser like Adam keeps per parameter, beyond the parameter and its gradient, to decide how to update it. Adam keeps two of them, which is most of why mixed-precision training budgets 16 bytes per parameter.</li>
+<li><b>Data parallelism</b> - copying the whole model onto every GPU and giving each GPU a different slice of the batch to process. It only helps once the whole model already fits on one GPU.</li>
 <li><b>All-reduce</b> - a communication step in which every participating GPU ends up holding the sum (or average) of a value that started out different on each of them.</li>
 <li><b>ZeRO / FSDP</b> - techniques that shard a model's parameters, gradients, or optimiser state across GPUs instead of copying all of it onto every GPU.</li>
-<li><b>Tensor parallelism</b> - splitting a single large matrix multiplication itself across GPUs, which then combine their partial results.</li>
+<li><b>Tensor parallelism</b> - splitting a single large matrix multiplication itself across GPUs, which then combine their partial results. That combining step happens on every layer, so it needs a fast interconnect and is usually kept within one machine.</li>
 <li><b>Pipeline parallelism</b> - splitting a model's layers into groups, with each group placed on a different GPU, so a batch flows through the GPUs in sequence.</li>
 <li><b>Expert parallelism</b> - placing the different expert sub-networks of a mixture-of-experts model on different GPUs, and routing each token to the GPU holding the expert it needs.</li>
 <li><b>Pipeline bubble</b> - the idle time a pipeline-parallel GPU spends waiting for work, before the pipeline is full or after it starts draining.</li>

@@ -18,14 +18,14 @@
 <li><b>Fine-tuning</b> - continuing to train a pretrained model on new, usually smaller, task-specific data so its weights shift toward that task. Example: training a base model on a company's support tickets so it answers in that voice.</li>
 <li><b>Prompt engineering</b> - getting a model to behave the way you want purely through how you phrase the request, with no training at all. Example: adding "answer in three bullet points" to the instruction text.</li>
 <li><b>Retrieval-augmented generation (RAG)</b> - <a href="#rag-and-agents/raa-f1">taught in Retrieval-augmented generation and agents</a>: looking up relevant text at request time and putting it in the prompt.</li>
-<li><b>Pretraining</b> - the original, very large training run on broad text that gives a model its general language ability, before anyone fine-tunes it for a task.</li>
+<li><b>Pretraining</b> - the original, very large training run on broad text that gives a model its general language ability, before anyone fine-tunes it for a task. Measured in trillions of tokens, and done once by whoever built the model rather than by the teams that later adapt it.</li>
 <li><b>Instruction tuning</b> - fine-tuning on examples that pair an instruction with the response wanted, so the model learns to follow instructions in general rather than one narrow task.</li>
 <li><b>Full fine-tuning</b> - updating every weight in the model. Correct, but memory-heavy, since gradients and optimiser state must be kept for every parameter.</li>
 <li><b>LoRA (low-rank adaptation)</b> - freezing the base weights and training only a small pair of added matrices per layer, cutting the number of trainable parameters by orders of magnitude.</li>
 <li><b>QLoRA</b> - LoRA, plus running the frozen base model itself in 4-bit precision, so memory is saved on both the frozen weights and the training state.</li>
 <li><b>Adapter</b> - the small set of extra weights, such as LoRA's A and B matrices, added to a frozen model and trained in place of the base weights.</li>
 <li><b>Rank (r)</b> - the size of the bottleneck dimension inside a LoRA adapter; a small chosen number, typically 4 to 64, that sets how many trainable parameters the adapter has.</li>
-<li><b>Catastrophic forgetting</b> - a model losing general ability it had before fine-tuning, because the fine-tuning pulled its weights too far in one narrow direction.</li>
+<li><b>Catastrophic forgetting</b> - a model losing general ability it had before fine-tuning, because the fine-tuning pulled its weights too far in one narrow direction. Example: a model tuned hard on SQL generation starts answering ordinary questions worse than it did before.</li>
 <li><b>Reward model</b> - a separate model trained to score how good a response is, usually learned from humans picking their preferred response out of a pair.</li>
 <li><b>RLHF (reinforcement learning from human feedback)</b> - using a reward model's score, inside a reinforcement-learning (RL) training loop, to push a language model toward the responses people prefer.</li>
 <li><b>KL (Kullback-Leibler) divergence</b> - a number measuring how far one probability distribution has moved from another, <a href="#ml-math-essentials/mfe-f5">derived in Maths for machine learning</a>. Used here as a penalty term that keeps a model being tuned from drifting far from the model it started as.</li>
@@ -33,7 +33,7 @@
 <li><b>DPO (direct preference optimisation)</b> - training directly on pairs of preferred and dispreferred responses with a single loss, reaching a similar result to RLHF without a reward model or a reinforcement-learning loop.</li>
 <li><b>GRPO (group relative policy optimisation)</b> - a reinforcement-learning method that scores each response against the average of several responses to the same prompt, instead of needing a separately trained value model.</li>
 <li><b>Held-out set</b> - data set aside and never used for training, so evaluating on it tells you how the model does on examples it has not seen.</li>
-<li><b>Benchmark</b> - a fixed, public test set used to compare models on a general capability, such as reasoning or knowledge.</li>
+<li><b>Benchmark</b> - a fixed, public test set used to compare models on a general capability, such as reasoning or knowledge. MMLU (massive multitask language understanding), a multiple-choice exam spanning many subjects, is the standard example.</li>
 <li><b>LLM-as-judge</b> (LLM is short for large language model) - using a strong model to read and score another model's outputs, so a human does not have to score every single one.</li>
 <li><b>Merging adapters</b> - folding a trained LoRA adapter's weights back into the base model, producing one ordinary checkpoint with no extra inference-time cost.</li>
 </ul>`,
@@ -265,18 +265,18 @@
         title: 'Key terms',
         body: `<ul>
 <li><b>Token</b> - the unit a language model reads and writes, roughly a word fragment; see <a href="#llm-inference-engineering/lie-f0">What a token actually is</a>. Cost, latency, and memory are all usually measured per token.</li>
-<li><b>Tokenizer, vocabulary</b> - the fixed table that maps pieces of text to the integer ids a model reads, and the set of pieces that table holds.</li>
-<li><b>Prefill</b> - processing every token of the input prompt in one pass, before the first output token is produced.</li>
-<li><b>Decode</b> - generating output tokens one at a time, each one depending on every token that came before it.</li>
+<li><b>Tokenizer, vocabulary</b> - the fixed table that maps pieces of text to the integer ids a model reads, and the set of pieces that table holds. A vocabulary typically holds 30,000 to 200,000 entries.</li>
+<li><b>Prefill</b> - processing every token of the input prompt in one pass, before the first output token is produced. It is compute-bound, so its cost rises with the length of the prompt.</li>
+<li><b>Decode</b> - generating output tokens one at a time, each one depending on every token that came before it. A 500-token answer needs 500 separate passes through the model.</li>
 <li><b>KV cache</b> (KV is short for key/value) - the stored key and value tensors from every previous token, kept so decode does not have to reprocess the whole prompt from scratch on every step.</li>
-<li><b>Time to first token (TTFT)</b> - how long a user waits before anything appears, dominated by prefill and by queueing.</li>
-<li><b>Time per output token (TPOT)</b> - the gap between each token after the first, dominated by the memory-bound decode step.</li>
-<li><b>Throughput</b> - total tokens produced per second across every request a server is handling.</li>
+<li><b>Time to first token (TTFT)</b> - how long a user waits before anything appears, dominated by prefill and by queueing. A common target for an interactive chat is under 500 milliseconds.</li>
+<li><b>Time per output token (TPOT)</b> - the gap between each token after the first, dominated by the memory-bound decode step. 50 milliseconds per token is 20 tokens a second, already faster than most people read.</li>
+<li><b>Throughput</b> - total tokens produced per second across every request a server is handling. It is the number that decides how many users one GPU can serve.</li>
 <li><b>Goodput</b> - throughput counting only the requests that actually met their latency target, rather than every token produced.</li>
 <li><b>Continuous batching</b> - adding and removing sequences from a running batch as they arrive and finish, instead of waiting for a whole fixed batch to complete together.</li>
 <li><b>PagedAttention</b> - storing the KV cache in fixed-size blocks that can sit anywhere in memory, rather than one contiguous region per sequence.</li>
 <li><b>FlashAttention</b> - an attention implementation that avoids writing the full attention matrix to slow GPU memory, computing the same result faster.</li>
-<li><b>Quantization</b> - representing weights or activations with fewer bits, trading some precision for less memory and, often, more speed.</li>
+<li><b>Quantization</b> - representing weights or activations with fewer bits, trading some precision for less memory and, often, more speed. Moving weights from 16-bit to 8-bit halves the memory they take.</li>
 <li><b>Speculative decoding</b> - a small draft model proposes several tokens, which the large target model verifies in one pass, keeping the ones it agrees with.</li>
 <li><b>Prefix caching</b> - reusing an already-computed KV cache for a prompt prefix shared by more than one request, instead of recomputing it each time.</li>
 <li><b>Tensor parallelism</b> - <a href="#training-at-scale/tas-f6">taught in Training at scale and GPUs</a>: one weight matrix's computation split across several GPUs.</li>

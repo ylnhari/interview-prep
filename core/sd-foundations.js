@@ -21,10 +21,10 @@
 <li><b>Nines.</b> Shorthand for an availability target: two nines is 99% (about 3.7 days of downtime a year), three nines is 99.9% (about 9 hours a year), five nines is 99.999% (about 5 minutes a year).</li>
 <li><b>Durability</b> (<a href="#storage-engines/se-f1">What a storage engine must do</a>) - the probability that data, once accepted, is never lost, independent of whether the system is reachable right now.</li>
 <li><b>Consistency.</b> How up to date a read is guaranteed to be relative to the latest write. <b>Strong</b> consistency guarantees the latest write; <b>eventual</b> consistency only guarantees that copies converge in time.</li>
-<li><b>Latency.</b> The time between sending a request and getting a response.</li>
+<li><b>Latency.</b> The time between sending a request and getting a response - under a millisecond for a cache hit in the same data centre, over 100 ms for a round trip between continents whatever the code does.</li>
 <li><b>Percentile (p50, p99)</b> (<a href="#counting-and-sketches/cs-f7">Quantile sketches</a>) - p50 is the median request; p99 means 99 out of 100 requests were at least this fast, so it captures the slow tail that an average hides.</li>
-<li><b>Throughput.</b> How much work a system completes per unit time.</li>
-<li><b>QPS / RPS.</b> Queries per second / requests per second - the standard unit for how busy a service is.</li>
+<li><b>Throughput.</b> How much work a system completes per unit time. It is independent of latency: a batch job can have enormous throughput and still take an hour to answer any single request.</li>
+<li><b>QPS / RPS.</b> Queries per second / requests per second - the standard unit for how busy a service is. One replica of an ordinary web service handles hundreds to a few thousand, which is what turns a traffic estimate into a machine count.</li>
 <li><b>DAU / MAU.</b> Daily active users / monthly active users - the standard way a product states how many people use it in a period.</li>
 <li><b>Read:write ratio.</b> How many reads happen for every write. A social feed might be 100:1; a payments ledger is closer to 1:1.</li>
 <li><b>Peak factor.</b> How many times higher than the average the busiest moment gets, for example ten times the average traffic during a flash sale.</li>
@@ -370,7 +370,7 @@ Yes, I'd still scale up today, and I think it's actually the right senior instin
 <li><b>Full-duplex.</b> Both sides of a connection can send and receive at the same time.</li>
 <li><b>API gateway.</b> A single entry point that terminates client traffic and applies cross-cutting concerns - authentication, rate limiting, routing to the right backend service.</li>
 <li><b>Load balancer.</b> The component that spreads incoming connections or requests across healthy replicas of one service.</li>
-<li><b>Round robin.</b> A load-balancing algorithm that sends each new request to the next replica in a fixed rotation.</li>
+<li><b>Round robin.</b> A load-balancing algorithm that sends each new request to the next replica in a fixed rotation, which shares out requests evenly but not work, so a replica stuck on expensive requests still gets its full share of new ones.</li>
 <li><b>Least connections.</b> A load-balancing algorithm that sends a request to whichever replica currently has the fewest open connections.</li>
 <li><b>Weighted.</b> A variant of round robin or least connections where each replica gets a per-machine weight, so a bigger machine gets a proportionally larger share.</li>
 <li><b>Consistent hashing</b> (<a href="#nosql-partitioning-ids/npi-f5">Consistent hashing: the ring, virtual nodes, and why it limits data movement</a>) - a hashing scheme mapping requests and replicas onto a ring, so adding or removing one replica reshuffles only a small fraction of the keys.</li>
@@ -382,7 +382,7 @@ Yes, I'd still scale up today, and I think it's actually the right senior instin
 <li><b>Idempotency key.</b> A value the caller attaches to a request so a retried request is recognised as the same request and never applied twice.</li>
 <li><b>Exponential backoff.</b> Waiting longer after each failed retry, typically doubling the wait each time.</li>
 <li><b>Jitter.</b> Random variation added to a backoff delay, so many clients that failed at the same moment do not all retry at the same instant.</li>
-<li><b>Batching.</b> Grouping several small units of work into one larger call to spread a fixed per-call cost across all of them.</li>
+<li><b>Batching.</b> Grouping several small units of work into one larger call to spread a fixed per-call cost across all of them, paid for by the wait the first item in the batch sits through.</li>
 <li><b>Backpressure.</b> A saturated component telling its callers to slow down or accept rejection, instead of accepting unbounded work.</li>
 <li><b>Tail latency.</b> The latency of the slowest fraction of requests, usually reported as p99 (the value below which 99 percent of measurements fall, so it is the slow tail rather than the average) or p999 (the same idea at the 99.9th percentile, an even narrower and slower slice) - see <a href="#requirements-and-capacity">Requirements and capacity planning</a> - which an average hides completely.</li>
 <li><b>Hedged request.</b> A second, duplicate request sent to a different replica after waiting a while for the first, using whichever answer returns first.</li>

@@ -13,7 +13,7 @@
     --font-display: 'Sora', ui-sans-serif, system-ui, sans-serif;
     --font-body: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
     --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-    --measure: 70ch;
+    --measure: none;   /* one width rule: every block fills the content column */
     --rail-w: 272px;
     color-scheme: light;
   }
@@ -52,7 +52,7 @@
 
   /* header */
   header.top { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--border); }
-  .top-inner { max-width: 1360px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; }
+  .top-inner { max-width: 1680px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; }
   .home { flex: none; font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-dim); text-decoration: none; padding: 5px 9px 5px 0; border-right: 1px solid var(--border); white-space: nowrap; }
   .home:hover { color: var(--accent); }
   .brand { display: flex; flex-direction: column; margin-right: auto; min-width: 0; flex: 1 1 200px; }
@@ -79,7 +79,7 @@
   }
 
   /* shell */
-  .shell { max-width: 1360px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: var(--rail-w) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .shell { max-width: 1680px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: var(--rail-w) minmax(0, 1fr); gap: 24px; align-items: start; }
   @media (max-width: 940px) { .shell { grid-template-columns: minmax(0, 1fr); padding: 14px; } }
 
   /* rail: course outline */
@@ -169,6 +169,13 @@
   .prose li::marker { color: var(--ink-dim); }
   .prose code { font-family: var(--font-mono); font-size: 13px; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
   .prose b { font-weight: 600; }
+  /* tables inside a chapter body: same width rule as every other block, scrolls on its own when narrow */
+  .prose .tw { overflow-x: auto; margin: 14px 0; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+  .prose table { width: 100%; min-width: 620px; border-collapse: collapse; font-size: 14px; line-height: 1.5; }
+  .prose thead th { text-align: left; font-family: var(--font-mono); font-size: 10.5px; font-weight: 500; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-dim); padding: 9px 12px; border-bottom: 1px solid var(--border-strong); background: var(--surface-2); }
+  .prose td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .prose tbody tr:last-child td { border-bottom: 0; }
+  .prose td:first-child { font-weight: 600; }
   .deeper { margin-top: 14px; padding: 14px 18px; background: var(--surface-2); border-radius: 10px; border-left: 3px solid var(--accent); max-width: var(--measure); }
   .deeper .lbl { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-ink); margin-bottom: 6px; }
   .deeper .prose { font-size: 15px; }
@@ -347,7 +354,7 @@
   @media (prefers-reduced-motion: reduce) { .v-flow, .v-flow-slow, .v-pulse, .v-blink, .v-move-x, .v-grow, .v-fade-seq > *, .v-rotate { animation: none !important; opacity: 1 !important; } }
 
   .empty { color: var(--ink-dim); font-size: 13.5px; padding: 40px; text-align: center; }
-  footer { max-width: 1360px; margin: 24px auto 0; padding: 16px 20px 48px; border-top: 1px solid var(--border); font-size: 12px; line-height: 1.5; color: var(--ink-dim); font-family: var(--font-mono); }
+  footer { max-width: 1680px; margin: 24px auto 0; padding: 16px 20px 48px; border-top: 1px solid var(--border); font-size: 12px; line-height: 1.5; color: var(--ink-dim); font-family: var(--font-mono); }
 </style>
 
 <header class="top">

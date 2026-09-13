@@ -96,3 +96,49 @@ Each pack defines one sentence in `honesty`, naming the candidate's verified rec
 ## Ordering
 
 Chapters in `groups`, activities within a chapter, drills and question-bank chunks are ordered by importance for the round. Add and revise rather than delete; delete only what is clearly irrelevant, and say what was removed.
+
+## What belongs in the shared course, and what belongs in a private pack
+
+Added after the audit of 14 September 2026, when the candidate found his own career history shaping the
+public course in ways a stranger could not use and in some places would be misled by.
+
+One test decides it: **would this sentence have been written the same way if this particular candidate did
+not exist?** If no, it belongs in a private pack, not in `core/`.
+
+- **Chapter level and label.** `level` and `levelLabel` say how often the subject comes up in interviews,
+  because that is what the legend on the course home page tells the reader they mean. They never say how
+  much the reader already knows. A core chapter labelled "Your strongest area" or "You have used one, not
+  built one" is a ranking of one person, and it belongs on that person's `you-<chapter>` chapter in their
+  own pack, where the same label is correct and useful.
+- **Ordering.** Key terms, sections and chapters are ordered by what a general reader needs first and what
+  depends on what - not by what one candidate was asked last time. Say the ordering principle in the first
+  line of a key-terms list so the reader can use it.
+- **Coaching.** Generic interview coaching stays in the shared course: it is an interview-preparation
+  course and stripping that out would make it a worse textbook with no reason to exist. What leaves is
+  coaching aimed at one record - "never let it sound like you built the store", "this is also true of the
+  systems you have built" - and anything naming one employer's round names or hiring process.
+- **Diagrams.** A diagram drawn from one candidate's system may stay if it teaches a stranger something
+  real, but it must be redrawn in neutral labels. A diagram that says "the parts you do not own" is telling
+  one person about their job; the same picture labelled by team role teaches anyone where the handoffs in a
+  streaming feature pipeline usually fall.
+- **Nothing is lost.** Every passage removed from `core/` must already exist, or be added, in the private
+  pack that needs it - normally on the matching `you-<chapter>` chapter or in a "From the shared chapter"
+  section - before the removal is committed.
+
+## Definitions
+
+- A key-term entry must give the reader something the term did not already give them: a concrete example, a
+  realistic number, a consequence of getting it wrong, or where the thing is actually used. "Low-latency
+  serving. A single-key read fast enough to sit inside a request budget" fails, because it only says that
+  low latency means fast. Add one clause, not a paragraph.
+- Never refer to a source the reader has not been shown. "Published platform goals map onto this almost
+  exactly", "such platforms typically expose four interfaces", "write-ups describe" are all research notes
+  with the citation stripped off. Either name what is being talked about, or state the point on its own
+  feet. `node local/tools/thin-terms.js` lists candidates for the first rule.
+
+## Layout
+
+One width rule across every block type. Prose, quizzes, key terms, readings and diagrams all fill the same
+content column, and the column uses the browser width (`--measure: none`, shell capped at 1680px). A page
+where the diagram runs to the right edge and the paragraph beside it stops two-thirds of the way across
+looks broken, and it is.

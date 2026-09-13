@@ -21,26 +21,26 @@
 <li><b>IP address.</b> The address of one machine on the network, for example <code>93.184.216.34</code>. Packets are routed from one of these to another.</li>
 <li><b>Port.</b> A number that says which program on that machine the bytes are for: 80 for plain web traffic, 443 for encrypted web traffic, 5432 for a common database. An address plus a port identifies one endpoint of one connection.</li>
 <li><b>Router.</b> A device that forwards a packet one step closer to its destination address. A packet crossing the internet passes through ten to thirty of them.</li>
-<li><b>Layer.</b> One level of the network stack. Software is built in layers so that each level can use the level below it without knowing how it works: your code asks for "send this message to this server" and never touches a cable.</li>
+<li><b>Layer.</b> One level of the network stack. Software is built in layers so that each level can use the level below it without knowing how it works: your code asks for "send this message to this server" and never touches a cable. The standard picture has seven of them (see <a href="#networking-basics/nb-layers">The network layers, all seven of them</a>).</li>
 <li><b>TCP.</b> Transmission control protocol: a connection that guarantees every byte arrives, once, in the order it was sent, by numbering the bytes and resending anything lost.</li>
 <li><b>UDP.</b> User datagram protocol: single packets sent with no connection, no ordering and no resending. Cheaper and faster to start, and the program has to cope with loss itself.</li>
-<li><b>Datagram.</b> One self-contained packet that stands on its own, with no connection behind it. UDP sends datagrams.</li>
+<li><b>Datagram.</b> One self-contained packet that stands on its own, with no connection behind it. UDP sends datagrams: a DNS lookup is one datagram out and one back, and if either is lost nothing resends it.</li>
 <li><b>Handshake.</b> The short exchange two machines have before real data flows, to agree that a connection exists and, for encryption, to agree on keys.</li>
 <li><b>Round-trip time (RTT).</b> How long a message takes to reach the other side and the answer to come back. It is the unit almost everything in this chapter is measured in.</li>
 <li><b>Latency and bandwidth.</b> Latency is how long one message takes to arrive; bandwidth is how many bytes per second the link can carry. A fatter pipe does not make a message arrive sooner.</li>
 <li><b>HTTP.</b> The application protocol the web runs on: the client sends a request (a method, a path, headers, sometimes a body) and the server sends back a response (a status code, headers, a body).</li>
 <li><b>HTTP method.</b> The verb of a request: <code>GET</code> reads, <code>POST</code> creates, <code>PUT</code> replaces, PATCH (changes only the fields included in the request) edits, <code>DELETE</code> removes.</li>
 <li><b>Status code.</b> The three-digit result of a request: 2xx worked, 3xx go somewhere else, 4xx the caller got it wrong, 5xx the server got it wrong.</li>
-<li><b>Multiplexing.</b> Running several independent conversations over one connection at the same time, instead of one after another.</li>
-<li><b>Head-of-line blocking.</b> One slow or missing item holding up everything queued behind it, even though the items have nothing to do with each other.</li>
+<li><b>Multiplexing.</b> Running several independent conversations over one connection at the same time, instead of one after another. HTTP/2 uses it so a single connection can carry a page's images, scripts and stylesheets together.</li>
+<li><b>Head-of-line blocking.</b> One slow or missing item holding up everything queued behind it, even though the items have nothing to do with each other. On a TCP connection carrying several requests at once, one lost packet stalls all of them until it is resent.</li>
 <li><b>QUIC.</b> A newer transport protocol built on UDP that does ordering, loss recovery and encryption itself, per stream rather than per connection. HTTP/3 runs on it.</li>
 <li><b>TLS.</b> Transport layer security: the encryption that turns HTTP into HTTPS. It hides the content, detects tampering, and proves the server really is the name you asked for.</li>
 <li><b>Certificate.</b> A signed statement that a particular public key belongs to a particular name, issued by a certificate authority that browsers and operating systems already trust.</li>
 <li><b>TLS termination.</b> The point where encryption is undone and the request becomes readable - usually a content delivery network (CDN) edge or a load balancer, not the application itself.</li>
-<li><b>Session resumption.</b> Re-using the result of an earlier TLS handshake so a returning client can skip most of it.</li>
+<li><b>Session resumption.</b> Re-using the result of an earlier TLS handshake so a returning client can skip most of it, saving a round trip on every later connection.</li>
 <li><b>DNS.</b> Domain name system: the directory that turns a name like <code>example.com</code> into an IP address.</li>
 <li><b>Recursive resolver.</b> The server that does the looking-up on your behalf, asking the root servers, then the <code>.com</code> servers, then the servers that own the name.</li>
-<li><b>Authoritative name server.</b> The server that actually holds the answer for a name, because its owner publishes it there.</li>
+<li><b>Authoritative name server.</b> The server that actually holds the answer for a name, because its owner publishes it there. It is the only place a record is really changed; every other copy is a cache that keeps serving the old answer until it expires.</li>
 <li><b>Time to live (TTL).</b> How many seconds a DNS answer may be kept in a cache before it must be looked up again. It is the dial between fast change and few lookups.</li>
 <li><b>Keep-alive.</b> Leaving a connection open after a response so the next request can use it instead of paying for a new handshake.</li>
 <li><b>Connection pool.</b> A set of already-open connections a program keeps to a server, handed out to whatever needs one, so the handshake cost is paid once rather than per request.</li>

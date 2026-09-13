@@ -26,10 +26,10 @@
         title: 'Key terms',
         body: `<ul>
 <li><b>Scalar, vector, matrix, tensor</b> -- a single number; an ordered list of numbers; a 2-D grid of numbers; the general word for a grid of any number of dimensions. A colour image is a 3-D tensor: height, width, and three colour channels.</li>
-<li><b>Dot product</b> -- multiply two vectors' matching entries and add up the results. It turns two vectors into one number.</li>
+<li><b>Dot product</b> -- multiply two vectors' matching entries and add up the results. It turns two vectors into one number: (1, 2, 3) and (4, 5, 6) give 4 + 10 + 18 = 32.</li>
 <li><b>Norm</b> -- a single number measuring a vector's size. <b>L2 norm</b> is the ordinary straight-line length; <b>L1 norm</b> is the sum of the absolute values of the entries.</li>
 <li><b>Cosine similarity</b> -- the cosine of the angle between two vectors. It is 1 for vectors pointing the same way, 0 for perpendicular vectors, and it ignores how long either vector is.</li>
-<li><b>Eigenvector, eigenvalue</b> -- a direction a matrix only stretches, never rotates, and the amount it stretches that direction by.</li>
+<li><b>Eigenvector, eigenvalue</b> -- a direction a matrix only stretches, never rotates, and the amount it stretches that direction by. PCA's principal components are exactly the eigenvectors of the data's covariance matrix.</li>
 <li><b>Derivative, gradient</b> -- how fast a function changes as its input changes; the gradient is that same idea for a function of several inputs at once, written as one vector, one entry per input.</li>
 <li><b>Chain rule</b> -- the rule for differentiating a function built out of nested functions, by multiplying the derivatives of each layer together.</li>
 <li><b>Jacobian</b> -- the gradient's generalisation again, for a function with several outputs: a grid holding every output's derivative with respect to every input.</li>
@@ -38,11 +38,11 @@
 <li><b>Likelihood</b> -- the probability of the data you actually observed, written as a function of an unknown parameter so you can ask which parameter value makes it largest.</li>
 <li><b>Prior, posterior</b> -- what you believed about a parameter before seeing data, and what you believe after combining that belief with the data through Bayes' rule.</li>
 <li><b>Entropy, cross-entropy, KL divergence</b> (KL is short for Kullback-Leibler, the two people it is named after) -- how much uncertainty a distribution has; how many extra bits it costs to describe outcomes from the true distribution using a guessed one; and the gap between the two, which measures how wrong the guess is.</li>
-<li><b>Logit</b> -- a model's raw, unnormalised output score for a class, before softmax turns it into a probability.</li>
-<li><b>Softmax</b> -- the function that turns a vector of logits into a vector of probabilities that add up to one.</li>
+<li><b>Logit</b> -- a model's raw, unnormalised output score for a class, before softmax turns it into a probability. The name comes from log-odds: for a two-class model a logit of 0 is an even chance and a logit of +2.2 is about 90%.</li>
+<li><b>Softmax</b> -- the function that turns a vector of logits into a vector of probabilities that add up to one. Logits of (2, 1, 0.1) come out as roughly (0.66, 0.24, 0.10).</li>
 <li><b>Loss function</b> -- the single number a model is trained to make small, measuring how wrong its predictions are on the training data.</li>
-<li><b>Gradient descent</b> -- repeatedly nudging the model's parameters a small step in the direction that most reduces the loss.</li>
-<li><b>Learning rate</b> -- how big each of those steps is.</li>
+<li><b>Gradient descent</b> -- repeatedly nudging the model's parameters a small step in the direction that most reduces the loss, which is the opposite of the gradient -- hence the minus sign in the update rule.</li>
+<li><b>Learning rate</b> -- how big each of those steps is; typical values run from 0.001 to 0.1, and one set too large makes the loss oscillate or diverge instead of falling.</li>
 <li><b>Convex function</b> -- a function shaped like a single bowl, with no dip anywhere other than the true minimum, so there is nowhere for a downhill search to get stuck.</li>
 <li><b>Local minimum, saddle point</b> -- a point that looks like the bottom from nearby but is not the true minimum; and a point that is a minimum in some directions and a maximum in others.</li>
 </ul>`,
@@ -301,17 +301,17 @@
 <li><b>Population, sample</b> -- everything you could in principle observe, and the finite subset you actually collected. A model is trained on a sample and hopefully works on the population.</li>
 <li><b>Data-generating process</b> -- the real-world mechanism that produced your data, including whatever made some things more likely to be observed than others.</li>
 <li><b>i.i.d.</b> -- independent and identically distributed: each observation is drawn from the same distribution, and drawing one tells you nothing about the next. Most standard ML theory assumes it.</li>
-<li><b>Sampling bias</b> -- the sample was collected in a way that systematically over- or under-represents part of the population.</li>
+<li><b>Sampling bias</b> -- the sample was collected in a way that systematically over- or under-represents part of the population, such as a satisfaction survey shown inside an app, which never reaches the users who already uninstalled it.</li>
 <li><b>Missing at random, missing not at random</b> -- whether the fact that a value is missing depends on unobserved information related to that same value; "missing completely at random" adds that it does not even depend on other observed columns.</li>
 <li><b>Feature</b> -- one measured or computed input column a model reads. <b>Target</b> (or label) -- the value the model is trained to predict.</li>
-<li><b>Encoding</b> -- turning a non-numeric feature, most often a category, into numbers a model can use.</li>
+<li><b>Encoding</b> -- turning a non-numeric feature, most often a category, into numbers a model can use, such as one-hot encoding, which replaces a three-value colour column with three 0/1 columns.</li>
 <li><b>Data leakage</b> -- information reaching the model during training that would not actually be available at prediction time in production.</li>
 <li><b>Empirical risk</b> -- the average loss a model achieves on the training sample, as opposed to its true, unobservable average loss on the whole population.</li>
 <li><b>Bias (statistical)</b> -- the systematic gap between a model's average prediction and the true value, caused by the model being too simple to capture the real pattern.</li>
 <li><b>Variance (statistical)</b> -- how much a model's predictions would change if it were retrained on a different sample from the same population.</li>
 <li><b>Regularisation</b> -- any technique that deliberately makes a model simpler or less confident than it would be if only training performance mattered, to reduce variance.</li>
 <li><b>Overfitting, underfitting</b> -- a model that has matched the noise in the training sample and will not generalise; a model too simple to have matched even the real pattern.</li>
-<li><b>Generalisation</b> -- how well a model trained on a sample performs on new data it has never seen.</li>
+<li><b>Generalisation</b> -- how well a model trained on a sample performs on new data it has never seen. A model scoring 99% on its training rows and 72% on held-out rows has not generalised.</li>
 <li><b>PAC learning</b> (PAC is short for probably approximately correct) -- a formal framework guaranteeing that, given enough i.i.d. samples, a model that fits the training data well will, with high probability, also generalise well.</li>
 <li><b>Distribution shift</b> -- the statistical relationship between features, labels, or both, changes between training time and prediction time.</li>
 </ul>`,

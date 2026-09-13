@@ -26,12 +26,12 @@
         title: 'Key terms',
         body: `<ul>
 <li><b>Feature, label</b> -- <a href="#data-and-generalization/dag-f4">taught in Data, features and generalisation</a>: an input a model uses to predict (a customer's age); the value it is trying to predict (whether they churn).</li>
-<li><b>Residual</b> -- actual value minus predicted value, for one row.</li>
+<li><b>Residual</b> -- actual value minus predicted value, for one row. A residual of -12 means the model predicted 12 units too high for that row.</li>
 <li><b>Least squares, normal equation</b> -- fitting a line by minimising the sum of squared residuals; the closed-form formula that solves this directly instead of searching for it.</li>
 <li><b>Multicollinearity</b> -- when two or more features carry almost the same information, which makes their individual coefficients unstable and hard to trust.</li>
 <li><b>Sigmoid, logit</b> -- the S-shaped function that squashes any real number into a probability between 0 and 1; the raw, un-squashed score fed into it.</li>
-<li><b>Log loss</b> -- the standard classification loss, which grows sharply as a confident prediction turns out to be wrong.</li>
-<li><b>Odds</b> -- the probability an event happens divided by the probability it does not.</li>
+<li><b>Log loss</b> -- the standard classification loss, which grows sharply as a confident prediction turns out to be wrong: predicting 0.99 for a row whose true label is 0 costs about 4.6, against 0.01 for the same confidence when it is right.</li>
+<li><b>Odds</b> -- the probability an event happens divided by the probability it does not, so a 20% chance is odds of 0.25, or 1 to 4 against.</li>
 <li><b>Generalised linear model (GLM)</b> -- a family that predicts a transformed version of the target's average using a linear combination of features, so the same idea fits probabilities, counts, and other kinds of outcome.</li>
 <li><b>Regularisation</b> -- <a href="#data-and-generalization/dag-f7">taught in Data, features and generalisation</a>: a penalty for large coefficients added to a model's loss, to stop it fitting noise.</li>
 <li><b>Ridge (L2), lasso (L1), elastic net</b> -- a penalty on the sum of squared coefficients; a penalty on the sum of their absolute values, which can push some to exactly zero; a mix of both.</li>
@@ -343,20 +343,20 @@
 <li><b>Train, validation, test split</b> -- the portion a model fits its parameters on; the portion used to choose between models or hyperparameters; the portion touched exactly once, at the end, for an unbiased final read.</li>
 <li><b>Stratified split</b> -- a split that preserves the proportion of each class, so a rare class is not accidentally missing from one side.</li>
 <li><b>Grouped split</b> -- a split that keeps every row belonging to one entity (one customer, one patient, one device) entirely on one side, so no information about that entity leaks across.</li>
-<li><b>Time-based split</b> -- training on earlier data and evaluating on later data, matching how the model will actually be used.</li>
+<li><b>Time-based split</b> -- training on earlier data and evaluating on later data, matching how the model will actually be used. A random split instead lets the model learn from next month before predicting last month, which flatters the score.</li>
 <li><b>k-fold cross-validation</b> -- rotating which fold is held out for evaluation across k splits and averaging the result, to reduce the variance of a single train/test split.</li>
 <li><b>Nested cross-validation</b> -- an outer loop that estimates generalisation performance wrapped around an inner loop that searches hyperparameters, so the same data never both tunes and scores the model.</li>
 <li><b>Leakage</b> -- <a href="#data-and-generalization/dag-f5">taught in Data, features and generalisation</a>: information about the evaluation data reaching the model during training, making a reported metric optimistic.</li>
 <li><b>Confusion matrix, TP, FP, FN, TN</b> -- the 2x2 (or larger) table of predicted versus actual class; a true positive (a correctly predicted positive); a false positive (a negative wrongly predicted positive); a false negative (a positive wrongly predicted negative); a true negative (a correctly predicted negative).</li>
 <li><b>Precision, recall, F1</b> -- of the rows predicted positive, the fraction actually positive; of the rows actually positive, the fraction caught; the harmonic mean of the two.</li>
 <li><b>ROC curve, AUC</b> -- true positive rate plotted against false positive rate across every threshold; the probability a random positive scores higher than a random negative.</li>
-<li><b>PR curve</b> -- precision plotted against recall across every threshold, more informative than ROC when positives are rare.</li>
+<li><b>PR curve</b> -- precision plotted against recall across every threshold, more informative than ROC when positives are rare: at a 1% positive rate an ROC-AUC of 0.95 can still mean precision below 10% at the threshold you ship.</li>
 <li><b>MAE, RMSE, MAPE, R-squared</b> -- mean absolute error; root mean squared error, which penalises large errors more; mean absolute percentage error; the fraction of the target's variance the model explains.</li>
 <li><b>NDCG</b> (normalised discounted cumulative gain), <b>MAP</b> (mean average precision), <b>MRR</b> (mean reciprocal rank) -- ranking metrics: gain from relevant items discounted by how far down the list they appear, normalised against the best possible order; the average, across queries, of precision measured at each relevant result; the average, across queries, of 1 over the rank of the first relevant result.</li>
 <li><b>Expected value, precision at k, lift</b> -- probability multiplied by the value of each outcome, summed; the fraction of the top k ranked items that are actually positive; how much better than the base rate a targeted segment performs.</li>
 <li><b>Grid search, random search, Bayesian optimisation</b> -- trying every combination of hyperparameters; trying random combinations; using a model of past trial results to choose the next, more promising, hyperparameter combination to try.</li>
 <li><b>Early stopping</b> -- <a href="#data-and-generalization/dag-f7">taught with the other regularisers</a>: training stops once validation performance has not improved for a fixed number of rounds.</li>
-<li><b>Slicing</b> -- evaluating a model separately on meaningful subgroups instead of only on the whole dataset at once.</li>
+<li><b>Slicing</b> -- evaluating a model separately on meaningful subgroups instead of only on the whole dataset at once. An overall accuracy of 92% can hide 60% accuracy on new users.</li>
 <li><b>A/B test, guardrail metric, interleaving</b> -- randomly splitting users between two versions to measure a causal difference; a secondary metric you watch to catch an unintended regression; mixing two systems' results into one list to compare them with far fewer users.</li>
 <li><b>Statistical power, effect size, sample size</b> -- the chance a test detects a real effect if one exists; how large that real effect actually is; how many observations are needed to detect it reliably.</li>
 </ul>`,
