@@ -150,7 +150,7 @@
     b += T(140, 82, '-', { s: 10, c: 'var(--ink-dim)' });
     b += A(u, 150, 74, 194, 74, { c: 'var(--danger)', m: 'ad' });
     b += T(172, 62, 'error', { s: 10, c: 'var(--danger)', cls: 'v-pulse' });
-    b += B(198, 52, 132, 44, 'controller~policy or MPC');
+    b += B(198, 52, 132, 44, 'controller~decision rule');
     b += A(u, 332, 74, 376, 74);
     b += T(354, 62, 'action', { s: 10, c: 'var(--ink-dim)' });
     b += B(380, 52, 132, 44, 'plant~the real system');
@@ -185,10 +185,10 @@
     b += B(626, 48, 84, 36, 'measure');
     b += AP(u, 'M668 86V112H440V90', { c: 'var(--good)', m: 'ag' });
     b += F('M668 86V112H440V90', { c: 'var(--good)' });
-    b += T(560, 128, 'correct on every cycle', { s: 10, c: 'var(--good)' });
+    b += T(560, 128, 'measurement informs correction', { s: 10, c: 'var(--good)' });
     b += R(440, 140, 240, 10, { f: 'var(--good-weak)' });
     b += R(440, 140, 30, 10, { f: 'var(--good)', cls: 'v-pulse' });
-    b += T(560, 164, 'error stays bounded', { s: 10, c: 'var(--ink-dim)' });
+    b += T(560, 164, 'error may shrink when the loop is stable', { s: 10, c: 'var(--ink-dim)' });
     return S(184, b);
   };
 
@@ -259,7 +259,7 @@
   V['assignment-matrix'] = function (u) {
     var b = D(u, 'ar'), r, c, inner = '';
     b += HD('assignment under capacity');
-    var eng = ['eng 1', 'eng 2', 'eng 3', 'eng 4', 'eng 5'];
+    var eng = ['engineer 1', 'engineer 2', 'engineer 3', 'engineer 4', 'engineer 5'];
     var pick = [1, 3, 1, 4];
     for (c = 0; c < 5; c++) { b += T(178 + c * 104, 44, eng[c], { s: 10, c: 'var(--ink-dim)' }); }
     for (r = 0; r < 4; r++) {
@@ -505,27 +505,25 @@
 
   V['ml-lifecycle'] = function (u) {
     var b = D(u, 'ar aa aw');
-    b += HD('the model lifecycle');
-    var top = [['data', 30], ['features', 178], ['training', 326], ['registry', 474], ['deploy', 622]];
+    b += HD('the nine-stage model lifecycle');
+    var top = [['1 ingestion', 18], ['2 features', 166], ['3 training', 314], ['4 evaluation', 462], ['5 registration', 610]];
+    var bottom = [['9 retraining', 18], ['8 serving +~monitoring', 166], ['7 deployment', 314], ['6 approval', 462]];
     var i;
-    for (i = 0; i < top.length; i++) { b += B(top[i][1], 48, 108, 40, top[i][0]); }
-    for (i = 0; i < 4; i++) { b += A(u, 140 + i * 148, 68, 172 + i * 148, 68); }
-    b += F('M140 68H172M288 68H320M436 68H468M584 68H616');
-    b += AP(u, 'M676 90V118H488V96', { m: 'none', c: 'var(--border)', d: '3 3' });
-    b += B(474, 118, 108, 40, 'serve');
-    b += B(326, 118, 108, 40, 'monitor', { cls: 'v-pulse', f: 'var(--warning-weak)', sk: 'var(--warning)' });
-    b += A(u, 470, 138, 440, 138);
-    b += AP(u, 'M330 138H200V92', { m: 'aa', c: 'var(--accent)' });
-    b += F('M330 138H200V92');
-    b += T(190, 128, 'drift and labels', { a: 'end', s: 10, c: 'var(--accent)' });
-    b += DT(452, 138, 4.5, { cls: 'v-blink' });
-    b += T(380, 180, 'monitoring is what turns a one-off model into a system', { s: 10, c: 'var(--ink-dim)' });
+    for (i = 0; i < top.length; i++) { b += B(top[i][1], 44, 126, 38, top[i][0], { ts: 9.5 }); }
+    for (i = 0; i < 4; i++) { b += A(u, 146 + i * 148, 63, 162 + i * 148, 63); }
+    b += F('M144 63H162M292 63H310M440 63H458M588 63H606');
+    b += AP(u, 'M673 84V126H590', { m: 'aa', c: 'var(--accent)' });
+    for (i = 0; i < bottom.length; i++) { b += B(bottom[i][1], 108, 126, 44, bottom[i][0], { ts: 9.5, f: i === 0 ? 'var(--warning-weak)' : 'var(--surface-2)', sk: i === 0 ? 'var(--warning)' : 'var(--border)', cls: i === 0 ? 'v-pulse' : '' }); }
+    for (i = 3; i > 0; i--) { b += A(u, bottom[i][1], 130, bottom[i - 1][1] + 130, 130); }
+    b += F('M462 130H440M314 130H292M166 130H144');
+    b += AP(u, 'M18 130H8V63H16', { m: 'aa', c: 'var(--warning)', d: '4 4' });
+    b += T(380, 180, 'monitor outcomes, then retrain only when evidence supports a new candidate', { s: 10, c: 'var(--ink-dim)' });
     return S(194, b);
   };
 
   V['feature-store-two-stores'] = function (u) {
     var b = D(u, 'ar aa');
-    b += HD('one definition, two stores');
+    b += HD('a common feature-store architecture', 'one definition, two materializations');
     b += B(28, 92, 150, 52, 'feature definition~written once');
     b += AP(u, 'M180 108H300V66H340', { m: 'aa', c: 'var(--accent)' });
     b += AP(u, 'M180 128H300V172H340', { m: 'aa', c: 'var(--accent)' });
@@ -536,7 +534,7 @@
     b += A(u, 498, 174, 548, 174);
     b += B(552, 46, 180, 46, 'serving lookup~single key, milliseconds', { ts: 10 });
     b += B(552, 152, 180, 46, 'training set~point-in-time join', { ts: 10 });
-    b += T(380, 218, 'the same code fills both, which is what stops training-serving skew', { s: 10, c: 'var(--ink-dim)' });
+    b += T(380, 218, 'shared definitions reduce skew; freshness, data and serving-path parity still need tests', { s: 10, c: 'var(--ink-dim)' });
     return S(230, b);
   };
 
@@ -545,13 +543,13 @@
     b += HD('point-in-time correctness');
     b += LN(50, 110, 730, 110, { c: 'var(--ink-dim)', w: 1.6 });
     b += LN(400, 46, 400, 158, { c: 'var(--accent)', w: 2 });
-    b += T(400, 40, 'decision time t0', { s: 10, c: 'var(--accent)' });
+    b += T(400, 40, 'decision time', { s: 10, c: 'var(--accent)' });
     b += R(90, 92, 306, 16, { f: 'var(--good-weak)', sk: 'var(--good)' });
-    b += T(243, 104, 'features known at or before t0', { s: 10, c: 'var(--ink)' });
+    b += T(243, 104, 'features available by the decision', { s: 10, c: 'var(--ink)' });
     b += LN(600, 96, 600, 124, { c: 'var(--warning)', w: 2 });
-    b += T(600, 148, 'label arrives at t0 + H', { s: 10, c: 'var(--warning)' });
+    b += T(600, 148, 'label arrives after its delay', { s: 10, c: 'var(--warning)' });
     b += R(410, 60, 300, 16, { f: 'var(--danger-weak)', sk: 'var(--danger)' });
-    b += T(560, 72, 'anything after t0 is a leak', { s: 10, c: 'var(--danger)' });
+    b += T(560, 72, 'later information is a leak', { s: 10, c: 'var(--danger)' });
     b += AP(u, 'M560 80V96H408', { m: 'ad', c: 'var(--danger)', d: '4 4' });
     b += LN(470, 78, 496, 100, { c: 'var(--danger)', w: 2.4, cls: 'v-blink' });
     b += LN(496, 78, 470, 100, { c: 'var(--danger)', w: 2.4, cls: 'v-blink' });
@@ -572,7 +570,7 @@
     b += T(660, 78, 'same feature, two values', { s: 10, c: 'var(--danger)', cls: 'v-blink', a: 'end' });
     b += T(250, 60, 'training value', { a: 'start', s: 10, c: 'var(--good)' });
     b += T(250, 164, 'serving value', { a: 'start', s: 10, c: 'var(--warning)' });
-    b += B(300, 176, 190, 30, 'parity check on live traffic', { ts: 10, f: 'var(--surface-3)', r: 15 });
+    b += B(300, 176, 190, 30, 'offline-serving equality check', { ts: 9.5, f: 'var(--surface-3)', r: 15 });
     b += A(u, 495, 191, 620, 130, { c: 'var(--danger)', m: 'ad', d: '4 4' });
     b += T(140, 196, 'alert on divergence', { a: 'start', s: 10, c: 'var(--danger)' });
     return S(216, b);
@@ -603,11 +601,11 @@
 
   V['data-contract-validation'] = function (u) {
     var b = D(u, 'ar ag ad'), i, inner = '';
-    b += HD('data contract as a gate');
+    b += HD('data-contract validation');
     b += B(28, 84, 118, 44, 'producer');
     b += A(u, 148, 106, 292, 106);
     b += F('M148 106H292', { c: 'var(--good)' });
-    b += B(296, 60, 96, 92, 'schema~gate', { f: 'var(--surface-3)', ts: 11 });
+    b += B(296, 60, 96, 92, 'contract~checks', { f: 'var(--surface-3)', ts: 11 });
     b += A(u, 394, 106, 540, 106, { c: 'var(--good)', m: 'ag' });
     b += B(544, 84, 188, 44, 'warehouse / feature store', { ts: 10 });
     for (i = 0; i < 4; i++) {
@@ -616,7 +614,7 @@
     b += SQ(inner);
     b += AP(u, 'M296 132C250 168 190 172 150 168', { m: 'ad', c: 'var(--danger)' });
     b += R(150, 158, 18, 16, { f: 'var(--danger-weak)', sk: 'var(--danger)', cls: 'v-blink' });
-    b += T(300, 186, 'a row that breaks the contract bounces back to the producer', { s: 10, c: 'var(--danger)' });
+    b += T(300, 186, 'reject or quarantine invalid rows; notify the producer, then repair or replay deliberately', { s: 10, c: 'var(--danger)' });
     b += T(640, 152, 'types, ranges, nulls, keys', { s: 10, c: 'var(--ink-dim)' });
     return S(200, b);
   };
@@ -645,7 +643,7 @@
   V['latency-budget-bar'] = function (u) {
     var b = D(u, 'ar ad'), i, x = 60;
     b += HD('latency budget', 'p99 must fit inside');
-    var segs = [['gateway', 70, 'var(--surface-3)'], ['features', 150, 'var(--accent-weak)'], ['model', 210, 'var(--accent)'], ['post', 90, 'var(--surface-3)']];
+    var segs = [['gateway', 70, 'var(--surface-3)'], ['features', 150, 'var(--accent-weak)'], ['model', 210, 'var(--accent)'], ['post-process~+ policy', 90, 'var(--surface-3)']];
     for (i = 0; i < segs.length; i++) {
       b += R(x, 60, segs[i][1], 40, { f: segs[i][2], sk: 'var(--border)' });
       b += T(x + segs[i][1] / 2, 84, segs[i][0], { s: 10, c: i === 2 ? 'var(--accent-ink)' : 'var(--ink)' });
@@ -664,7 +662,7 @@
 
   V['load-balancer-replicas'] = function (u) {
     var b = D(u, 'ar ag ad'), i;
-    b += HD('load balancer and health checks');
+    b += HD('load balancer and readiness checks');
     b += B(24, 88, 96, 42, 'clients');
     b += A(u, 122, 109, 168, 109);
     b += F('M122 109H168');
@@ -679,7 +677,7 @@
       b += T(576, ys[i] + 24, dead ? 'health check failing' : 'healthy', { a: 'start', s: 10, c: dead ? 'var(--danger)' : 'var(--ink-dim)' });
     }
     b += F('M282 109C330 109 340 66 388 66', { c: 'var(--good)' });
-    b += T(380, 210, 'the unhealthy replica is drained and its share moves to the others', { s: 10, c: 'var(--ink-dim)' });
+    b += T(380, 210, 'failed readiness removes new traffic; graceful shutdown separately drains in-flight work', { s: 10, c: 'var(--ink-dim)' });
     return S(222, b);
   };
 
@@ -699,7 +697,7 @@
     b += SQ(inner);
     b += T(600, 40, 'replicas added', { s: 10, c: 'var(--accent)' });
     b += T(600, 164, 'depth falls back under the threshold', { s: 10, c: 'var(--ink-dim)' });
-    b += T(380, 186, 'scale on the backlog, not on CPU, when work is queued', { s: 10, c: 'var(--ink-dim)' });
+    b += T(380, 186, 'choose a workload signal that predicts saturation; queue depth is one option', { s: 10, c: 'var(--ink-dim)' });
     return S(198, b);
   };
 
@@ -719,7 +717,7 @@
       b += B(610, 44 + i * 30, 96, 24, 'result', { ts: 10, r: 12 });
     }
     b += F('M504 118C548 118 560 56 606 56M504 118C548 118 560 176 606 176', { cls: 'v-flow-slow' });
-    b += T(380, 206, 'higher GPU utilisation, at the cost of the batching window in latency', { s: 10, c: 'var(--ink-dim)' });
+    b += T(380, 206, 'higher accelerator utilisation, at the cost of the batching window in latency', { s: 10, c: 'var(--ink-dim)' });
     return S(218, b);
   };
 
@@ -925,7 +923,7 @@
   V['multi-region-failover'] = function (u) {
     var b = D(u, 'ar ag ad');
     b += HD('multi-region failover');
-    b += B(302, 44, 156, 40, 'global router / DNS', { ts: 10, f: 'var(--accent-weak)', sk: 'var(--accent)' });
+    b += B(302, 44, 156, 40, 'global traffic router', { ts: 10, f: 'var(--accent-weak)', sk: 'var(--accent)' });
     b += AP(u, 'M340 86C300 100 260 100 216 112', { m: 'ad', c: 'var(--danger)', d: '4 4' });
     b += AP(u, 'M420 86C460 100 500 100 546 112', { m: 'ag', c: 'var(--good)' });
     b += F('M420 86C460 100 500 100 546 112', { c: 'var(--good)' });
@@ -943,7 +941,7 @@
 
   V['scale-test-3x'] = function (u) {
     var b = D(u, 'ar ad'), i, inner = '';
-    b += HD('scale test at three times peak');
+    b += HD('illustrative scale test at three times peak', 'choose the margin from measured risk');
     b += LN(70, 160, 720, 160);
     b += LN(70, 40, 70, 160);
     b += LN(70, 122, 720, 122, { c: 'var(--accent)', d: '5 4' });
@@ -1040,11 +1038,11 @@
     b += F('M278 112C310 112 312 152 336 152', { cls: 'v-flow-slow' });
     b += B(340, 130, 170, 44, 'shadow model', { ts: 11, f: 'var(--surface-3)' });
     b += AP(u, 'M512 152H566', { m: 'none', c: 'var(--border)', d: '4 4' });
-    b += B(570, 130, 162, 44, 'logged only', { ts: 11, f: 'var(--surface-3)', tc: 'var(--ink-dim)' });
+    b += B(570, 130, 162, 44, 'no decision effect', { ts: 10, f: 'var(--surface-3)', tc: 'var(--ink-dim)' });
     b += LN(636, 182, 668, 206, { c: 'var(--danger)', w: 2.2 });
     b += LN(668, 182, 636, 206, { c: 'var(--danger)', w: 2.2 });
-    b += T(620, 202, 'no user impact', { a: 'end', s: 10, c: 'var(--danger)' });
-    b += T(300, 202, 'real traffic, real load, zero blast radius', { s: 10, c: 'var(--ink-dim)' });
+    b += T(620, 202, 'isolate side effects', { a: 'end', s: 10, c: 'var(--danger)' });
+    b += T(300, 202, 'real traffic and load; capacity, privacy, logs and cost still matter', { s: 10, c: 'var(--ink-dim)' });
     return S(216, b);
   };
 
@@ -1059,19 +1057,19 @@
     b += A(u, 190, 162, 330, 162, { c: 'var(--warning)', m: 'aw', cls: 'v-pulse' });
     b += T(340, 166, 'shift', { a: 'start', s: 10, c: 'var(--warning)' });
     b += R(510, 52, 220, 40, { f: 'var(--surface-2)', sk: 'var(--border)', r: 6 });
-    b += T(620, 76, 'PSI 0.31', { s: 12, c: 'var(--warning)' });
-    b += T(620, 42, 'drift score', { s: 10, c: 'var(--ink-dim)' });
+    b += T(620, 76, 'example PSI: 0.31', { s: 11, c: 'var(--warning)' });
+    b += T(620, 42, 'illustrative drift score', { s: 10, c: 'var(--ink-dim)' });
     b += LN(510, 104, 730, 104, { c: 'var(--danger)', d: '5 4' });
-    b += T(620, 120, 'alert threshold 0.20', { s: 10, c: 'var(--danger)' });
+    b += T(620, 120, 'illustrative threshold: 0.20', { s: 10, c: 'var(--danger)' });
     b += A(u, 620, 130, 620, 148, { c: 'var(--warning)', m: 'aw' });
-    b += B(534, 150, 172, 38, 'retrain triggered', { ts: 10, f: 'var(--warning-weak)', sk: 'var(--warning)', cls: 'v-blink' });
-    b += T(320, 192, 'input drift is a warning; falling business metrics are the real signal', { s: 10, c: 'var(--ink-dim)' });
+    b += B(534, 150, 172, 38, 'investigation triggered', { ts: 10, f: 'var(--warning-weak)', sk: 'var(--warning)', cls: 'v-blink' });
+    b += T(320, 192, 'input drift is a warning to investigate, not an automatic retraining command', { s: 10, c: 'var(--ink-dim)' });
     return S(204, b);
   };
 
   V['rollback-path'] = function (u) {
     var b = D(u, 'ar ag ad'), i;
-    b += HD('rollback is a pointer move');
+    b += HD('an application rollback can be a pointer change');
     for (i = 0; i < 4; i++) {
       b += B(60 + i * 170, 58, 140, 44, 'v' + (i + 1), { ts: 12, f: i === 3 ? 'var(--danger-weak)' : 'var(--surface-2)', sk: i === 3 ? 'var(--danger)' : 'var(--border)' });
       if (i < 3) { b += A(u, 202 + i * 170, 80, 226 + i * 170, 80); }
@@ -1080,7 +1078,7 @@
     b += LN(60, 122, 700, 122, { c: 'var(--border)' });
     b += AP(u, 'M640 138H300', { m: 'ag', c: 'var(--good)', w: 2 });
     b += F('M640 138H300', { c: 'var(--good)' });
-    b += T(470, 158, 'traffic pointer moves back in one step', { s: 10, c: 'var(--good)' });
+    b += T(470, 158, 'traffic is repointed to a compatible version kept ready', { s: 10, c: 'var(--good)' });
     b += DT(300, 122, 7, { f: 'var(--good)', cls: 'v-pulse' });
     b += T(300, 178, 'v3 serving again', { s: 10, c: 'var(--good)' });
     b += T(380, 200, 'data migrations are the part that does not roll back; plan them forward-compatible', { s: 10, c: 'var(--ink-dim)' });
@@ -1113,18 +1111,18 @@
 
   V['incident-scenario-spine'] = function (u) {
     var b = D(u, 'ar aa'), i;
-    var st = ['clarify', 'contain', 'diagnose', 'fix', 'prevent'];
-    var sub = ['scope and impact', 'stop the bleeding', 'find the cause', 'ship the change', 'make it not recur'];
-    b += HD('incident answer spine');
-    b += LN(60, 96, 706, 96, { c: 'var(--border)', w: 2 });
+    var st = ['clarify', 'contain', 'diagnose', 'fix + verify', 'prevent'];
+    var sub = ['impact + safety', 'lowest-risk action', 'test evidence', 'repair + prove', 'learn + follow up'];
+    b += HD('a five-step incident-response path');
+    b += LN(60, 84, 700, 84, { c: 'var(--border)', w: 2 });
     for (i = 0; i < 5; i++) {
-      b += B(52 + i * 136, 60, 120, 44, st[i], { ts: 11, f: i === 0 ? 'var(--accent-weak)' : 'var(--surface-2)', sk: i === 0 ? 'var(--accent)' : 'var(--border)' });
-      b += T(112 + i * 136, 130, sub[i], { s: 10, c: 'var(--ink-dim)' });
-      if (i < 4) { b += A(u, 174 + i * 136, 82, 186 + i * 136, 82); }
+      b += B(52 + i * 136, 52, 120, 44, st[i], { ts: 10, f: i === 0 ? 'var(--accent-weak)' : (i === 1 ? 'var(--warning-weak)' : 'var(--surface-2)'), sk: i === 0 ? 'var(--accent)' : (i === 1 ? 'var(--warning)' : 'var(--border)') });
+      b += T(112 + i * 136, 120, sub[i], { s: 9, c: 'var(--ink-dim)' });
+      if (i < 4) { b += A(u, 174 + i * 136, 74, 186 + i * 136, 74); }
     }
-    b += DT(112, 150, 7, { f: 'var(--accent)', cls: 'v-move-x', st: DXS(544) });
-    b += T(380, 178, 'say which step you are on before you answer; it is the structure interviewers score', { s: 10, c: 'var(--ink-dim)' });
-    return S(190, b);
+    b += DT(112, 142, 6, { f: 'var(--accent)', cls: 'v-move-x', st: DXS(544) });
+    b += T(380, 170, 'contain with a safe reversible action when available; diagnosis can continue in parallel', { s: 10, c: 'var(--ink-dim)' });
+    return S(184, b);
   };
 
   /* ------------------------------------------------------------------ 7. GenAI */
@@ -1210,7 +1208,7 @@
     b += HD('guardrails on both sides of the model');
     b += B(20, 78, 88, 46, 'user input', { ts: 10 });
     b += A(u, 110, 101, 146, 101);
-    b += B(150, 70, 126, 62, 'input filter~PII, injection', { ts: 10, f: 'var(--good-weak)', sk: 'var(--good)' });
+    b += B(150, 70, 126, 62, 'input filter~sensitive data,~injection', { ts: 9.5, f: 'var(--good-weak)', sk: 'var(--good)' });
     b += A(u, 278, 101, 314, 101, { c: 'var(--good)', m: 'ag' });
     b += F('M110 101H146M278 101H314', { c: 'var(--good)' });
     b += B(318, 78, 124, 46, 'model', { ts: 11, f: 'var(--surface-3)' });
@@ -1391,11 +1389,11 @@
 
   var C = {
     'flow-forecast-optimize-act': 'A decision system is a <b>loop</b>: forecast what happens, optimize what to do, act, then feed the observed outcome back into the next forecast.',
-    'closed-loop': 'A controller only works when the <b>measured output</b> is fed back and turned into an error that changes the next action.',
-    'open-vs-closed-loop': 'Without measurement, error accumulates silently; with a feedback path the same plan stays <b>bounded</b>.',
+    'closed-loop': 'A closed-loop controller feeds the <b>measured output</b> back into its next action. Whether that reduces error depends on observability, delay, constraints and stable tuning.',
+    'open-vs-closed-loop': 'An open loop cannot react to measured error. Feedback <b>can reduce error</b> when the closed loop is observable, controllable and stably tuned; feedback alone does not guarantee bounded error.',
     'receding-horizon': 'Plan over a long horizon but <b>commit only the first slot</b>, then re-plan as new information lands.',
-    'mdp-loop': 'In an MDP the agent picks an action, the environment returns the next state, and the <b>reward can arrive many steps later</b>.',
-    'bandit-vs-rl': 'A bandit is one decision with fast feedback; RL is a <b>chain of states</b> where credit has to be assigned backwards.',
+    'mdp-loop': 'In a Markov decision process (MDP), the agent picks an action, the environment returns the next state, and the <b>reward can arrive many steps later</b>.',
+    'bandit-vs-rl': 'A bandit is one decision with fast feedback; reinforcement learning (RL) follows a <b>chain of states</b> where credit may need to be assigned across time.',
     'assignment-matrix': 'Assignment picks one owner per item subject to <b>per-owner capacity</b> — a constraint problem, not a ranking problem.',
     'vrp-routes': 'Vehicle routing builds a route per vehicle so that every stop is visited inside its <b>time window</b>.',
     'exact-vs-metaheuristic-landscape': 'An exact solver gives a <b>proven bound</b>; a metaheuristic wanders out of local dips and gives a good answer quickly.',
@@ -1408,16 +1406,16 @@
     'rolling-origin-backtest': 'A rolling-origin backtest moves the cut forward fold by fold, so the model is never scored on data it could have seen.',
     'coverage-vs-width': 'An interval is only useful if it is both <b>calibrated</b> (covers at the stated rate) and narrow enough to act on.',
     'driver-regression-fit': 'A driver model is judged by its <b>residuals</b>: what the drivers fail to explain is where the next feature lives.',
-    'ml-lifecycle': 'Data, features, training, registry, deploy, serve, monitor — the <b>monitoring arc back to features</b> is what makes it a system.',
-    'feature-store-two-stores': 'One feature definition is materialised twice: an <b>online store</b> for request-time lookups and an <b>offline store</b> for training.',
-    'point-in-time-join': 'Every feature must be joined <b>as of the decision time</b>; anything from after t0 is leakage that inflates offline scores.',
-    'training-serving-skew': 'When training and serving compute the same feature by different code paths, the values drift — a <b>parity check</b> on live traffic catches it.',
+    'ml-lifecycle': 'The nine taught stages are ingestion, feature engineering, training, evaluation, registration, approval, deployment, serving and monitoring, then retraining. Monitoring supplies evidence; it does not make retraining automatic.',
+    'feature-store-two-stores': 'A common feature-store design materializes one shared definition into an <b>online store</b> for request-time lookups and an offline store for training. Shared definitions reduce one source of skew but do not guarantee equal data, freshness or serving behavior.',
+    'point-in-time-join': 'Each training row must use only feature values that were <b>available by the decision time</b>. Later information is leakage even if its event time is earlier.',
+    'training-serving-skew': 'An offline-versus-serving equality check, often called a <b>parity check</b>, compares the two code paths on the same inputs and alerts when their values diverge.',
     'label-latency': 'When labels arrive weeks after the event, today cannot be scored yet; use <b>leading proxies</b> while the real labels mature.',
-    'data-contract-validation': 'A data contract is a gate: conforming rows pass, and a bad row <b>bounces back to the producer</b> instead of poisoning the store.',
-    'gitops-loop': 'In GitOps the repository is the desired state and a controller continuously <b>reconciles</b> the cluster back to it.',
+    'data-contract-validation': 'A data contract states schema and quality expectations. Valid rows proceed; invalid rows are <b>rejected or quarantined</b>, the producer is notified, and repair or replay follows an explicit policy rather than an automatic bounce.',
+    'gitops-loop': 'In GitOps, the repository contains declarative, versioned desired state and a controller continuously <b>reconciles</b> the cluster to it. Git records desired-state changes; preserve approval metadata and controller/deployment audit events separately.',
     'latency-budget-bar': 'A latency budget is spent by every hop; the model is one slice, and the <b>headroom</b> is what absorbs a bad day.',
-    'load-balancer-replicas': 'Health checks let the load balancer <b>drain</b> an unhealthy replica and move its share to the others.',
-    'autoscaling-queue': 'When work is queued, scale on <b>backlog depth</b> rather than CPU, and expect a lag before the new replicas help.',
+    'load-balancer-replicas': 'A failed readiness check removes a replica from <b>new load-balancer selections</b>. Gracefully draining existing connections and in-flight requests is a separate shutdown behavior.',
+    'autoscaling-queue': 'Queue depth can be a better autoscaling signal than central processing unit (CPU) use for queued work, but the right signal depends on what predicts saturation for that workload.',
     'request-batching': 'Batching many small requests into one forward pass raises utilisation, paying the <b>batching window</b> in latency.',
     'caching-read-through': 'In a read-through cache the cache itself loads a missing key, so callers never learn the loading path.',
     'caching-write-through': 'Write-through acks only after both stores are written; write-back acks early and <b>risks the buffer</b> to be fast.',
@@ -1429,19 +1427,19 @@
     'rate-limiter-token-bucket': 'A token bucket allows a burst equal to the bucket size while holding the <b>sustained rate</b> at the refill rate.',
     'circuit-breaker-states': 'A breaker goes closed to open on errors, half-open after a cool-off, and back to closed only if the probe succeeds — it protects the <b>caller</b>.',
     'multi-region-failover': 'Failover only exists if the router, the data path, and the runbook have all been <b>exercised</b> together.',
-    'scale-test-3x': 'Testing at three times expected peak finds the first component that bends, before the season does.',
+    'scale-test-3x': 'Three times expected peak is an <b>illustrative margin</b>, not a universal target. Choose the test load from forecast uncertainty, failure scenarios, launch risk and cost, then identify the first component that bends.',
     'degrade-to-fallback': 'Decide the degraded answer in advance — rules or a cached result — and <b>alert on how often it fires</b>.',
     'canary-rollout': 'A canary raises traffic in steps with a <b>metrics gate</b> at each one, and every step can be reversed.',
     'blue-green-swap': 'Two full environments make the rollback a single router flip, because the previous version is still running.',
-    'shadow-traffic': 'Shadow traffic exercises a new model on real load with <b>zero blast radius</b>, because its output is only logged.',
-    'drift-monitor': 'Input drift is an early warning; the decision to retrain should still be anchored on the <b>business metric</b>.',
-    'rollback-path': 'A rollback is a pointer move — except for data migrations, which is why they must be written forward-compatible.',
+    'shadow-traffic': 'When isolated correctly, shadow traffic has <b>no user-facing decision effect</b>. It can still consume capacity and money, expose sensitive input, mutate telemetry or tools, and needs access controls and monitoring.',
+    'drift-monitor': 'Population stability index (PSI) is one possible input-drift score. The shown 0.20 threshold is <b>illustrative</b>: binning, baseline, sample size and operational cost determine a local threshold and response.',
+    'rollback-path': 'A compatible application release can roll back by repointing traffic to a previous version kept ready. That does not undo completed decisions, external side effects or incompatible data changes, so rollback is <b>not instant or risk-free by default</b>.',
     'two-dashboards': 'System health and <b>decision quality</b> are two different dashboards; everything can be green while the decisions get worse.',
-    'incident-scenario-spine': 'Clarify, contain, diagnose, fix, prevent — naming the step you are on is the structure interviewers actually score.',
-    'rag-pipeline': 'RAG grounds the model on retrieved chunks, and the <b>citations</b> are the audit trail back to the source.',
+    'incident-scenario-spine': 'Clarify impact and immediate safety, contain with the lowest-risk reversible action available, diagnose from evidence, fix and verify recovery, then prevent recurrence. Containment must not worsen the hazard, and diagnosis can run in parallel.',
+    'rag-pipeline': 'Retrieval-augmented generation (RAG) supplies source chunks to the model; <b>citations</b> link claims back to evidence but still need a grounding check.',
     'vector-similarity': 'Cosine similarity ranks by <b>direction, not magnitude</b>; an approximate index trades a little recall for a lot of speed.',
     'llm-serving-batching': 'Continuous batching keeps <b>KV-cache slots</b> busy and frees each one the moment its sequence finishes; memory is usually the limit.',
-    'guardrails-io': 'Guardrails sit on both sides of the model — input filtering and output policy — and every trigger should be logged.',
+    'guardrails-io': 'Guardrails can detect prompt injection and personally identifiable information (PII) around a model. They are defense in depth: authorization and sensitive-data boundaries must be enforced outside the model.',
     'craft-demo-clock': 'A craft demo is mostly one case study end to end, with a short intro and real time reserved for <b>their questions</b>.',
     'hlding-boxes': 'A high-level design is drawn in order: entry point, then the work, then state, then the async path — and each box needs a reason.',
     'gcp-aws-mapping': 'Managed services map roughly across clouds; the mapping is good enough to talk with and never exact in the details.',

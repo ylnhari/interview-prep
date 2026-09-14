@@ -1,4 +1,4 @@
-/* streaming-features diagrams: the two clocks on a feature value, and one possible
+/* streaming-features diagrams: two clocks used for point-in-time reasoning, and one possible
    streaming pipeline ownership arrangement with two handoffs. */
 (function (root) {
   'use strict';
@@ -9,33 +9,33 @@
 
   V['two-timestamps-timeline'] = function (u) {
     var b = D(u, 'ar aa aw ad');
-    b += HD('every feature value carries two timestamps', 'one transaction, two clocks');
+    b += HD('point-in-time reasoning uses two clocks', 'one card-transaction example');
 
     /* ---- the world's clock ---- */
     b += T(24, 44, 'EVENT TIME - when it became true', { a: 'start', s: 10.5, w: 1, c: 'var(--accent-ink)' });
     b += LN(24, 58, 736, 58, { c: 'var(--accent)', w: 1.6 });
     b += DT(110, 58, 5);
     b += T(110, 76, '14:32:07', { a: 'start', s: 11, w: 1, c: 'var(--accent-ink)' });
-    b += T(110, 90, 'the card is used. The chargeback that arrives six weeks later', { a: 'start', s: 9.5, c: 'var(--ink-dim)' });
-    b += T(110, 102, 'is stamped with this same moment, not with its arrival date.', { a: 'start', s: 9.5, c: 'var(--ink-dim)' });
+    b += T(110, 90, 'a card transaction occurs. A later chargeback outcome belongs', { a: 'start', s: 9.5, c: 'var(--ink-dim)' });
+    b += T(110, 102, 'to this transaction, but is not available at decision time.', { a: 'start', s: 9.5, c: 'var(--ink-dim)' });
     b += F('M24 58H736', { d: '4 10', w: 1.6 });
 
     /* ---- what the training row may use ---- */
     b += R(110, 122, 268, 42, { f: 'var(--good-weak)', sk: 'var(--good)', r: 8 });
     b += T(244, 139, 'the training row uses this', { s: 10.5, w: 1, c: 'var(--good)' });
-    b += T(244, 154, 'the value readable at 14:32:11', { s: 9.5, c: 'var(--ink-dim)' });
+    b += T(244, 154, 'the feature value available by 14:32:11', { s: 9.5, c: 'var(--ink-dim)' });
     b += R(398, 122, 268, 42, { f: 'var(--danger-weak)', sk: 'var(--danger)', r: 8 });
     b += T(532, 139, 'either of these leaks', { s: 10.5, w: 1, c: 'var(--danger)' });
     b += T(532, 154, '14:32:13, or the value as it stands today', { s: 9.5, c: 'var(--ink-dim)' });
 
     /* ---- the system's clock ---- */
-    b += T(24, 198, 'PROCESSING TIME - when the system found out', { a: 'start', s: 10.5, w: 1, c: 'var(--ink-dim)' });
+    b += T(24, 198, 'AVAILABILITY TIME - when each fact could be read', { a: 'start', s: 10.5, w: 1, c: 'var(--ink-dim)' });
     b += LN(24, 212, 736, 212, { c: 'var(--ink-dim)', w: 1.6, d: '6 4' });
     var marks = [
-      [86, '14:31:50', 'the velocity value', 'already in the store', 'var(--good)'],
-      [256, '14:32:11', 'the scorer runs and', 'reads that 14:31:50 value', 'var(--accent)'],
-      [430, '14:32:13', 'the new value is written,', 'two seconds too late to read', 'var(--warning)'],
-      [612, '10 Oct', 'the chargeback arrives;', 'the label finally exists', 'var(--danger)']
+      [86, '14:31:50', 'velocity feature', 'available in the store', 'var(--good)'],
+      [256, '14:32:11', 'scoring service runs;', 'returns a prediction', 'var(--accent)'],
+      [430, '14:32:13', 'new feature available,', 'too late for this decision', 'var(--warning)'],
+      [612, '10 Oct', 'chargeback observed;', 'the outcome is now usable', 'var(--danger)']
     ];
     var i;
     for (i = 0; i < marks.length; i++) {
@@ -47,11 +47,11 @@
     b += LN(530, 204, 530, 220, { c: 'var(--border-strong)', d: '2 3' });
     b += T(530, 199, 'six weeks', { s: 9, c: 'var(--ink-dim)' });
 
-    b += T(380, 286, 'training must respect event time; serving is limited by processing time', { s: 10.5, c: 'var(--ink-dim)' });
+    b += T(380, 286, 'point-in-time training respects both event time and when each value became available', { s: 10.5, c: 'var(--ink-dim)' });
     return S(298, b);
   };
 
-  C['two-timestamps-timeline'] = 'One transaction, two clocks. The scorer can only read what was written before it ran, so the training row has to carry that same value - not the one written two seconds later, and not the one the feature holds today.';
+  C['two-timestamps-timeline'] = 'In this card-transaction example, event time says when the transaction occurred and availability time says when each feature or outcome could be read. The scoring service returns a model prediction using only values available by the decision; a point-in-time training row must reproduce that boundary.';
 
   /* ----------------------------------- one possible streaming pipeline ownership arrangement */
 
@@ -84,9 +84,9 @@
     b += LN(272, 102, 549, 102, { c: 'var(--border)', d: '3 4' });
 
     /* ---- the topics the job publishes ---- */
-    b += B(582, 34, 156, 24, 'audit log topic', PIPELINE_TOPIC);
-    b += B(582, 64, 156, 24, 'dead-letter topic', PIPELINE_TOPIC);
-    b += B(582, 94, 156, 24, 'feature topic', PIPELINE_TOPIC);
+    b += B(582, 34, 156, 24, 'audit events', PIPELINE_TOPIC);
+    b += B(582, 64, 156, 24, 'failed events', PIPELINE_TOPIC);
+    b += B(582, 94, 156, 24, 'feature updates', PIPELINE_TOPIC);
     b += AP(u, 'M560 70H570V46H578', { c: 'var(--accent)', m: 'aa' });
     b += A(u, 560, 76, 578, 76, { c: 'var(--accent)', m: 'aa' });
     b += AP(u, 'M560 82H570V106H578', { c: 'var(--accent)', m: 'aa' });
@@ -118,5 +118,5 @@
     return S(230, b);
   };
 
-  C['streaming-feature-pipeline'] = 'One possible ownership arrangement: producer services publish to a topic, a job turns the stream into features and publishes them, a platform team loads the store, and the scoring service <b>reads the store but never writes to it</b>. Solid boxes share one team in this example; dashed boxes represent adjacent teams. Organizations assign these boundaries differently. Use the handoffs to identify which team investigates each failure.';
+  C['streaming-feature-pipeline'] = 'One possible ownership arrangement: producers publish events, a job computes feature updates, and a platform component loads the store. Audit events record what the job processed; failed events move to a dead-letter stream after the retry policy is exhausted. In this example the scoring service returns a model prediction and only reads the store; on-demand or push features use other paths. Team boundaries vary by organization.';
 }(typeof window !== 'undefined' ? window : this));

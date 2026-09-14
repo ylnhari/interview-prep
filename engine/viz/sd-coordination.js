@@ -106,30 +106,28 @@
 
   V['consistency-spectrum'] = function (u) {
     var b = D(u, 'ar');
-    b += HD('the consistency spectrum');
+    b += HD('consistency guarantees are not one simple spectrum');
     var segs = [
       { lab: 'linearizable', f: 'var(--accent)', c: 'var(--accent-ink)', ex: 'balance check right after a transfer' },
       { lab: 'sequential', f: 'var(--accent-weak)', c: 'var(--ink)', ex: 'a replicated log applied in one order' },
       { lab: 'causal', f: 'var(--surface-3)', c: 'var(--ink)', ex: 'a reply never precedes its comment' },
-      { lab: 'read-your-writes /~monotonic reads', f: 'var(--surface-2)', c: 'var(--ink)', ex: 'you always see your own last edit' },
       { lab: 'eventual', f: 'var(--surface)', c: 'var(--ink-dim)', ex: 'replicas agree once writes stop' }
     ];
-    var x0 = 30, w = 140, gap = 4, i;
-    for (i = 0; i < 5; i++) {
+    var x0 = 30, w = 166, gap = 16, i;
+    b += T(30, 42, 'global ordering and convergence guarantees', { s: 9, c: 'var(--ink-dim)', a: 'start' });
+    for (i = 0; i < 4; i++) {
       var x = x0 + i * (w + gap);
-      b += R(x, 70, w, 34, { f: segs[i].f, sk: 'var(--border)', r: 5 });
-      b += ML(x + w / 2, 87, segs[i].lab, { ts: 10, tc: segs[i].c });
-      b += T(x + w / 2, 122, segs[i].ex, { s: 8.5, c: 'var(--ink-dim)' });
+      b += R(x, 52, w, 34, { f: segs[i].f, sk: 'var(--border)', r: 5 });
+      b += ML(x + w / 2, 69, segs[i].lab, { ts: 10, tc: segs[i].c });
+      b += T(x + w / 2, 104, segs[i].ex, { s: 8.2, c: 'var(--ink-dim)' });
     }
-    b += AP(u, 'M30 50H710', { c: 'var(--ink-dim)', m: 'none' });
-    b += DT(30, 50, 3, { f: 'var(--ink-dim)' });
-    b += GROW(DT(30, 50, 4, { f: 'var(--accent)', cls: 'v-move-x', st: DXS(680) }));
-    b += T(30, 40, 'stronger, more coordination', { s: 9, c: 'var(--ink-dim)', a: 'start' });
-    b += T(710, 40, 'weaker, less coordination', { s: 9, c: 'var(--ink-dim)', a: 'end' });
-    b += T(380, 150, 'every model to the left promises strictly more than every model to its right', { s: 10, c: 'var(--ink-dim)' });
-    return S(168, b);
+    b += T(30, 132, 'optional session guarantees can overlay several global models', { s: 9, c: 'var(--ink-dim)', a: 'start' });
+    b += B(210, 142, 160, 34, 'read-your-writes', { ts: 10, f: 'var(--good-weak)', sk: 'var(--good)' });
+    b += B(390, 142, 160, 34, 'monotonic reads', { ts: 10, f: 'var(--good-weak)', sk: 'var(--good)' });
+    b += T(380, 198, 'coordination cost depends on the protocol and workload, not only the guarantee name', { s: 10, c: 'var(--ink-dim)' });
+    return S(210, b);
   };
-  C['consistency-spectrum'] = 'A dot slides across the spectrum: every model to the <b>left</b> costs more coordination and promises strictly more than the ones to its right.';
+  C['consistency-spectrum'] = 'Linearizability, sequential consistency, causal consistency and eventual convergence describe global ordering or convergence. <b>Read-your-writes</b> and monotonic reads are session guarantees that can be added separately, so the choices are not one strict total order and coordination cost is implementation-dependent.';
 
   V['quorum-w-r-n'] = function (u) {
     var b = D(u, 'ar aa ag'), i;

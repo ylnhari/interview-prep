@@ -1,5 +1,6 @@
-"""Focused tests for public-only output, metadata, and cloud-config boundaries."""
-import json
+"""Focused tests for public-only output, metadata, and guest-only progress boundaries."""
+import contextlib
+import io
 from pathlib import Path
 import tempfile
 import unittest
@@ -31,16 +32,8 @@ class PublicBuildTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             output, builder = self.fixture(root)
-            config_path = root / "public-config.json"
-            wrapper = {"enabled": True, "firebase": {
-                "apiKey": "public-key", "authDomain": "example.firebaseapp.com",
-                "projectId": "course-project", "appId": "web-app",
-                "messagingSenderId": "123456",
-            }}
-            config_path.write_text(json.dumps(wrapper), encoding="utf-8")
             with mock.patch.object(public_build.subprocess, "check_call", side_effect=builder) as call:
-                public_build.build_public(root=root, output_dir=output,
-                                          cloud_config_path=config_path)
+                public_build.build_public(root=root, output_dir=output)
             self.assertEqual(set(p.name for p in output.iterdir()), public_build.PUBLIC_FILES)
             self.assertEqual(Path(call.call_args.args[0][2]), root / "packs" / "course")
             course = (output / "course.html").read_text(encoding="utf-8")
@@ -50,8 +43,8 @@ class PublicBuildTests(unittest.TestCase):
             self.assertIn('<meta name="viewport" content="width=device-width,initial-scale=1">', course)
             self.assertEqual(index.count('name="viewport"'), 1)
             self.assertIn('rel="canonical" href="https://ylnhari.github.io/interview-prep/course.html"', course)
-            self.assertIn("window.PREP_CLOUD_CONFIG=" + json.dumps(wrapper, separators=(",", ":")), course)
-            self.assertIn("window.PREP_CLOUD_CONFIG=" + json.dumps(wrapper, separators=(",", ":")), index)
+            self.assertNotIn("window.PREP_CLOUD_CONFIG=", course)
+            self.assertNotIn("window.PREP_CLOUD_CONFIG=", index)
             self.assertNotEqual(course.split('name="description" content="', 1)[1].split('"', 1)[0],
                                 index.split('name="description" content="', 1)[1].split('"', 1)[0])
             self.assertNotIn("another-pack", "".join(p.read_text(encoding="utf-8") for p in output.iterdir()))
@@ -109,26 +102,38 @@ class PublicBuildTests(unittest.TestCase):
                         public_build.build_public(root=root, output_dir=output)
             call.assert_not_called()
 
-    def test_cloud_config_is_allowlisted_and_script_safe(self):
-        safe = {"enabled": True, "firebase": {"apiKey": "public-key", "authDomain": "example.test",
-                                                "projectId": "course-project", "appId": "web-app"}}
-        html = public_build.add_metadata("<title>x</title><script></script>", title="x",
-                                         canonical="https://example.test/", cloud_config=safe)
-        self.assertIn('window.PREP_CLOUD_CONFIG={"enabled":true,"firebase":{"apiKey":"public-key","authDomain":"example.test","projectId":"course-project","appId":"web-app"}}', html)
-        self.assertNotIn("</script>\"", html)
+    def test_cloud_config_is_rejected_before_build(self):
         with tempfile.TemporaryDirectory() as tmp:
-            for invalid in (
-                {"enabled": True, "firebase": {"apiKey": "k", "authDomain": "a", "projectId": "p", "appId": "i", "ownerUid": "private"}},
-                {"enabled": True, "firebase": {"apiKey": "k", "authDomain": "a", "projectId": "p", "appId": "i", "storageBucket": "unused"}},
-                {"enabled": True, "firebase": {"apiKey": "k", "authDomain": "a", "projectId": "p", "appId": "i", "measurementId": "unused"}},
-                {"enabled": True, "firebase": {"apiKey": "k", "authDomain": "a", "projectId": "p", "appId": "i", "apiSecret": "private"}},
-                {"enabled": True, "firebase": {"apiKey": "k", "authDomain": "a", "projectId": "p", "appId": "i", "ownerEmail": "private@example.test"}},
-                {"apiKey": "flat-config-is-not-supported"},
-            ):
-                config = Path(tmp) / "config.json"
-                config.write_text(json.dumps(invalid), encoding="utf-8")
-                with self.assertRaises(ValueError):
-                    public_build.parse_config(config)
+            root = Path(tmp)
+            output, builder = self.fixture(root)
+            config_path = root / "must-not-be-read.json"
+            with mock.patch.object(public_build.subprocess, "check_call", side_effect=builder) as call:
+                with self.assertRaisesRegex(ValueError, "do not accept cloud configuration"):
+                    public_build.build_public(root=root, output_dir=output,
+                                              cloud_config_path=config_path)
+            call.assert_not_called()
+
+    def test_embedded_cloud_config_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "must not define cloud configuration"):
+            public_build.reject_cloud_config(
+                "<script>window.PREP_CLOUD_CONFIG = {enabled: true};</script>")
+        self.assertEqual(
+            public_build.reject_cloud_config(
+                "<script>var cloudConfig = window.PREP_CLOUD_CONFIG || null;</script>"),
+            "<script>var cloudConfig = window.PREP_CLOUD_CONFIG || null;</script>")
+        with self.assertRaisesRegex(ValueError, "must not expose cloud-sync controls"):
+            public_build.reject_cloud_config(
+                '<button id="cloud-btn">Sign in to sync</button>')
+        self.assertEqual(
+            public_build.reject_cloud_config(
+                '<button id="cloud-btn" hidden>Sign in to sync</button>'),
+            '<button id="cloud-btn" hidden>Sign in to sync</button>')
+
+    def test_command_line_has_no_cloud_config_option(self):
+        with contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit) as raised:
+                public_build.main(["--cloud-config", "must-not-be-read.json"])
+        self.assertEqual(raised.exception.code, 2)
 
 
 if __name__ == "__main__":

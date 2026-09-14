@@ -47,7 +47,7 @@
     var b = D(u, 'ar aa ad');
     b += HD('backprop through a tiny 2-layer net', 'x = [1.0, 2.0], target y = 1');
     b += B(24, 60, 130, 40, 'input~x1=1.0, x2=2.0', { ts: 10 });
-    b += B(196, 50, 150, 60, 'hidden~A: z=-0.2 to a=0 (dead)~B: z=0.9 to a=0.90', { ts: 9 });
+    b += B(196, 50, 150, 60, 'hidden~A: z=-0.2 to a=0 (inactive here)~B: z=0.9 to a=0.90', { ts: 8.5 });
     b += B(388, 60, 150, 40, 'output~z=-0.07, y-hat=0.48', { ts: 10 });
     b += B(580, 60, 150, 40, 'loss~L = 0.73 (cross-entropy)', { ts: 9 });
     b += A(u, 154, 80, 192, 80, { c: 'var(--accent)', m: 'aa' });
@@ -62,10 +62,10 @@
     b += T(290, 130, 'dL/da_B=0.16, dL/da_A=0', { s: 9, c: 'var(--danger)', a: 'middle' });
     b += T(112, 130, 'dW_B=[0.16,0.31], dW_A=0', { s: 9, c: 'var(--danger)', a: 'middle' });
     b += T(400, 160, 'backward pass', { s: 10, c: 'var(--danger)', a: 'middle' });
-    b += T(400, 198, 'ReLU has a derivative of 0 for z below 0, so no gradient reaches A this step: a dead unit stops learning', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
+    b += T(400, 198, 'ReLU has derivative 0 below 0, so no gradient reaches A for this example; persistent inactivity is a dead unit', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
     return S(216, b);
   };
-  C['backprop-two-layer'] = 'The seed of every gradient in this tiny net is <b>y-hat minus y</b> at the output; it is scaled and passed backward layer by layer, and a ReLU unit that fired negative this step gets a gradient of exactly zero.';
+  C['backprop-two-layer'] = 'The seed of every gradient in this tiny net is <b>y-hat minus y</b> at the output. A rectified linear unit (ReLU) that is negative for this example receives zero gradient on this step; it is called dead only if it stays inactive across its inputs.';
 
   V['norm-layers'] = function (u) {
     var b = D(u, 'ar'), panels = [
@@ -211,21 +211,21 @@
 
   V['mlflow-registry'] = function (u) {
     var b = D(u, 'ar aa ag'), i;
-    b += HD('MLflow: track runs, promote a version');
+    b += HD('MLflow: track runs, assign aliases');
     b += B(24, 40, 170, 70, 'training run~params, metrics,~artifacts logged', { ts: 10 });
     b += A(u, 198, 75, 240, 75, { c: 'var(--accent)', m: 'aa' });
     b += F('M198 75L240 75');
     b += B(244, 40, 150, 70, 'tracking server~one row per run', { ts: 10 });
     b += A(u, 398, 75, 440, 75, { c: 'var(--accent)', m: 'aa' });
     b += T(420, 60, 'register', { s: 9, c: 'var(--accent)', a: 'middle' });
-    var vy = [40, 90, 140], stages = ['v1: Archived', 'v2: Production', 'v3: Staging (candidate)'], cols = ['var(--surface-3)', 'var(--good)', 'var(--warning)'];
+    var vy = [40, 90, 140], stages = ['v1: tag = retired', 'v2: alias = champion', 'v3: alias = candidate'], cols = ['var(--surface-3)', 'var(--good)', 'var(--warning)'];
     for (i = 0; i < 3; i++) { b += B(444, vy[i], 200, 34, stages[i], { ts: 9, f: cols[i] }); }
     b += AP(u, 'M549 157C630 157 630 105 549 105', { c: 'var(--good)', m: 'ag', d: '5 4' });
-    b += T(646, 130, 'promote', { s: 9, c: 'var(--good)' });
-    b += T(400, 200, 'promoting v3 to Production and archiving v2 is one auditable step, not a file copied by hand', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
+    b += T(646, 130, 'move champion alias', { s: 9, c: 'var(--good)' });
+    b += T(400, 200, 'aliases name roles; deployment still records the resolved immutable version in Git desired state', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
     return S(212, b);
   };
-  C['mlflow-registry'] = 'Every run logs its params, metrics and artifacts; promoting a registered version to Production (and archiving the old one) is a recorded action, not a manual file swap.';
+  C['mlflow-registry'] = 'MLflow records parameters, metrics and artifacts for each run. Current registry workflows use aliases and tags; fixed Staging and Production stages are legacy. A release resolves the chosen alias to an immutable version and pins that version or image in Git desired state.';
 
   V['fastapi-serving'] = function (u) {
     var b = D(u, 'ar aa ad');
@@ -257,35 +257,38 @@
     b += A(u, 272, 90, 312, 90, { c: 'var(--accent)', m: 'aa' });
     b += F('M126 90L166 90M272 90L312 90');
     var px = [316, 400, 484];
-    for (i = 0; i < 3; i++) { b += B(px[i], 70, 76, 40, 'Pod~GPU node', { ts: 9, f: i === 2 ? 'var(--surface-3)' : 'var(--surface-2)' }); }
+    for (i = 0; i < 3; i++) { b += B(px[i], 70, 76, 40, 'Pod~GPU request', { ts: 8.5, f: i === 2 ? 'var(--surface-3)' : 'var(--surface-2)' }); }
     b += B(600, 46, 130, 40, 'HPA~watches queue depth', { ts: 9 });
     b += AP(u, 'M600 66C560 66 500 42 460 66', { c: 'var(--warning)', m: 'aw', d: '4 4' });
     b += T(600, 28, 'scales replicas up or down', { s: 9, c: 'var(--warning)', a: 'middle' });
-    b += B(316, 140, 244, 34, 'resources: requests and limits~cpu, memory, nvidia.com/gpu', { ts: 9 });
-    b += T(400, 200, 'a GPU node pool is tainted so only GPU pods land there; requests reserve capacity, limits cap it', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
+    b += B(316, 140, 244, 34, 'placement: toleration + selector~capacity: GPU resource request', { ts: 8.5 });
+    b += T(400, 200, 'a toleration permits placement on a tainted node; a separate resource request reserves a GPU', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
     return S(214, b);
   };
-  C['k8s-ml-service'] = 'Ingress and Service front a Deployment’s Pods on a GPU node pool; the HPA watches a load metric and changes the replica count.';
+  C['k8s-ml-service'] = 'The Horizontal Pod Autoscaler (HPA) changes Pod count from a load metric. A graphics processing unit (GPU) node taint checks for a matching toleration, not a GPU request; the separate resource request reserves a device. GPUs are exclusive by default unless an administrator configures time-slicing or Multi-Instance GPU (MIG).';
 
   V['ci-cd-ml'] = function (u) {
     var b = D(u, 'ar aa ag ad');
     b += HD('CI/CD for a model, not just code');
-    b += B(20, 70, 100, 40, 'commit', { ts: 10 });
-    b += A(u, 122, 90, 158, 90, { c: 'var(--accent)', m: 'aa' });
-    b += B(162, 60, 140, 60, 'CI~unit tests + data validation', { ts: 9 });
-    b += A(u, 304, 90, 340, 90, { c: 'var(--accent)', m: 'aa' });
-    b += B(344, 60, 130, 60, 'train or build~image + model', { ts: 9 });
-    b += A(u, 476, 90, 512, 90, { c: 'var(--accent)', m: 'aa' });
-    b += B(516, 60, 120, 60, 'registry~new candidate version', { ts: 9 });
-    b += A(u, 638, 90, 674, 90, { c: 'var(--good)', m: 'ag' });
-    b += F('M122 90L158 90M304 90L340 90M476 90L512 90M638 90L674 90');
-    b += B(560, 150, 150, 36, 'GitOps CD~ArgoCD / Flux reconciles', { ts: 9 });
-    b += AP(u, 'M600 150V126H460V90', { c: 'var(--good)', m: 'ag', d: '4 4' });
-    b += T(400, 30, 'a failing data-validation check blocks here, before anything trains', { s: 9, c: 'var(--danger)', a: 'middle' });
-    b += AP(u, 'M232 60V30', { c: 'var(--danger)', d: '3 3', m: 'ad' });
-    b += T(400, 205, 'the pipeline promotes a versioned model artefact; the cluster is reconciled to match, not pushed to by hand', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
+    b += B(20, 60, 90, 40, 'commit', { ts: 10 });
+    b += A(u, 112, 80, 146, 80, { c: 'var(--accent)', m: 'aa' });
+    b += B(150, 50, 130, 60, 'CI~tests + data checks', { ts: 9 });
+    b += A(u, 282, 80, 316, 80, { c: 'var(--accent)', m: 'aa' });
+    b += B(320, 50, 130, 60, 'train + build~model and image', { ts: 9 });
+    b += A(u, 452, 80, 486, 80, { c: 'var(--accent)', m: 'aa' });
+    b += B(490, 50, 150, 60, 'registry~immutable version', { ts: 9 });
+    b += F('M112 80H146M282 80H316M452 80H486');
+    b += AP(u, 'M565 110V144H326', { c: 'var(--good)', m: 'ag' });
+    b += B(180, 140, 150, 40, 'Git manifest~pins model + image', { ts: 9, f: 'var(--good-weak)', sk: 'var(--good)' });
+    b += A(u, 332, 160, 378, 160, { c: 'var(--good)', m: 'ag' });
+    b += B(382, 140, 150, 40, 'CD controller~reconciles', { ts: 9 });
+    b += A(u, 534, 160, 580, 160, { c: 'var(--good)', m: 'ag' });
+    b += B(584, 140, 150, 40, 'running cluster~exact pinned version', { ts: 9 });
+    b += T(400, 30, 'a failing data check blocks before training', { s: 9, c: 'var(--danger)', a: 'middle' });
+    b += AP(u, 'M215 50V30', { c: 'var(--danger)', d: '3 3', m: 'ad' });
+    b += T(400, 205, 'the registry records versions; the Git manifest is the deployment desired state', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
     return S(220, b);
   };
-  C['ci-cd-ml'] = 'CI blocks on a failing data-validation check before anything trains; a passing candidate becomes a registry version, and GitOps reconciles the cluster to whatever the registry now says.';
+  C['ci-cd-ml'] = 'Continuous integration (CI) tests and builds an immutable model version and image. A release updates the Git manifest with exact pins; the continuous-delivery (CD) controller reconciles the cluster to that desired state. The cluster does not implicitly follow whichever registry alias changes.';
 
 }(typeof window !== 'undefined' ? window : this));

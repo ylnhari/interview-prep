@@ -27,6 +27,23 @@
   };
   C['golden-signals'] = 'The four golden signals - <b>latency, traffic, errors, saturation</b> - are the four questions worth an answer on every service dashboard.';
 
+  V['incident-command-timeline'] = function (u) {
+    var b = D(u, 'ar aa aw'), i;
+    var st = ['detect', 'assess~severity', 'assign~roles', 'mitigate~safely', 'recover +~verify', 'follow up'];
+    var sub = ['signal', 'impact + risk', 'lead / technical / comms', 'lowest-risk action', 'prove stable', 'learn + prevent'];
+    b += HD('an incident-command timeline');
+    b += LN(60, 84, 700, 84, { c: 'var(--border)', w: 2 });
+    for (i = 0; i < 6; i++) {
+      b += B(20 + i * 124, 52, 108, 44, st[i], { ts: 9.5, f: i === 0 ? 'var(--accent-weak)' : (i === 3 ? 'var(--warning-weak)' : 'var(--surface-2)'), sk: i === 0 ? 'var(--accent)' : (i === 3 ? 'var(--warning)' : 'var(--border)') });
+      b += T(74 + i * 124, 120, sub[i], { s: 8.5, c: 'var(--ink-dim)' });
+      if (i < 5) { b += A(u, 130 + i * 124, 74, 140 + i * 124, 74); }
+    }
+    b += DT(74, 142, 6, { f: 'var(--accent)', cls: 'v-move-x', st: DXS(620) });
+    b += T(380, 170, 'diagnosis can continue in parallel; mitigate only when the action does not worsen the hazard', { s: 10, c: 'var(--ink-dim)' });
+    return S(184, b);
+  };
+  C['incident-command-timeline'] = 'Incident command starts by detecting and assessing impact, assigns incident-lead, technical and communications roles, takes the lowest-risk safe mitigation, verifies recovery, then follows up. Diagnosis may run in parallel.';
+
   V['error-budget-burn'] = function (u) {
     var b = D(u, 'ar ad ag'), i, inner = '';
     b += HD('error budget burn: 30-day window, 99.9% SLO');
@@ -234,10 +251,10 @@
     b += CY(340, 170, 180, 40, 'feature store~online + offline', { ts: 9 });
     b += AP(u, 'M340 190C300 190 280 150 280 146', { c: 'var(--ink-dim)', d: '3 4', m: 'none' });
     b += AP(u, 'M430 170C440 150 460 130 470 146', { c: 'var(--ink-dim)', d: '3 4', m: 'none' });
-    b += T(380, 226, 'the cheap model can afford to look at everything; the expensive model only ever sees the shortlist', { s: 10, c: 'var(--ink-dim)' });
+    b += T(380, 226, 'fast retrieval searches the large catalog; the heavier ranker sees only the shortlist', { s: 10, c: 'var(--ink-dim)' });
     return S(236, b);
   };
-  C['case-recsys-two-stage'] = 'Candidate generation cheaply narrows millions of items to a few hundred; <b>ranking</b> then spends a heavier model\'s budget only on that short list, both stages reading the same feature store.';
+  C['case-recsys-two-stage'] = 'Fast candidate retrieval searches the large catalog using an index or parallel generators and narrows it to a few hundred items. The heavier <b>ranker</b> evaluates only that shortlist; candidate generation does not inspect every item with one cheap model.';
 
   V['case-fraud-stream'] = function (u) {
     var b = D(u, 'ar aa ad');

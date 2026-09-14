@@ -146,7 +146,7 @@
       { l: 'fp16 param', bytes: 2 }, { l: 'fp16 gradient', bytes: 2 },
       { l: 'fp32 master param', bytes: 4 }, { l: 'fp32 momentum', bytes: 4 }, { l: 'fp32 variance', bytes: 4 }
     ], i, y0 = 36, x0 = 220, scale = 28;
-    b += HD('16 bytes per parameter: mixed precision with Adam');
+    b += HD('a common fp16 AMP + Adam estimate', '16 bytes per parameter under these assumptions');
     for (i = 0; i < rows.length; i++) {
       var y = y0 + i * 30, w = rows[i].bytes * scale;
       b += T(210, y + 15, rows[i].l, { a: 'end', s: 10, c: 'var(--ink-dim)' });
@@ -154,11 +154,11 @@
       b += T(x0 + w + 8, y + 15, rows[i].bytes + ' bytes', { a: 'start', s: 10, c: 'var(--ink-dim)' });
     }
     b += LN(x0, y0 - 6, x0, y0 + rows.length * 30 - 8, { d: '3 3' });
-    b += T(x0 + 224, y0 + rows.length * 30 + 6, 'total: 16 bytes/param', { s: 12, w: 1, c: 'var(--ink)', cls: 'v-pulse' });
-    b += T(390, 210, '7B params x 16 bytes = 112 GB, before any activation memory', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
+    b += T(x0 + 224, y0 + rows.length * 30 + 6, 'total: 16 bytes/parameter', { s: 12, w: 1, c: 'var(--ink)', cls: 'v-pulse' });
+    b += T(390, 210, '7 billion parameters x 16 bytes = 112 GB, before activation memory', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
     return S(226, b);
   };
-  C['memory-per-parameter'] = 'Every trained parameter costs 16 bytes in mixed-precision Adam training: two small copies used to compute, and three larger fp32 copies the optimiser needs to update it correctly.';
+  C['memory-per-parameter'] = 'This 16-byte estimate assumes 16-bit floating point (fp16) automatic mixed precision (AMP) with Adam: fp16 parameters and gradients plus 32-bit floating point (fp32) master parameters and two optimizer states. Brain floating point (bf16), fused or 8-bit optimizers, and framework settings can use different layouts; inspect the actual recipe.';
 
   V['data-parallel-allreduce'] = function (u) {
     var b = D(u, 'ar aa'), i, xs = [40, 220, 400, 580];
@@ -177,11 +177,11 @@
     b += T(380, 172, 'gradient all-reduce: every GPU ends with the identical, averaged gradient', { s: 10, c: 'var(--ink)' });
     return S(200, b);
   };
-  C['data-parallel-allreduce'] = 'Each replica trains on its own shard of the batch, then a ring <b>all-reduce</b> sums and shares the gradients, so every replica takes the same optimiser step and stays identical.';
+  C['data-parallel-allreduce'] = 'Each graphics processing unit (GPU) replica trains on its own batch shard. A ring <b>all-reduce</b> sums and shares gradients so every replica takes the same optimiser step and stays identical.';
 
   V['zero-sharding'] = function (u) {
     var b = D(u, 'ar'), i, cols = [
-      { x: 110, title: 'DDP baseline', shard: [false, false, false] },
+      { x: 110, title: 'replicated baseline', shard: [false, false, false] },
       { x: 300, title: 'ZeRO-2', shard: [false, true, true] },
       { x: 490, title: 'ZeRO-3', shard: [true, true, true] }
     ], rowY = [48, 78, 108], rowLabel = ['params', 'gradients', 'optimizer state'], c, r;
@@ -199,7 +199,7 @@
     b += T(400, 172, 'FSDP gathers a shard just before it is used in the forward or backward pass, then frees it again', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
     return S(190, b);
   };
-  C['zero-sharding'] = 'ZeRO shards optimiser state, then gradients, then parameters themselves across GPUs one stage at a time; FSDP is the same idea, gathering each shard only when it is needed.';
+  C['zero-sharding'] = 'Distributed Data Parallel (DDP) replicates model state. Zero Redundancy Optimizer (ZeRO) progressively shards optimizer state, gradients and parameters across graphics processing units (GPUs); Fully Sharded Data Parallel (FSDP) similarly gathers parameter shards only when needed.';
 
   V['pipeline-bubbles'] = function (u) {
     var b = D(u, 'ar'), s, i, stages = 4, micro = 4, cw = 40, x0 = 140, rowY = [40, 74, 108, 142], rowH = 26;

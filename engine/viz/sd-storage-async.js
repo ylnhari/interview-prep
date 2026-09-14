@@ -138,10 +138,10 @@
     b += SQ(inner1);
     b += F('M330 60H354', { c: 'var(--good)' });
     b += GROW(B(358, 44, 110, 32, 'consumer', { ts: 9, f: 'var(--good-weak)', sk: 'var(--good)' }));
-    b += T(358, 96, 'taken, then gone: one consumer, once', { s: 9, c: 'var(--ink-dim)', a: 'start' });
+    b += T(358, 96, 'one consumer per delivery; retry may redeliver', { s: 9, c: 'var(--ink-dim)', a: 'start' });
     b += B(40, 130, 110, 30, 'billing', { ts: 9, f: 'var(--surface-3)' });
     b += B(40, 168, 110, 30, 'analytics', { ts: 9, f: 'var(--surface-3)' });
-    b += T(30, 122, 'nothing else can read a taken message', { s: 9, c: 'var(--ink-dim)', a: 'start' });
+    b += T(30, 122, 'competing consumers share deliveries', { s: 9, c: 'var(--ink-dim)', a: 'start' });
     b += B(430, 44, 110, 30, 'producer', { ts: 9 });
     b += A(u, 540, 59, 576, 59, { c: 'var(--accent)', m: 'aa' });
     b += F('M540 59H576', { c: 'var(--accent)' });
@@ -160,7 +160,7 @@
     b += T(430, 196, 'both groups read all events, each at its own offset', { s: 10, c: 'var(--ink-dim)', a: 'start' });
     return S(210, b);
   };
-  C['queue-vs-stream'] = 'In a task queue, one <b>consumer</b> takes a message and it is gone; in an event stream, every event stays in the log so several independent consumer groups can each read it at their own pace.';
+  C['queue-vs-stream'] = 'In a task queue, one competing consumer handles each delivery at a time, but failure before acknowledgement can cause <b>redelivery</b>. In an event stream, retained events let independent consumer groups read at their own pace.';
 
   V['consumer-group-offsets'] = function (u) {
     var b = D(u, 'ar aa');
@@ -220,10 +220,10 @@
     b += A(u, 448, 155, 484, 155, { c: 'var(--good)', m: 'ag' });
     b += F('M448 155H484', { c: 'var(--good)' });
     b += GROW(B(488, 140, 150, 30, 'skip: return stored result', { ts: 8.5, f: 'var(--good-weak)', sk: 'var(--good)' }));
-    b += T(30, 200, 'at-least-once plus an idempotent consumer is what "exactly-once" means in practice', { s: 10, c: 'var(--ink-dim)', a: 'start' });
+    b += T(30, 200, 'at-least-once plus atomic, durable idempotency can make a defined effect duplicate-safe', { s: 10, c: 'var(--ink-dim)', a: 'start' });
     return S(214, b);
   };
-  C['delivery-guarantees'] = 'At-most-once can silently drop a message; at-least-once can silently duplicate one; combining at-least-once delivery with an <b>idempotent consumer</b> makes duplicates harmless, which is what "exactly-once" means in practice.';
+  C['delivery-guarantees'] = 'At-most-once can drop a message; at-least-once can deliver duplicates. A defined effect becomes <b>duplicate-safe</b> only when its idempotency record and side effect are coupled atomically and durably, or the destination operation is itself idempotent. This is not a guarantee of arbitrary exactly-once execution.';
 
   V['dead-letter-queue'] = function (u) {
     var b = D(u, 'ar aa ad');

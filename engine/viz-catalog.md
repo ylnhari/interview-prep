@@ -80,7 +80,8 @@ Column key: **id** — what the picture shows (and what moves) — concepts it f
 - `drift-monitor` — two distributions pulling apart with a shift arrow, a drift score against an alert threshold, and a retrain trigger. Fits: data drift, PSI/KL monitoring, retraining policy, model decay.
 - `rollback-path` — four versions with a bad release, and the traffic pointer moving back one step. Fits: rollback, release management, forward-compatible migrations, incident response.
 - `two-dashboards` — an all-green system health panel beside a decision-quality panel lighting up amber and red. Fits: metrics that matter, business vs system monitoring, ML observability, "green dashboards, bad outcomes".
-- `incident-scenario-spine` — clarify, contain, diagnose, fix, prevent along a spine with a pointer moving across it. Fits: incident response, interview answer structure, postmortems, on-call narrative.
+- `incident-scenario-spine` — clarify, contain, diagnose, fix and verify, prevent along a five-step response path. Fits: generic scenario response, safe containment, diagnosis and prevention.
+- `incident-command-timeline` — detect, assess severity, assign incident-lead/technical/communications roles, mitigate, recover and follow up. Fits: operational incident command, runbooks and postmortems.
 
 ## GenAI
 

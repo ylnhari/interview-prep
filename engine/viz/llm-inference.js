@@ -15,10 +15,10 @@
     b += A(u, 306, 68, 356, 68);
     b += AP(u, 'M66 106V150H176', { m: 'aa', c: 'var(--accent)' });
     b += F('M66 106V150H176');
-    b += B(176, 130, 68, 40, 'A~d x r', { ts: 10, sk: 'var(--accent)', f: 'var(--surface-2)' });
+    b += B(176, 130, 68, 40, 'A~r x d', { ts: 10, sk: 'var(--accent)', f: 'var(--surface-2)' });
     b += A(u, 244, 150, 288, 150, { c: 'var(--accent)', m: 'aa' });
     b += F('M244 150H288');
-    b += B(288, 130, 68, 40, 'B~r x d', { ts: 10, sk: 'var(--accent)', f: 'var(--surface-2)' });
+    b += B(288, 130, 68, 40, 'B~d x r', { ts: 10, sk: 'var(--accent)', f: 'var(--surface-2)' });
     b += AP(u, 'M356 150V68H372', { m: 'aa', c: 'var(--accent)' });
     b += F('M356 150V68H372');
     b += '<circle cx="388" cy="68" r="16" fill="var(--surface-2)" stroke="var(--accent)" stroke-width="1.4"/>';
@@ -29,7 +29,7 @@
     b += T(232, 190, 'A and B together are a small fraction of the parameters in W', { s: 10, c: 'var(--ink-dim)' });
     return S(204, b);
   };
-  C['lora-adapter'] = 'The base weight <b>W</b> stays frozen; only the low-rank pair <b>A</b> and <b>B</b> train, and their product adds a correction to the output.';
+  C['lora-adapter'] = 'In low-rank adaptation (LoRA), the base weight <b>W</b> stays frozen. For input width d and rank r, A has shape r by d and B has shape d by r; only A and B train, and B times A times the input adds a low-rank correction.';
 
   V['rlhf-pipeline'] = function (u) {
     var b = D(u, 'ar aa');
@@ -51,7 +51,7 @@
     b += T(457, 210, 'DPO: trains directly on preference pairs, no separate reward model or PPO step', { s: 10, c: 'var(--good)' });
     return S(224, b);
   };
-  C['rlhf-pipeline'] = 'Supervised fine-tuning, then a reward model, then reinforcement learning with a KL penalty back to the SFT model; the dashed path shows where <b>DPO</b> shortcuts straight to the policy.';
+  C['rlhf-pipeline'] = 'Supervised fine-tuning (SFT), then a reward model, then reinforcement learning (RL), often proximal policy optimization (PPO), with a Kullback-Leibler (KL) penalty. The dashed path is direct preference optimization (DPO), which learns from preference pairs without a separate reward model or online RL loop.';
 
   /* ---------------------------------------------------------- inference engineering */
 
@@ -138,19 +138,19 @@
     var b = D(u, 'ar aa');
     b += HD('fewer bits per weight, less memory to hold and move');
     b += R(150, 44, 128, 30, { f: 'var(--surface-3)', sk: 'var(--border)' });
-    b += T(90, 64, 'FP16', { a: 'end', s: 11, w: 1 });
+    b += T(90, 64, '16-bit float', { a: 'end', s: 10, w: 1 });
     b += T(290, 64, '16 bit ~ about 14 GB for a 7B model', { a: 'start', s: 10, c: 'var(--ink-dim)' });
     b += R(150, 92, 64, 30, { f: 'var(--surface-2)', sk: 'var(--accent)' });
-    b += T(90, 112, 'INT8', { a: 'end', s: 11, w: 1 });
+    b += T(90, 112, '8-bit integer', { a: 'end', s: 10, w: 1 });
     b += T(226, 112, '8 bit ~ about 7 GB', { a: 'start', s: 10, c: 'var(--ink-dim)' });
     b += R(150, 140, 32, 30, { f: 'var(--accent-weak)', sk: 'var(--accent)' });
-    b += T(90, 160, 'INT4', { a: 'end', s: 11, w: 1 });
-    b += T(194, 160, '4 bit (AWQ / GPTQ) ~ about 3.5 GB', { a: 'start', s: 10, c: 'var(--ink-dim)' });
+    b += T(90, 160, '4-bit weights', { a: 'end', s: 10, w: 1 });
+    b += T(194, 160, 'post-training quantization ~ about 3.5 GB', { a: 'start', s: 10, c: 'var(--ink-dim)' });
     b += AP(u, 'M64 60V170', { m: 'ar', c: 'var(--ink-dim)', d: '3 3' });
     b += F('M64 60V170');
     return S(190, b);
   };
-  C['quantization-bits'] = 'Every halving of the bit width roughly halves the memory a weight takes, which is why INT8 and INT4 formats matter most for the memory-bound decode step.';
+  C['quantization-bits'] = 'Compared with 16-bit floating-point weights, 8-bit and 4-bit quantized weights use roughly one-half and one-quarter of the raw weight memory. Actual memory and quality also depend on quantization metadata, grouping and runtime support.';
 
   V['speculative-decoding'] = function (u) {
     var b = D(u, 'ar aa ag ad'), i, seq = '';

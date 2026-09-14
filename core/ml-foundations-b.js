@@ -7,7 +7,7 @@
     id: 'classical-models',
     title: 'Classical machine learning models',
     level: 'danger',
-    levelLabel: 'Asked in almost every machine learning interview, from the first screen to the on-site.',
+    levelLabel: 'Frequently asked in machine learning interviews, from the first screen to the on-site.',
     why: `Most production ML is not a large neural network; it is a regression, a tree ensemble, or a clustering step, chosen because it is fast, explainable, and good enough. An interviewer uses this chapter to check that you know what each model actually optimises, what it assumes about the data, and where it breaks -- not just its name. Being able to say why gradient boosting usually beats a neural network on a spreadsheet of numbers, or why a tree ensemble needs no feature scaling, is what separates someone who has used a library from someone who understands the model underneath it.`,
     readings: [
       { l: 'StatQuest -- Decision Trees, Clearly Explained', u: 'https://www.youtube.com/watch?v=7VeUPuFGJHk', w: 'The clearest walkthrough of how a tree actually picks a split and why depth is what causes overfitting.', m: 18 },
@@ -24,7 +24,8 @@
         id: 'cm-0',
         part: 'field',
         title: 'Key terms',
-        body: `<ul>
+        body: `<p>These terms build the shared vocabulary for the model explanations that follow; start with the inputs and fitting ideas, then use the later terms as each model introduces them.</p>
+<ul>
 <li><b>Feature, label</b> -- <a href="#data-and-generalization/dag-f4">taught in Data, features and generalisation</a>: an input a model uses to predict (a customer's age); the value it is trying to predict (whether they churn).</li>
 <li><b>Residual</b> -- actual value minus predicted value, for one row. A residual of -12 means the model predicted 12 units too high for that row.</li>
 <li><b>Least squares, normal equation</b> -- fitting a line by minimising the sum of squared residuals; the closed-form formula that solves this directly instead of searching for it.</li>
@@ -133,7 +134,7 @@
 <p><b>Gini impurity</b> for a group is <code>1 - sum(p_i^2)</code> over its classes; it is 0 for a pure group and highest when classes are evenly mixed. <a href="#ml-math-essentials/mfe-f5">Entropy</a> is <code>-sum(p_i * log2(p_i))</code>, measured in bits; a split's <b>information gain</b> is the parent's entropy minus the weighted average entropy of the children. The two criteria usually pick very similar splits in practice -- Gini is slightly cheaper to compute (no logarithm) and is scikit-learn's and most libraries' default.</p>
 <p>Worked example: a node has 10 examples, 5 of each class (Gini = 0.5). A candidate split sends 6 examples left (5 of class A, 1 of class B: Gini = 1 - (5/6)^2 - (1/6)^2 ≈ 0.278) and 4 right (0 of class A, 4 of class B: Gini = 0). The weighted child impurity is <code>(6/10)*0.278 + (4/10)*0 ≈ 0.167</code>, so the gain is <code>0.5 - 0.167 = 0.333</code> -- a strong split, since one side is already pure.</p>
 <p>Left unchecked, a tree keeps splitting until every leaf is pure, memorising the training set including its noise -- classic overfitting, visible as near-perfect training accuracy alongside poor validation accuracy. The usual controls are a maximum depth, a minimum number of examples required to split or to form a leaf, a minimum impurity decrease required to accept a split, or growing the full tree and then <b>pruning</b> back branches that do not improve validation performance (cost-complexity pruning). Any one of these trades training fit for a tree that generalises.</p>`,
-        deeper: `<p>A single tree's decision boundary is always made of axis-aligned rectangles, since every split tests one feature against one threshold -- this is precisely why a tree needs an ensemble around it (random forest or boosting) to approximate a smooth or diagonal boundary well.</p>`,
+        deeper: `<p>A single tree's decision boundary is made of axis-aligned regions, since every split tests one feature against one threshold. A sufficiently deep tree can approximate a smooth or diagonal boundary with many such regions; a random forest or boosting ensemble can often represent it more compactly.</p>`,
         check: {
           question: 'A fully grown decision tree gets 99.8% accuracy on its training set and 71% on a held-out validation set. What does that gap most directly tell you, and what is the most direct fix?',
           options: [
@@ -322,8 +323,8 @@
     id: 'evaluation-and-selection',
     title: 'Evaluation, metrics and model selection',
     level: 'danger',
-    levelLabel: 'Asked in almost every machine learning interview, and in almost every take-home review of your work.',
-    why: `A model is only as good as the number used to judge it, and picking the wrong number is the single most common way a strong-looking model turns out to be useless in production. Interviewers use this chapter to check whether you evaluate a model the way it will actually be used -- the right split, the right metric, the right comparison against chance -- rather than reaching for whatever scikit-learn prints by default. The gap between an offline metric and a business outcome is where most ML projects quietly fail, and being able to name that gap and close it is a large part of what separates a junior and a senior answer.`,
+    levelLabel: 'Frequently asked in machine learning interviews and take-home reviews.',
+    why: `A model is only as useful as the measure used to judge it, and picking the wrong measure is a common way a strong-looking model turns out to be ineffective in production. Interviewers use this chapter to check whether you evaluate a model the way it will actually be used -- the right split, the right metric, the right comparison against chance -- rather than reaching for whatever scikit-learn prints by default. A gap between an offline metric and the real outcome causes many ML projects to disappoint, and being able to identify and close that gap is an important part of a strong answer.`,
     readings: [
       { l: 'StatQuest -- ROC and AUC, Clearly Explained', u: 'https://www.youtube.com/watch?v=4jRBRDbJemM', w: 'Builds the ROC curve point by point from a confusion matrix, which is the fastest way to see what AUC actually measures.', m: 16 },
       { l: 'StatQuest -- Machine Learning Fundamentals: The Confusion Matrix', u: 'https://www.youtube.com/watch?v=Kdsp6soqA7o', w: 'A short, precise walkthrough of precision, recall and why a single accuracy number hides the trade-off between them.', m: 7 },
@@ -339,7 +340,8 @@
         id: 'es-0',
         part: 'field',
         title: 'Key terms',
-        body: `<ul>
+        body: `<p>These terms establish the evaluation vocabulary used below: first identify how data is split, then how predictions are scored, and finally how model choices are tested.</p>
+<ul>
 <li><b>Train, validation, test split</b> -- the portion a model fits its parameters on; the portion used to choose between models or hyperparameters; the portion touched exactly once, at the end, for an unbiased final read.</li>
 <li><b>Stratified split</b> -- a split that preserves the proportion of each class, so a rare class is not accidentally missing from one side.</li>
 <li><b>Grouped split</b> -- a split that keeps every row belonging to one entity (one customer, one patient, one device) entirely on one side, so no information about that entity leaks across.</li>
@@ -360,7 +362,7 @@
 <li><b>A/B test, guardrail metric, interleaving</b> -- randomly splitting users between two versions to measure a causal difference; a secondary metric you watch to catch an unintended regression; mixing two systems' results into one list to compare them with far fewer users.</li>
 <li><b>Statistical power, effect size, sample size</b> -- the chance a test detects a real effect if one exists; how large that real effect actually is; how many observations are needed to detect it reliably.</li>
 </ul>`,
-        deeper: `<p>Nearly every mistake in this chapter comes down to one of two things: comparing a metric to the wrong baseline (an ROC-AUC of 0.9 that still means an unusable number of false alarms), or letting information flow backward in time or across a split boundary that should have blocked it (leakage). Checking for both, every time, is worth more than knowing every formula by heart.</p>`,
+        deeper: `<p>Many common mistakes in this chapter come down to one of two things: comparing a metric to the wrong baseline (an ROC-AUC of 0.9 that still means an unusable number of false alarms), or letting information flow backward in time or across a split boundary that should have blocked it (leakage). Checking for both, every time, is worth more than knowing every formula by heart.</p>`,
         check: {
           question: 'A model gets 95% cross-validated accuracy in development but 80% accuracy once deployed. Before assuming the model is simply "worse in production," what should you check first?',
           options: [
@@ -618,7 +620,7 @@
         ['Nested cross-validation', 'An outer loop estimating performance around an inner loop that searches hyperparameters.', 'Honest performance estimates when tuning hyperparameters.', ''],
         ['Precision, recall', 'TP/(TP+FP); TP/(TP+FN).', 'Classification metrics, especially under class imbalance.', ''],
         ['F1 score', 'The harmonic mean of precision and recall.', 'A single number balancing both error types.', ''],
-        ['ROC-AUC', 'The probability a random positive scores higher than a random negative.', 'Ranking quality of a classifier, most reliable when classes are balanced.', ''],
+        ['ROC-AUC', 'The probability a random positive scores higher than a random negative.', 'Ranking quality; pair with PR-AUC or precision at the operating threshold when positives are rare.', ''],
         ['PR-AUC', 'The area under the precision-recall curve.', 'Ranking quality when positives are rare.', ''],
         ['MAPE', 'Mean absolute percentage error; undefined at zero, asymmetric.', 'Regression metrics; forecasting.', ''],
         ['NDCG / MAP / MRR', 'Ranking metrics rewarding relevant items near the top of a list, by different rules.', 'Search and recommendation evaluation.', ''],

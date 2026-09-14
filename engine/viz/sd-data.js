@@ -32,28 +32,29 @@
 
   V['isolation-anomalies'] = function (u) {
     var b = D(u, 'ar'), i, r, c;
-    b += HD('what each isolation level blocks');
+    b += HD('SQL-standard isolation guarantees', 'PostgreSQL Repeatable Read is stronger; see note below');
     var cols = ['read committed', 'repeatable read', 'serializable'];
     var colx = [300, 460, 620];
     for (i = 0; i < 3; i++) { b += T(colx[i] + 60, 44, cols[i], { s: 10, c: 'var(--ink-dim)' }); }
-    var rows = ['dirty read', 'non-repeatable read', 'phantom read'];
-    var rowy = [60, 96, 132];
+    var rows = ['dirty read', 'non-repeatable read', 'phantom read', 'serialization anomaly'];
+    var rowy = [54, 84, 114, 144];
     for (i = 0; i < 3; i++) { b += T(284, rowy[i] + 19, rows[i], { a: 'end', s: 10, c: 'var(--ink-dim)' }); }
-    var grid = [[true, true, true], [false, true, true], [false, true, true]];
+    b += T(284, rowy[3] + 19, rows[3], { a: 'end', s: 9.5, c: 'var(--ink-dim)' });
+    var grid = [[true, true, true], [false, true, true], [false, false, true], [false, false, true]];
     var inner = '';
-    for (r = 0; r < 3; r++) {
+    for (r = 0; r < 4; r++) {
       for (c = 0; c < 3; c++) {
         var ok = grid[r][c];
-        inner += '<g' + IX(r * 3 + c) + '>' + R(colx[c], rowy[r], 120, 30, { f: ok ? 'var(--good-weak)' : 'var(--danger-weak)', sk: ok ? 'var(--good)' : 'var(--danger)', r: 5 }) +
-          T(colx[c] + 60, rowy[r] + 19, ok ? 'blocked' : 'possible', { s: 10, c: ok ? 'var(--good)' : 'var(--danger)', cls: ok ? '' : 'v-blink' }) + '</g>';
+        inner += '<g' + IX(r * 3 + c) + '>' + R(colx[c], rowy[r], 120, 24, { f: ok ? 'var(--good-weak)' : 'var(--danger-weak)', sk: ok ? 'var(--good)' : 'var(--danger)', r: 5 }) +
+          T(colx[c] + 60, rowy[r] + 16, ok ? 'blocked' : 'possible', { s: 9.5, c: ok ? 'var(--good)' : 'var(--danger)', cls: ok ? '' : 'v-blink' }) + '</g>';
       }
     }
     b += SQ(inner);
-    b += T(380, 176, 'a stronger level to the right blocks strictly more anomalies, at the cost of more retries', { s: 10, c: 'var(--ink-dim)' });
-    b += T(380, 194, 'repeatable read blocks the phantoms above, but can still allow write skew', { s: 10, c: 'var(--ink-dim)' });
-    return S(206, b);
+    b += T(380, 188, 'PostgreSQL Repeatable Read also blocks phantoms, but can still allow write skew', { s: 10, c: 'var(--ink-dim)' });
+    b += T(380, 206, 'portable unchanged-range semantics require Serializable or an engine-specific guarantee', { s: 10, c: 'var(--ink-dim)' });
+    return S(218, b);
   };
-  C['isolation-anomalies'] = 'Each column blocks strictly more anomalies than the one before it; the <b>possible</b> cells are where a lost update or a changing result set can still slip through.';
+  C['isolation-anomalies'] = 'The table shows the SQL-standard minimum guarantees: Repeatable Read may allow phantom rows, while Serializable prevents serialization anomalies, sometimes by aborting a transaction for retry. PostgreSQL gives Repeatable Read stronger snapshot behavior that also prevents phantoms, but it can still allow write skew.';
 
   V['mvcc-versions'] = function (u) {
     var b = D(u, 'ar aa');

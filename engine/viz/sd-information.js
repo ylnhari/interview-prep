@@ -71,14 +71,14 @@
     }
     b += AP(u, 'M160 110C300 110 300 96 396 96', { c: 'var(--good)', d: '4 4' });
     b += AP(u, 'M340 78C370 78 370 96 396 96', { c: 'var(--good)', d: '4 4' });
-    b += B(400, 70, 170, 66, 'RRF(D) =~1/63 + 1/68~= 0.031', { f: 'var(--accent-weak)', sk: 'var(--accent)' });
+    b += B(400, 70, 170, 66, 'RRF(D) =~1/(60+3) + 1/(60+2)~= 0.0320', { ts: 9, f: 'var(--accent-weak)', sk: 'var(--accent)' });
     b += A(u, 570, 103, 610, 103, { c: 'var(--accent)', m: 'aa' });
     b += F('M570 103H610');
-    b += B(614, 82, 130, 42, 'fused #1', { f: 'var(--good-weak)', sk: 'var(--good)', cls: 'v-pulse' });
+    b += B(614, 82, 130, 42, 'D is fused #2', { ts: 10, f: 'var(--good-weak)', sk: 'var(--good)', cls: 'v-pulse' });
     b += T(380, 200, 'a document ranked well by both lists beats one ranked #1 by only one', { s: 10, c: 'var(--ink-dim)' });
     return S(214, b);
   };
-  C['hybrid-rank-fusion'] = 'Reciprocal rank fusion rewards a document that ranks well on <b>both</b> lists, not just one.';
+  C['hybrid-rank-fusion'] = 'Reciprocal rank fusion (RRF) adds 1 divided by k plus rank from each list. Here document D is rank 3 and rank 2, so with k = 60 its score is 1/63 + 1/62, about <b>0.0320</b>.';
 
   V['trie-autocomplete'] = function (u) {
     var b = D(u, 'ar aa');
@@ -127,7 +127,7 @@
 
   V['hyperloglog-buckets'] = function (u) {
     var b = D(u, 'ar aa'), i, inner = '';
-    b += HD('HyperLogLog: longest run of leading zeros, per bucket');
+    b += HD('HyperLogLog: one register per bucket', 'rho = leading-zero count + 1');
     b += B(16, 60, 90, 40, 'item');
     b += A(u, 106, 80, 150, 80, { c: 'var(--accent)', m: 'aa' });
     b += F('M106 80H150');
@@ -135,14 +135,14 @@
     b += AP(u, 'M300 68C330 68 320 30 360 24', { c: 'var(--ink-dim)' });
     b += B(364, 6, 150, 34, 'bucket = 0110~(bucket 6)', { ts: 10 });
     b += AP(u, 'M300 92C330 92 320 118 360 122', { c: 'var(--ink-dim)' });
-    b += B(364, 106, 190, 44, '00101...~2 leading zeros~register candidate = 3', { ts: 10 });
+    b += B(364, 106, 190, 44, '00101...~2 leading zeros~rho candidate = 3', { ts: 10 });
     for (i = 0; i < 12; i++) { inner += '<g' + IX(i) + '>' + B(16 + i * 60, 172, 52, 34, i === 6 ? '6: 3' : (i + ': ' + (i % 4)), { ts: 10, f: i === 6 ? 'var(--accent-weak)' : 'var(--surface-2)', sk: i === 6 ? 'var(--accent)' : 'var(--border)', cls: i === 6 ? 'v-pulse' : '' }) + '</g>'; }
     b += SQ(inner);
     b += T(380, 148, 'registers (one slice of m = 16,384 shown)', { s: 10, c: 'var(--ink-dim)' });
     b += T(380, 222, 'standard error = 1.04 / √m = 1.04 / 128 ≈ 0.81%', { s: 10, c: 'var(--ink-dim)' });
     return S(230, b);
   };
-  C['hyperloglog-buckets'] = 'Each bucket keeps only the <b>longest run of leading zeros</b> it has seen; a long run means many distinct items.';
+  C['hyperloglog-buckets'] = 'HyperLogLog stores rho, the <b>one-based position of the first 1 bit</b>, in each bucket. Two leading zeroes therefore produce rho = 3; larger observed rho values suggest more distinct items.';
 
   V['count-min-sketch'] = function (u) {
     var b = D(u, 'ar aa'), rows = ['h1', 'h2', 'h3'], cols = [2, 4, 1], vals = [[1, 1, 4, 1, 2], [2, 1, 1, 6, 1], [1, 5, 1, 1, 3]], i, j, inner = '';
@@ -218,26 +218,26 @@
 
   V['websocket-fanout'] = function (u) {
     var b = D(u, 'ar aa');
-    b += HD('cross-server fan-out for a connected client');
+    b += HD('route an event to the gateway that owns the socket');
     b += B(20, 40, 100, 40, 'user 9~sends a like');
     b += A(u, 122, 60, 168, 60, { c: 'var(--accent)', m: 'aa' });
     b += F('M122 60H168');
-    b += B(172, 40, 110, 40, 'server 1');
-    b += A(u, 284, 60, 330, 90, { c: 'var(--accent)', m: 'aa' });
-    b += F('M284 60C310 60 310 90 330 90');
-    b += B(334, 74, 130, 40, 'pub/sub~channel: user 42');
-    b += B(334, 130, 150, 34, 'registry: user 42 -> server 3', { ts: 10, f: 'var(--surface-3)' });
-    b += A(u, 464, 94, 520, 94, { c: 'var(--good)', m: 'ag' });
-    b += F('M464 94H520');
-    b += B(524, 74, 110, 40, 'server 3', { f: 'var(--good-weak)', sk: 'var(--good)' });
-    b += A(u, 579, 114, 579, 150, { c: 'var(--good)', m: 'ag' });
-    b += F('M579 114V150');
-    b += B(534, 154, 110, 36, 'user 42', { f: 'var(--good-weak)', sk: 'var(--good)', cls: 'v-pulse' });
-    b += B(184, 74, 100, 34, 'server 2', { f: 'var(--surface-2)' });
-    b += T(380, 210, 'servers 1 and 2 are also subscribed; only the one holding user 42 forwards it', { s: 10, c: 'var(--ink-dim)' });
+    b += B(172, 40, 110, 40, 'gateway 1');
+    b += A(u, 284, 60, 326, 60, { c: 'var(--accent)', m: 'aa' });
+    b += F('M284 60H326');
+    b += B(330, 34, 170, 52, 'connection registry~user 42 -> gateway 3', { ts: 9.5, f: 'var(--surface-3)' });
+    b += AP(u, 'M415 86V120', { c: 'var(--accent)', m: 'aa' });
+    b += B(330, 124, 170, 40, 'broker channel~gateway 3', { ts: 9.5 });
+    b += AP(u, 'M500 144C540 144 530 60 558 60', { c: 'var(--good)', m: 'ag' });
+    b += F('M500 144C540 144 530 60 558 60', { c: 'var(--good)' });
+    b += B(562, 40, 120, 40, 'gateway 3', { f: 'var(--good-weak)', sk: 'var(--good)' });
+    b += A(u, 622, 82, 622, 144, { c: 'var(--good)', m: 'ag' });
+    b += F('M622 82V144', { c: 'var(--good)' });
+    b += B(562, 148, 120, 36, 'user 42 socket', { ts: 9.5, f: 'var(--good-weak)', sk: 'var(--good)', cls: 'v-pulse' });
+    b += T(380, 210, 'publish to the owning gateway or shard; do not fan every user event to every server', { s: 10, c: 'var(--ink-dim)' });
     return S(224, b);
   };
-  C['websocket-fanout'] = 'A publish reaches every subscribed server, but only the one holding the target <b>connection</b> forwards it down a socket.';
+  C['websocket-fanout'] = 'An established WebSocket is already bound to one gateway. A connection registry maps the target user to that owner, so the event is published to the <b>owning gateway or shard channel</b>, not to every server. Reconnect affinity is a separate policy.';
 
   V['notification-pipeline'] = function (u) {
     var b = D(u, 'ar aa');
@@ -253,13 +253,14 @@
     b += AP(u, 'M336 108C370 108 370 146 400 152', { c: 'var(--ink-dim)', m: 'aa' });
     b += B(404, 136, 100, 32, 'SMS', { ts: 10 });
     b += SQ('<g' + IX(0) + '>' + F('M504 32H556') + '</g><g' + IX(1) + '>' + F('M504 93H556') + '</g><g' + IX(2) + '>' + F('M504 152H556') + '</g>');
-    b += B(560, 16, 110, 32, 'FCM/APNs', { ts: 9, f: 'var(--surface-3)' });
-    b += B(560, 77, 110, 32, 'SMTP relay', { ts: 9, f: 'var(--surface-3)' });
-    b += B(560, 136, 110, 32, 'SMS gateway', { ts: 9, f: 'var(--surface-3)' });
+    b += B(560, 16, 110, 32, 'push provider', { ts: 9, f: 'var(--surface-3)' });
+    b += B(560, 77, 110, 32, 'email relay', { ts: 9, f: 'var(--surface-3)' });
+    b += B(560, 136, 110, 32, 'text gateway', { ts: 9, f: 'var(--surface-3)' });
     b += AP(u, 'M615 48V70', { c: 'var(--good)', d: '3 4', m: 'ag' });
-    b += T(680, 210, 'retry with backoff on failure; a delivery receipt updates sent -> delivered -> read', { s: 10, c: 'var(--ink-dim)' });
+    b += T(680, 194, 'provider/client delivery ACK -> delivered', { a: 'end', s: 9.5, c: 'var(--ink-dim)' });
+    b += T(680, 212, 'separate explicit open/read ACK -> read', { a: 'end', s: 9.5, c: 'var(--ink-dim)' });
     return S(224, b);
   };
-  C['notification-pipeline'] = 'One event fans out to the channels a user actually wants, each with its own <b>provider and retry</b> path.';
+  C['notification-pipeline'] = 'One event fans out to the selected channels, each with its own provider and retry path. An acknowledgement (ACK) from a provider or client can establish <b>delivery</b>; only a separate explicit open or read acknowledgement establishes that the user read it.';
 
 }(typeof window !== 'undefined' ? window : this));

@@ -37,7 +37,7 @@ All HTML strings are backtick template literals. Never write the two characters 
 - Chapters in `core/library.js` carry `field` chunks only, and their `connect`, `sayQuestion` and `sayItOutLoud` are `null`: core is shared by every pack and must name no candidate and no employer. A pack supplies its own `experience` and `role` chunks, exercises, connect block and spoken answer through its overlay. The engine splices overlay learn chunks in after the last `field` chunk, appends overlay activities, and sets the connect and say fields.
 - The first learn chunk of every core chapter is titled `Key terms`: every term the chapter uses, each defined in one sentence with an example. Later chunks may use those words freely; never introduce a new undefined term.
 - No learn chunk carries an `In the room:` closing paragraph. Bodies teach the subject; they do not narrate the document. Sentences that explain the page rather than the subject ("this chapter covers…", "you will be asked…", "as an assessor would…") do not belong in core.
-- `viz` names a diagram id from `engine/viz-catalog.md`; the shell renders it at the top of the section. Use it where the diagram shows the mechanism; foundations, glossary and question-bank chunks usually have none.
+- `viz` names a diagram id from `engine/viz-catalog.md`; the shell renders a section diagram after its explanatory prose and before its quiz, and an exercise diagram after the prompt. Use a diagram only when it reinforces the concept the preceding text has already explained. Expand every abbreviation, symbol, notation and non-obvious label in the nearby prose or in the diagram itself so the reader does not have to infer what it means. Foundations, glossary and question-bank sections usually have no diagram.
 - `link: { url, label }` on a learn chunk renders a prominent "Open in the course" button (new tab) under the chunk title, before the body; the chunk's tick button then reads "Mark done". Used by private packs that send the reader to a generic chapter on the public site and back.
 - `kind: "prereqs"` on a topic renders its learn chunks as a compact checklist (title, one-line body, the link button, a done tick) instead of prose sections, and its header shows "n of m done". Such a chapter carries no `activities`; the home page shows the pack with a "Prerequisites: n of m generic chapters done" line.
 - A chapter whose chunks all share one `part` shows no part headers; the "Part 1 / 2 / 3" movements appear only when a chapter mixes `field`, `experience` and `role` chunks.
@@ -156,11 +156,9 @@ displaying that saved field, but the stored field remains untouched. Do not sile
 progress. A future deliberate migration must preserve the existing export/import format and include an
 explicit backup and user confirmation before changing local progress.
 
-Public course pages remain readable without an account, and public visitors can keep progress in the
-current browser. The authorized owner can sign in from the public course page or the separate private
-dashboard to sync chapter/checklist progress and quiz selections. Free-form answer drafts and grading
-history stay in the browser and are not synced. Roadmap progress remains browser-local. Service rules
-enforce owner-only access.
-Public source contains generic web-client configuration only, never an owner email or user identifier.
+Public course pages have no account or cloud-sync feature. Progress, free-form answer drafts and grading
+history stay in the current browser. Visitors can move progress between devices only by exporting a
+backup and importing it in the other browser. The public build rejects cloud configuration and must not
+contain owner-sync settings or offer sign-in. Owner-only sync belongs to the separate private app.
 Content deployment must remain independent of progress data. Any hosting of private content is an
 optional, independent deployment, not a dependency of the public course.

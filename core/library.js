@@ -822,7 +822,7 @@ window.PREP_CORE = {
     "part": "field",
     "title": "Key terms",
     "body": "<ul>\n<li><b>Time series</b> — a sequence of values recorded in time order, where the order carries information. <i>Daily units sold in a store; hourly electricity load.</i></li>\n<li><b>Forecast</b> — an estimate of future values of that series, made from what you know now. <i>Next week's daily sales.</i></li>\n<li><b>Horizon</b> — how far ahead you forecast, in periods. <i>A 14-day horizon means you predict each of the next 14 days.</i></li>\n<li><b>Lag</b> — the value of the series some number of periods earlier, used as an input. <i>Sales 7 days ago is the lag-7 feature.</i></li>\n<li><b>Feature</b> — any input column the model reads. <i>Day of week, a public-holiday flag, price, weather, a lag.</i></li>\n<li><b>Trend</b> — the slow long-run direction of the series. <i>Demand drifting up 3% a year.</i></li>\n<li><b>Seasonality</b> — a pattern that repeats on a fixed period. <i>Weekly: every Saturday is high. Yearly: every December is high.</i></li>\n<li><b>Univariate</b> — you forecast a series using only its own history. <b>Multivariate</b> — you also use other variables. <i>Sales from sales alone, versus sales from sales plus price plus weather.</i></li>\n<li><b>Ordinary least squares (OLS)</b> — the standard way to fit a linear regression: pick the coefficients that make the sum of squared residuals as small as possible. <b>Driver-based regression</b> — regressing the target on explanatory variables (drivers) rather than on its own past values.</li>\n<li><b>Residual</b> — the gap between an actual observation and what the fitted model said it would be. <b>Residual standard error</b> — the typical size of those gaps, and the scale factor in every interval formula below.</li>\n<li><b>Point forecast</b> — a single number per period. <i>\"Tuesday: 412 units.\"</i></li>\n<li><b>Prediction interval</b> — a range with a stated probability of containing the actual value. <i>\"Tuesday: 340 to 500 units, 90% of the time.\"</i></li>\n<li><b>Confidence interval for the mean response</b> — a range for where the <i>average</i> outcome at a given input sits. It carries only the uncertainty in the fitted coefficients. A prediction interval covers one <i>single</i> future outcome, so it must also carry the residual noise, and it is therefore always the wider of the two.</li>\n<li><b>Quantile</b> (<a href=\"#counting-and-sketches/cs-f7\">Quantile sketches</a>) — the value below which a stated fraction of outcomes fall. <i>The p90 is the level that demand stays below on 90% of days.</i></li>\n<li><b>Probabilistic forecast</b> — a forecast that describes the whole distribution of outcomes, not one number. A set of quantiles or an interval is the practical form of it.</li>\n<li><b>Resampling</b> — refitting a model many times on altered versions of the same data to see how much the answer moves. <b>Bootstrap</b> — resample the observations with replacement. <b>Jackknife</b>, or leave-one-out — refit repeatedly, dropping one observation each time. Both give you a spread of fitted values, and that spread estimates coefficient uncertainty.</li>\n<li><b>Stochastic</b> — uncertain or random from your point of view: you can know the distribution, not the actual value in advance. <b>Stochastic demand</b> is demand you can only know as a distribution, never as a number, until it happens.</li>\n<li><b>Backtest</b> — testing a forecasting method on history by pretending you were standing at a past date and only knew what was known then.</li>\n<li><b>Rolling origin</b> — the correct way to backtest a time series: walk the \"today\" point forward through history, refitting and re-forecasting at each step, instead of doing one train/test split.</li>\n<li><b>MAE</b> (mean absolute error, see <a href=\"#evaluation-and-selection/es-f5\">Regression and ranking metrics</a>) — average size of the error in the original units. <i>\"On average we are 38 units out.\"</i></li>\n<li><b>MAPE</b> (mean absolute percentage error) — the same as a percentage of actuals; unusable when actuals can be zero or near zero.</li>\n<li><b>sMAPE</b> — a symmetric variant of MAPE that is less brutal when actuals are small; still awkward near zero.</li>\n<li><b>Pinball loss</b> (also called quantile loss) — the scoring rule for a quantile forecast: it penalises being under and being over by different amounts, in proportion to which quantile you claimed to predict.</li>\n<li><b>Coverage</b> — the fraction of actual outcomes that really fell inside your stated interval. <i>A 90% interval that contains the truth 74% of the time has 74% coverage and is not calibrated.</i></li>\n<li><b>Calibrated</b> — your stated probabilities match reality. A calibrated 90% interval covers about 90% of outcomes.</li>\n</ul>\n<p>Primer references if any of these is genuinely new: <code>otexts.com/fpp3</code> (Hyndman and Athanasopoulos, the standard free textbook — chapters 1 to 5 and the chapter on prediction intervals), <code>nixtlaverse.nixtla.io</code> for the statsforecast package docs, and <code>scikit-learn.org</code> for the general regression vocabulary.</p>",
-    "deeper": "<p>Two distinctions worth locking in now because they cause most confusion later. First, a prediction interval is not a confidence interval: a confidence interval is about uncertainty in a parameter you estimated, a prediction interval is about uncertainty in a single future outcome, and the second is always wider.</p>\n<p>Second, accuracy and calibration are different properties. A model can have excellent MAE and badly calibrated intervals, or terrible MAE and perfectly honest intervals. They are measured separately and improved separately.</p>",
+    "deeper": "<p>Two distinctions worth locking in now because they cause most confusion later. First, a prediction interval is not a confidence interval: a confidence interval is about uncertainty in a parameter you estimated, while a prediction interval is about a single future outcome. For the same model, inputs, and coverage level in standard regression, the prediction interval also includes residual variation and is wider.</p>\n<p>Second, accuracy and calibration are different properties. A model can have excellent MAE and badly calibrated intervals, or terrible MAE and perfectly honest intervals. They are measured separately and improved separately.</p>",
     "check": {
      "question": "What does a well-calibrated 90% prediction interval promise?",
      "options": [
@@ -885,7 +885,7 @@ window.PREP_CORE = {
     "part": "field",
     "title": "Why a point forecast is dangerous when a machine reads it",
     "viz": "flow-forecast-optimize-act",
-    "body": "<p>A point forecast is fine when a human reads it, because a human silently applies their own error bar. It becomes dangerous when it is fed to an automated decision, because the decision has no way to know how wrong the number might be.</p>\n<p>Take a generic staffing example: a contact centre forecasts calls per half hour and staffs agents accordingly. A point forecast makes the plan <b>confidently wrong</b> — it staffs against one assumed future, absorbs the entire forecast error silently, and because the resulting plan looks feasible and optimal, nothing in the system flags that it was built on a guess.</p>\n<p>An interval changes the conversation. The plan can carry buffer, staff to a service-level quantile, or be tested against a range of plausible days rather than one.</p>",
+    "body": "<p>A point forecast can be useful to a human or an automated decision, but neither should silently treat it as certain. An automated decision needs an explicit uncertainty representation and a cost rule, because it cannot supply its own judgement about how wrong the number might be.</p>\n<p>Take a generic staffing example: a contact centre forecasts calls per half hour and staffs agents accordingly. A point forecast makes the plan commit to one assumed future and can absorb forecast error silently unless the system also carries buffers, quantiles, or scenario tests.</p>\n<p>An interval changes the conversation. The plan can carry buffer, staff to a service-level quantile, or be tested against a range of plausible days rather than one.</p>",
     "deeper": "<p>The clearest way to describe it is <b>asymmetric cost</b>. Under-staffing a half hour means customers waiting or abandoning; over-staffing means paid idle time. Those costs are almost never equal, so the cost-minimising staffing level is not the mean of the demand distribution — it is a high quantile of it. This is the newsvendor result from operations research, and the optimal quantile is set by the ratio of under-cost to under-cost-plus-over-cost.</p>\n<p>You do not need the formula. You need the consequence: a point forecast cannot express that target no matter how accurate it is on average, because the mean is simply the wrong statistic for an asymmetric decision.</p>",
     "check": {
      "question": "Why is feeding a point forecast to a capacity optimizer risky even when the forecast is accurate on average?",
@@ -904,7 +904,7 @@ window.PREP_CORE = {
     "part": "field",
     "title": "Prediction intervals 1: quantile regression and pinball loss",
     "viz": "quantile-band-forecast",
-    "body": "<p>Train the model to predict a specific percentile directly by swapping the loss function for <b>pinball loss</b>, which penalises under- and over-prediction asymmetrically. Want the p90? Penalise under-prediction nine times as hard as over-prediction, and the model learns to sit at the 90th percentile.</p>\n<p>This is the production-friendly route because it needs no extra machinery: LightGBM and XGBoost support a quantile objective natively, so you train one model per quantile — typically p10, p50 and p90 — and you are done. Linear quantile regression exists too, in statsmodels, if the relationship is simple enough.</p>",
+    "body": "<p>Train the model to predict a specific percentile directly by swapping the loss function for <b>pinball loss</b>, which penalises under- and over-prediction asymmetrically. Want the p90? Penalise under-prediction nine times as hard as over-prediction, and the model learns to target the 90th conditional quantile.</p>\n<p>This is a production-friendly route because LightGBM and XGBoost support a quantile objective natively: train one model per quantile, typically p10, p50 and p90, then validate ordering, coverage, width, horizon, and segment behaviour. Linear quantile regression exists too, in statsmodels, if the relationship is simple enough.</p>",
     "deeper": "<p>Two practical wrinkles. Independently trained quantile models can <b>cross</b> — the p90 model predicting below the p50 model for some inputs, which is incoherent. You fix it by sorting the outputs per row, or by training a monotone-constrained joint model.</p>\n<p>And there is a cost story: three quantiles means three models to train, serve and monitor. In a real deployment that is three times as much to monitor for drift, which is a legitimate argument for the conformal route instead — wrapping a single point model's past errors into an interval.</p>",
     "check": {
      "question": "To make a gradient-boosted model predict the 90th percentile, you:",
@@ -1110,7 +1110,7 @@ window.PREP_CORE = {
     "part": "field",
     "title": "Metaheuristics versus exact solvers: how to choose",
     "viz": "exact-vs-metaheuristic-landscape",
-    "body": "<p>When exact methods will not scale, you use a <b>metaheuristic</b>: a general-purpose search over solutions rather than a proof of optimality. The four to know by name are simulated annealing, genetic algorithms, tabu search and guided local search. All four are strategies for escaping a local optimum, and they differ mainly in how they decide where to look next.</p>\n<p>The judgement line to have ready. <b>Exact solvers buy guarantees</b> — provable feasibility, and an optimality gap so you know how much better it could have been. <b>Metaheuristics buy scale and objective freedom</b> — the objective can be non-linear, non-convex, or even stochastic, so you can score a candidate solution by simulating uncertain demand against it, which a MIP essentially cannot do.</p>\n<p>The grown-up answer is to use both rather than pick a winner: solve a small, tightly constrained sub-problem exactly inside a heuristic outer loop, and separately solve a scaled-down version to optimality purely as a yardstick for how far the heuristic's answers sit from the best possible. Building that benchmark, so the heuristic's cost is <i>measured</i> rather than assumed, is the strongest thing you can say on this topic.</p>",
+    "body": "<p>When exact methods will not scale, you use a <b>metaheuristic</b>: a general-purpose search over solutions rather than a proof of optimality. The four to know by name are simulated annealing, genetic algorithms, tabu search and guided local search. All four are strategies for escaping a local optimum, and they differ mainly in how they decide where to look next.</p>\n<p>The judgement line to have ready. <b>Exact solvers can certify results relative to the model</b> — when they return the appropriate feasible/optimal status, with valid data and numerical tolerances — and can report a gap from a valid bound. <b>Metaheuristics buy scale and objective freedom</b> — the objective can be non-linear, non-convex, or evaluated by simulation. A MIP can also represent or approximate many stochastic objectives through scenarios, but may become too large or require simplifying assumptions.</p>\n<p>The grown-up answer is to use both rather than pick a winner: solve a small, tightly constrained sub-problem exactly inside a heuristic outer loop, and separately solve a scaled-down version to optimality purely as a yardstick for how far the heuristic's answers sit from the best possible. Building that benchmark, so the heuristic's cost is <i>measured</i> rather than assumed, is the strongest thing you can say on this topic.</p>",
     "deeper": "<p>A detail worth knowing because it makes the two families less separate than they look: many production \"exact\" solvers are themselves full of heuristics — branching rules, primal heuristics that go hunting for feasible solutions, restarts. A useful distinction is not heuristic versus principled; it is whether the method carries a bound alongside its answer.</p>\n<p>And the practical rule of thumb for which to reach for: if you can write the objective as a weighted sum of linear terms and the constraints are clear-cut, start exact. If scoring a candidate requires simulation, or the objective contains a term you can only evaluate rather than express, start heuristic.</p>",
     "check": {
      "question": "What is the strongest general argument for a metaheuristic over an exact solver?",
@@ -1121,7 +1121,7 @@ window.PREP_CORE = {
       "Exact solvers cannot handle binary variables"
      ],
      "answer": 1,
-     "explain": "Objective freedom plus scale is the real case. The price is giving up the feasibility guarantee and the optimality gap, which is exactly what you must be able to state."
+     "explain": "Objective freedom plus scale is the real case. The price is giving up a solver certificate of feasibility or optimality relative to the model, and a reported bound/gap, which is exactly what you must be able to state."
     }
    }
   ],
@@ -1228,7 +1228,7 @@ window.PREP_CORE = {
     "part": "field",
     "title": "Open loop versus closed loop, and why it matters under uncertainty",
     "viz": "open-vs-closed-loop",
-    "body": "<p>A single optimization solve produces a <b>plan</b>. Execute that plan without looking again and you are running <b>open loop</b>: nothing measures whether reality matched the plan, and nothing corrects it. Re-solve on fresh data and act on the new answer, and you are running <b>closed loop</b>.</p>\n<p>A system can be both, at different timescales. Take a generic daily delivery planner: across days it is closed loop, because each morning it re-solves against the real orders and the real available fleet, so yesterday's surprises are absorbed into today's plan. Within a day it is open loop, because once the vehicles leave nothing re-plans.</p>\n<p>Closed loop wins whenever the disturbance is <b>stochastic</b>. If you knew tomorrow's demand exactly, a single plan would be perfect and feedback would buy you nothing. You do not, so the value of the loop is that it absorbs error in the model instead of requiring you not to have any. That is the single most useful thing to understand about feedback: it is a substitute for model accuracy.</p>",
+    "body": "<p>A single optimization solve produces a <b>plan</b>. Execute that plan without looking again and you are running <b>open loop</b>: nothing measures whether reality matched the plan, and nothing corrects it. Re-solve on fresh data and act on the new answer, and you are running <b>closed loop</b>.</p>\n<p>A system can be both, at different timescales. Take a generic daily delivery planner: across days it is closed loop, because each morning it re-solves against the real orders and the real available fleet, so yesterday's surprises are absorbed into today's plan. Within a day it is open loop, because once the vehicles leave nothing re-plans.</p>\n<p>Feedback can add value when material disturbances occur and the system can observe them, act quickly enough, and remain stable. If you knew tomorrow's demand exactly, a single plan could be enough. In practice forecasts are imperfect, so a well-designed loop can absorb some error; it complements rather than replaces model accuracy, constraints, and sound measurements.</p>",
     "deeper": "<p>The more precise version is <b>loop rate versus disturbance rate</b>. A loop can only correct disturbances that are slower than the loop itself. If a planner re-solves once a day and demand shocks arrive hourly, the system is structurally blind to those shocks — no improvement to the optimizer changes that, because the problem is the cadence, not the solver.</p>\n<p>That gives you a precise way to argue for event-driven re-solving: not \"real time is better\", but \"the disturbance is faster than the loop\".</p>",
     "check": {
      "question": "A route plan is solved each morning and executed all day with no re-planning. During the day it is:",
@@ -1267,7 +1267,7 @@ window.PREP_CORE = {
     "title": "The four design settings of any re-solving loop",
     "viz": "receding-horizon",
     "body": "<p>Nobody is going to ask you to prove stability. They will ask how you would set these four things.</p>\n<ul>\n<li><b>Cadence and staleness.</b> How often do you re-solve? A plan is only as good as the data it was built on, so the real question is how stale the inputs may get. Too slow and the loop cannot see the disturbances that matter. Too fast and you pay compute for a decision nobody can act on yet, and you destabilise the people downstream. What to say: \"I would set the cadence from how fast the inputs actually move, not from how fast the solver can run.\"</li>\n<li><b>Horizon versus commitment.</b> Plan over several periods, commit only the first. The horizon exists so today's decision accounts for tomorrow's consequences; the commitment window is short because the far end of the plan rests on the least reliable data. Get it wrong one way and you are myopic — you strand capacity in the wrong place at the end of every horizon. Get it wrong the other way and you have locked in a plan built on a forecast you have stopped believing. What to say: \"plan long, commit short, and be explicit about which decisions are already locked.\"</li>\n<li><b>Damping and stability, in software terms.</b> The failure is thrash: a plan that changes every time it is re-solved, until the people living under it stop trusting it. Four practical measures, none needing an equation — smooth the inputs so noise alone cannot drive a re-plan; use <b>hysteresis</b> so a marginal signal cannot flip the plan back and forth; penalise deviation from the previously published plan directly in the objective; and <b>warm start</b> the solver from the previous solution, which both shortens the solve and biases it toward a similar plan. What to say: \"people wanting predictable plans is not a nice-to-have, it is a stability requirement, and it belongs in the objective.\"</li>\n<li><b>Model-error monitoring as a re-plan trigger.</b> The loop should re-plan when the world disagrees with the model, not only when a timer fires. Track forecast error against realised outcomes and trigger an off-cycle re-solve when it crosses a threshold. What to say: \"I would make a re-plan an event driven by measured model error, with the scheduled run as the floor rather than the only mechanism.\"</li>\n</ul>",
-    "deeper": "<p>Notice that three of the four settings are the same trade-off in different forms: responsiveness against stability. Faster cadence, shorter commitment and weaker damping all make the system react sooner and thrash more. That is the sentence to reach for if pushed on any one of them — you are not tuning four independent parameters, you are choosing one point on one trade-off.</p>\n<p>The fourth setting is the one that breaks the trade-off rather than sitting on it: triggering on measured model error lets the loop be slow when the world is calm and fast when it is not, which is strictly better than picking one fixed rate.</p>",
+    "deeper": "<p>Notice that three of the four settings are the same trade-off in different forms: responsiveness against stability. Faster cadence, shorter commitment and weaker damping all make the system react sooner and can create more churn unless the controls are designed well. That is the sentence to reach for if pushed on any one of them — you are not tuning four independent parameters, you are choosing one point on one trade-off.</p>\n<p>A measured-error trigger can complement a fixed cadence: it lets the loop re-plan sooner when the world is demonstrably off-model, subject to reliable measurements, thresholds, and safeguards against noisy oscillation.</p>",
     "check": {
      "question": "People complain that their published plan keeps changing. Which change most directly addresses it?",
      "options": [
@@ -1316,8 +1316,8 @@ window.PREP_CORE = {
     "title": "Follow-up question: \"How do you stop the plan thrashing when the forecast is noisy?\"",
     "prompt": "An interviewer asks: \"How do you stop the plan thrashing when the forecast is noisy?\" Answer in first person. Name the measures concretely, say where the requirement comes from, and be clear that re-solving harder is not the answer.",
     "timeboxSec": 90,
-    "rubric": "Must-haves: (1) treats churn as a stability requirement rather than a cosmetic complaint, and says the requirement comes from the people living under the plan; (2) names at least three concrete measures — smoothing or filtering the input signal, hysteresis so a marginal change cannot flip the plan back, an explicit penalty on deviation from the currently published plan inside the objective, warm starting the solver from the previous solution; (3) states that re-solving more often makes churn worse, not better; (4) distinguishes a change the loop should absorb quietly from one that genuinely warrants re-publishing, ideally via a trigger on measured model error; (5) stays operational rather than theoretical. Common mistakes: proposing a more accurate forecast as the fix; treating stability as a preference rather than something that belongs in the objective; claiming that a more frequent re-solve reduces churn. {{HONESTY}}",
-    "model": "<p>\"I would treat that as a stability requirement rather than a complaint, because it comes from the people living under the plan. If it moves every time it is re-solved, they stop trusting it, and an untrusted plan is worse than a slightly suboptimal one.</p>\n<p>Four measures, roughly in order of how cheap they are. Smooth the input so noise alone cannot drive a re-plan. Add hysteresis — require a bigger swing to move back than you required to move in the first place, so a marginal signal cannot flip-flop the plan. Put an explicit penalty on deviation from the currently published plan into the objective, which is the honest version: if stability has value, it should be priced, not added afterwards. And warm start the solver from the previous solution, which shortens the solve and biases it toward a similar answer.</p>\n<p>And re-solving more often is not the fix — it is usually the cause. What I would add instead is a trigger: monitor forecast error against realised demand, and re-publish when the model is genuinely wrong rather than on every tick. And the cadence should come from the human requirement — the hour by which the plan has to be reliable — rather than from how fast the solver can run.\"</p>"
+    "rubric": "Must-haves: (1) treats churn as a stability requirement rather than a cosmetic complaint, and says the requirement comes from the people living under the plan; (2) names at least three concrete measures — smoothing or filtering the input signal, hysteresis so a marginal change cannot flip the plan back, an explicit penalty on deviation from the currently published plan inside the objective, warm starting the solver from the previous solution; (3) explains that increasing cadence can increase churn unless damping, commitment rules, and publish triggers control it; (4) distinguishes a change the loop should absorb quietly from one that genuinely warrants re-publishing, ideally via a trigger on measured model error; (5) stays operational rather than theoretical. Common mistakes: naming a cadence without considering its stability effect; treating stability as a preference rather than something that belongs in the objective; assuming that a more frequent re-solve automatically reduces churn. {{HONESTY}}",
+    "model": "<p>\"I would treat that as a stability requirement rather than a complaint, because it comes from the people living under the plan. If it moves every time it is re-solved, they stop trusting it, and an untrusted plan is worse than a slightly suboptimal one.</p>\n<p>Four measures, roughly in order of how cheap they are. Smooth the input so noise alone cannot drive a re-plan. Add hysteresis — require a bigger swing to move back than you required to move in the first place, so a marginal signal cannot flip-flop the plan. Put an explicit penalty on deviation from the currently published plan into the objective, which is the honest version: if stability has value, it should be priced, not added afterwards. And warm start the solver from the previous solution, which shortens the solve and biases it toward a similar answer.</p>\n<p>Increasing the re-solve cadence can create more churn if those controls are absent. I would add a trigger: monitor forecast error against realised demand, and re-publish when the model is genuinely wrong rather than on every tick. The cadence should come from the human requirement — the hour by which the plan has to be reliable — rather than from how fast the solver can run.\"</p>"
    },
    {
     "id": "ct-a1",
@@ -1419,8 +1419,8 @@ window.PREP_CORE = {
     "part": "field",
     "title": "Offline RL and off-policy evaluation",
     "viz": "shadow-traffic",
-    "body": "<p>You cannot let an untrained policy explore freely against real customers or real money. So the production path is <b>offline</b>: learn from logged decisions, then use <b>off-policy evaluation</b> to estimate what a new policy would have earned on that logged data, before it touches anything live.</p>\n<p>The standard estimators to name are <b>inverse propensity scoring</b> (reweight each logged outcome by how much more or less likely the new policy was to take that action), <b>self-normalised IPS</b> (the same, with the weights normalised to reduce variance), and <b>doubly robust</b> estimators (combine importance weighting with a learned reward model, so you get a good estimate if either component is right). You do not need their derivations — you need to know they exist and that they need logged action probabilities to work at all.</p>",
-    "deeper": "<p>The failure mode to name is <b>distribution shift</b>: off-policy estimates get unreliable exactly where the new policy does something the old one rarely did, which is usually the interesting part. Importance weights explode, variance blows up, and the estimate quietly stops meaning anything.</p>\n<p>So the honest deployment story is a series of stages, not one big check: offline evaluation, then <b>shadow mode</b> — the candidate policy runs on real traffic and its decisions are logged but never acted on — then a small guarded ramp with a kill switch you have actually tested.</p>",
+    "body": "<p>You cannot let an untrained policy explore freely against real customers or real money. So the production path is <b>offline</b>: learn from logged decisions, then use <b>off-policy evaluation</b> to estimate what a new policy would have earned on that logged data, before it touches anything live.</p>\n<p>The standard estimators to name are <b>inverse propensity scoring</b> (reweight each logged outcome by how much more or less likely the new policy was to take that action), <b>self-normalised IPS</b> (the same, with the weights normalised to reduce variance), and <b>doubly robust</b> estimators (combine importance weighting with a learned reward model). IPS, SNIPS, and the importance-weighted part of doubly robust estimation require logged action probabilities; direct model-based evaluation uses different assumptions that must be tested.</p>",
+    "deeper": "<p>The failure mode to name is <b>distribution shift</b>: off-policy estimates get unreliable exactly where the new policy does something the old one rarely did, which is usually the interesting part. Importance weights explode, variance blows up, and the estimate quietly stops meaning anything.</p>\n<p>So the honest deployment story is a series of stages, not one big check: offline evaluation, then <b>shadow mode</b> — the candidate policy runs on real traffic and its decisions are logged but never acted on — then a small guarded ramp with a kill switch you have actually tested. Shadow avoids a user-facing decision change, but it still needs privacy review, access controls, capacity and cost limits, and safeguards against side effects.</p>",
     "check": {
      "question": "Why does off-policy evaluation need the probability with which each logged action was chosen?",
      "options": [
@@ -1438,7 +1438,7 @@ window.PREP_CORE = {
     "part": "field",
     "title": "How to choose: solver, bandit, or RL",
     "body": "<p>Use <b>constrained optimization — LP, MIP, CP-SAT (Google's constraint-programming solver; see <a href=\"#or-tooling\">Optimisation and operations research</a>) or a routing engine</b> when the constraints are hard and known and the objective is writable. You get a feasible, auditable answer, and with an exact method a stated optimality gap.</p>\n<p>Reach for <b>bandits or RL</b> when the objective cannot be written in closed form, when dynamics are unknown or non-stationary, or when today's decision changes tomorrow's state.</p>\n<p>In production the answer is nearly always <b>both</b>: an optimizer in the decision loop, with learned models supplying its parameters — demand forecast, ETA (estimated time of arrival), acceptance probability, handling time. Learning belongs in the numbers the optimizer takes on faith, not in replacing the optimizer.</p>",
-    "deeper": "<p>The strongest version of the argument: a solver gives you a feasibility guarantee, and you should be very reluctant to trade a feasibility guarantee for a learned policy. If vehicle counts and time windows are hard, a policy that \"usually\" respects them is not a better system, it is a worse one with better demos.</p>\n<p>Where learning genuinely earns its place inside that architecture is in the parameters — and, occasionally, in a heuristic that decides how to decompose or warm-start a large solve, which is a much less risky place to put a learned component.</p>",
+    "deeper": "<p>For a correctly specified model and solver status, an exact solver can certify feasibility relative to the encoded constraints; a learned policy cannot supply that certificate by itself. If vehicle counts and time windows are hard, retain constraint checks and a safe fallback rather than relying on a policy that merely usually respects them.</p>\n<p>Where learning genuinely earns its place inside that architecture is in the parameters — and, occasionally, in a heuristic that decides how to decompose or warm-start a large solve, which is a much less risky place to put a learned component.</p>",
     "check": {
      "question": "Constraints are hard and fully specified, the objective is writable, and decisions are near-independent. What should you build first?",
      "options": [
@@ -1448,7 +1448,7 @@ window.PREP_CORE = {
       "A deep policy network with a shaped reward"
      ],
      "answer": 1,
-     "explain": "Hard known constraints plus a writable objective is the classic case for a solver. Learning belongs in the parameters the solver consumes, not in replacing the feasibility guarantee."
+     "explain": "Hard known constraints plus a writable objective is the classic case for a solver. When the model and solver status support it, the solver can certify feasibility for the encoded constraints; learning can supply parameters without replacing those checks."
     }
    },
    {
@@ -1468,8 +1468,8 @@ window.PREP_CORE = {
     "title": "Exercise: when to reach for RL, and when not to",
     "prompt": "From memory, list three conditions under which you would reach for a bandit or RL, and three under which you would use a solver instead. One line each, no explanation. Then say in one line what a contextual bandit is and why it is usually the right first step.",
     "timeboxSec": 120,
-    "rubric": "Reach-for-RL side must include at least three of: objective not writable in closed form; unknown or hard-to-model dynamics; non-stationary environment; today's decision changes tomorrow's state; only partial feedback available. Solver side must include at least three of: hard and fully specified constraints; writable objective; need for a feasibility guarantee; need for auditability; near-independent decisions; need for a stated optimality gap. The bandit line must state the no-carry-over property and the cheaper evaluation and operational risk. Common mistakes: listing \"lots of data\" or \"deep learning available\" as an RL trigger; failing to name feasibility guarantee on the solver side; describing a bandit as \"RL with one step\" without the no-carry-over property; giving vague conditions that do not discriminate between the two. {{HONESTY}}",
-    "model": "<p>RL or bandit: objective cannot be written down cleanly; dynamics unknown or non-stationary; today's action changes tomorrow's state. Solver: constraints hard and fully specified; objective writable and agreed with the business; you need a feasibility guarantee and an auditable decision with a stated gap.</p>\n<p>Contextual bandit: you see a context, choose one action, observe the reward for that action only, and your choice does not change the next context — which makes it far cheaper to evaluate and operate than full RL, so it is the right first step whenever the carry-over is genuinely absent.</p>"
+    "rubric": "Reach-for-RL side must include at least three of: objective not writable in closed form; unknown or hard-to-model dynamics; non-stationary environment; today's decision changes tomorrow's state; only partial feedback available. Solver side must include at least three of: hard and fully specified constraints; writable objective; need for explicit feasibility checks or a solver certificate under its stated assumptions; need for auditability; near-independent decisions; need for a stated optimality gap. The bandit line must state the no-carry-over property and the cheaper evaluation and operational risk. Common mistakes: listing \"lots of data\" or \"deep learning available\" as an RL trigger; claiming a blanket feasibility guarantee; describing a bandit as \"RL with one step\" without the no-carry-over property; giving vague conditions that do not discriminate between the two. {{HONESTY}}",
+    "model": "<p>RL or bandit: objective cannot be written down cleanly; dynamics unknown or non-stationary; today's action changes tomorrow's state. Solver: constraints hard and fully specified; objective writable and agreed with the business; you need auditable constraint checks and, when the model and solver status support it, a certificate for the encoded problem with a stated gap.</p>\n<p>Contextual bandit: you see a context, choose one action, observe the reward for that action only, and your choice does not change the next context — which makes it far cheaper to evaluate and operate than full RL, so it is the right first step whenever the carry-over is genuinely absent.</p>"
    },
    {
     "id": "rl-a5",
@@ -1832,7 +1832,7 @@ window.PREP_CORE = {
     "part": "field",
     "title": "Key terms",
     "body": "<p>Precision here is cheap and it is noticed. Define these once.</p>\n<ul>\n<li><b>Time complexity, big-O</b> - how running time grows with input size, ignoring constants. <code>O(1)</code> means constant, not growing with input size at all; <code>O(n)</code> means proportional to input size; <code>O(n log n)</code> is typical of sorting; <code>O(n squared)</code> means every pair.</li>\n<li><b>Space complexity</b> - the same for additional memory used, not counting the input. O(1) extra space means you rearranged the input itself rather than building a second copy of it.</li>\n<li><b>Amortised</b> - averaged over a sequence of operations. Appending to a dynamic array is amortised constant time even though an occasional append copies everything.</li>\n<li><b>In-place</b> - modifying the input rather than allocating a new structure.</li>\n<li><b>Streaming or online algorithm</b> - one pass, bounded memory, no ability to revisit earlier items. The default assumption in any event-processing question.</li>\n<li><b>Idempotent</b> - applying it twice has the same effect as applying it once.</li>\n<li><b>Deterministic</b> - the same input always yields the same output. Matters for tests and for audit.</li>\n<li><b>Edge case</b> - empty input, one element, all elements identical, values at the boundary, negative or zero, duplicates, unsorted input assumed sorted, integer overflow in languages that have it.</li>\n<li><b>Invariant</b> - something that stays true at every step of a loop. Stating one aloud is the fastest way to convince someone your loop is correct.</li>\n<li><b>Unit test</b> (<a href=\"#mlops-tooling/mot-f1\">Source control and project layout for ML</a>) - a small automated check of one behaviour, including at least one edge case.</li>\n<li><b>Window function (SQL)</b> - a computation over rows related to the current row, written with <code>OVER</code> and usually <code>PARTITION BY</code> and <code>ORDER BY</code>, which does not collapse the rows the way <code>GROUP BY</code> does.</li>\n<li><b>Common table expression (CTE)</b> - a named subquery introduced with <code>WITH</code>, used to make multi-step SQL readable.</li>\n</ul>",
-    "deeper": "<p>One habit worth more than any pattern: after writing a loop, say the invariant out loud. \"At the top of each iteration, the window holds exactly the elements within k of the current index, and the running sum equals their total.\" If that sentence is true, the loop is almost certainly correct, and if you cannot say it, you have found your bug without running anything.</p>\n<p>The second habit is to name your edge cases before you write, not after. Empty input, single element, all duplicates, and the boundary value. Saying them first turns them into requirements; saying them afterwards turns them into corrections.</p>",
+    "deeper": "<p>One habit worth more than any pattern: after writing a loop, say the invariant out loud. \"At the top of each iteration, the window holds exactly the elements within k of the current index, and the running sum equals their total.\" An invariant is evidence, not a complete proof: pair it with a correct initialization and a termination argument. If you cannot state it, you have found an important gap before running anything.</p>\n<p>The second habit is to name your edge cases before you write, not after. Empty input, single element, all duplicates, and the boundary value. Saying them first turns them into requirements; saying them afterwards turns them into corrections.</p>",
     "check": {
      "question": "What is the fastest way to convince an interviewer your loop is correct?",
      "options": [
@@ -2140,3 +2140,742 @@ window.PREP_CORE = {
   "sayItOutLoud": null
  }
 };
+
+/* Public-course wording corrections. Keep these narrow while stable topic ids
+   continue to identify saved course progress. */
+(function (core) {
+  'use strict';
+  function learn(topicId, itemId) {
+    var xs = core[topicId].learn, i;
+    for (i = 0; i < xs.length; i++) if (xs[i].id === itemId) return xs[i];
+    throw new Error('Missing public learn item: ' + topicId + '/' + itemId);
+  }
+  function activity(topicId, itemId) {
+    var xs = core[topicId].activities, i;
+    for (i = 0; i < xs.length; i++) if (xs[i].id === itemId) return xs[i];
+    throw new Error('Missing public activity: ' + topicId + '/' + itemId);
+  }
+  function change(o, field, from, to) {
+    if (o[field].indexOf(from) < 0) throw new Error('Missing public wording: ' + from.slice(0, 72));
+    o[field] = o[field].replace(from, to);
+  }
+
+  var mlp0 = learn('ml-lifecycle-platform', 'mlp-0');
+  change(mlp0, 'body',
+    '<li><b>Guardrail</b> - a check built into the road rather than added by review: a blocking data-quality test, a mandatory approval, an enforced encryption policy.</li>',
+    '<li><b>Guardrail</b> - a check built into the road rather than added by review: a blocking data-quality test, a mandatory approval, an enforced encryption policy.</li>\n<li><b>Data contract</b> - an agreed, enforced statement of a data producer\'s schema and quality expectations. For example, a changed unit or a missing required field fails validation before it reaches a training or feature store.</li>\n<li><b>Label latency and drift</b> - label latency is how long a real outcome takes to arrive; drift is a meaningful change in inputs or outcomes after release. Monitoring reveals the evidence that may justify retraining; it does not make retraining automatic.</li>');
+
+  var df0 = learn('data-features', 'df-0');
+  change(df0, 'body',
+    '<li><b>Feature vector</b> - the complete set of values handed to the model for one prediction, in a fixed order. The training row and the serving request have to produce the same vector for the same situation; when they do not, that is skew.</li>\n<li><b>Label</b> - the ground truth you are trying to predict: was this transaction charged back, did this customer renew, was this recommendation accepted. A feature describes the world before the decision; a label describes how it turned out.</li>',
+    '<li><b>Feature vector</b> - the complete set of values handed to the model for one prediction, in a fixed order. The training row and the serving request have to produce the same vector for the same situation; when they do not, that is skew.</li>\n<li><b>Scorer</b> - the serving component that reads the feature vector and returns a model score or decision at request time.</li>\n<li><b>Velocity</b> - a recent activity count or rate, such as transactions on one card in the last hour.</li>\n<li><b>Label</b> - the ground truth you are trying to predict: was this transaction charged back, did this customer renew, was this recommendation accepted. A feature describes the world before the decision; a label describes how it turned out.</li>\n<li><b>Chargeback</b> - a payment dispute in which the cardholder\'s issuer reverses a transaction. It is an illustrative delayed fraud label here, not an assumption about a particular system.</li>');
+  var df2 = learn('data-features', 'df-f2');
+  change(df2, 'body',
+    '<p>The correct operation is an <b>as-of join</b>: for each training row, take the feature value with the greatest timestamp that is still less than or equal to the row\'s event timestamp.',
+    '<p>In the accompanying timeline, <b>t0</b> means the decision time and <b>H</b> means the label horizon: the elapsed time until an outcome can be observed.</p>\n<p>The correct operation is an <b>as-of join</b>: for each training row, take the feature value with the greatest timestamp that is still less than or equal to the row\'s event timestamp.');
+  var df3 = learn('data-features', 'df-f3');
+  change(df3, 'body',
+    '<p>One test catches most of the table at once, and it should block a release:',
+    '<p>One test catches most of the table at once, and it should block a release. It is often called a <b>parity check</b>: an equality check between the offline and deployed serving computations on the same records.');
+  var df5 = learn('data-features', 'df-f5');
+  change(df5, 'body',
+    '<p>A feature computed on a stream is a different object from one computed by a nightly batch, and the difference is what gets probed.',
+    '<p>In the ownership diagram, an <b>audit-event stream</b> records what the pipeline did for later inspection, while a <b>dead-letter stream</b> receives events that repeatedly failed processing instead of retrying forever. A feature computed on a stream is a different object from one computed by a nightly batch, and the difference is what gets probed.');
+
+  var ss0 = learn('serving-and-scale', 'ss-0');
+  change(ss0, 'body',
+    '<li><b>Batching</b> - grouping requests into one model call.',
+    '<li><b>Graphics processing unit (GPU)</b> - an accelerator commonly used for parallel model inference and training. Its throughput depends on both model work and how efficiently requests are batched.</li>\n<li><b>Batching</b> - grouping requests into one model call.');
+  var ro0 = learn('reliability-ops', 'ro-0');
+  change(ro0, 'body',
+    '<li><b>Proxy metric</b> <i>(ML-specific)</i> - a fast-moving stand-in for a delayed quality metric: score distribution, alert rate, override rate.</li>',
+    '<li><b>Proxy metric</b> <i>(ML-specific)</i> - a fast-moving stand-in for a delayed quality metric: score distribution, alert rate, override rate.</li>\n<li><b>Population stability index (PSI)</b> <i>(ML-specific)</i> - one distribution-distance summary sometimes used to compare a live feature distribution with a reference. Its threshold is chosen and validated locally; no single PSI cutoff is universal.</li>');
+  var ro5 = learn('reliability-ops', 'ro-f5');
+  change(ro5, 'deeper',
+    '<p>Published incident discipline is worth citing accurately when you rely on it: incidents rated P1 to P4, a central operations centre that spins up incident calls, and a platform team taking central responsibility for one class of incident and for learning from it.</p>\n<p>What is usually <i>not</i> published is an on-call rotation structure or a postmortem process for ML specifically. Cite what a source states; do not extrapolate a process it has not described.</p>',
+    '<p>Incident severity schemes, command structures and on-call ownership differ by organization. State the published or local process only when you can name its source; otherwise describe the general requirement for a clear severity path, an incident lead and documented follow-up without implying a particular organization\'s process.</p>');
+  var roa3 = activity('reliability-ops', 'ro-a3');
+  change(roa3, 'prompt',
+    'State the abort criteria at each stage, who or what decides, and what cannot be undone.',
+    'State the abort criteria at each stage, who or what decides, and what cannot be undone. If a release also changes stored-data format, explain that a data migration is usually made forward-compatible because moving traffic back does not undo already-written data.');
+  change(roa3, 'model',
+    'I should be clear that automated canary abort is something I would build - what I have operated is blue-green through a service mesh with metric alerting and a human decision to switch.',
+    'If I have not operated automated canary abort, I would say it is the design I would build rather than claim it as history. The narrower experience I could describe, if true, is a blue-green switch with metric alerting and a human decision to switch.');
+
+  var sA2 = activity('system-design-fundamentals', 'sdf-a2');
+  change(sA2, 'rubric',
+    'write-through defined as writing to cache and database together, so data written that way is never stale, paid for with latency on every write whether or not the value is read',
+    'write-through defined as synchronously updating cache and backing store on the write path, paid for with latency on every write whether or not the value is read; atomicity and partial-failure recovery are implementation-specific, so it must not be described as universally stale-free');
+  change(sA2, 'model',
+    'Write-through means every write goes to the cache and the database as one operation, so anything written that way is never stale in the cache. You pay for it on the write path, twice per write, whether or not anyone reads the value.',
+    'Write-through means the write path synchronously updates the cache and backing store. You pay for it on every write, whether or not anyone reads the value. That does not by itself make two separate stores an atomic transaction: partial-failure recovery and the stale-read guarantee depend on the implementation.');
+  change(sA2, 'model',
+    'For the experience boundary, state whether you built the cache layer, used a managed component, or are describing a design. Connect only verified adjacent experience, if any, to the same consistency, latency, and failure questions.',
+    'If you have not operated a cache layer, say this is the design you would use and do not turn an adjacent system into a claim that you built one. If you have relevant experience, describe its actual consistency, latency and failure boundary.');
+  var mlpA3 = activity('ml-lifecycle-platform', 'mlp-a3');
+  change(mlpA3, 'model',
+    'and doing the first migration myself rather than handing over a guide.',
+    'and helping an early team migrate rather than handing over a guide. If that is not your experience, present it as the support you would offer, not as history.');
+
+  var gp3 = learn('genai-platform', 'gp-f3');
+  change(gp3, 'body',
+    '<li><b>Injection and exfiltration.</b> Retrieved content is untrusted input. Instructions embedded in a document must not be followed, and sensitive fields must not be echoed into an output that leaves the boundary.</li>',
+    '<li><b>Injection and exfiltration.</b> Retrieved content is untrusted input. Instructions embedded in a document must not be followed, and personally identifiable information (PII) or other sensitive fields must not be echoed into an output that leaves the boundary.</li>');
+  var gp4 = learn('genai-platform', 'gp-f4');
+  change(gp4, 'body',
+    'Low temperature makes the highest-probability tokens dominate, so output is more deterministic and repetitive; high temperature flattens the distribution, so output is more varied and more likely to be wrong. Consequence: for extraction, classification or anything parsed downstream, use a low temperature; variety is a feature only when the task is generative.',
+    'Low temperature makes the highest-probability tokens dominate, so output is more repeatable; high temperature flattens the distribution, so output is more varied. Temperature is not a correctness or JSON-validity control. Consequence: for extraction, classification or anything parsed downstream, use a schema or structured-output/tool contract, deterministic parsing and validation, plus an explicit error and retry path; low temperature may reduce variance, while variety is a feature only when the task is generative.');
+  change(gp4, 'deeper',
+    'that temperature is a correctness control for anything parsed downstream.',
+    'that parsed output needs an enforceable schema, deterministic parsing and validation rather than a temperature setting.');
+  change(gp4.check, 'question',
+    'A team parses the model\'s output as JSON downstream and occasionally gets malformed responses. Which single setting is most likely wrong?',
+    'A team parses the model\'s output as JSON downstream and occasionally gets malformed responses. Which control is most reliable?');
+  gp4.check.options[1] = 'A schema or structured-output/tool contract with deterministic parsing, validation, and a defined retry or error path';
+  change(gp4.check, 'explain',
+    'Temperature scales the output distribution before sampling. For anything parsed downstream, a low temperature is a correctness control, not a style preference.',
+    'Temperature changes sampling variance; it cannot guarantee JSON validity or factual correctness. A contract plus deterministic parsing, validation, and a defined failure path enforces the downstream interface.');
+  var gpA4 = activity('genai-platform', 'gp-a4');
+  change(gpA4, 'rubric',
+    'temperature as a scaling of the output distribution before sampling, with the consequence that low temperature is a correctness control for anything parsed downstream',
+    'temperature as a scaling of the output distribution before sampling, with the consequence that low temperature improves repeatability but parsed output still needs a schema or structured-output/tool contract, deterministic parsing and validation, plus a retry or error path');
+  change(gpA4, 'model',
+    'For anything parsed downstream I treat a low temperature as a correctness setting rather than a style one.',
+    'For anything parsed downstream, low temperature only improves repeatability. I require a schema or structured-output/tool contract, deterministic parsing and validation, plus a retry or error path.');
+  var gp5 = learn('genai-platform', 'gp-f5');
+  change(gp5.check, 'explain',
+    'The other three are arguments for a smaller model, a lower temperature, or retrieval - all still machine learning.',
+    'The other three are arguments for a smaller model, schema-constrained output with validation, or retrieval - all still machine learning.');
+}(window.PREP_CORE));
+
+/* Independent public-core correctness pass. These replacements deliberately
+   preserve every stable topic, section, activity and quiz-answer index. */
+;(function (core) {
+  'use strict';
+  function walk(value, before, after) {
+    var count = 0, key, result;
+    if (!value || typeof value !== 'object') return 0;
+    Object.keys(value).forEach(function (k) {
+      key = value[k];
+      if (typeof key === 'string') {
+        result = key.split(before);
+        if (result.length > 1) {
+          count += result.length - 1;
+          value[k] = result.join(after);
+        }
+      } else if (key && typeof key === 'object') {
+        count += walk(key, before, after);
+      }
+    });
+    return count;
+  }
+  function swap(topicId, before, after, minimum) {
+    var count = walk(core[topicId], before, after);
+    if (count < (minimum || 1)) throw new Error('Missing independent correction in ' + topicId + ': ' + before.slice(0, 72));
+  }
+  function item(topicId, collection, id) {
+    var xs = core[topicId][collection], i;
+    for (i = 0; i < xs.length; i++) if (xs[i].id === id) return xs[i];
+    throw new Error('Missing public item: ' + topicId + '/' + id);
+  }
+
+  /* System design fundamentals. */
+  swap('system-design-fundamentals',
+    'keeping copies of data on more than one node, so a machine can fail without losing anything and reads can be spread across the copies. What it does not give you is more write capacity - every copy has to take every write.',
+    'keeping copies of data on more than one node to improve availability and sometimes read capacity. Durability and acknowledged-write loss depend on whether replication is synchronous or asynchronous and on the quorum used; replicas do not necessarily accept every write synchronously.');
+  swap('system-design-fundamentals',
+    'a durable buffer between a producer and a consumer, so the producer does not wait for the consumer and a spike becomes a backlog rather than an error.',
+    'a buffer between a producer and a consumer. It can decouple their pace until its capacity or retention limit is reached; durability and producer acknowledgement depend on the queue configuration.');
+  swap('system-design-fundamentals',
+    'a configured check used to decide whether a replica should receive traffic or be restarted.',
+    'a configured check used by a controller. A readiness check decides whether a replica should receive new traffic; a liveness check may trigger a restart; a separate drain procedure lets in-flight work finish.');
+  swap('system-design-fundamentals',
+    'DNS resolves a name, the client opens a connection, and it arrives at a load balancer. At <a href="#networking-basics/nb-layers">layer 7</a> that balancer can route by path or header, terminate TLS,',
+    'The Domain Name System (DNS) resolves a name, the client opens a connection, and it arrives at a load balancer. At <a href="#networking-basics/nb-layers">layer 7</a> that balancer can route by path or header, terminate Transport Layer Security (TLS),');
+  swap('system-design-fundamentals',
+    'a pool of reused connections turns that into a queue wait measured in microseconds.',
+    'a pool of reused connections avoids most setup work, although acquisition can still wait under contention.');
+  swap('system-design-fundamentals',
+    'Fan-out, because several consumers can read the same stream for different purposes.',
+    'Fan-out when the design uses separate subscriptions or consumer groups so each downstream receives the event; workers in one ordinary queue usually share messages instead.');
+  swap('system-design-fundamentals',
+    'Decoupling, so a slow consumer does not fail the producer. Absorption, so a spike becomes a backlog instead of a wall of errors.',
+    'Decoupling, so a slow consumer need not immediately fail the producer. Absorption, so a bounded spike can become a backlog; once capacity or retention limits are reached, producers still need backpressure or rejection.');
+  swap('system-design-fundamentals',
+    'Every remote call has one, and it must be smaller than the caller\'s own remaining budget. A call with no timeout is a call that can hold a thread forever, and enough of those is an outage.',
+    'Every remote call needs a bounded deadline or cancellation policy, and its timeout must fit inside the caller\'s remaining budget. Without one, synchronous threads or asynchronous work can remain occupied until a lower-level timeout, exhausting concurrency.');
+  swap('system-design-fundamentals',
+    'Retry only what is safe to retry - which means idempotent, which means the idempotency key from the previous section.',
+    'Retry only operations made safe by natural idempotency, a destination-side idempotency key, deduplication, or a transaction boundary.');
+  swap('system-design-fundamentals',
+    'The rule to state: the answer to a failed dependency is a worse answer, not no answer.',
+    'Choose the response from the harm model and caller contract: a validated degraded answer may be appropriate, while high-impact paths may need to fail closed, defer, route to review, or return an explicit unavailable result.');
+  swap('system-design-fundamentals',
+    'REST at the edge for readability and tooling; a typed binary protocol like gRPC internally where the latency budget is small and both sides are yours.',
+    'A resource-oriented HTTP interface may fit an external edge; gRPC (gRPC Remote Procedure Calls) may fit an internal typed or streaming interface. Choose from compatibility, schema and streaming needs, browser/client support, latency measurements and operational ownership rather than location alone.');
+  swap('system-design-fundamentals',
+    'the pod autoscaler schedules pods but does not create nodes',
+    'the horizontal pod autoscaler changes the workload\'s desired replica count; workload controllers create Pods, the scheduler places them, and a separate node autoscaler may provision Nodes', 2);
+  swap('system-design-fundamentals',
+    'A worse answer, never no answer.',
+    'Use a degraded answer only where it is validated and allowed by the caller contract; otherwise fail closed, defer, or return an explicit unavailable result.');
+  swap('system-design-fundamentals',
+    'The online feature store is the cache in this design: latest value per entity, read-through from the perspective of the scoring service.',
+    'The online feature store is a pre-populated low-latency store in this design, not necessarily a read-through cache: a miss does not imply that it will load from an offline source.');
+  swap('system-design-fundamentals',
+    'Everything after the answer is off the path by construction, so it can be slow without being felt - and that is exactly why it must be monitored separately, because nothing will page for it.',
+    'Best-effort telemetry can be off the response path, but any audit event required by the contract must at least be durably accepted before acknowledgement. Asynchronous pipelines still need independent freshness, loss and backlog alerts.');
+  swap('system-design-fundamentals',
+    'Design an online scoring API that must never be down, including during releases,',
+    'Design a highly available online scoring API, including during releases,');
+  swap('system-design-fundamentals',
+    'a defined degraded mode that returns a worse answer rather than no answer.',
+    'a failure mode chosen from the harm model and caller contract, such as a validated reduced answer, conservative rules, review, deferral or an explicit unavailable result.');
+  swap('system-design-fundamentals',
+    'and to let a replica keep serving degraded rather than removing itself.',
+    'and to keep serving only when the degraded response is safe and allowed by the caller contract.');
+
+  /* ML lifecycle and platform. */
+  swap('ml-lifecycle-platform',
+    'GitOps</b> - short for Git Operations: the declarative pattern where Git holds the desired state and a controller continuously reconciles the running system to it.',
+    'GitOps</b> - an operating model in which desired state is declarative, versioned and immutable, pulled automatically, and continuously reconciled by software agents. “GitOps” is a coined name, not an acronym.');
+  swap('ml-lifecycle-platform',
+    'being able to rebuild the same artefact from the same declared inputs - the same data version, the same code commit, the same container image, the same random seed. If any one of those four is missing from your description, the build is not reproducible.',
+    'being able to rebuild an artefact or reproduce its declared results from immutable code, data, configuration, dependencies and execution-environment identities. Record seeds and nondeterminism settings, and state whether the target is bit-for-bit identity or results within a numeric or metric tolerance.');
+  swap('ml-lifecycle-platform',
+    'The test is whether a new team can ship on a Friday afternoon when the platform team is unavailable.',
+    'A useful test is whether a new team can complete the supported path without waiting for a platform engineer, within the organization\'s release and support policy.');
+  swap('ml-lifecycle-platform',
+    'Most engineers have built something that crosses that line without ever calling it a platform.',
+    'A contribution crosses that line when another team can use the supported capability without depending on its original author.');
+  swap('ml-lifecycle-platform',
+    'Most production incidents live in the other eight, which is the argument of <i>Hidden Technical Debt in Machine Learning Systems</i>.',
+    'Production failures can occur at any lifecycle boundary; the model is only one component, as <i>Hidden Technical Debt in Machine Learning Systems</i> illustrates.');
+  var mlpF1 = item('ml-lifecycle-platform', 'learn', 'mlp-f1');
+  mlpF1.check.question = 'Which records together let you reconstruct why a specific customer received a score three months ago?';
+  mlpF1.check.options[1] = 'A registry entry plus deployment history and privacy-governed prediction/decision records containing the model, feature and policy versions actually used';
+  mlpF1.check.explain = 'Registration supplies artefact and training lineage; deployment and prediction records supply the version, request-time features, transformations and policy used for the individual decision. Neither is sufficient alone.';
+  swap('ml-lifecycle-platform',
+    'If the compliant way to deploy a model is also the fastest way, nobody routes around it. If compliance is a review meeting and speed is a shell script, everyone routes around it',
+    'When the compliant path is also the easiest supported path, teams have less incentive to route around it. When it is materially slower than an alternative, shadow tooling becomes more likely');
+  swap('ml-lifecycle-platform',
+    'These catch the most common production breakage, which is an upstream change nobody told you about.',
+    'These catch schema, freshness and distribution failures caused by upstream data changes.');
+  swap('ml-lifecycle-platform',
+    'This is the single most valuable test in an ML system, because it is the one that catches training-serving skew before customers do.',
+    'This is a high-value test for deterministic offline-versus-serving computation mismatch; schema, freshness, timeout and fallback tests cover different failure classes.');
+  item('ml-lifecycle-platform', 'learn', 'mlp-f3').deeper = '<p>Choose tolerances from measured numeric variance and the cost of false blocks versus missed regressions. Record who owns each threshold and review false positives, false negatives and overrides; a check that fires without useful discrimination teaches teams to bypass it.</p>';
+  mlpF1 = item('ml-lifecycle-platform', 'learn', 'mlp-f3');
+  mlpF1.check.explain = 'A deployed-path comparison most directly checks deterministic offline-versus-serving computation. Data tests, captured-request replay, feature monitoring and explicit fallback tests detect other skew mechanisms.';
+  swap('ml-lifecycle-platform',
+    'the approval record via pull request.',
+    'the desired-state reference; pull-request approval metadata and deployment/controller audit events must be retained separately when they are required evidence.');
+  swap('ml-lifecycle-platform',
+    'Who changed the serving model, when, and with whose approval is a Git history. Rollback is a revert, and the controller reconciles.',
+    'Git history records desired-state changes; it does not by itself prove who approved or who synchronized a change to an environment. A tested rollback may begin with a revert, while controller events and deployment records show what actually ran.');
+  swap('ml-lifecycle-platform',
+    'a continuous-delivery controller that reconciles many clusters with enterprise single sign-on and role-based access control, a workflow engine, and a progressive-delivery controller.',
+    'declarative continuous-delivery controllers. Workflow engines and progressive-delivery controllers are separate components even when they belong to the same broader project family.');
+  swap('ml-lifecycle-platform',
+    'The common mistake is a pre-production environment with synthetic data, which validates nothing about the real distribution.',
+    'Synthetic pre-production data can validate schema, behavior and failure handling, but not whether the real production distribution is represented.');
+  swap('ml-lifecycle-platform',
+    'To rebuild a model you need four pinned things: the code commit, the data window or snapshot identifier, the configuration and hyperparameters, and the environment image. Randomness needs a recorded seed. Miss any one and "we cannot reproduce the model that is serving" becomes a real incident, usually discovered during an audit.',
+    'To reproduce a model, record immutable code, data, configuration and dependency/container identities, plus the execution environment, seeds and nondeterminism settings. State whether the target is an identical artefact or results within declared numeric and metric tolerances.');
+  var mlpF5 = item('ml-lifecycle-platform', 'learn', 'mlp-f5');
+  mlpF5.check.question = 'Which inputs and execution facts belong in a reproducibility record?';
+  mlpF5.check.options[1] = 'Immutable code, data, configuration and dependency/container identities, execution environment, seeds and nondeterminism settings, plus the declared reproduction tolerance';
+  mlpF5.check.explain = 'A seed is not sufficient across nondeterministic kernels, hardware or distributed ordering. Record all immutable inputs and define whether reproduction means identical bytes or results within a stated tolerance.';
+  swap('data-features',
+    'with features built point-in-time correct as of the transaction.',
+    'with features built from values whose event semantics fit the window and whose availability time is no later than the transaction\'s prediction-time cutoff.');
+  swap('ml-lifecycle-platform',
+    'Both built with point-in-time correct features, so no row contains information that was not knowable at the label timestamp.',
+    'Both built with point-in-time correct features, so no row contains information that was unavailable at the prediction-time cutoff.');
+  swap('ml-lifecycle-platform',
+    'A frozen holdout that never changes, so releases are comparable over time, and a recent window, so the candidate model is judged on the world as it is now.',
+    'A versioned benchmark set for comparability, a protected final audit set, and a recent window for current relevance. Refresh them under a documented policy as the population changes.');
+  swap('ml-lifecycle-platform',
+    'a frozen holdout for comparability across releases and a recent window for current relevance',
+    'a versioned benchmark set for longitudinal comparability, a protected audit set, and a recent window for current relevance');
+  swap('ml-lifecycle-platform',
+    'with an explicit statement that raw accuracy is useless here',
+    'with an explicit statement that raw accuracy is usually misleading for a heavily imbalanced problem unless interpreted with class mix and error cost');
+  swap('ml-lifecycle-platform',
+    'and a hard block if any named slice regresses beyond tolerance',
+    'and a block when a predeclared slice regression exceeds tolerance with sufficient sample size or uncertainty evidence');
+  swap('ml-lifecycle-platform',
+    'Any named slice regressing beyond tolerance is a hard block, not a warning.',
+    'A predeclared slice regression blocks promotion when it exceeds tolerance with adequate sample size or uncertainty evidence; small slices are reported without pretending noise is certainty.');
+  var mlpA3 = item('ml-lifecycle-platform', 'activities', 'mlp-a3');
+  mlpA3.prompt = 'An interviewer asks: "How would you drive adoption of a shared delivery standard, and what would you change after the first rollout?" If you have done this, use only verified experience; otherwise answer as a design and say so. Answer in first person, in about 90 seconds, and include something that did not work or a risk you would test.';
+
+  /* Data and features. */
+  var df0 = item('data-features', 'learn', 'df-0');
+  delete df0.viz;
+  swap('data-features',
+    'Besides the number itself, every feature value carries two things: the entity it belongs to, and the moment it was true.',
+    'A feature value needs the entity or scope it describes where applicable, its event semantics, and enough availability/version metadata to reconstruct what serving could know. Some features are global or request-scoped rather than entity-keyed.');
+  swap('data-features',
+    'The symptom is unmistakable: excellent offline numbers and immediate disappointment in production.',
+    'A common symptom is an unexplained offline-to-production gap, but that pattern is not unique to leakage and may be small or slice-specific.');
+  swap('data-features',
+    'the full history of every feature value with the timestamp it was true at, kept in a warehouse or a columnar table. Read to build training sets and to score in batch: scans of millions of rows, taking seconds to minutes, and nobody minds.',
+    'historical feature data used for training and batch scoring, commonly held in a warehouse or analytical table. Retention, access latency and whether every change is preserved depend on the implementation.');
+  swap('data-features',
+    'the latest value per entity and nothing else, kept in a key-value store such as Redis, Bigtable or DynamoDB. Read on the request path, one entity at a time, in single-digit milliseconds. It has no history at all:',
+    'a low-latency serving store, commonly holding recent or latest values by entity key. Data model, history and latency depend on the implementation; a Feast-style online store keeps the latest values, so');
+  swap('data-features',
+    'Nothing on the request path computes a feature; it only reads what something earlier wrote.',
+    'Many features are precomputed, while request/on-demand features may combine stored bases with current request data; both paths need the same semantics in training and serving.');
+  swap('data-features',
+    'Every streaming engine has both ideas under some name; they are not specific to any one product.',
+    'Windowing and late-data policies vary by engine; where a watermark exists, it is a progress estimate or lower bound, not proof that no earlier event can arrive.');
+  swap('data-features',
+    'a watermark is the processor\'s declared belief that it has now seen everything older than a given event time, which is what lets it close a window and emit a result.',
+    'a watermark is a progress estimate or lower bound indicating that earlier event-time data is expected to be complete; triggers and allowed-lateness policy decide when provisional or final results are emitted.');
+  swap('data-features',
+    'the guarantee that an event may be delivered more than once but is never silently lost, which is what almost every message broker gives you by default.',
+    'a delivery mode in which an acknowledged processing path may receive an event more than once. It reduces loss within the broker\'s durability and retention boundary; defaults and failure guarantees vary by system.');
+  swap('data-features',
+    '<b>The label</b> is stamped 14:32:07, the event it describes, not 10 October when it arrived. Stamp it with its arrival instead and every October training set will believe that six weeks of fraud happened in a single day.',
+    '<b>The label</b> keeps both the transaction/prediction time it belongs to and the 10 October outcome-observation time. The first joins the outcome to the prediction; the second prevents training or evaluation from treating the outcome as knowable before it arrived.');
+  swap('data-features',
+    'Computing a feature in the stream as events arrive means the value attached to an event is, by construction, the value as of that event: there is nothing to reconstruct later because nothing was ever joined. It removes the as-of join from the training pipeline entirely and pays for it in ingestion, which is usually the right trade when the feature has to be available at request time anyway.',
+    'A streaming pipeline can persist the exact feature value and version available at decision time, avoiding a later reconstruction join. That is correct only when event time, availability time, late updates, replay and versioning are handled explicitly; attaching a value during ingestion is not sufficient by itself.');
+  swap('data-features',
+    'drift is the world changing after you shipped, and it takes weeks; skew is wrong from the very first request.',
+    'drift is a change in the population or input-to-outcome relationship, while skew is a mismatch between comparable training and serving representations or computations. Either can appear quickly or only on a subset, so timing alone does not distinguish them.');
+  swap('data-features',
+    'and every row of the table below is an instance of it.',
+    'for comparable examples. The sampling-bias row below is a related dataset/selection mismatch rather than feature-computation skew.');
+  swap('data-features',
+    'One test catches most of the table at once, and it should block a release.',
+    'One high-value test directly checks deterministic computation mismatch and may block a release.');
+  swap('data-features',
+    'Any difference is skew by definition, because the two paths are supposed to be computing the same thing.',
+    'A difference beyond the declared numeric or nondeterminism tolerance is evidence to investigate; semantic mismatch is skew, while expected numeric variance is not.');
+  swap('data-features',
+    'Those need a comparison of distributions between the training set and a sample of live traffic, which is the same machinery used for drift',
+    'Sampling mismatch needs representative cohort and distribution comparisons. Label mismatch needs a versioned label contract and matched outcome data, not score distributions alone');
+  swap('data-features',
+    'A gap of roughly twenty per cent in any bin is a widely used threshold for "stop and investigate".',
+    'Choose a red-flag threshold from baseline variance, sample size, binning and operational cost; there is no universal twenty-percent cutoff.');
+  swap('data-features',
+    'A difference of roughly twenty percent across score bins is the kind of thing I would treat as a red flag rather than noise.',
+    'I would set the red-flag threshold from historical variance, sample size, binning and the cost of missing a real change, rather than use a universal percentage.');
+  var df3 = item('data-features', 'learn', 'df-f3');
+  df3.check.question = 'Which test most directly detects a deterministic offline-versus-serving computation mismatch before release?';
+  df3.check.explain = 'A parity test exercises both computations on captured identical inputs. Freshness, timeouts, fallback behavior, filters, schema changes, sampling and label semantics need separate tests.';
+  swap('data-features',
+    'For a stateless transform that is harmless - the same input produces the same output.',
+    'A pure stateless transform may recompute the same value, but duplicate emissions can still create duplicate sink writes or downstream effects unless those boundaries are idempotent.');
+  swap('data-features',
+    'with that store\'s retention sized to the realistic redelivery horizon - minutes to hours - rather than kept forever.',
+    'with retention sized to the documented maximum broker redelivery, consumer outage, source retry and replay/backfill horizon. That horizon may be seconds, days or longer.');
+  swap('data-features',
+    'A card-velocity feature two seconds stale is fine; the same feature two minutes stale during a card-testing attack is worthless, because the whole attack fits inside the staleness.',
+    'Whether two seconds or two minutes is acceptable depends on measured attack dynamics, decision policy and model sensitivity; state the example assumptions rather than treating either number as universal.');
+  swap('data-features',
+    'A window closes when the watermark passes it, and a late event can correct the result afterwards.',
+    'A configured trigger may emit when the watermark passes a window, and allowed late data may produce later panes or corrections.');
+  swap('data-features',
+    'Inside a 200 millisecond budget you cannot wait at all, so you accept an approximate value at decision time and a corrected one in the offline store',
+    'Inside a 200 millisecond budget, allocate any wait, lookup or request-time computation explicitly; a design may use a provisional precomputed value, a micro-batched update, or bounded on-demand work');
+  swap('data-features',
+    'If the decision depends on something that happened in the last few minutes - a burst of activity, a velocity, a session in progress - it has to be streaming, and you pay for a job that runs forever and can fall behind.',
+    'If the decision needs very fresh activity, compare streaming, micro-batch, incremental database aggregation and bounded request-time computation against the freshness, volume, cost and replay requirements.');
+  swap('data-features',
+    'or, best of all, compute the feature at the event as it arrives, which is what a streaming feature pipeline does - then the as-of value is attached to the event by construction.',
+    'or persist the exact value and feature version available to the scorer at decision time. A streaming pipeline can do that, but it must still handle availability time, late data, replay and corrections explicitly.');
+  swap('data-features',
+    'compute the feature at the event grain during ingestion so the as-of value is attached by construction.',
+    'persist the exact feature value and version available to the scorer, with explicit event-time, availability-time, replay and correction semantics.');
+
+  /* Serving and scale. */
+  swap('serving-and-scale',
+    'The mean is nearly useless for user experience because it hides the tail.',
+    'The mean alone can hide a slow tail, so report it only alongside workload and percentile distributions.');
+  swap('serving-and-scale',
+    'Below saturation they are independent; above it, adding load adds waiting time faster than it adds work.',
+    'Waiting can grow as utilization rises even before capacity is reached; beyond sustainable capacity, throughput plateaus while backlog and latency grow.');
+  swap('serving-and-scale',
+    'In practice it means running at around 60 per cent of measured capacity rather than 90, because a new node takes minutes to become useful and traffic does not wait for it.',
+    'Choose the margin from measured startup time, demand slope, forecast uncertainty and failure-domain requirements; no single utilization percentage applies to every workload.');
+  swap('serving-and-scale',
+    'Cluster autoscaler</b> - adds and removes nodes. Distinct from HPA, and the reason HPA can schedule pods that have nowhere to run.',
+    'Node autoscaler</b> - may add or remove Nodes under its provider and node-pool constraints. HPA changes desired workload replicas; controllers create Pods and the scheduler places them, while a node autoscaler may provision capacity for pending Pods.');
+  swap('serving-and-scale',
+    'In a queueing system, waiting time grows roughly in proportion to one divided by one minus utilisation.',
+    'In a simple single-server queueing model, waiting grows nonlinearly as utilization approaches capacity; the exact curve depends on arrival and service-time distributions, concurrency and scheduling.');
+  swap('serving-and-scale',
+    'the chance that at least one exceeds 20 milliseconds is 1 - (0.99 x 0.99 x 0.99 x 0.99 x 0.99), or about 4.9%.',
+    'if each call exceeds 20 milliseconds on exactly one percent of requests and the calls are independent, the chance that at least one exceeds it is about 4.9%; with p99 alone, 4.9% is an upper bound rather than an exact probability.');
+  var ssF1 = item('serving-and-scale', 'learn', 'ss-f1');
+  ssF1.check.options[1] = 'At most about 4.9% under independence; p99 only bounds each exceedance probability, and the request p99 needs the full latency distributions';
+  ssF1.check.explain = 'Each call exceeds 20 ms on at most one percent of observations. Under independence, the union is therefore at most 1 - 0.99^5, about 4.9%; the maximum\'s p99 cannot be recovered from percentile points alone.';
+  swap('serving-and-scale',
+    'and to size minimum and maximum replicas from the lowest and highest observed throughput over a recent window - seven days is a common choice - with a healthy buffer.',
+    'then validate minimum and maximum replicas against measured throughput, demand cycles, startup time, forecast uncertainty and failure requirements.');
+  swap('serving-and-scale',
+    '<b>HPA schedules pods; it does not create nodes.</b>',
+    '<b>HPA changes desired workload replicas; it neither schedules Pods nor provisions Nodes.</b>');
+  swap('serving-and-scale',
+    'HPA described accurately - it schedules pods but does not create nodes',
+    'HPA described accurately - it changes desired workload replicas; controllers create Pods, the scheduler places them, and node autoscaling may provision Nodes');
+  swap('serving-and-scale',
+    'HPA schedules pods but does not create nodes',
+    'HPA changes desired workload replicas; workload controllers create Pods, the scheduler places them, and node autoscaling may provision Nodes');
+  swap('serving-and-scale',
+    'a cascade where a cheap model handles the easy majority and only ambiguous cases reach the expensive one.',
+    'a validated cascade where a cheaper model handles only the subset for which its routing and quality criteria are met, while ambiguous cases reach the expensive model.');
+  swap('serving-and-scale',
+    'If the expensive stage is unavailable, the cheap stage still produces a decision, which is exactly the graceful-degradation behaviour a reliability question is asking for.',
+    'If the expensive stage is unavailable, the cheap stage is a fallback only for the subset on which it was validated; other cases may need rules, deferral, review or an unavailable response.');
+  swap('serving-and-scale',
+    'which is why it improves throughput far more than naive batching.',
+    'which can improve utilization for mixed-length requests; the gain is workload- and scheduler-dependent.');
+  var ssF4 = item('serving-and-scale', 'learn', 'ss-f4');
+  ssF4.check.question = 'A per-node log collector falls behind only on nodes whose Pod and log volume rose sharply; its local input buffers grow while backend throttling is absent. What does that evidence suggest?';
+  ssF4.check.options[1] = 'The per-node collector path is undersized for the observed per-node log rate; measure CPU, memory, parsing and output capacity before choosing node-agent, sidecar or direct-push changes';
+  ssF4.check.explain = 'The evidence links lag to per-node input rate, but topology alone does not prescribe a sidecar. Size the collector and backend from measured load, then choose the least costly architecture that meets isolation and reliability needs.';
+  swap('serving-and-scale',
+    'Remove network dependencies from node startup,',
+    'Minimize and make explicit remote dependencies in node startup, cache or mirror required artefacts where appropriate,');
+  swap('serving-and-scale',
+    'a passing test at some multiple of forecast peak,',
+    'a passing test at a justified margin above a stated forecast quantile,');
+  swap('serving-and-scale',
+    'A passing load test at three times forecast peak; a failover rehearsed end to end this season, not last; runbooks updated within the last month;',
+    'A passing load test at a margin justified by forecast uncertainty and failure cost; a recent end-to-end failover rehearsal whose age fits the change rate; runbooks reviewed after relevant changes and exercises;');
+  swap('serving-and-scale',
+    'a cascade whose cheap stage serves when the expensive stage saturates, or a rules fallback',
+    'a validated reduced model for a bounded subset, conservative rules, deferral, review, or an explicit unavailable response');
+  swap('serving-and-scale',
+    'a cascade where a cheap model handles the obvious majority, which both cuts cost at peak and doubles as the fallback if the expensive stage saturates; and a rules layer beneath that, so the answer to a total model failure is a worse decision rather than no decision.',
+    'a cascade whose cheap stage handles only a validated subset; if the expensive stage saturates, remaining cases follow the documented harm policy, such as conservative rules, deferral, human review or an explicit unavailable result.');
+  var ssA1 = item('serving-and-scale', 'activities', 'ss-a1');
+  ssA1.rubric = ssA1.rubric
+    .replace('a timeout per hop, each smaller than the remaining budget', 'a deadline per hop at or below its allocation, enforced inside the propagated remaining end-to-end budget')
+    .replace('logging, feature writes and any downstream notification explicitly moved off the critical path', 'best-effort telemetry and notifications moved off the critical path, while any contractually required audit event is durably accepted before acknowledgement');
+  ssA1.model = ssA1.model
+    .replace('Feature fetch times out at 50 milliseconds', 'Feature fetch times out at 45 milliseconds')
+    .replace('Model inference times out at 30', 'Model inference times out at 20')
+    .replace('All asynchronous, none blocking the response.', 'Best-effort telemetry is asynchronous; any audit event required by the service contract must at least be durably accepted before acknowledgement.');
+  var ssA2 = item('serving-and-scale', 'activities', 'ss-a2');
+  ssA2.rubric = ssA2.rubric.replace('a change freeze near the peak with a stated exception process', 'change controls chosen from failure risk, recovery time and operational load, with an exception process');
+  ssA2.model = ssA2.model.replace('Change freeze from a stated date before the peak, with a named exception path for security fixes.', 'Choose change controls from failure risk, recovery time and operational load; if that evidence justifies a freeze, give it a stated start and named exception path.');
+
+  /* Reliability and operations. */
+  swap('reliability-ops',
+    'An ordinary service has one health question: is it up. An ML service has two: is it up, and is it right.',
+    'A model service must track ordinary service health and decision quality separately. Non-ML services can also have semantic correctness and data-integrity objectives; ML makes the delayed-quality problem especially visible.');
+  swap('reliability-ops',
+    'the new version scores real traffic but its output is discarded, so it can be compared with no customer risk.',
+    'the new version scores real traffic through a side-effect-isolated path and its output is not used for the customer decision. This reduces decision risk but still carries data, capacity, dependency and accidental-side-effect risk.');
+  swap('reliability-ops',
+    'two full environments with an atomic traffic switch and an instant switch back.',
+    'two environments with a tested routing switch and rollback target; switch time and safety still depend on state, dependencies and compatible data.');
+  swap('reliability-ops',
+    'A runbook nobody has followed during a real incident is a document, not a runbook.',
+    'A runbook should be exercised and updated; a rehearsal can validate it before the first real incident.');
+  swap('reliability-ops',
+    'Detection is usually the larger and more improvable half.',
+    'Measure both for the local incident population; either detection or recovery may dominate.');
+  swap('reliability-ops',
+    'Platform teams increasingly make this a step in the release workflow rather than a review that happens alongside it:',
+    'A platform can encode measurable fairness and explainability checks in the release workflow and retain human review where judgment is required:');
+  swap('reliability-ops',
+    'A check inside the pipeline blocks a release; a review beside the pipeline gets skipped under deadline, and everyone involved knows it.',
+    'Automated checks provide consistent enforcement for measurable criteria; recorded human approval remains appropriate for criteria that cannot be reduced to an automated threshold.');
+  swap('reliability-ops',
+    'The share of requests that receive a decision, including the degraded path. Note the subtlety: a rules-based fallback still counts as a decision, so availability and quality are separated deliberately.',
+    'The share of requests that receive a response satisfying the documented success contract. A degraded or rules-based response counts only if that contract accepts it; track degraded exposure and quality separately.');
+  swap('reliability-ops',
+    'This is the one people never propose, and it is the best single sign of hidden decay.',
+    'This can reveal hidden fallback use that latency and error rate miss.');
+  swap('reliability-ops',
+    'do not promise a quality number over a window shorter than the label delay; it cannot be measured.',
+    'do not attribute quality to a prediction cohort until its outcome horizon has matured. Reporting can run more frequently if it clearly covers older mature cohorts.');
+  swap('reliability-ops',
+    'which is the most common cause and is fixed upstream, not by retraining. Only then consider a model response: threshold adjustment first, because it is fast and reversible, then retraining, then a redesign of features.',
+    'which is one common cause and is fixed upstream, not by retraining. Then choose among threshold, model or feature changes from the diagnosed mechanism, harm trade-off, fairness impact and rollback evidence rather than a universal order.');
+  var roF3 = item('reliability-ops', 'learn', 'ro-f3');
+  roF3.check.question = 'A drift alert fires on eight features simultaneously. What is the strongest conclusion supported by that evidence alone?';
+  roF3.check.options[1] = 'The shifts may share a cause, so investigate upstream data/pipeline changes, a real population change, and monitor configuration before choosing a response';
+  roF3.check.explain = 'Correlated shifts suggest a shared cause but do not identify it. Deployment lineage, raw-data checks, traffic context and monitor configuration distinguish an upstream defect from a real regime change.';
+  var roF2 = item('reliability-ops', 'learn', 'ro-f2');
+  roF2.check.question = 'Which indicator pair can reveal a degraded serving path that latency and request-error metrics may miss?';
+  roF2.check.explain = 'Feature age and degraded-path share expose stale inputs or fallback use. They do not prove model quality; report that separately on mature outcome cohorts.';
+  swap('reliability-ops',
+    'This catches skew, latency problems and distribution surprises with zero customer risk.',
+    'This can catch skew, latency problems and distribution surprises with reduced decision risk when side effects are isolated; it still uses production data and capacity.');
+  swap('reliability-ops',
+    'with no customer consequence.',
+    'without using its prediction for the customer action, while privacy, capacity and accidental-side-effect controls still apply.');
+  var roF4 = item('reliability-ops', 'learn', 'ro-f4');
+  roF4.check.explain = 'Prediction and action are separable, so the scoring path can be exercised on real traffic without using the shadow prediction for the customer action. This reduces decision risk but does not validate downstream action outcomes, and privacy, capacity and side-effect controls still apply.';
+  swap('reliability-ops',
+    'The procedure.</b> Stabilise first, diagnose second. Stabilising means reducing harm now: raise the threshold to cut false positives, route to the previous model version, or fall back to rules. All three are reversible in minutes; retraining is not.',
+    'The procedure.</b> Confirm what signal changed and its scope, then contain harm with the lowest-risk reversible action allowed by policy while diagnosis begins. Depending on score direction and harm, that may be a threshold change, a compatible previous version, conservative rules, deferral or review; none is universally safe or guaranteed reversible in minutes.');
+  swap('reliability-ops',
+    'with the deliberate note that a degraded or rules-based decision still counts, so availability and quality are separated',
+    'with degraded or rules-based responses counted only when they satisfy the documented success contract, and their exposure and quality tracked separately');
+  swap('reliability-ops',
+    'a stated refusal to promise a quality objective over a window shorter than the label delay, on the grounds that it cannot be measured',
+    'a refusal to attribute quality to an immature prediction cohort, while allowing frequent reports over older cohorts whose labels have matured');
+  var roA1 = item('reliability-ops', 'activities', 'ro-a1');
+  roA1.rubric = roA1.rubric.replace('identified as the commonly omitted one, with the reasoning that a service can be available, fast and error-free while quietly running on its fallback', 'used to reveal hidden fallback use, with the reasoning that transport can remain fast and error-free while decision quality changes; whether that counts as successful availability depends on the documented contract');
+  roA1.model = roA1.model
+    .replace('including the degraded path. Target:', 'only when the response meets the documented success contract; degraded exposure is tracked separately. Illustrative target:')
+    .replace('the caller must always get an answer; a timeout is worse than a conservative answer.', 'the caller needs an explicit, risk-appropriate failure contract; a conservative answer is used only when validated.')
+    .replace('it is the best indicator of hidden decay', 'it can reveal hidden fallback use')
+    .replace('Any quality objective over a window shorter than the label delay. With chargebacks arriving between 7 and 90 days out, a weekly precision SLO cannot be measured', 'Any claim about an immature prediction cohort. A weekly report can measure older cohorts whose chargeback horizon has matured, but it cannot call this week\'s predictions precise')
+    .replace('stabilise with the threshold before considering a retrain', 'choose a reversible containment action from the diagnosed cause and harm trade-off before considering retraining')
+    .replace('a service can be fully available, fast and error-free while quietly running on rules. Breach: treat as a real incident', 'transport can remain fast and error-free while the service quietly runs on rules; whether that is successful availability depends on the documented contract. Breach: treat as an incident');
+  var roF5 = item('reliability-ops', 'learn', 'ro-f5');
+  roF5.check.options[1] = 'Confirm the affected metric and score semantics, then contain harm with the lowest-risk reversible action allowed by policy before diagnosing';
+  roF5.check.explain = 'Containment should be evidence-led and reversible. A threshold change, compatible rollback, conservative rules, deferral or review may fit; retraining may be slow and wrong if the cause is upstream data.';
+  var roA2 = item('reliability-ops', 'activities', 'ro-a2');
+  roA2.rubric = roA2.rubric.replace('raise the decision threshold to cut alert volume, revert to the previous model version, or fall back to the rules layer - and the acknowledgement that raising the threshold trades recall for volume', 'first confirm score direction and the harmed error, then choose among a compatible rollback, policy-appropriate threshold change, conservative rules, deferral or review - with the acknowledgement that any threshold change trades errors and exposure');
+  swap('reliability-ops',
+    'I would raise the threshold first because it is the least disruptive,',
+    'I would first confirm score direction and which error is causing harm, then choose the lowest-risk reversible containment action; if that is a threshold increase,');
+  swap('reliability-ops',
+    'a sudden shift like this is far more often an upstream data defect than model decay',
+    'a sudden shift makes upstream data, deployment, traffic and monitor faults important early hypotheses rather than proving model decay');
+  swap('reliability-ops',
+    'with zero customer risk',
+    'with reduced decision risk when the path is side-effect-isolated');
+  swap('reliability-ops',
+    'at zero customer risk.',
+    'without using the shadow prediction for the customer action, while privacy, capacity and side-effect controls still apply.');
+  swap('reliability-ops',
+    'One percent of decisions.',
+    'A traffic share chosen to bound harm while collecting enough evidence.');
+  swap('reliability-ops',
+    'Duration: long enough to cover a full daily cycle, because traffic mix changes by hour.',
+    'Duration: long enough to cover the traffic cycles and sample size relevant to the stated metrics; a daily cycle is only an illustrative minimum for some workloads.');
+  swap('reliability-ops',
+    'previous version kept warm long enough that switching back is instant rather than a cold start.',
+    'previous version kept warm and compatibility-tested so switching back meets a measured rollback-time objective rather than assuming it is instant.');
+
+  /* Generative AI platform. */
+  swap('genai-platform',
+    'Cost and latency are both measured per token.',
+    'Provider billing is often token-based, while latency and self-hosted cost also include queueing, fixed overhead, hardware utilization and caching.');
+  swap('genai-platform',
+    'prefill processes the whole input prompt in one pass and is limited by compute; decode then produces output tokens one at a time and is limited by memory bandwidth.',
+    'prefill processes the input context before output begins; decode then produces output tokens incrementally. Their bottlenecks depend on model, hardware, context, batching, caching and scheduler.');
+  swap('genai-platform',
+    'It is usually what limits how many requests one server can hold at once',
+    'It is one common limit on concurrent sequences alongside compute, scheduler limits and other memory use');
+  swap('genai-platform',
+    'It is the single largest throughput improvement available in language-model serving, because otherwise one long generation holds up every short one beside it.',
+    'It can materially improve utilization for mixed-length requests; measure it alongside model choice, quantization, caching, scheduler and hardware constraints.');
+  swap('genai-platform',
+    'typically a few hundred, frozen, and re-scored on every change',
+    'versioned, representative and re-scored on changes, with protected audit data and a documented refresh policy');
+  swap('genai-platform',
+    'Throughput does not degrade gracefully - once the KV cache is full, new requests queue rather than slow slightly, so the jump in latency is sudden.',
+    'When a serving resource such as KV-cache memory or compute saturates, admission and queueing policy can make latency rise sharply; measure which resource is limiting rather than assume one universal cliff.');
+  swap('genai-platform',
+    'For a gradient-boosted model you watch CPU and latency. For an LLM you watch cache occupancy, queue depth, and the split between time to first token and tokens per second',
+    'For any model service watch traffic, errors, latency and saturation. A language-model service additionally benefits from accelerator utilization, cache occupancy, queue depth, time to first token and inter-token throughput');
+  swap('genai-platform',
+    'This is roughly the order of impact.',
+    'Rank these controls from task evaluation, request mix, runtime measurements and current provider or infrastructure prices.');
+  swap('genai-platform',
+    '<b>Bound the output.</b> Generation dominates cost. Capping output length is often the simplest saving available.',
+    '<b>Bound the output.</b> Output tokens can materially affect latency and provider or serving cost. Cap output length when evaluation shows that the task does not need the extra tokens.');
+  swap('genai-platform',
+    'the single biggest throughput win on fixed hardware',
+    'one possible throughput improvement on fixed hardware');
+  swap('genai-platform',
+    'A gradient-boosted model costs almost nothing per prediction once deployed; a large language model costs real money per call, every call, forever.',
+    'Both classical and language-model serving consume marginal capacity. Language models often use materially more compute or carry higher per-call provider prices, so compare end-to-end cost per successful task rather than assume one model family is free.');
+  var gpF2 = item('genai-platform', 'learn', 'gp-f2');
+  gpF2.body = '<p>Common GenAI (generative AI) platform responsibilities include the following; products and organizations divide them differently.</p>\n<ul>\n<li><b>Model catalog.</b> A curated set of approved commercial, open-weight or in-house models, with capability, data-handling, region, cost and access metadata plus a measured review cadence.</li>\n<li><b>Runtime, routing and orchestration.</b> Interfaces that select and call models or tools, manage resources and state, and expose observability and cost attribution. Centralizing these controls reduces duplicated work but does not make governance free.</li>\n<li><b>Authorization and guardrails.</b> Enforcing which identity may use which model, data and tool; validating inputs, outputs and tool actions; and applying privacy, security, legal and retention policy outside the model.</li>\n<li><b>Evaluation and operations.</b> Versioned evaluation sets, expert review where needed, automated regression checks, production monitoring and budget controls.</li>\n</ul>\n<p>The design philosophy matches the classical ML platform chapter: provide a supported path with shared controls, then measure adoption, task quality, safety and operating cost. Do not assume an operating-system analogy, plugin registry, leaderboard or model-review cadence unless a named design actually uses it.</p>';
+  gpF2.deeper = '<p>If an interview prompt names a particular company platform, cite its primary publication and date and distinguish published architecture from unknown operational details. Otherwise describe the generic responsibilities above without implying internal hardware, vendors, latency, cost, organization or process.</p>';
+  swap('genai-platform',
+    'it is the first thing to try before <a href="#rag-and-agents/raa-f1">retrieval</a> or <a href="#llm-fine-tuning-and-alignment/lft-f1">fine-tuning</a>.',
+    'it controls behavior, while <a href="#rag-and-agents/raa-f1">retrieval</a> supplies external or current evidence and <a href="#llm-fine-tuning-and-alignment/lft-f1">fine-tuning</a> changes learned behavior. Start with the simplest combination that has the information and controls the task requires.');
+  swap('genai-platform',
+    'It is the part that does not change per request.',
+    'It may be static or assembled from versioned policy and request context; record the complete effective prompt.');
+  swap('genai-platform',
+    'If the steps are not meant to reach the user, ask for them in a field the application strips.',
+    'Ask for concise justifications or structured intermediate artifacts only when they are useful and safe; do not depend on access to a model\'s hidden chain of thought.');
+  swap('genai-platform',
+    'Politeness, insistence and threats do nothing measurable. Vague quality words - "be accurate", "be thorough" - do nothing either, because they name no test the model can apply.',
+    'Tone and wording can change outputs, but politeness, insistence, threats and vague quality words are not reliable correctness controls because they define no enforceable test.');
+  swap('genai-platform',
+    'It lives in source control, it is reviewed, it ships with a version number, and it can be rolled back on its own without redeploying the service.',
+    'Version the complete prompt assembly and associated model/configuration. Whether it can be rolled back without a service deployment depends on how the application loads configuration.');
+  swap('genai-platform',
+    'Thirty to a hundred labelled cases covering the ordinary path and the known awkward ones are enough to make prompt changes reviewable,',
+    'A versioned evaluation set covering ordinary, edge, adversarial and refusal cases makes prompt changes reviewable; size it from task diversity, risk and measured uncertainty,');
+  swap('genai-platform',
+    'since most failures are retrieval failures.',
+    'so each observed failure can be attributed to retrieval or generation from evidence.');
+  swap('genai-platform',
+    'and most failures are retrieval failures rather than generation failures.',
+    'and separate retrieval from generation evaluation so observed failures are attributed from evidence.');
+  swap('genai-platform',
+    'most of its failures are retrieval failures, so I would measure retrieval separately',
+    'I would measure retrieval coverage separately from generation faithfulness and attribute observed failures from evidence');
+  swap('genai-platform',
+    'which is that the generator was fine and the retriever missed.',
+    'that retrieval and generation fail for different reasons.');
+  swap('genai-platform',
+    'The answer should be traceable to retrieved passages, and the system should be able to show them. This is both a trust feature and an audit requirement.',
+    'The answer should be traceable to retrieved passages, and the system should verify that each cited passage supports the associated claim. This supplies evidence for trust and audit; citation presence alone is not faithfulness.');
+  swap('genai-platform',
+    'The arrangement most platform teams settle on is a blend:',
+    'One defensible arrangement is a blend:');
+  swap('genai-platform',
+    'adding filters such as tenant or date has to happen inside the search rather than after it.',
+    'authorization must be enforced before model context is assembled; metadata filters may be implemented through secure partitioning, authorized candidate generation, or an enforcing retrieval layer rather than post-generation filtering.');
+  swap('genai-platform',
+    'Because the index is approximate there is a trade-off between recall and latency, and filters like tenant or date have to be applied inside the search rather than after it.',
+    'approximate search trades recall against latency, while tenant authorization must be enforced before model context is assembled and date filtering must preserve retrieval quality.');
+  swap('genai-platform',
+    'you take an internal layer\'s activations, usually the last one before the classifier, as the representation.',
+    'you use the encoder\'s documented pooling or projection output as the representation.');
+  swap('genai-platform',
+    'a model with no refusal path will always produce something.',
+    'an explicit abstention contract improves controllability, while provider refusals and runtime errors remain separate outcomes.');
+  swap('genai-platform',
+    'a model given no way to decline will always produce something.',
+    'an explicit abstention contract improves controllability while provider refusals and runtime errors remain separate outcomes.');
+  swap('genai-platform',
+    'A model that approximates a rule is strictly worse than the rule: less accurate, less explainable, and it drifts.',
+    'Use a deterministic rule when requirements are fully specified and cheaply executable; a learned component may still help with noisy inputs, ranking or cost estimation while the rule enforces the binding decision.');
+  swap('genai-platform',
+    'Scheduling, assignment and routing under hard constraints are solved by solvers, not learned by models.',
+    'Use an optimizer to enforce hard scheduling, assignment or routing constraints; learned models may estimate demand, costs or candidate quality inside a hybrid system.');
+  swap('genai-platform',
+    'which is the whole of prompt-injection defence.',
+    'as one signal, while authorization, least-privilege tools, isolation, structured validation, egress controls, confirmations, monitoring and adversarial tests enforce defense in depth.');
+  swap('genai-platform',
+    'Every request and response logged with its prompt and model version, so misuse is detectable and auditable rather than deniable.',
+    'Log model/configuration identity and the minimum metadata needed for auditability; sample or redact content under explicit classification, access and retention policy rather than copying every full prompt and response by default.');
+  swap('genai-platform',
+    'write the tests yourself,',
+    'write or generate tests, then independently review their cases and assertions,');
+  var gpF5 = item('genai-platform', 'learn', 'gp-f5');
+  gpF5.check.question = 'Which design most clearly requires deterministic constraint enforcement rather than an unconstrained learned decision?';
+  gpF5.check.options[1] = 'Assigning experts to shifts under hard legal and availability constraints: use an optimizer for the constraints, while learned forecasts or costs may still support a hybrid design';
+  gpF5.check.explain = 'Hard constraints belong in a solver or deterministic validator. A learned component can still estimate demand, costs or candidate rankings, so this argues against an unconstrained learned decision rather than all machine learning.';
+  var gpA2 = item('genai-platform', 'activities', 'gp-a2');
+  gpA2.rubric = gpA2.rubric.replace('retrieved content treated as untrusted input, covering instruction injection from documents and preventing sensitive fields being echoed outward', 'retrieved content treated as untrusted input, with authorization outside the model, least-privilege retrieval and tools, isolation, structured tool/output validation, egress controls and confirmations for consequential actions; sensitive fields must not be echoed outward');
+  gpA2.model = gpA2.model.replace('Instructions inside a document must never be executed, so the prompt structure has to separate instructions from evidence, and outputs are checked so sensitive fields are not echoed outside the boundary.', 'Prompt structure separates instructions from evidence, but enforcement stays outside the model: authorize retrieval and every tool action, expose least-privilege capabilities, isolate execution, validate structured tool arguments and outputs, restrict egress, and require confirmation for consequential actions. Sensitive fields must not be echoed outside the boundary.');
+  var gpA3 = item('genai-platform', 'activities', 'gp-a3');
+  gpA3.model = gpA3.model
+    .replace('because if it is writable, a rule is more accurate, more explainable and does not drift.', 'because if requirements are fully specified and cheaply executable, a rule is easier to audit and enforce; learned components may still support noisy perception or ranking.')
+    .replace('those are solver problems,', 'use a solver to enforce their hard constraints; learned forecasts or costs can still feed a hybrid design,')
+    .replace('a classical model is almost always the better engineering choice: cheaper per call by orders of magnitude, faster, more explainable, and far easier to evaluate and gate automatically.', 'compare a classical model, a language model and a hybrid on task quality, latency, cost, auditability and data needs; a classical model is often the simpler baseline for a well-defined output with suitable labels.')
+    .replace('if the decision has to happen in 200 milliseconds inside a transaction, that is not where a language model belongs.', 'a 200 millisecond decision budget requires measured proof from the chosen model and hardware rather than assuming a language model can or cannot fit.')
+    .replace('because unlike a tree model the marginal cost never goes away.', 'because every deployed model consumes serving capacity and provider pricing can make language-model marginal cost especially material.')
+    .replace('engineers at large product companies have published exactly that argument.', 'hybrid learned-prediction plus deterministic-optimization systems are also valid, so the boundary should follow the requirement.');
+  var gpA4 = item('genai-platform', 'activities', 'gp-a4');
+  gpA4.rubric = gpA4.rubric
+    .replace('an image embedding as activations taken from a vision model', 'an image embedding as the encoder\'s documented pooling or projection output')
+    .replace('it is a versioned production file', 'the complete effective prompt and model/configuration are versioned');
+  gpA4.model = gpA4.model
+    .replace('which is the case I have actually built.', 'Present that as a design unless it matches your verified experience.')
+    .replace('and most of its failures are retrieval failures, so I measure retrieval separately.', 'and I measure retrieval coverage separately from generation faithfulness so the observed failure is attributed from evidence.')
+    .replace('you take an internal layer\'s activations, usually the last before the classifier, as the representation.', 'you use the encoder\'s documented pooling or projection output as the representation.')
+    .replace('it is a production file that should be versioned and rolled back like code', 'the complete effective prompt and model/configuration should be versioned and rolled back together')
+    .replace('at much lower cost, Present that as a design unless it matches your verified experience.', 'at materially lower evaluated cost. Present that as a design unless it matches your verified experience.');
+  swap('genai-platform',
+    'and that most failures are retrieval failures',
+    'and with retrieval coverage and generation faithfulness measured separately so failures are attributed from evidence');
+  swap('genai-platform',
+    'with the point that most failures are retrieval failures',
+    'with observed failures attributed to retrieval or generation from evidence');
+  swap('genai-platform',
+    'filters such as tenant must be applied inside the search rather than after it',
+    'tenant authorization must be enforced before model context is assembled');
+  swap('genai-platform',
+    'A prompt change is a production change. It goes through the same checks as a model change,',
+    'A prompt change is a production change. Version the complete prompt assembly with its model/configuration and apply risk-proportionate checks,');
+  swap('genai-platform',
+    'The arrangement most teams converge on is a registry of approved models',
+    'One possible platform arrangement is a registry of approved models');
+  swap('genai-platform',
+    'model size named as the biggest single factor, with the reason that it multiplies cost on every call',
+    'model choice evaluated as one major cost factor using current runtime or provider measurements');
+  swap('genai-platform',
+    'continuous batching named as the way to raise throughput on fixed hardware',
+    'continuous batching evaluated as one way to raise throughput on fixed hardware');
+  swap('genai-platform',
+    'a first choice with a reason, normally model size or a cascade',
+    'a first choice justified by measured cost and quality rather than a universal ordering');
+  swap('genai-platform',
+    'Model size first - it multiplies cost on every single call, and the largest model is rarely the right default.',
+    'Start from measured cost per successful task. Model choice is often a major factor, but provider price and self-hosted efficiency are not determined by parameter count alone.');
+  swap('genai-platform',
+    'Then continuous batching, which is the serving engine\'s job and the biggest throughput win on fixed hardware.',
+    'Then evaluate continuous batching against the measured scheduler, compute and memory bottleneck.');
+  swap('genai-platform',
+    'A cascade with a smaller default model. It attacks the dominant term, it degrades gradually rather than dropping off suddenly, and the cheap stage doubles as a fallback if the expensive stage is saturated',
+    'Choose the first change from the measured dominant cost. If that is a cascade, validate the smaller model and escalation rule on a bounded subset; it is not automatically a fallback for cases that require the expensive model');
+  gpA3 = item('genai-platform', 'activities', 'gp-a1');
+  gpA3.rubric = gpA3.rubric
+    .replace('retrieved context identified as the usual culprit', 'retrieved context measured as a possible major contributor')
+    .replace('with the point that generation dominates cost', 'with the effect measured for the provider/runtime and request mix');
+  gpA3.model = gpA3.model
+    .replace('retrieved context is almost always the largest and least disciplined part of the prompt', 'retrieved context can be a large part of the prompt and should be measured')
+    .replace('Then bounding output length, since generation dominates cost.', 'Then bound output length and measure its effect on task quality, latency and cost for the chosen provider or runtime.');
+
+  /* First-use abbreviation coverage in the six topics. */
+  swap('system-design-fundamentals', 'Fast JSON serialisation', 'Fast JavaScript Object Notation (JSON) serialisation');
+  swap('serving-and-scale', 'gateway, TLS termination, authorisation.', 'gateway, Transport Layer Security (TLS) termination, authorisation.');
+  swap('genai-platform',
+    '<li><b>KV cache</b>',
+    '<li><b>Graphics processing unit (GPU)</b> - an accelerator commonly used for parallel model inference; measure compute, memory and scheduler limits for the chosen workload.</li>\n<li><b>KV cache</b>');
+  swap('ml-lifecycle-platform',
+    'precision-recall AUC',
+    'area under the precision-recall curve (precision-recall AUC)', 2);
+  swap('ml-lifecycle-platform',
+    'and calibration -',
+    'and calibration, meaning predicted probabilities match observed frequencies -');
+}(window.PREP_CORE));
+
+// Apply the same safety qualifiers where question-bank repetitions would otherwise teach absolutes.
+;(function (core) {
+  var swap = function (text, before, after) { return text.replace(before, after); };
+  var rewrite = function (topicId, before, after) {
+    var topic = core[topicId];
+    topic.learn.forEach(function (item) {
+      ["body", "deeper", "rubric", "model"].forEach(function (field) {
+        if (typeof item[field] === "string") item[field] = swap(item[field], before, after);
+      });
+    });
+    topic.activities.forEach(function (item) {
+      ["prompt", "rubric", "model"].forEach(function (field) {
+        if (typeof item[field] === "string") item[field] = swap(item[field], before, after);
+      });
+    });
+  };
+  rewrite("scenario-questions", "Containment is cheap and reversible; customer impact is not recoverable.", "Containment can be valuable when a low-risk reversible mitigation is available and does not worsen the hazard; customer impact still needs prompt assessment.");
+  rewrite("scenario-questions", "roll back to the previous model version, which is a traffic switch rather than a rebuild, and revert the feature contract with it.", "select the lowest-risk reversible mitigation after checking current safety constraints; a tested rollback can include the previous model and compatible feature contract.");
+  rewrite("question-bank-fundamentals", "a solver gives you that and a learned policy does not", "an exact solver can certify the encoded constraints when its model, assumptions, and status support that claim; a learned policy needs separate checks");
+  rewrite("question-bank-fundamentals", "which require that you logged the probability of each action taken", "where importance-weighted methods require the probability of each action taken; direct model-based evaluation relies on different assumptions");
+  rewrite("question-bank-mle", "only values that were knowable at the label's timestamp", "only values that were knowable at the prediction-time cutoff");
+  rewrite("question-bank-mle", "That combination gives effectively-once processing within the horizon.", "It suppresses duplicate processing within the horizon; an effectively-once business outcome also needs an atomic or durable idempotent side effect.");
+}(window.PREP_CORE));
+
+// The public course must not imply a particular candidate operated these systems.
+;(function (core) {
+  var topic = core["scenario-questions"];
+  var find = function (items, id) { return items.find(function (item) { return item.id === id; }); };
+  var scenario = find(topic.learn, "sq-1");
+  scenario.body = scenario.body
+    .replace("In the system I ran, rollback was a traffic switch through the mesh plus a Git revert, and the reason that mattered was not elegance, it was that reverting the model and its feature contract together is the only version that actually works - rolling a model back onto a changed feature definition is a second incident, not a fix.", "A concrete implementation can make rollback a traffic switch plus a compatible feature-contract revert; test that paired procedure, because rolling a model back onto an incompatible feature definition can create a second incident.")
+    .replace("That is exactly why, in a streaming fraud pipeline, features are computed once at event time and published to both read paths - one computation, two readers, so there is nothing to get out of step.", "A common design computes features once at event time and publishes them to both read paths, reducing opportunities for the definitions to drift apart.");
+  find(topic.learn, "sq-2").deeper = find(topic.learn, "sq-2").deeper.replace("this team's published problem is a nested hierarchy", "a common planning-system problem is a nested hierarchy");
+  var rollbackExercise = find(topic.activities, "sq-a2");
+  rollbackExercise.model = rollbackExercise.model.replace("And I would be honest that this is not theoretical for me: in the fraud system, rollback being a traffic switch through the mesh plus a Git revert was the single thing that made shipping frequently safe, and the detail that mattered most was that the model and its feature contract reverted together.", "The general engineering point is that a tested traffic switch and a paired model-and-feature-contract revert make frequent changes safer; the details must be verified in the system at hand.");
+}(window.PREP_CORE));

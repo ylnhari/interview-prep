@@ -1,3 +1,5 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Interview Prep</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -15,6 +17,7 @@
     --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
     --measure: none;   /* one width rule: every block fills the content column */
     --rail-w: 272px;
+    --header-clearance: 84px;
     color-scheme: light;
   }
   @media (prefers-color-scheme: dark) {
@@ -136,7 +139,7 @@
 
   /* book */
   .book { min-width: 0; display: flex; flex-direction: column; gap: 28px; }
-  .chapter { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; scroll-margin-top: 72px; min-width: 0; max-width: 100%; }
+  .chapter { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; scroll-margin-top: var(--header-clearance); min-width: 0; max-width: 100%; }
   .chb, .chh { min-width: 0; }
   .chh { padding: 26px 36px 22px; border-bottom: 1px solid var(--border); }
   .chh .eyebrow { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
@@ -156,7 +159,7 @@
   .viz .cap b, .cviz .cap b { color: var(--ink); }
 
   /* section: the reading unit */
-  .sec { padding: 24px 0 8px; border-top: 1px dashed var(--border); margin-top: 18px; scroll-margin-top: 72px; }
+  .sec { padding: 24px 0 8px; border-top: 1px dashed var(--border); margin-top: 18px; scroll-margin-top: var(--header-clearance); }
   .sec:first-of-type, .reads + .sec, .viz + .sec, .part + .sec { border-top: 0; }
   .reads + .sec { margin-top: 10px; }
   .part + .sec { padding-top: 12px; }
@@ -205,7 +208,7 @@
 
   /* prerequisite checklist chapter */
   .plist { margin-top: 12px; display: flex; flex-direction: column; }
-  .pitem { display: grid; grid-template-columns: 28px 1fr; gap: 12px; padding: 14px 0; border-top: 1px dashed var(--border); scroll-margin-top: 72px; }
+  .pitem { display: grid; grid-template-columns: 28px 1fr; gap: 12px; padding: 14px 0; border-top: 1px dashed var(--border); scroll-margin-top: var(--header-clearance); }
   .pitem:first-child { border-top: 0; }
   .tick { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--border-strong); background: var(--surface); cursor: pointer; display: grid; place-items: center; color: transparent; font-size: 14px; line-height: 1; padding: 0; margin-top: 1px; transition: background-color .15s ease, border-color .15s ease; }
   .tick:hover { border-color: var(--accent); }
@@ -279,7 +282,7 @@
   .sayq .lbl { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-ink); white-space: nowrap; font-weight: 500; }
 
   /* interviewer profile */
-  .who { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; scroll-margin-top: 72px; }
+  .who { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; scroll-margin-top: var(--header-clearance); }
   .who .wh { padding: 20px 36px; display: grid; grid-template-columns: auto 1fr; gap: 2px 16px; align-items: center; border-bottom: 1px solid var(--border); }
   .who .av { width: 46px; height: 46px; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; font-size: 16px; grid-row: span 2; }
   .who .nm { font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: -.01em; }
@@ -295,7 +298,7 @@
   .who .src a { margin-right: 10px; }
 
   /* glossary */
-  .gloss { scroll-margin-top: 72px; }
+  .gloss { scroll-margin-top: var(--header-clearance); }
   .gtable { width: 100%; min-width: 720px; border-collapse: collapse; font-size: 13.5px; line-height: 1.5; margin-top: 6px; }
   .gtable th { text-align: left; font-family: var(--font-mono); font-size: 10.5px; font-weight: 500; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-dim); padding: 8px 10px; border-bottom: 1px solid var(--border-strong); }
   .gtable td { padding: 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
@@ -351,8 +354,8 @@
   @keyframes vmovex { to { transform: translateX(var(--dx, 100px)); } }
   .v-grow { transform-box: fill-box; transform-origin: bottom; animation: vgrow 2s ease-in-out infinite alternate; }
   @keyframes vgrow { from { transform: scaleY(0.05); } to { transform: scaleY(1); } }
-  .v-fade-seq > * { opacity: 0; animation: vfade 4s ease-in-out infinite; animation-delay: calc(var(--i, 0) * .35s); }
-  @keyframes vfade { 0% { opacity: 0; } 15%, 80% { opacity: 1; } 100% { opacity: 0; } }
+  /* Teaching labels must stay readable; motion is reserved for flow indicators. */
+  .v-fade-seq > * { opacity: 1; }
   .v-rotate { transform-box: fill-box; transform-origin: center; animation: vrot 6s linear infinite; }
   @keyframes vrot { to { transform: rotate(360deg); } }
   @media (prefers-reduced-motion: reduce) { .v-flow, .v-flow-slow, .v-pulse, .v-blink, .v-move-x, .v-grow, .v-fade-seq > *, .v-rotate { animation: none !important; opacity: 1 !important; } }
@@ -387,7 +390,7 @@
   <nav class="rail" id="rail" aria-label="Course outline"></nav>
   <main class="book" id="book"></main>
 </div>
-<footer>Progress is saved in this browser. When personal sync is enabled, completion, checklist, and quiz selections sync to that account. Draft answers and grading history stay in this browser and are cleared from this account cache on sign-out; export first to keep a copy.</footer>
+<footer>Progress is saved in this browser. Use Export progress to save it to a file, and Import progress to load that file on another device.</footer>
 
 <script>
 /*__VIZLIB__*/
@@ -432,6 +435,16 @@ window.PREP_IO = (function () {
 <script>
 (function () {
   var active = null;
+  var topHeader = document.querySelector('header.top');
+  function updateHeaderClearance() {
+    if (!topHeader) return;
+    document.documentElement.style.setProperty('--header-clearance', Math.ceil(topHeader.getBoundingClientRect().height + 12) + 'px');
+  }
+  if (topHeader) {
+    updateHeaderClearance();
+    if (window.ResizeObserver) { var headerObserver = new window.ResizeObserver(updateHeaderClearance); headerObserver.observe(topHeader); }
+    else window.addEventListener('resize', updateHeaderClearance);
+  }
   function mount(content) {
     if (active) unmount();
     if (!content || !content.topics) { document.getElementById('book').textContent = 'Content is not available yet.'; return null; }
@@ -461,6 +474,8 @@ window.PREP_IO = (function () {
   window.PREP_SHELL = {
     mount: mount,
     unmount: unmount,
+    prepareTransition: function () { return active && active.flushForTransition ? active.flushForTransition() : Promise.resolve(true); },
+    whenReady: function () { return active && active.whenReady ? active.whenReady() : Promise.resolve(true); },
     getState: function () { return active ? active.getState() : null; },
     applyRemoteState: function (next) { return active ? active.applyRemoteState(next) : false; },
     signOut: function () { return active && active.signOut ? active.signOut() : Promise.resolve(true); }
@@ -469,6 +484,20 @@ window.PREP_IO = (function () {
 
   function start(C) {
   var book = document.getElementById('book');
+  var privateHost = window.PREP_PRIVATE === true;
+  var privateReadyResolve = null, privateReadyReject = null, privateReadySettled = !privateHost, privateReady = !privateHost;
+  var privateReadyPromise = privateHost ? new Promise(function (resolve, reject) { privateReadyResolve = resolve; privateReadyReject = reject; }) : Promise.resolve(true);
+  var privateHydrationGuard = function (event) { if (privateReady) return; event.preventDefault(); if (event.stopImmediatePropagation) event.stopImmediatePropagation(); };
+  if (privateHost) {
+    book.inert = true; book.setAttribute('aria-busy', 'true');
+    ['click','input','change'].forEach(function (type) { book.addEventListener(type, privateHydrationGuard, true); });
+  }
+  function settlePrivateReady(error) {
+    if (!privateHost || privateReadySettled) return;
+    privateReadySettled = true;
+    if (!error) { privateReady = true; book.inert = false; book.removeAttribute('aria-busy'); privateReadyResolve(true); }
+    else privateReadyReject(error);
+  }
   if (C.useCore && window.PREP_CORE) { C.useCore.forEach(function (id) { if (window.PREP_CORE[id] && !C.topics.some(function (t) { return t.id === id; })) C.topics.push(JSON.parse(JSON.stringify(window.PREP_CORE[id]))); }); }
   // pack overlays: candidate-specific chunks/exercises spliced into generic core chapters
   var OV = window.PREP_OVERLAYS || C.overlays || {};
@@ -563,7 +592,7 @@ window.PREP_IO = (function () {
       if (revision === cloudRevision && uid === cloudUid && generation === cloudGeneration) { cloudDirty = false; setSync('on'); }
       return Promise.resolve();
     }
-    return next().catch(function () { if (uid === cloudUid && generation === cloudGeneration) { cloudDirty = true; setSync('error'); } });
+    return next().catch(function (error) { if (uid === cloudUid && generation === cloudGeneration) { cloudDirty = true; setSync('error'); } throw error; });
   }
   var cloudDrain = window.PREP_CLOUD && window.PREP_CLOUD.createSerialDrain ? window.PREP_CLOUD.createSerialDrain(flushCloudBatch) : null;
   function scheduleCloudSave() {
@@ -587,6 +616,47 @@ window.PREP_IO = (function () {
     clearTimeout(draftTimer); saveState(accountKey || LS_KEY, state); cloudRevision++;
     if (cloudUid) setSync(cloudDirty ? 'pending' : 'on', cloudDirty ? 'draft saved locally; progress sync pending' : 'draft saved in this browser');
     draftTimer = setTimeout(function () { persist(tid); }, 600);
+  }
+  var hydrateCloud = null, hydrationPromise = null, accountStartResolve = null;
+  var accountStarted = cloudClient ? new Promise(function (resolve) { accountStartResolve = resolve; }) : Promise.resolve();
+  function clearPendingSaveTimers() {
+    clearTimeout(draftTimer);
+    Object.keys(saveTimer).forEach(function (key) { clearTimeout(saveTimer[key]); });
+  }
+  function transitionError(message, cause) {
+    var error = new Error(message); error.code = 'prep-transition-not-saved'; if (cause) error.cause = cause; return error;
+  }
+  function waitForHydration() {
+    if (!cloudClient || !cloudClient.enabled) return privateHost ? Promise.reject(transitionError('Account progress sync is not available. The current preparation is still open.')) : Promise.resolve();
+    return Promise.resolve(cloudUid && hydrateCloud ? true : accountStarted).then(function () {
+      if (!cloudUid || !hydrateCloud) throw transitionError('Account progress is not ready. The current preparation is still open.');
+      return hydrateCloud();
+    }).then(function () {
+      if (!cloudUid || !cloudBaselineState) throw transitionError('Account progress could not be hydrated. The current preparation is still open.');
+    }, function (error) {
+      if (error && error.code === 'prep-transition-not-saved') throw error;
+      throw transitionError('Account progress could not be hydrated. The current preparation is still open.', error);
+    });
+  }
+  function flushForTransition() {
+    clearPendingSaveTimers();
+    saveState(accountKey || LS_KEY, state);
+    if (window.navigator && window.navigator.onLine === false) return Promise.reject(transitionError('You are offline. Reconnect before switching preparations; the current preparation is still open.'));
+    return waitForHydration().then(function drainLatestRevision() {
+      clearPendingSaveTimers();
+      if (window.navigator && window.navigator.onLine === false) throw transitionError('You went offline before progress was confirmed. The current preparation is still open.');
+      if (!cloudDirty) return true;
+      var revision = cloudRevision;
+      if (!cloudDrain) throw transitionError('Account progress sync is not available. The current preparation is still open.');
+      return cloudDrain.request().then(function () {
+        if (window.navigator && window.navigator.onLine === false) throw transitionError('You went offline before progress was confirmed. The current preparation is still open.');
+        if (!cloudUid || !cloudBaselineState) throw transitionError('Account access changed before progress was confirmed. The current preparation is still open.');
+        if (cloudDirty || revision !== cloudRevision) return drainLatestRevision();
+        return true;
+      }, function (error) {
+        throw transitionError('Progress was not confirmed online. Retry the switch; the current preparation is still open.', error);
+      });
+    });
   }
   // Draft answers and grading history remain local; only completion/checklist state syncs.
   function logAttempt() {}
@@ -743,8 +813,10 @@ window.PREP_IO = (function () {
     ch.appendChild(hd);
     var body = el('div', 'chb');
 
-    function appendVizAndReadings() {
+    function appendTopicViz() {
       if (VIZ[topic.id]) { var v = el('div', 'viz'); v.innerHTML = VIZ[topic.id].svg + '<div class="cap">' + VIZ[topic.id].cap + '</div>'; body.appendChild(v); }
+    }
+    function appendReadings() {
       if (READINGS[topic.id] && READINGS[topic.id].length) {
         var rd = el('div', 'reads'); var rh = el('div', 'rh'); rh.appendChild(txt('span', 'lbl', 'Where to read more')); rh.appendChild(txt('span', 'sub', 'Start with the ones marked PRIMER if the basics are rusty. Tick each one when you have read it.')); rd.appendChild(rh);
         var readings = READINGS[topic.id];
@@ -757,7 +829,7 @@ window.PREP_IO = (function () {
         body.appendChild(rd);
       }
     }
-    if (!topic.learn.length) appendVizAndReadings();
+    if (!topic.learn.length) { appendTopicViz(); appendReadings(); }
 
     if (prereqs) {
       // compact checklist: title, one-line body, external link, done tick
@@ -771,7 +843,8 @@ window.PREP_IO = (function () {
         it.appendChild(tk); it.appendChild(bd); list.appendChild(it);
       });
       body.appendChild(list);
-      appendVizAndReadings();
+      appendTopicViz();
+      appendReadings();
     } else {
       // sections, grouped into parts only when the chapter has more than one part
       var PART_LABEL = { field: ['Part 1', 'The basics: what it is, how it works, the tools'], experience: ['Part 2', 'Your experience: what you did, and what to call it'], role: ['Part 3', 'In this role: how it is likely to come up'] };
@@ -785,7 +858,6 @@ window.PREP_IO = (function () {
         var sec = el('div', 'sec'); sec.id = 'sec-' + c.id;
         var sh = el('div', 'sech' + (read ? ' read' : '')); sh.appendChild(txt('span', 'num', read ? TICK : n + '.' + (i + 1))); sh.appendChild(txt('h3', null, c.title)); sec.appendChild(sh);
         if (c.link && c.link.url) sec.appendChild(extLink(c.link));
-        if (c.viz && window.VIZLIB && window.VIZLIB[c.viz]) { var cv = el('div', 'cviz'); cv.innerHTML = window.VIZLIB[c.viz]('v' + Math.random().toString(36).slice(2, 8)) + (window.VIZLIB_CAPTIONS && window.VIZLIB_CAPTIONS[c.viz] ? '<div class="cap">' + window.VIZLIB_CAPTIONS[c.viz] + '</div>' : ''); sec.appendChild(cv); }
         if (qbank && c.deeper) {
           var qb = document.createElement('div'); qb.innerHTML = c.body || ''; var ab = document.createElement('div'); ab.innerHTML = c.deeper;
           var qs = Array.prototype.slice.call(qb.querySelectorAll('li')), as = Array.prototype.slice.call(ab.querySelectorAll('li'));
@@ -801,6 +873,7 @@ window.PREP_IO = (function () {
         } else if (c.body) {
           sec.appendChild(el('div', 'prose', c.body));
         }
+        if (c.viz && window.VIZLIB && window.VIZLIB[c.viz]) { var cv = el('div', 'cviz'); cv.innerHTML = window.VIZLIB[c.viz]('v' + Math.random().toString(36).slice(2, 8)) + (window.VIZLIB_CAPTIONS && window.VIZLIB_CAPTIONS[c.viz] ? '<div class="cap">' + window.VIZLIB_CAPTIONS[c.viz] + '</div>' : ''); sec.appendChild(cv); }
         if (c.check) {
           var mq = el('div', 'mcq'); mq.appendChild(txt('div', 'q', c.check.question)); var opts = el('div', 'opts'); var chosen = t.checks[c.id];
           c.check.options.forEach(function (o, oi) { var ob = txt('button', 'opt', o); ob.type = 'button'; if (chosen != null) { ob.disabled = true; if (oi === c.check.answer) ob.classList.add('right'); else if (oi === chosen) ob.classList.add('wrong'); } ob.addEventListener('click', function () { t.checks[c.id] = oi; if (oi === c.check.answer) t.learn[c.id] = true; persist(topic.id); rerenderChapter(topic); }); opts.appendChild(ob); });
@@ -810,8 +883,9 @@ window.PREP_IO = (function () {
         var doneLabel = c.link ? 'Mark done' : 'Mark as read';
         var got = txt('button', 'btn' + (read ? ' done' : ' primary'), read ? 'Done' + ' ' + TICK : doneLabel); got.type = 'button'; got.setAttribute('aria-pressed', read ? 'true' : 'false'); got.addEventListener('click', function () { t.learn[c.id] = !read; persist(topic.id); rerenderChapter(topic); }); row.appendChild(got);
         sec.appendChild(row); body.appendChild(sec);
-        if (i === 0) appendVizAndReadings();
+        if (i === 0) appendReadings();
       });
+      appendTopicViz();
     }
 
     var G = graded();
@@ -847,8 +921,8 @@ window.PREP_IO = (function () {
       topic.activities.forEach(function (a) {
         var st = AC(topic.id, a.id); var box2 = el('div', 'act' + (st.status === 'pass' ? ' pass' : ''));
         var ah = el('div', 'ah'); ah.appendChild(txt('span', 'type', a.type)); ah.appendChild(txt('h4', null, a.title)); if (st.status !== 'none') ah.appendChild(txt('span', 'verdict ' + st.status, st.self ? 'practised' : st.status === 'pass' ? 'passed' : 'try again')); box2.appendChild(ah);
-        if (a.viz && window.VIZLIB && window.VIZLIB[a.viz]) { var av = el('div', 'cviz'); av.innerHTML = window.VIZLIB[a.viz]('a' + Math.random().toString(36).slice(2, 8)); box2.appendChild(av); }
         box2.appendChild(el('div', 'prose', a.prompt));
+        if (a.viz && window.VIZLIB && window.VIZLIB[a.viz]) { var av = el('div', 'cviz'); av.innerHTML = window.VIZLIB[a.viz]('a' + Math.random().toString(36).slice(2, 8)) + (window.VIZLIB_CAPTIONS && window.VIZLIB_CAPTIONS[a.viz] ? '<div class="cap">' + window.VIZLIB_CAPTIONS[a.viz] + '</div>' : ''); box2.appendChild(av); }
         var ta2 = document.createElement('textarea'); ta2.placeholder = a.type === 'formulate' ? 'Decision variables, objective, constraints, problem class' : 'Write your answer the way you would say it out loud'; ta2.value = st.lastAnswer || ''; ta2.dataset.prepFocus = 'answer-act-' + topic.id + '-' + a.id; ta2.setAttribute('aria-label', 'Your answer'); ta2.addEventListener('input', function () { st.lastAnswer = ta2.value; persistDraft(topic.id); }); box2.appendChild(ta2);
         var row3 = el('div', 'row'); var out2 = el('div'); var md2 = revealBlock('A strong answer', a.model);
         if (G) {
@@ -888,11 +962,11 @@ window.PREP_IO = (function () {
 
   function renderGlossary() {
     var sec = el('section', 'chapter gloss'); sec.id = 'glossary';
-    var hd = el('div', 'chh'); hd.appendChild(el('div', 'eyebrow', '<span>Reference</span>')); hd.appendChild(txt('h2', null, 'Glossary')); hd.appendChild(txt('div', 'why', 'Interviewers judge how well you know a subject partly by the words you use for it. Each row gives the term, what it means, where it shows up in your own work, and a phrase you can say out loud. Rows marked "learn / not shipped" are terms to recognise, not ones to claim you have built.')); sec.appendChild(hd);
+    var hd = el('div', 'chh'); hd.appendChild(el('div', 'eyebrow', '<span>Reference</span>')); hd.appendChild(txt('h2', null, 'Glossary')); hd.appendChild(txt('div', 'why', 'Interviewers judge how well you know a subject partly by the words you use for it. Each row gives the term, what it means, where it appears, and a phrase you can say out loud. Rows marked "learn / not shipped" are terms to recognise, not ones to claim you have built.')); sec.appendChild(hd);
     var body = el('div', 'chb');
     GLOSSARY.forEach(function (g) {
       var gg = el('div', 'ggroup'); gg.appendChild(txt('h3', null, g.g)); if (g.sub) gg.appendChild(txt('div', 'sub', g.sub));
-      var wrap = el('div', 'gwrap'); var tb = el('table', 'gtable'); tb.innerHTML = '<thead><tr><th>Term</th><th>Meaning</th><th>In your experience</th><th>Say it as</th></tr></thead>';
+      var wrap = el('div', 'gwrap'); var tb = el('table', 'gtable'); tb.innerHTML = '<thead><tr><th>Term</th><th>Meaning</th><th>Where it appears</th><th>Say it as</th></tr></thead>';
       var tbody = el('tbody'); (g.rows || []).forEach(function (r) { var tr = el('tr'); r.forEach(function (c, i) { var td = txt('td', i === 3 ? 'say' : null, c); tr.appendChild(td); }); tbody.appendChild(tr); }); tb.appendChild(tbody); wrap.appendChild(tb); gg.appendChild(wrap); body.appendChild(gg);
     });
     sec.appendChild(body); return sec;
@@ -954,6 +1028,7 @@ window.PREP_IO = (function () {
     return true;
   }
   function importProgress(file) {
+    if (privateHost && !privateReady) { alert('Wait until account progress has loaded before importing progress.'); return; }
     var reader = new FileReader();
     reader.onerror = function () { alert('Could not read that progress file.'); };
     reader.onload = async function () {
@@ -992,13 +1067,16 @@ window.PREP_IO = (function () {
   var escapeHandler = function (ev) { if (ev.key === 'Escape' && document.body.classList.contains('menu-open')) { closeMenu(); menuBtn.focus(); } };
   document.addEventListener('keydown', escapeHandler);
   function renderAll() { renderRail(); renderBook(); }
+  var privateInitialRoute = null;
   function applyHash() {
     var h = (location.hash || '').replace(/^#/, ''); if (!h) return false;
     try {
       var parts = h.split('/'), vid = decodeURIComponent(parts[0]);
       var ok = (vid === 'who' && C.interviewer) || (vid === 'glossary' && GLOSSARY.length) || TOPICS.some(function (t) { return t.id === vid; });
       if (!ok) return false;
-      state.view = vid; state.pendingScroll = parts[1] ? 'sec-' + decodeURIComponent(parts[1]) : null; return true;
+      state.view = vid; state.pendingScroll = parts[1] ? 'sec-' + decodeURIComponent(parts[1]) : null;
+      if (privateHost && !privateReady) privateInitialRoute = { view: state.view, pendingScroll: state.pendingScroll };
+      return true;
     } catch (e) { return false; }
   }
   applyHash();
@@ -1038,10 +1116,13 @@ window.PREP_IO = (function () {
     if (start !== null) { try { next.setSelectionRange(start, end, direction); } catch (e) {} }
   }
   function remoteState(records) { return window.PREP_CLOUD.applyRecords(emptyState(), records); }
-  function renderAccountState(records, cached, oldBase) {
+  function renderAccountState(records, cached, oldBase, initialRoute) {
     var remote = window.PREP_CLOUD.projectProgress(remoteState(records));
     var merged = window.PREP_CLOUD.mergeProgress(oldBase || remote, cached || remote, remote);
+    var pendingScroll = initialRoute && initialRoute.pendingScroll;
+    if (initialRoute && initialRoute.view) merged.view = initialRoute.view;
     cloudBaselineState = remote; saveState(baselineKey, remote); state = merged; saveState(accountKey, state); renderPreservingTextFocus();
+    if (pendingScroll) { var target = document.getElementById(pendingScroll); if (target) target.scrollIntoView({ block: 'start' }); }
     scheduleCloudSave();
   }
   function beginAccount(context) {
@@ -1050,18 +1131,27 @@ window.PREP_IO = (function () {
     clearTimeout(draftTimer); guestState = cloneState(state); saveState(LS_KEY, guestState);
     cloudUid = context.uid; cloudGeneration++; var generation = cloudGeneration;
     accountKey = accountStateKey(cloudUid); baselineKey = accountBaseKey(cloudUid);
-    var cached = readState(accountKey), oldBase = readState(baselineKey);
-    state = cached || emptyState(); saveState(accountKey, state); renderAll();
+    var cached = readState(accountKey), oldBase = readState(baselineKey), initialRoute = privateInitialRoute; privateInitialRoute = null;
+    state = cached || emptyState(); if (initialRoute && initialRoute.view) state.view = initialRoute.view; saveState(accountKey, state); renderAll();
     setSync('pending', 'checking your saved progress');
-    cloudClient.read(C.meta.id).then(function (records) {
-      if (!cloudUid || context.uid !== cloudUid || generation !== cloudGeneration || !cloudClient.getContext() || cloudClient.getContext().uid !== context.uid) return;
-      renderAccountState(records, cached, oldBase);
-      migrateButton.hidden = !hasProgress(guestState);
-      return cloudClient.watch(C.meta.id, function (next, meta) {
-        if (!cloudUid || context.uid !== cloudUid || generation !== cloudGeneration || meta.fromCache || meta.hasPendingWrites) return;
-        renderAccountState(next, state, cloudBaselineState);
-      }, function () { if (cloudUid === context.uid) setSync('error'); }).then(function (unsub) { if (cloudUid === context.uid) cloudUnwatch = unsub; else unsub(); });
-    }).catch(function () { if (cloudUid === context.uid) setSync('error'); });
+    hydrateCloud = function () {
+      if (cloudBaselineState) return Promise.resolve(true);
+      if (hydrationPromise) return hydrationPromise;
+      var attempt = cloudClient.read(C.meta.id).then(function (records) {
+        if (!cloudUid || context.uid !== cloudUid || generation !== cloudGeneration || !cloudClient.getContext() || cloudClient.getContext().uid !== context.uid) throw transitionError('Account access changed while progress was loading.');
+        renderAccountState(records, cached, oldBase, initialRoute);
+        migrateButton.hidden = !hasProgress(guestState);
+        return cloudClient.watch(C.meta.id, function (next, meta) {
+          if (!cloudUid || context.uid !== cloudUid || generation !== cloudGeneration || meta.fromCache || meta.hasPendingWrites) return;
+          renderAccountState(next, state, cloudBaselineState);
+        }, function () { if (cloudUid === context.uid) setSync('error'); }).then(function (unsub) { if (cloudUid === context.uid) cloudUnwatch = unsub; else unsub(); });
+      });
+      hydrationPromise = attempt;
+      attempt.catch(function () { if (hydrationPromise === attempt) hydrationPromise = null; if (cloudUid === context.uid) setSync('error'); });
+      return attempt;
+    };
+    if (accountStartResolve) { accountStartResolve(true); accountStartResolve = null; }
+    hydrateCloud().then(function () { settlePrivateReady(); }, function (error) { settlePrivateReady(error); });
   }
   function leaveAccount(clearCache, targetUid) {
     cloudGeneration++; clearTimeout(saveTimer.__cloud);
@@ -1069,7 +1159,7 @@ window.PREP_IO = (function () {
     if (cloudUid) {
       saveState(accountKey, state);
       if (clearCache === true && (!targetUid || targetUid === cloudUid)) { try { window.PREP_CLOUD.clearAccountCache(localStorage, C.meta.id, cloudUid); } catch (e) {} }
-      cloudUid = null; accountKey = null; baselineKey = null; cloudBaselineState = null; cloudDirty = false;
+      cloudUid = null; accountKey = null; baselineKey = null; cloudBaselineState = null; cloudDirty = false; hydrateCloud = null; hydrationPromise = null;
       state = readState(LS_KEY) || cloneState(guestState); renderAll(); migrateButton.hidden = true; setSync('local');
     }
     if (clearCache === true && targetUid && targetUid !== cloudUid) { try { window.PREP_CLOUD.clearAccountCache(localStorage, C.meta.id, targetUid); } catch (e) {} }
@@ -1105,20 +1195,20 @@ window.PREP_IO = (function () {
       cloudButton.textContent = 'Sign in to sync';
       var canClear = event.status === 'disabled' || (!cloudDirty && !hasLocalOnlyData(state)) || signoutBackupReadyUid === cloudUid;
       leaveAccount(canClear, cloudUid); signoutBackupReadyUid = null; setSync('local');
-      if (C.meta && C.meta.id !== 'course' && event.status === 'signed_out') window.PREP_SHELL.unmount('signed_out');
+      if ((privateHost || C.meta && C.meta.id !== 'course') && (privateHost || event.status === 'signed_out')) window.PREP_SHELL.unmount(event.status === 'signed_out' ? 'signed_out' : 'disabled');
       return;
     }
     if (event.status === 'not_enabled') {
       cloudButton.textContent = 'Sign out'; setSync('error', 'This Google account is not enabled for this workspace');
       leaveAccount(true, event.uid || cloudUid);
-      if (C.meta && C.meta.id !== 'course') window.PREP_SHELL.unmount('unauthorized');
+      if (privateHost || C.meta && C.meta.id !== 'course') window.PREP_SHELL.unmount('unauthorized');
       return;
     }
     if (event.status === 'checking') {
       var switching = !!cloudUid;
       if (switching) leaveAccount(false);
       setSync('pending', 'checking Google account access');
-      if (switching && C.meta && C.meta.id !== 'course') window.PREP_SHELL.unmount('checking');
+      if (switching && (privateHost || C.meta && C.meta.id !== 'course')) window.PREP_SHELL.unmount('checking');
       return;
     }
     if (event.status === 'error') { setSync('error', 'Saved here; account access or sync failed'); }
@@ -1140,6 +1230,11 @@ window.PREP_IO = (function () {
     cloudButton.hidden = false; document.getElementById('sync-policy').hidden = false; cloudClient.onAuthState(authChanged);
   } else setSync('local');
   function teardown(reason) {
+    if (privateHost) {
+      ['click','input','change'].forEach(function (type) { book.removeEventListener(type, privateHydrationGuard, true); });
+      book.inert = false; book.removeAttribute('aria-busy');
+      settlePrivateReady(transitionError('The preparation closed before account progress finished loading.'));
+    }
     clearTimeout(draftTimer); Object.keys(saveTimer).forEach(function (key) { clearTimeout(saveTimer[key]); });
     intervals.forEach(function (id) { clearInterval(id); }); intervals.length = 0;
     if (cloudUnwatch) { try { cloudUnwatch(); } catch (e) {} cloudUnwatch = null; }
@@ -1171,6 +1266,8 @@ window.PREP_IO = (function () {
   renderAll();
   return {
     teardown: teardown,
+    flushForTransition: flushForTransition,
+    whenReady: function () { return privateReadyPromise; },
     getState: function () { return cloneState(state); },
     applyRemoteState: function (next) { if (!window.PREP_IO.validState(next)) return false; state = cloneState(next); persist(); renderAll(); return true; },
     signOut: signOutCloud,
