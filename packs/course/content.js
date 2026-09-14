@@ -312,8 +312,8 @@ window.PREP_CONTENT = {
           part: "field",
           title: "Your progress",
           viz: null,
-          body: `<p>Everything you write, every question you answer and every section you mark as read is stored in this browser and nowhere else. The page sends nothing anywhere, so progress is per browser and per device.</p>
-<p>Press Export progress in the header to write it to a file, and Import progress to read it back on another machine. On this site you mark your own exercises against the list of what a good answer contains; a copy published through Claude marks them for you.</p>`,
+          body: `<p>You can use this course without signing in. Your answers and completion marks stay in this browser. Optional Google sign-in is enabled only for the site owner's account: chapter completion, checklist marks and quiz selections then sync across devices. Free-form answer drafts and grading history are not uploaded.</p>
+<p>Press Export progress in the header to save a backup, and Import progress to load one on another device. Export browser-only answers before signing out to keep them. Compare exercises with the strong answers and mark them practised; automatic AI grading is not included. Course content and progress are stored separately, so routine content updates preserve your completion marks.</p>`,
           deeper: null,
           check: null
         }
