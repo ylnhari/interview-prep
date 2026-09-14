@@ -1,5 +1,5 @@
-/* streaming-features diagrams: the two clocks on a feature value, and a streaming feature
-   pipeline drawn as three owners with two handoffs between them. */
+/* streaming-features diagrams: the two clocks on a feature value, and one possible
+   streaming pipeline ownership arrangement with two handoffs. */
 (function (root) {
   'use strict';
   var V = root.VIZLIB, C = root.VIZLIB_CAPTIONS, H = root.VIZLIB_HELPERS;
@@ -53,21 +53,21 @@
 
   C['two-timestamps-timeline'] = 'One transaction, two clocks. The scorer can only read what was written before it ran, so the training row has to carry that same value - not the one written two seconds later, and not the one the feature holds today.';
 
-  /* ------------------------------------------------- a streaming feature pipeline, by owner */
+  /* ----------------------------------- one possible streaming pipeline ownership arrangement */
 
   V['streaming-feature-pipeline'] = function (u) {
-    var OTHER = { f: 'var(--surface-3)', sk: 'var(--ink-dim)', st: 'stroke-dasharray:4 4', tc: 'var(--ink-dim)', tc2: 'var(--ink-dim)' };
-    var OTHERTOPIC = { f: 'var(--surface-3)', sk: 'var(--ink-dim)', st: 'stroke-dasharray:4 4', r: 12, ts: 10, tc: 'var(--ink-dim)', tc2: 'var(--ink-dim)' };
-    var MINE = { f: 'var(--accent-weak)', sk: 'var(--accent)' };
-    var MYTOPIC = { f: 'var(--accent-weak)', sk: 'var(--accent)', r: 12, ts: 10 };
+    var ADJACENT_TEAM = { f: 'var(--surface-3)', sk: 'var(--ink-dim)', st: 'stroke-dasharray:4 4', tc: 'var(--ink-dim)', tc2: 'var(--ink-dim)' };
+    var ADJACENT_TOPIC = { f: 'var(--surface-3)', sk: 'var(--ink-dim)', st: 'stroke-dasharray:4 4', r: 12, ts: 10, tc: 'var(--ink-dim)', tc2: 'var(--ink-dim)' };
+    var PIPELINE_TEAM = { f: 'var(--accent-weak)', sk: 'var(--accent)' };
+    var PIPELINE_TOPIC = { f: 'var(--accent-weak)', sk: 'var(--accent)', r: 12, ts: 10 };
     var b = D(u, 'ar aa');
 
-    b += HD('a streaming feature pipeline: three owners, two handoffs', 'dashed = a different team owns it');
+    b += HD('one possible feature-pipeline team split', 'ownership boundaries vary by organization');
 
     /* ---- upstream: producers and the topic they publish to ---- */
-    b += B(20, 56, 88, 40, 'producer~services', OTHER);
+    b += B(20, 56, 88, 40, 'producer~services', ADJACENT_TEAM);
     b += A(u, 110, 76, 132, 76);
-    b += B(136, 56, 102, 40, 'input topic~message broker', OTHERTOPIC);
+    b += B(136, 56, 102, 40, 'input topic~message broker', ADJACENT_TOPIC);
     b += A(u, 240, 76, 260, 76, { c: 'var(--accent)', m: 'aa' });
     b += LN(250, 100, 250, 107, { c: 'var(--warning)', d: '3 3' });
     b += T(250, 118, 'handoff', { s: 9, c: 'var(--warning)' });
@@ -84,9 +84,9 @@
     b += LN(272, 102, 549, 102, { c: 'var(--border)', d: '3 4' });
 
     /* ---- the topics the job publishes ---- */
-    b += B(582, 34, 156, 24, 'audit log topic', MYTOPIC);
-    b += B(582, 64, 156, 24, 'dead-letter topic', MYTOPIC);
-    b += B(582, 94, 156, 24, 'feature topic', MYTOPIC);
+    b += B(582, 34, 156, 24, 'audit log topic', PIPELINE_TOPIC);
+    b += B(582, 64, 156, 24, 'dead-letter topic', PIPELINE_TOPIC);
+    b += B(582, 94, 156, 24, 'feature topic', PIPELINE_TOPIC);
     b += AP(u, 'M560 70H570V46H578', { c: 'var(--accent)', m: 'aa' });
     b += A(u, 560, 76, 578, 76, { c: 'var(--accent)', m: 'aa' });
     b += AP(u, 'M560 82H570V106H578', { c: 'var(--accent)', m: 'aa' });
@@ -94,14 +94,14 @@
     /* ---- downstream: a platform team loads the store ---- */
     b += AP(u, 'M660 118V142', { d: '4 4' });
     b += DT(660, 130, 3.5, { cls: 'v-pulse' });
-    b += T(578, 140, 'handoff: they load it', { s: 9, c: 'var(--warning)', a: 'end' });
-    b += CY(596, 146, 128, 48, 'feature store', OTHER);
+    b += T(578, 140, 'handoff: platform team loads it', { s: 9, c: 'var(--warning)', a: 'end' });
+    b += CY(596, 146, 128, 48, 'feature store', ADJACENT_TEAM);
 
     /* ---- the scoring service ---- */
-    b += B(300, 150, 150, 44, 'scoring service~model + policy', MINE);
+    b += B(300, 150, 150, 44, 'scoring service~model + policy', PIPELINE_TEAM);
     b += A(u, 594, 172, 454, 172, { c: 'var(--accent)', m: 'aa' });
     b += T(524, 164, 'reads, never writes', { s: 9, c: 'var(--ink-dim)' });
-    b += B(96, 150, 120, 44, 'calling service', OTHER);
+    b += B(96, 150, 120, 44, 'calling service', ADJACENT_TEAM);
     b += A(u, 218, 164, 296, 164);
     b += T(257, 157, 'request', { s: 9, c: 'var(--ink-dim)' });
     b += A(u, 296, 184, 218, 184, { c: 'var(--accent)', m: 'aa' });
@@ -114,9 +114,9 @@
     b += F('M660 118V142', { cls: 'v-flow-slow' });
     b += DT(594, 172, 4, { cls: 'v-move-x', st: DXS(-140) });
 
-    b += T(380, 218, 'the topics are the contract between the three teams, and nobody reaches across a handoff', { s: 10, c: 'var(--ink-dim)' });
+    b += T(380, 218, 'topics can mark team contracts; ownership and handoffs vary', { s: 10, c: 'var(--ink-dim)' });
     return S(230, b);
   };
 
-  C['streaming-feature-pipeline'] = 'The common shape: producer services publish to a topic, one job turns that stream into features and publishes them, a platform team loads the store, and the scoring service <b>reads the store but never writes to it</b>. Solid boxes are one team; dashed boxes belong to the teams on either side. Knowing where the handoffs are is what lets you say which failures are yours to fix.';
+  C['streaming-feature-pipeline'] = 'One possible ownership arrangement: producer services publish to a topic, a job turns the stream into features and publishes them, a platform team loads the store, and the scoring service <b>reads the store but never writes to it</b>. Solid boxes share one team in this example; dashed boxes represent adjacent teams. Organizations assign these boundaries differently. Use the handoffs to identify which team investigates each failure.';
 }(typeof window !== 'undefined' ? window : this));
