@@ -35,6 +35,12 @@ Python 3.9+ and Node 18+ (Node is used only for validation and the roadmap summa
 
 ## Authoring
 
+For any assistant or human maintaining this project, start with `AGENTS.md` and
+[the maintenance runbook](docs/maintenance.md). It covers progress compatibility,
+publication checks and the optional owner-authorized downstream handoff. No chat
+history, specific assistant subscription or private repository is needed to work
+on the public course.
+
 `docs/extending.md` explains how to add a chapter or a diagram in its own file. `docs/content-schema.md` is the contract: the content object, the two voices (coach vs candidate), define-before-use, the honesty rule, diagrams by id, importance ordering. `engine/viz-catalog.md` lists the diagrams (about 170). Add a diagram to `engine/viz-lib.js` following its helper conventions (CSS-variable colours only, `uid`-prefixed ids, the shell's animation classes).
 
 ## Layout

@@ -2,7 +2,9 @@
 
 A local-first interview-preparation engine with a public course and optional private packs. It renders chapters, concept diagrams, readings, exercises, spoken answers, question banks and glossaries. One private pack can be used per interview process (company, role, round); shared chapters live in `core/`.
 
-Read this file, then `README.md`, then the pack you are working on.
+Read this file, then `README.md` and `docs/maintenance.md`, then the pack you are
+working on. These are the canonical instructions for every assistant and human
+maintainer; tool-specific entry files must only reference them.
 
 ## Layout
 
@@ -60,3 +62,11 @@ Public Pages validation uses `python engine/public_build.py`, then validates `pu
 ## Living artifacts
 
 - GitHub Pages at `https://ylnhari.github.io/interview-prep/` describes the current public course. Refresh it after an approved public-course change through `.github/workflows/pages.yml`; that workflow builds only `packs/course` into `public-dist/`.
+- When the owner's private companion is in the authorized task scope, a public
+  content or renderer update also requires refreshing its course snapshot and
+  renderer from the same reviewed commit, following that private repository's
+  maintenance runbook. Report public publication and private synchronization
+  separately; do not call both complete on the strength of a push or local copy.
+  Never place private credentials, configuration or content in this public
+  repository or its Actions. External contributors need no private access, and
+  public Pages must remain independent of the private deployment.

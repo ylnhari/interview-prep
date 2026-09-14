@@ -146,7 +146,10 @@ looks broken, and it is.
 ## Stable IDs and progress updates
 
 The public course's `meta.id` is its stable progress namespace. Topic ids, learn-chunk ids and activity ids
-are stable identifiers for saved progress fields. Keep them when revising or moving content; never reuse an
+are stable identifiers for saved progress fields. Keep them when revising or reordering content within the
+same topic and role. Learn-chunk and activity ids need be unique only within their topic and role; the same
+local id may appear in another topic or in the other role. Moving an item to another topic or between
+`learn` and `activities` changes its saved-progress path and requires a reviewed migration. Never reuse an
 old id for a different topic, section or exercise. A wording, ordering or reading-list update does not
 change these identifiers.
 
@@ -162,3 +165,24 @@ backup and importing it in the other browser. The public build rejects cloud con
 contain owner-sync settings or offer sign-in. Owner-only sync belongs to the separate private app.
 Content deployment must remain independent of progress data. Any hosting of private content is an
 optional, independent deployment, not a dependency of the public course.
+
+### Committed public compatibility check
+
+Before publishing an update, compare two committed public revisions with:
+
+```
+node engine/check_progress_compatibility.cjs BASE_SHA HEAD_SHA
+```
+
+Both arguments must be full 40- or 64-character commit SHAs. The checker reads only the Git objects for
+allowlisted `core/*.js` files and `packs/course/content.js`; it never reads the working tree, local packs,
+or private content. Run it only for trusted committed public revisions. It resolves the public course's
+selected core topics and fails closed if an existing
+course, topic, section, or activity identifier is lost or duplicated. Reordering and new identifiers are
+allowed. For every existing quiz, its question, ordered options, and answer index must remain exactly the
+same. Any quiz mapping change requires an explicit reviewed migration; this checker has no reset or bypass
+flag.
+
+The Pages workflow checks the push event's predecessor SHA with full Git history. A manual run requires an
+explicit committed public baseline SHA. On a repository's first push GitHub supplies no predecessor, so the
+workflow runs tests and page schema validation but reports that it cannot prove continuity.

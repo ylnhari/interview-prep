@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      baseline_sha:
+        description: Full committed public baseline SHA to compare with this run
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -19,12 +24,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - name: Test progress compatibility guard
+        run: node engine/test_progress_compatibility.cjs
+      - name: Verify saved-progress compatibility
+        env:
+          BASE_SHA: ${{ github.event_name == 'push' && github.event.before || inputs.baseline_sha }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "push" ] && [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
+            echo "No predecessor exists for this first push; tests and schema checks run, but continuity is not proven."
+          else
+            node engine/check_progress_compatibility.cjs "$BASE_SHA" "$HEAD_SHA"
+          fi
       - name: Build the allowlisted public course
         run: python engine/public_build.py
       - name: Validate the public course page
