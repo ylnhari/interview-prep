@@ -9,6 +9,7 @@ plus core/*.js, only if the pack uses any) and the pack content (packs/<pack>/<r
 escaped to pure ASCII so it renders correctly whatever charset the host assumes.
 """
 import io
+import json
 import os
 import re
 import sys
@@ -89,6 +90,22 @@ def main(argv):
     for marker in ("/*__VIZLIB__*/", "/*__CORE__*/", "/*__CONTENT__*/", "/*__OVERLAYS__*/"):
         assert marker in shell, "shell missing marker " + marker
     html = shell.replace("/*__VIZLIB__*/", viz, 1).replace("/*__CORE__*/", core, 1).replace("/*__CONTENT__*/", content, 1).replace("/*__OVERLAYS__*/", overlays, 1)
+    cloud_path = os.path.join(ROOT, "engine", "cloud-progress.js")
+    if "/*__CLOUD__*/" in html:
+        html = html.replace("/*__CLOUD__*/", read(cloud_path) if os.path.exists(cloud_path) else "", 1)
+    if "--cloud-config" in argv:
+        config_path = argv[argv.index("--cloud-config") + 1]
+        config = json.loads(read(config_path))
+        # Firebase web configuration is public; never accept service credentials here.
+        allowed = {"enabled", "firebase"}
+        if not isinstance(config, dict) or set(config) - allowed:
+            raise ValueError("Cloud config must contain only enabled and firebase web settings")
+        firebase_config = config.get("firebase", {})
+        web_keys = {"apiKey", "authDomain", "projectId", "appId", "messagingSenderId"}
+        if not isinstance(firebase_config, dict) or set(firebase_config) - web_keys:
+            raise ValueError("Only Firebase public web settings are allowed")
+        encoded = json.dumps(config, ensure_ascii=True).replace("<", "\\u003c")
+        html = "<script>window.PREP_CLOUD_CONFIG=" + encoded + ";</script>\n" + html
     html = ascii_only(html)
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     with io.open(out_path, "w", encoding="utf-8") as f:

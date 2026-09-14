@@ -1,4 +1,5 @@
 dist/
+public-dist/
 local/
 *.tmp
 *.log

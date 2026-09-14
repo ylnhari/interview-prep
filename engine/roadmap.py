@@ -37,7 +37,7 @@ def rounds():
     return out
 
 
-def summarise(rdir):
+def summarise(rdir, root=None):
     js = r"""
 const fs=require('fs');const path=require('path');const w={};
 const root=process.argv[1], rdir=process.argv[2];
@@ -51,7 +51,7 @@ const byId=Object.fromEntries(C.topics.map(t=>[t.id,t]));
 const groups=(C.groups||[{id:'all',label:'Chapters',ids:C.topics.map(t=>t.id)}]).map(g=>({id:g.id,label:g.label,sub:g.sub||'',chapters:g.ids.filter(i=>byId[i]).map(i=>({id:i,title:byId[i].title,level:byId[i].level||'good',levelLabel:byId[i].levelLabel||'',kind:byId[i].kind||'',sections:byId[i].learn.map(c=>({id:c.id,title:c.title,part:c.part||'',link:!!(c.link&&c.link.url)})),exercises:byId[i].activities.length,hasSay:!!byId[i].sayItOutLoud}))}));
 console.log(JSON.stringify({meta:C.meta||{},interviewAt:C.interviewAt||null,hasInterviewer:!!C.interviewer,groups,glossary:!!(C.glossary&&C.glossary.length)}));
 """
-    out = subprocess.check_output(["node", "-e", js, ROOT, rdir], encoding="utf-8")
+    out = subprocess.check_output(["node", "-e", js, os.path.abspath(root or ROOT), rdir], encoding="utf-8")
     return json.loads(out)
 
 
@@ -175,9 +175,9 @@ footer{max-width:1680px;margin:0 auto;padding:16px 20px 48px;border-top:1px soli
 PROMISE = ("A free course for machine learning and software engineering interviews. Each chapter teaches one "
            "subject: it defines every term before using it, draws the mechanism in a diagram, points you at the "
            "best pages and videos on that subject, and gives you exercises with a list of what a good answer "
-           "contains. Take the tracks in order, or start with the one your interview will test most. Your "
-           "progress is saved in this browser, and you can save it to a file from any chapter and load it on "
-           "another device.")
+           "contains. Take the tracks in order, or start with the one your interview will test most. Progress "
+           "stays in this browser unless signed-in sync is explicitly configured; you can also export it to a "
+           "file and import it on another device.")
 
 
 def render_pack(e, n_packs):
@@ -307,7 +307,7 @@ def render_index(entries):
     for e in entries:
         parts.append(render_pack(e, len(entries)))
     parts.append("</main>")
-    parts.append("<footer>Your progress is read from what this browser has saved. Open a chapter page once and it will show up here, or load a saved progress file on that page.</footer>")
+    parts.append("<footer>Progress is read from what this browser has saved. Open a chapter page once and it will show up here, or import a saved progress file on that page.</footer>")
     parts.append("<script>" + SCRIPT + "</script>")
     return ascii_only("\n".join(parts))
 
@@ -328,6 +328,16 @@ def main(argv):
         f.write(html)
     print("roadmap: %d pages -> dist/index.html" % len(entries))
     return 0
+
+
+def public_course_entry(root=None, page="course.html"):
+    """Return only the explicitly public course entry, without discovering other packs."""
+    root = os.path.abspath(root or ROOT)
+    rdir = os.path.join(root, "packs", "course")
+    if not os.path.isfile(os.path.join(rdir, "content.js")):
+        raise FileNotFoundError("public course content is missing")
+    return {"pack": "course", "round": None, "page": page,
+            "summary": summarise(rdir, root=root)}
 
 
 if __name__ == "__main__":

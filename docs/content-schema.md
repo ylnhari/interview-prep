@@ -142,3 +142,25 @@ One width rule across every block type. Prose, quizzes, key terms, readings and 
 content column, and the column uses the browser width (`--measure: none`, shell capped at 1680px). A page
 where the diagram runs to the right edge and the paragraph beside it stops two-thirds of the way across
 looks broken, and it is.
+
+## Stable IDs and progress updates
+
+The public course's `meta.id` is its stable progress namespace. Topic ids, learn-chunk ids and activity ids
+are stable identifiers for saved progress fields. Keep them when revising or moving content; never reuse an
+old id for a different topic, section or exercise. A wording, ordering or reading-list update does not
+change these identifiers.
+
+Content records and progress records are separate. Publishing an ordinary course update replaces or adds
+course content only; it must not write, clear or delete progress. If an item is removed, the page may stop
+displaying that saved field, but the stored field remains untouched. Do not silently migrate or reset user
+progress. A future deliberate migration must preserve the existing export/import format and include an
+explicit backup and user confirmation before changing local progress.
+
+Public course pages remain readable without an account, and public visitors can keep progress in the
+current browser. The authorized owner can sign in from the public course page or the separate private
+dashboard to sync chapter/checklist progress and quiz selections. Free-form answer drafts and grading
+history stay in the browser and are not synced. Roadmap progress remains browser-local. Service rules
+enforce owner-only access.
+Public source contains generic web-client configuration only, never an owner email or user identifier.
+Content deployment must remain independent of progress data. Any hosting of private content is an
+optional, independent deployment, not a dependency of the public course.

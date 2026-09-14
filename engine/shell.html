@@ -70,12 +70,16 @@
   .sync::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--surface-3); flex: none; }
   .sync.on::before { background: var(--good); }
   .sync.local::before { background: var(--border-strong); }
+  .sync.pending::before { background: var(--warning); }
+  .sync.error::before { background: var(--danger); }
+  .sync-policy { flex: 1 1 100%; margin-left: auto; max-width: 920px; text-align: right; color: var(--ink-dim); font-size: 11px; line-height: 1.4; }
   @media (max-width: 760px) {
     .top-inner { padding: 8px 14px; gap: 8px 10px; }
     .brand { flex-basis: calc(100% - 140px); }
     .home { border-right: 0; padding-right: 0; }
-    .sync { display: none; }
+    .sync { display: flex; white-space: normal; }
     .io { margin-left: auto; }
+    .sync-policy { text-align: left; }
   }
 
   /* shell */
@@ -365,14 +369,17 @@
       <h1>Prep</h1>
     </div>
     <button class="menu" id="menu-btn" type="button" aria-expanded="false" aria-controls="rail">Contents</button>
-    <div class="sync" id="sync" hidden></div>
+    <div class="sync" id="sync" role="status" aria-live="polite" hidden></div>
     <div class="stat" title="How much of the course you have finished"><div class="ring" id="ring" style="--pct:0" aria-hidden="true"></div><span><b id="pct">0%</b> done</span></div>
     <div class="stat accent" id="countdown-wrap" hidden><span>interview in</span><b id="countdown"></b></div>
     <div class="io">
+      <button class="btn sm" id="cloud-btn" type="button" hidden>Sign in to sync</button>
+      <button class="btn sm" id="migrate-btn" type="button" hidden>Move browser progress to this account</button>
       <button class="btn sm" id="export-btn" type="button" title="Save your progress on this page to a file">Export progress</button>
-      <label class="btn sm" for="import-file" tabindex="0" title="Load progress from a file you saved earlier">Import progress</label>
+      <button class="btn sm" id="import-btn" type="button" title="Load progress from a file you saved earlier">Import progress</button>
       <input type="file" id="import-file" accept="application/json,.json" hidden>
     </div>
+    <div class="sync-policy" id="sync-policy" hidden>Personal sync includes completion, checklist, and quiz selections. Draft answers and grading history stay in this browser and are cleared from this account cache on sign-out; export first to keep a copy.</div>
   </div>
 </header>
 
@@ -380,7 +387,7 @@
   <nav class="rail" id="rail" aria-label="Course outline"></nav>
   <main class="book" id="book"></main>
 </div>
-<footer>Your progress is saved in this browser. Use Export progress at the top to save it to a file, and Import progress to load that file on another device.</footer>
+<footer>Progress is saved in this browser. When personal sync is enabled, completion, checklist, and quiz selections sync to that account. Draft answers and grading history stay in this browser and are cleared from this account cache on sign-out; export first to keep a copy.</footer>
 
 <script>
 /*__VIZLIB__*/
@@ -393,6 +400,9 @@
 </script>
 <script>
 /*__OVERLAYS__*/
+</script>
+<script>
+/*__CLOUD__*/
 </script>
 <script>
 // Progress export/import: pure functions, no DOM, so they can be unit-tested (engine/test_io.js).
@@ -421,9 +431,44 @@ window.PREP_IO = (function () {
 </script>
 <script>
 (function () {
-  var C = window.PREP_CONTENT;
+  var active = null;
+  function mount(content) {
+    if (active) unmount();
+    if (!content || !content.topics) { document.getElementById('book').textContent = 'Content is not available yet.'; return null; }
+    active = start(content);
+    return active;
+  }
+  function unmount(reason) {
+    if (active && active.teardown) active.teardown(reason);
+    active = null;
+    document.getElementById('book').textContent = '';
+    document.getElementById('rail').textContent = '';
+    document.title = 'Interview Prep';
+    var eyebrow = document.querySelector('.brand .eyebrow'); if (eyebrow) eyebrow.textContent = 'Interview prep';
+    var heading = document.querySelector('.brand h1'); if (heading) heading.textContent = 'Prep';
+    var footer = document.querySelector('footer'); if (footer) footer.textContent = 'Progress is saved in this browser. Use Export progress to save it to a file, and Import progress to load that file on another device.';
+    var cloudButton = document.getElementById('cloud-btn'); if (cloudButton) { cloudButton.hidden = true; cloudButton.textContent = 'Sign in to sync'; }
+    var migrateButton = document.getElementById('migrate-btn'); if (migrateButton) migrateButton.hidden = true;
+    var policy = document.getElementById('sync-policy'); if (policy) policy.hidden = true;
+    var sync = document.getElementById('sync'); if (sync) { sync.hidden = true; sync.className = 'sync'; sync.textContent = ''; }
+    var countdownWrap = document.getElementById('countdown-wrap'); if (countdownWrap) countdownWrap.hidden = true;
+    var countdown = document.getElementById('countdown'); if (countdown) countdown.textContent = '';
+    var pct = document.getElementById('pct'); if (pct) pct.textContent = '0%';
+    var ring = document.getElementById('ring'); if (ring) ring.style.setProperty('--pct', '0');
+    var menu = document.getElementById('menu-btn'); if (menu) menu.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('menu-open');
+  }
+  window.PREP_SHELL = {
+    mount: mount,
+    unmount: unmount,
+    getState: function () { return active ? active.getState() : null; },
+    applyRemoteState: function (next) { return active ? active.applyRemoteState(next) : false; },
+    signOut: function () { return active && active.signOut ? active.signOut() : Promise.resolve(true); }
+  };
+  if (window.PREP_CONTENT && window.PREP_CONTENT.topics) mount(window.PREP_CONTENT);
+
+  function start(C) {
   var book = document.getElementById('book');
-  if (!C || !C.topics) { book.innerHTML = '<div class="empty">Content failed to load.</div>'; return; }
   if (C.useCore && window.PREP_CORE) { C.useCore.forEach(function (id) { if (window.PREP_CORE[id] && !C.topics.some(function (t) { return t.id === id; })) C.topics.push(JSON.parse(JSON.stringify(window.PREP_CORE[id]))); }); }
   // pack overlays: candidate-specific chunks/exercises spliced into generic core chapters
   var OV = window.PREP_OVERLAYS || C.overlays || {};
@@ -477,23 +522,79 @@ window.PREP_IO = (function () {
 
   // ---------- state ----------
   var state = { topics: {}, whoOpen: true };
-  try { var ls = JSON.parse(localStorage.getItem(LS_KEY) || 'null'); if (ls && window.PREP_IO.validState(ls)) state = ls; } catch (e) {}
+  function readState(key) { try { var value = JSON.parse(localStorage.getItem(key) || 'null'); return value && window.PREP_IO.validState(value) ? value : null; } catch (e) { return null; } }
+  function cloneState(value) { return JSON.parse(JSON.stringify(value || { topics: {}, whoOpen: true })); }
+  function saveState(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch (e) { return false; } }
+  var storedGuest = readState(LS_KEY); if (storedGuest) state = storedGuest;
+  var guestState = cloneState(state), accountKey = null, baselineKey = null, cloudBaselineState = null, cloudUid = null, cloudDirty = false, cloudGeneration = 0, cloudRevision = 0, cloudUnwatch = null, signoutBackupReadyUid = null;
+  var cloudButton = document.getElementById('cloud-btn'), migrateButton = document.getElementById('migrate-btn');
+  var cloudConfig = window.PREP_CLOUD_CONFIG || null;
+  var cloudClient = window.PREP_CLOUD && window.PREP_CLOUD.create ? window.PREP_CLOUD.create(cloudConfig) : null;
   function T(id) {
     if (!state.topics[id]) state.topics[id] = { learn: {}, checks: {}, reads: {}, connect: { status: 'none', attempts: 0 }, acts: {}, said: false, updatedAt: null };
     var t = state.topics[id]; t.learn = t.learn || {}; t.checks = t.checks || {}; t.reads = t.reads || {}; t.acts = t.acts || {}; t.connect = t.connect || { status: 'none', attempts: 0 }; return t;
   }
   function AC(tid, aid) { var t = T(tid); if (!t.acts[aid]) t.acts[aid] = { status: 'none', attempts: 0 }; return t.acts[aid]; }
-  var db = null, sample = null, saveTimer = {};
+  var sample = null, saveTimer = {}, intervals = [];
+  function flushCloudBatch() {
+    if (!cloudClient || !cloudUid || !cloudBaselineState || !cloudDirty || window.navigator && window.navigator.onLine === false) return Promise.resolve();
+    var uid = cloudUid, generation = cloudGeneration, revision = cloudRevision;
+    var desired = window.PREP_CLOUD.projectProgress(state);
+    var diff = window.PREP_CLOUD.diff(window.PREP_CLOUD.flatten(cloudBaselineState), window.PREP_CLOUD.flatten(desired));
+    var keys = Object.keys(diff), index = 0;
+    function next() {
+      if (index >= keys.length) {
+        if (uid !== cloudUid || generation !== cloudGeneration) return;
+        saveState(accountKey, state);
+        if (revision === cloudRevision) { cloudDirty = false; setSync('on'); }
+        else { cloudDirty = true; setSync('pending', 'newer progress is waiting to sync'); }
+        return;
+      }
+      var key = keys[index++], change = diff[key];
+      return (change.deleted ? cloudClient.remove(C.meta.id, change.parts) : cloudClient.write(C.meta.id, change.parts, change.value)).then(function () {
+        if (uid !== cloudUid || generation !== cloudGeneration || !cloudBaselineState) return;
+        var leaves = window.PREP_CLOUD.flatten(cloudBaselineState);
+        if (change.deleted) delete leaves[key]; else leaves[key] = { parts: change.parts, value: change.value };
+        cloudBaselineState = window.PREP_CLOUD.applyRecords({}, leaves); saveState(baselineKey, cloudBaselineState);
+        return next();
+      });
+    }
+    if (!keys.length) {
+      if (revision === cloudRevision && uid === cloudUid && generation === cloudGeneration) { cloudDirty = false; setSync('on'); }
+      return Promise.resolve();
+    }
+    return next().catch(function () { if (uid === cloudUid && generation === cloudGeneration) { cloudDirty = true; setSync('error'); } });
+  }
+  var cloudDrain = window.PREP_CLOUD && window.PREP_CLOUD.createSerialDrain ? window.PREP_CLOUD.createSerialDrain(flushCloudBatch) : null;
+  function scheduleCloudSave() {
+    if (!cloudClient || !cloudUid || !window.PREP_CLOUD) return;
+    cloudDirty = true;
+    if (!cloudBaselineState) { setSync('pending', 'saved here; checking cloud progress'); return; }
+    if (window.navigator && window.navigator.onLine === false) { setSync('pending', 'saved here; waiting for internet'); return; }
+    setSync('pending', 'saved here; waiting for cloud confirmation');
+    clearTimeout(saveTimer.__cloud);
+    saveTimer.__cloud = setTimeout(function () { if (cloudDrain) cloudDrain.request().catch(function () { if (cloudUid) setSync('error'); }); }, 400);
+  }
   function persist(tid) {
-    try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {}
-    if (!tid || !db) return;
-    clearTimeout(saveTimer[tid]);
-    saveTimer[tid] = setTimeout(function () { var t = T(tid); t.updatedAt = new Date().toISOString(); db.doc('progress/' + tid).set(JSON.parse(JSON.stringify(t))).catch(function () { setSync('local'); }); }, 400);
+    saveState(accountKey || LS_KEY, state);
+    cloudRevision++;
+    if (cloudUid) cloudDirty = true;
+    if (tid) { clearTimeout(saveTimer[tid]); saveTimer[tid] = setTimeout(scheduleCloudSave, 400); }
+    else scheduleCloudSave();
   }
   var draftTimer = null;
-  function persistDraft(tid) { clearTimeout(draftTimer); draftTimer = setTimeout(function () { persist(tid); }, 600); }
-  function logAttempt(rec) { if (!db) return; rec.at = new Date().toISOString(); db.collection('attempts').add(rec).catch(function () {}); }
-  function setSync(mode) { var e = document.getElementById('sync'); e.hidden = false; e.className = 'sync ' + (mode === 'on' ? 'on' : mode === 'local' ? 'local' : ''); e.textContent = mode === 'on' ? 'progress saved online' : mode === 'local' ? 'saved in this browser' : 'connecting'; }
+  function persistDraft(tid) {
+    clearTimeout(draftTimer); saveState(accountKey || LS_KEY, state); cloudRevision++;
+    if (cloudUid) setSync(cloudDirty ? 'pending' : 'on', cloudDirty ? 'draft saved locally; progress sync pending' : 'draft saved in this browser');
+    draftTimer = setTimeout(function () { persist(tid); }, 600);
+  }
+  // Draft answers and grading history remain local; only completion/checklist state syncs.
+  function logAttempt() {}
+  function setSync(mode, message) {
+    var e = document.getElementById('sync'); if (!e) return;
+    e.hidden = false; e.className = 'sync ' + (mode === 'on' ? 'on' : mode === 'local' ? 'local' : mode === 'pending' ? 'pending' : mode === 'error' ? 'error' : '');
+    e.textContent = message || (mode === 'on' ? 'progress saved to your account' : mode === 'local' ? 'progress saved in this browser' : mode === 'pending' ? 'saved here; syncing' : mode === 'error' ? 'saved here; cloud sync failed' : 'checking account access');
+  }
 
   // progress: weights count only the components a chapter actually has
   function topicProgress(topic) {
@@ -529,7 +630,7 @@ window.PREP_IO = (function () {
     var target = new Date(C.interviewAt); if (isNaN(target.getTime())) return;
     wrap.hidden = false;
     function tick() { var diff = target - new Date(); if (diff <= 0) { e.textContent = 'now'; return; } e.textContent = Math.floor(diff / 864e5) + 'd ' + Math.floor(diff % 864e5 / 36e5) + 'h ' + Math.floor(diff % 36e5 / 6e4) + 'm'; }
-    tick(); setInterval(tick, 60000);
+    tick(); intervals.push(setInterval(tick, 60000));
   })();
 
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
@@ -623,7 +724,7 @@ window.PREP_IO = (function () {
   function revealBlock(label, html) { var md = el('div', 'model'); md.hidden = true; md.appendChild(txt('div', 'lbl', label)); md.appendChild(el('div', 'prose', html)); return md; }
   function selfMarkButton(rec, topic, label) {
     var on = rec.status === 'pass' && rec.self;
-    var b = txt('button', 'btn' + (on ? ' done' : ''), on ? label + ' ' + TICK : label); b.type = 'button';
+    var b = txt('button', 'btn' + (on ? ' done' : ''), on ? label + ' ' + TICK : label); b.type = 'button'; b.setAttribute('aria-pressed', on ? 'true' : 'false');
     b.addEventListener('click', function () { if (on) { rec.status = 'none'; delete rec.self; } else { rec.status = 'pass'; rec.self = true; } persist(topic.id); rerenderChapter(topic); });
     return b;
   }
@@ -646,9 +747,11 @@ window.PREP_IO = (function () {
       if (VIZ[topic.id]) { var v = el('div', 'viz'); v.innerHTML = VIZ[topic.id].svg + '<div class="cap">' + VIZ[topic.id].cap + '</div>'; body.appendChild(v); }
       if (READINGS[topic.id] && READINGS[topic.id].length) {
         var rd = el('div', 'reads'); var rh = el('div', 'rh'); rh.appendChild(txt('span', 'lbl', 'Where to read more')); rh.appendChild(txt('span', 'sub', 'Start with the ones marked PRIMER if the basics are rusty. Tick each one when you have read it.')); rd.appendChild(rh);
-        READINGS[topic.id].forEach(function (r, ri) {
-          var done = !!t.reads[ri]; var row = el('div', 'rd' + (done ? ' done' : ''));
-          var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = done; cb.id = 'rd-' + topic.id + '-' + ri; cb.setAttribute('aria-label', 'Mark read: ' + r.l); cb.addEventListener('change', function () { t.reads[ri] = cb.checked; persist(topic.id); row.classList.toggle('done', cb.checked); });
+        var readings = READINGS[topic.id];
+        if (window.PREP_CLOUD && window.PREP_CLOUD.migrateIndexedReads(t.reads, readings)) persist(topic.id);
+        readings.forEach(function (r, ri) {
+          var readKey = r.u; var done = !!t.reads[readKey]; var row = el('div', 'rd' + (done ? ' done' : ''));
+          var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = done; cb.id = 'rd-' + topic.id + '-' + ri; cb.setAttribute('aria-label', 'Mark read: ' + r.l); cb.addEventListener('change', function () { t.reads[readKey] = cb.checked; persist(topic.id); row.classList.toggle('done', cb.checked); });
           row.appendChild(cb); var a = txt('a', null, r.l); a.href = r.u; a.target = '_blank'; a.rel = 'noopener'; row.appendChild(a); row.appendChild(txt('span', 'mn', r.m ? '~' + r.m + ' min' : '')); if (r.w) row.appendChild(txt('div', 'w', r.w)); rd.appendChild(row);
         });
         body.appendChild(rd);
@@ -719,7 +822,7 @@ window.PREP_IO = (function () {
       var ph = el('div', 'ph'); ph.appendChild(txt('span', 'lbl', 'Your experience')); ph.appendChild(txt('h3', null, 'Map it onto ' + cn.project)); part.appendChild(ph);
       part.appendChild(txt('div', 'sub', 'Write it from memory first, then compare. Write it the way you would say it out loud.'));
       part.appendChild(el('div', 'prose', cn.prompt));
-      var ta = document.createElement('textarea'); ta.value = t.connect.lastAnswer || ''; ta.setAttribute('aria-label', 'Your answer'); ta.addEventListener('input', function () { t.connect.lastAnswer = ta.value; persistDraft(topic.id); }); part.appendChild(ta);
+      var ta = document.createElement('textarea'); ta.value = t.connect.lastAnswer || ''; ta.dataset.prepFocus = 'answer-connect-' + topic.id; ta.setAttribute('aria-label', 'Your answer'); ta.addEventListener('input', function () { t.connect.lastAnswer = ta.value; persistDraft(topic.id); }); part.appendChild(ta);
       var row2 = el('div', 'row'); var out = el('div'); var md = revealBlock('A strong answer', cn.model);
       if (G) {
         var gb = txt('button', 'btn primary', 'Mark my answer'); gb.type = 'button'; var rv = txt('button', 'btn ghost', 'Show a strong answer'); rv.type = 'button'; row2.appendChild(gb); row2.appendChild(rv);
@@ -733,7 +836,7 @@ window.PREP_IO = (function () {
       if (t.connect.attempts) row2.appendChild(txt('span', 'meta', t.connect.attempts + ' marked attempt' + (t.connect.attempts > 1 ? 's' : ''))); part.appendChild(row2);
       part.appendChild(out); if (t.connect.last) out.appendChild(renderGrade(t.connect.last));
       part.appendChild(md);
-      if (!G) part.appendChild(txt('div', 'note', 'Marking only works in a copy of this page published by Claude.'));
+      if (!G) part.appendChild(txt('div', 'note', 'Automatic AI marking is not included here. Compare with the strong answer and mark practised.'));
       body.appendChild(part);
     }
 
@@ -746,7 +849,7 @@ window.PREP_IO = (function () {
         var ah = el('div', 'ah'); ah.appendChild(txt('span', 'type', a.type)); ah.appendChild(txt('h4', null, a.title)); if (st.status !== 'none') ah.appendChild(txt('span', 'verdict ' + st.status, st.self ? 'practised' : st.status === 'pass' ? 'passed' : 'try again')); box2.appendChild(ah);
         if (a.viz && window.VIZLIB && window.VIZLIB[a.viz]) { var av = el('div', 'cviz'); av.innerHTML = window.VIZLIB[a.viz]('a' + Math.random().toString(36).slice(2, 8)); box2.appendChild(av); }
         box2.appendChild(el('div', 'prose', a.prompt));
-        var ta2 = document.createElement('textarea'); ta2.placeholder = a.type === 'formulate' ? 'Decision variables, objective, constraints, problem class' : 'Write your answer the way you would say it out loud'; ta2.value = st.lastAnswer || ''; ta2.setAttribute('aria-label', 'Your answer'); ta2.addEventListener('input', function () { st.lastAnswer = ta2.value; persistDraft(topic.id); }); box2.appendChild(ta2);
+        var ta2 = document.createElement('textarea'); ta2.placeholder = a.type === 'formulate' ? 'Decision variables, objective, constraints, problem class' : 'Write your answer the way you would say it out loud'; ta2.value = st.lastAnswer || ''; ta2.dataset.prepFocus = 'answer-act-' + topic.id + '-' + a.id; ta2.setAttribute('aria-label', 'Your answer'); ta2.addEventListener('input', function () { st.lastAnswer = ta2.value; persistDraft(topic.id); }); box2.appendChild(ta2);
         var row3 = el('div', 'row'); var out2 = el('div'); var md2 = revealBlock('A strong answer', a.model);
         if (G) {
           var gb2 = txt('button', 'btn primary', st.status === 'pass' ? 'Mark it again' : 'Ask Claude to mark it'); gb2.type = 'button'; row3.appendChild(gb2);
@@ -757,7 +860,7 @@ window.PREP_IO = (function () {
           row3.appendChild(selfMarkButton(st, topic, 'Mark practised'));
         }
         if (a.timeboxSec) { var tb = txt('button', 'btn', 'Start ' + Math.round(a.timeboxSec / 6) / 10 + ' min timer'); tb.type = 'button'; var tm = txt('span', 'timer', ''); var iv = null, left = a.timeboxSec;
-          tb.addEventListener('click', function () { if (iv) { clearInterval(iv); iv = null; tb.textContent = 'Restart timer'; return; } left = a.timeboxSec; tb.textContent = 'Stop'; tm.classList.remove('over'); iv = setInterval(function () { left--; var mm = Math.floor(Math.abs(left) / 60), ss = Math.abs(left) % 60; tm.textContent = (left < 0 ? '-' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss; if (left < 0) tm.classList.add('over'); }, 1000); });
+          tb.addEventListener('click', function () { if (iv) { clearInterval(iv); iv = null; tb.textContent = 'Restart timer'; return; } left = a.timeboxSec; tb.textContent = 'Stop'; tm.classList.remove('over'); iv = setInterval(function () { left--; var mm = Math.floor(Math.abs(left) / 60), ss = Math.abs(left) % 60; tm.textContent = (left < 0 ? '-' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss; if (left < 0) tm.classList.add('over'); }, 1000); intervals.push(iv); });
           row3.appendChild(tb); row3.appendChild(tm); }
         if (G) { var rv2 = txt('button', 'btn ghost', 'Show a strong answer'); rv2.type = 'button'; row3.appendChild(rv2); rv2.addEventListener('click', function () { if (md2.hidden && !st.attempts && !confirm('You have not tried this one yet. Show the strong answer anyway?')) return; md2.hidden = !md2.hidden; }); }
         if (st.attempts) row3.appendChild(txt('span', 'meta', st.attempts + ' marked attempt' + (st.attempts > 1 ? 's' : '') + (st.lastScore != null ? ' ' + DOT + ' last ' + st.lastScore : ''))); box2.appendChild(row3);
@@ -765,7 +868,7 @@ window.PREP_IO = (function () {
         box2.appendChild(md2);
         px.appendChild(box2);
       });
-      if (!G) px.appendChild(txt('div', 'note', 'Marking only works in a copy of this page published by Claude.'));
+      if (!G) px.appendChild(txt('div', 'note', 'Automatic AI marking is not included here. Compare with the strong answer and mark practised.'));
       body.appendChild(px);
     }
 
@@ -776,7 +879,7 @@ window.PREP_IO = (function () {
       ps2.appendChild(txt('div', 'sub', 'Answer the question above in your own words. Say it without reading, time it (60 to 90 seconds), then mark it rehearsed.'));
       var sy = el('div', 'say'); sy.appendChild(txt('div', 'lbl', 'Spoken answer')); sy.appendChild(el('div', 'prose', topic.sayItOutLoud)); ps2.appendChild(sy);
       var row4 = el('div', 'row'); var sw = txt('button', 'btn', 'Start stopwatch'); sw.type = 'button'; var tm2 = txt('span', 'timer', ''); var iv2 = null, s = 0;
-      sw.addEventListener('click', function () { if (iv2) { clearInterval(iv2); iv2 = null; sw.textContent = 'Start stopwatch'; return; } s = 0; sw.textContent = 'Stop'; tm2.classList.remove('over'); iv2 = setInterval(function () { s++; tm2.textContent = Math.floor(s / 60) + ':' + (s % 60 < 10 ? '0' : '') + s % 60 + (s > 100 ? ' (trim)' : ''); if (s > 100) tm2.classList.add('over'); }, 1000); });
+      sw.addEventListener('click', function () { if (iv2) { clearInterval(iv2); iv2 = null; sw.textContent = 'Start stopwatch'; return; } s = 0; sw.textContent = 'Stop'; tm2.classList.remove('over'); iv2 = setInterval(function () { s++; tm2.textContent = Math.floor(s / 60) + ':' + (s % 60 < 10 ? '0' : '') + s % 60 + (s > 100 ? ' (trim)' : ''); if (s > 100) tm2.classList.add('over'); }, 1000); intervals.push(iv2); });
       var mk = txt('button', 'btn' + (t.said ? ' done' : ' primary'), t.said ? 'Rehearsed ' + TICK : 'Mark rehearsed'); mk.type = 'button'; mk.setAttribute('aria-pressed', t.said ? 'true' : 'false'); mk.addEventListener('click', function () { t.said = !t.said; persist(topic.id); rerenderChapter(topic); });
       row4.appendChild(sw); row4.appendChild(tm2); row4.appendChild(mk); ps2.appendChild(row4); body.appendChild(ps2);
     }
@@ -809,7 +912,7 @@ window.PREP_IO = (function () {
     o.out.innerHTML = ''; var pend = el('div', 'grade'); pend.appendChild(txt('div', 'pending', 'Marking')); o.out.appendChild(pend); o.btn.disabled = true;
     (async function () {
       try {
-        if (!graded()) { pend.innerHTML = ''; pend.appendChild(txt('div', 'err', 'Marking only works in a copy of this page published by Claude. Compare your answer with the strong answer instead.')); return; }
+        if (!graded()) { pend.innerHTML = ''; pend.appendChild(txt('div', 'err', 'Automatic AI marking is not included here. Compare with the strong answer and mark practised.')); return; }
         if (!sample) sample = await claude.use('sample');
         if (!sample) { pend.innerHTML = ''; pend.appendChild(txt('div', 'err', 'Marking is not available here. Compare your answer with the strong answer instead.')); return; }
         var prompt = [
@@ -843,66 +946,236 @@ window.PREP_IO = (function () {
   async function exportProgress() {
     var json = window.PREP_IO.serialise(LS_KEY, state); var name = window.PREP_IO.filename(LS_KEY);
     /* In a Claude-published copy the viewer blocks plain download links; the downloads capability mediates the save. */
-    if (graded()) { try { var dl = await claude.use('downloads'); if (dl) { await dl.save({ filename: name, data: json }); return; } } catch (e) { if (e && e.code === 'cancelled') return; } }
+    if (graded()) { try { var dl = await claude.use('downloads'); if (dl) { await dl.save({ filename: name, data: json }); return true; } } catch (e) { if (e && e.code === 'cancelled') return false; } }
     var a = document.createElement('a'); a.download = name; a.rel = 'noopener';
     try { var blob = new Blob([json], { type: 'application/json' }); a.href = URL.createObjectURL(blob); } catch (e) { a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json); }
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(function () { try { if (a.href.indexOf('blob:') === 0) URL.revokeObjectURL(a.href); } catch (e) {} }, 2000);
+    return true;
   }
   function importProgress(file) {
     var reader = new FileReader();
-    reader.onload = function () {
+    reader.onerror = function () { alert('Could not read that progress file.'); };
+    reader.onload = async function () {
       var parsed;
       try { parsed = window.PREP_IO.parse(String(reader.result)); } catch (e) { alert(e && e.message ? e.message : 'Could not read that file.'); return; }
-      if (parsed.key && parsed.key !== LS_KEY && !confirm('This file came from a different page (' + parsed.key + '). Load it here anyway? It will replace the progress you have on this page.')) return;
-      if (!parsed.key && !confirm('Replace the progress saved on this page with what is in this file?')) return;
+      var origin = parsed.key && parsed.key !== LS_KEY ? 'This file came from a different page (' + parsed.key + '). ' : '';
+      if (!confirm(origin + 'Replace all progress currently saved on this page? A backup will be downloaded first.')) return;
+      try { if (!await exportProgress()) { alert('Backup was not saved, so progress was not replaced.'); return; } } catch (e) { alert('Backup failed, so progress was not replaced.'); return; }
       state = parsed.state; if (!state.view) state.view = null;
-      persist(); TOPICS.forEach(function (t) { if (state.topics[t.id]) persist(t.id); });
+      persist();
       renderAll(); window.scrollTo({ top: 0 });
     };
     reader.readAsText(file);
   }
-  document.getElementById('export-btn').addEventListener('click', exportProgress);
+  var exportButton = document.getElementById('export-btn');
+  exportButton.addEventListener('click', exportProgress);
   var importInput = document.getElementById('import-file');
-  importInput.addEventListener('change', function () { if (importInput.files && importInput.files[0]) importProgress(importInput.files[0]); importInput.value = ''; });
-  document.querySelector('label[for="import-file"]').addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); importInput.click(); } });
+  var importChangeHandler = function () { if (importInput.files && importInput.files[0]) importProgress(importInput.files[0]); importInput.value = ''; };
+  var importButton = document.getElementById('import-btn');
+  var importButtonHandler = function () { importInput.click(); };
+  importInput.addEventListener('change', importChangeHandler);
+  importButton.addEventListener('click', importButtonHandler);
 
   // ---------- navigation plumbing ----------
   // in-page anchors: scroll explicitly (hash navigation is unreliable inside an artifact frame)
-  document.addEventListener('click', function (ev) {
+  var anchorClickHandler = function (ev) {
     var a = ev.target.closest && ev.target.closest('a[href^="#"]'); if (!a) return;
     var id = a.getAttribute('href').slice(1); var target = document.getElementById(id); if (!target) return;
     ev.preventDefault(); closeMenu(); target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     if (id.indexOf('sec-') === 0 && state.view) setHash(state.view + '/' + id.slice(4));
-  });
+  };
+  document.addEventListener('click', anchorClickHandler);
   var menuBtn = document.getElementById('menu-btn');
-  menuBtn.addEventListener('click', function () { var open = document.body.classList.toggle('menu-open'); menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false'); if (open) { var first = document.querySelector('#rail button, #rail a'); if (first) first.focus(); } });
-  document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' && document.body.classList.contains('menu-open')) { closeMenu(); menuBtn.focus(); } });
+  var menuClickHandler = function () { var open = document.body.classList.toggle('menu-open'); menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false'); if (open) { var first = document.querySelector('#rail button, #rail a'); if (first) first.focus(); } };
+  menuBtn.addEventListener('click', menuClickHandler);
+  var escapeHandler = function (ev) { if (ev.key === 'Escape' && document.body.classList.contains('menu-open')) { closeMenu(); menuBtn.focus(); } };
+  document.addEventListener('keydown', escapeHandler);
   function renderAll() { renderRail(); renderBook(); }
   function applyHash() {
-    var h = (location.hash || '').replace(/^#/, ''); if (!h) return false; var parts = h.split('/'); var vid = decodeURIComponent(parts[0]);
-    var ok = (vid === 'who' && C.interviewer) || (vid === 'glossary' && GLOSSARY.length) || TOPICS.some(function (t) { return t.id === vid; });
-    if (!ok) return false; state.view = vid; state.pendingScroll = parts[1] ? 'sec-' + decodeURIComponent(parts[1]) : null; return true;
+    var h = (location.hash || '').replace(/^#/, ''); if (!h) return false;
+    try {
+      var parts = h.split('/'), vid = decodeURIComponent(parts[0]);
+      var ok = (vid === 'who' && C.interviewer) || (vid === 'glossary' && GLOSSARY.length) || TOPICS.some(function (t) { return t.id === vid; });
+      if (!ok) return false;
+      state.view = vid; state.pendingScroll = parts[1] ? 'sec-' + decodeURIComponent(parts[1]) : null; return true;
+    } catch (e) { return false; }
   }
   applyHash();
   if (!state.view) state.view = (orderedTopics()[0] || {}).id;
   renderAll();
   if (state.pendingScroll) { var ps0 = document.getElementById(state.pendingScroll); if (ps0) ps0.scrollIntoView({ block: 'start' }); state.pendingScroll = null; }
-  window.addEventListener('hashchange', function () { if (applyHash()) { renderAll(); if (state.pendingScroll) { var e = document.getElementById(state.pendingScroll); if (e) e.scrollIntoView({ block: 'start' }); state.pendingScroll = null; } else window.scrollTo({ top: 0 }); } });
 
-  // ---------- optional server sync (Claude-published copies) ----------
-  (async function () {
-    if (!graded()) { setSync('local'); return; }
-    setSync('connecting');
-    try {
-      db = await claude.use('db');
-      if (!db) { setSync('local'); return; }
-      var snaps = await Promise.all(TOPICS.map(function (t) { return db.doc('progress/' + t.id).get(); }));
-      snaps.forEach(function (s, i) { if (!s.exists) return; var remote = s.data(); var local = T(TOPICS[i].id); if (!local.updatedAt || (remote.updatedAt && remote.updatedAt > local.updatedAt)) state.topics[TOPICS[i].id] = remote; });
-      try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {}
-      setSync('on'); renderAll();
-      TOPICS.forEach(function (t) { db.doc('progress/' + t.id).onSnapshot(function (s) { if (!s.exists || s.metadata.hasPendingWrites) return; var remote = s.data(); var local = T(t.id); if (remote.updatedAt && (!local.updatedAt || remote.updatedAt > local.updatedAt)) { state.topics[t.id] = remote; rerenderChapter(t); } }, function () { setSync('local'); }); });
-    } catch (e) { setSync('local'); }
-  })();
+  function hasProgress(saved) {
+    var topics = saved && saved.topics || {};
+    return Object.keys(topics).some(function (id) {
+      var t = topics[id] || {};
+      if (Object.keys(t.learn || {}).length || Object.keys(t.checks || {}).length || Object.keys(t.reads || {}).length) return true;
+      if (t.said === true || t.connect && (t.connect.status !== 'none' || !!t.connect.lastAnswer)) return true;
+      return Object.keys(t.acts || {}).some(function (k) { var a = t.acts[k] || {}; return a.status !== 'none' || !!a.lastAnswer || !!a.attempts; });
+    });
+  }
+  function hasLocalOnlyData(saved) {
+    return Object.keys(saved && saved.topics || {}).some(function (id) {
+      var topic = saved.topics[id] || {};
+      if (topic.connect && ((typeof topic.connect.lastAnswer === 'string' && topic.connect.lastAnswer.length) || topic.connect.attempts || topic.connect.last)) return true;
+      return Object.keys(topic.acts || {}).some(function (key) { var act = topic.acts[key] || {}; return !!((typeof act.lastAnswer === 'string' && act.lastAnswer.length) || act.attempts || act.last || act.lastScore != null); });
+    });
+  }
+  function accountStateKey(uid) { return window.PREP_CLOUD.cacheKey(C.meta.id, uid); }
+  function accountBaseKey(uid) { return accountStateKey(uid) + '-baseline'; }
+  function emptyState() { return { topics: {}, whoOpen: true }; }
+  function renderPreservingTextFocus() {
+    var active = document.activeElement, key = active && active.tagName === 'TEXTAREA' ? active.getAttribute('data-prep-focus') : null;
+    var start = null, end = null, direction = 'none';
+    if (key && typeof active.selectionStart === 'number') { start = active.selectionStart; end = active.selectionEnd; direction = active.selectionDirection || 'none'; }
+    renderAll();
+    if (!key) return;
+    var fields = document.querySelectorAll('[data-prep-focus]'), next = null;
+    for (var i = 0; i < fields.length; i++) if (fields[i].getAttribute('data-prep-focus') === key) { next = fields[i]; break; }
+    if (!next) return;
+    try { next.focus({ preventScroll: true }); } catch (e) { next.focus(); }
+    if (start !== null) { try { next.setSelectionRange(start, end, direction); } catch (e) {} }
+  }
+  function remoteState(records) { return window.PREP_CLOUD.applyRecords(emptyState(), records); }
+  function renderAccountState(records, cached, oldBase) {
+    var remote = window.PREP_CLOUD.projectProgress(remoteState(records));
+    var merged = window.PREP_CLOUD.mergeProgress(oldBase || remote, cached || remote, remote);
+    cloudBaselineState = remote; saveState(baselineKey, remote); state = merged; saveState(accountKey, state); renderPreservingTextFocus();
+    scheduleCloudSave();
+  }
+  function beginAccount(context) {
+    if (!context || !context.uid || cloudUid === context.uid) return;
+    if (cloudUid) leaveAccount(false);
+    clearTimeout(draftTimer); guestState = cloneState(state); saveState(LS_KEY, guestState);
+    cloudUid = context.uid; cloudGeneration++; var generation = cloudGeneration;
+    accountKey = accountStateKey(cloudUid); baselineKey = accountBaseKey(cloudUid);
+    var cached = readState(accountKey), oldBase = readState(baselineKey);
+    state = cached || emptyState(); saveState(accountKey, state); renderAll();
+    setSync('pending', 'checking your saved progress');
+    cloudClient.read(C.meta.id).then(function (records) {
+      if (!cloudUid || context.uid !== cloudUid || generation !== cloudGeneration || !cloudClient.getContext() || cloudClient.getContext().uid !== context.uid) return;
+      renderAccountState(records, cached, oldBase);
+      migrateButton.hidden = !hasProgress(guestState);
+      return cloudClient.watch(C.meta.id, function (next, meta) {
+        if (!cloudUid || context.uid !== cloudUid || generation !== cloudGeneration || meta.fromCache || meta.hasPendingWrites) return;
+        renderAccountState(next, state, cloudBaselineState);
+      }, function () { if (cloudUid === context.uid) setSync('error'); }).then(function (unsub) { if (cloudUid === context.uid) cloudUnwatch = unsub; else unsub(); });
+    }).catch(function () { if (cloudUid === context.uid) setSync('error'); });
+  }
+  function leaveAccount(clearCache, targetUid) {
+    cloudGeneration++; clearTimeout(saveTimer.__cloud);
+    if (cloudUnwatch) { try { cloudUnwatch(); } catch (e) {} cloudUnwatch = null; }
+    if (cloudUid) {
+      saveState(accountKey, state);
+      if (clearCache === true && (!targetUid || targetUid === cloudUid)) { try { window.PREP_CLOUD.clearAccountCache(localStorage, C.meta.id, cloudUid); } catch (e) {} }
+      cloudUid = null; accountKey = null; baselineKey = null; cloudBaselineState = null; cloudDirty = false;
+      state = readState(LS_KEY) || cloneState(guestState); renderAll(); migrateButton.hidden = true; setSync('local');
+    }
+    if (clearCache === true && targetUid && targetUid !== cloudUid) { try { window.PREP_CLOUD.clearAccountCache(localStorage, C.meta.id, targetUid); } catch (e) {} }
+  }
+  function signOutCloud() {
+    if (!cloudClient) return Promise.resolve(true);
+    if ((cloudDirty || hasLocalOnlyData(state)) && !confirm('Unsynced progress or browser-only drafts/grading history are on this device. Download a backup before signing out? Cancel keeps you signed in.')) return Promise.resolve(false);
+    var ticket = window.PREP_CLOUD.accountTicket(cloudUid, cloudGeneration, accountKey), revision = cloudRevision;
+    var backup = cloudDirty || hasLocalOnlyData(state) ? exportProgress() : Promise.resolve(true);
+    return Promise.resolve(backup).then(function (saved) {
+      if (!saved) return false;
+      if (!window.PREP_CLOUD.matchesAccountTicket(ticket, cloudUid, cloudGeneration, accountKey)) return false;
+      if (revision !== cloudRevision) { alert('Progress changed while the backup was being saved. Save a fresh backup before signing out.'); return false; }
+      signoutBackupReadyUid = ticket.uid;
+      return cloudClient.signOut().then(function () { return true; }).catch(function (error) { signoutBackupReadyUid = null; throw error; });
+    });
+  }
+  function migrateGuestProgress() {
+    if (!cloudUid || !hasProgress(guestState)) return;
+    if (!confirm('Replace this account’s progress with the progress saved in this browser? A backup of the current account progress will be downloaded first.')) return;
+    var ticket = window.PREP_CLOUD.accountTicket(cloudUid, cloudGeneration, accountKey), snapshot = cloneState(guestState), revision = cloudRevision;
+    exportProgress().then(function (saved) {
+      if (!saved || !window.PREP_CLOUD.matchesAccountTicket(ticket, cloudUid, cloudGeneration, accountKey)) return;
+      if (cloudRevision !== revision) { alert('Progress changed while the backup was being saved. Retry the migration so the newest account state is backed up.'); return; }
+      state = snapshot; saveState(ticket.key, state); cloudRevision++; cloudDirty = true; renderAll(); scheduleCloudSave();
+      migrateButton.hidden = true;
+    }).catch(function () { alert('The account backup failed, so progress was not replaced.'); });
+  }
+  function authChanged(event) {
+    try { window.dispatchEvent(new CustomEvent('prep:cloud-auth', { detail: event })); } catch (e) {}
+    if (event.status === 'authorized') { cloudButton.textContent = 'Sign out'; beginAccount(event.context); return; }
+    if (event.status === 'signed_out' || event.status === 'disabled') {
+      cloudButton.textContent = 'Sign in to sync';
+      var canClear = event.status === 'disabled' || (!cloudDirty && !hasLocalOnlyData(state)) || signoutBackupReadyUid === cloudUid;
+      leaveAccount(canClear, cloudUid); signoutBackupReadyUid = null; setSync('local');
+      if (C.meta && C.meta.id !== 'course' && event.status === 'signed_out') window.PREP_SHELL.unmount('signed_out');
+      return;
+    }
+    if (event.status === 'not_enabled') {
+      cloudButton.textContent = 'Sign out'; setSync('error', 'This Google account is not enabled for this workspace');
+      leaveAccount(true, event.uid || cloudUid);
+      if (C.meta && C.meta.id !== 'course') window.PREP_SHELL.unmount('unauthorized');
+      return;
+    }
+    if (event.status === 'checking') {
+      var switching = !!cloudUid;
+      if (switching) leaveAccount(false);
+      setSync('pending', 'checking Google account access');
+      if (switching && C.meta && C.meta.id !== 'course') window.PREP_SHELL.unmount('checking');
+      return;
+    }
+    if (event.status === 'error') { setSync('error', 'Saved here; account access or sync failed'); }
+  }
+  var hashHandler = function () { if (applyHash()) { renderAll(); if (state.pendingScroll) { var e = document.getElementById(state.pendingScroll); if (e) e.scrollIntoView({ block: 'start' }); state.pendingScroll = null; } else window.scrollTo({ top: 0 }); } };
+  var onlineHandler = function () { if (cloudUid) scheduleCloudSave(); };
+  var offlineHandler = function () { if (cloudUid) setSync('pending', 'saved here; waiting for internet'); };
+  var cloudButtonClickHandler = function () {
+    if (!cloudClient) return;
+    if (cloudClient.getUser()) signOutCloud();
+    else { setSync('pending', 'opening Google sign-in'); cloudClient.signIn().catch(function () { setSync('error', 'Sign-in failed; progress is still saved here'); }); }
+  };
+  cloudButton.addEventListener('click', cloudButtonClickHandler);
+  migrateButton.addEventListener('click', migrateGuestProgress);
+  window.addEventListener('hashchange', hashHandler);
+  window.addEventListener('online', onlineHandler);
+  window.addEventListener('offline', offlineHandler);
+  if (cloudClient && cloudClient.enabled) {
+    cloudButton.hidden = false; document.getElementById('sync-policy').hidden = false; cloudClient.onAuthState(authChanged);
+  } else setSync('local');
+  function teardown(reason) {
+    clearTimeout(draftTimer); Object.keys(saveTimer).forEach(function (key) { clearTimeout(saveTimer[key]); });
+    intervals.forEach(function (id) { clearInterval(id); }); intervals.length = 0;
+    if (cloudUnwatch) { try { cloudUnwatch(); } catch (e) {} cloudUnwatch = null; }
+    if (cloudClient) cloudClient.close();
+    document.removeEventListener('click', anchorClickHandler); document.removeEventListener('keydown', escapeHandler);
+    window.removeEventListener('hashchange', hashHandler); window.removeEventListener('online', onlineHandler); window.removeEventListener('offline', offlineHandler);
+    cloudButton.removeEventListener('click', cloudButtonClickHandler); migrateButton.removeEventListener('click', migrateGuestProgress);
+    exportButton.removeEventListener('click', exportProgress); importButton.removeEventListener('click', importButtonHandler);
+    importInput.removeEventListener('change', importChangeHandler); menuBtn.removeEventListener('click', menuClickHandler);
+    if (reason === 'signed_out' && cloudUid) {
+      if ((!cloudDirty && !hasLocalOnlyData(state)) || signoutBackupReadyUid === cloudUid) { try { window.PREP_CLOUD.clearAccountCache(localStorage, C.meta.id, cloudUid); } catch (e) {} }
+      else saveState(accountKey, state);
+    }
+    state = emptyState(); cloudUid = null; cloudBaselineState = null;
+    if (window.PREP_CONTENT === C) window.PREP_CONTENT = null;
+    function scrub(value, seen) {
+      if (!value || typeof value !== 'object') return;
+      seen = seen || [];
+      if (seen.indexOf(value) >= 0) return;
+      seen.push(value);
+      Object.keys(value).forEach(function (key) { scrub(value[key], seen); try { delete value[key]; } catch (e) {} });
+      if (Array.isArray(value)) value.length = 0;
+    }
+    if (window.PREP_OVERLAYS === OV) window.PREP_OVERLAYS = null;
+    scrub(C); scrub(OV); scrub(READINGS); scrub(VIZ); scrub(GLOSSARY); scrub(META);
+    sample = null; HON = '';
+    return true;
+  }
+  renderAll();
+  return {
+    teardown: teardown,
+    getState: function () { return cloneState(state); },
+    applyRemoteState: function (next) { if (!window.PREP_IO.validState(next)) return false; state = cloneState(next); persist(); renderAll(); return true; },
+    signOut: signOutCloud,
+    getContext: function () { return cloudClient && cloudClient.getContext(); }
+  };
+  }
 })();
 </script>

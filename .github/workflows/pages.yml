@@ -25,17 +25,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Build every tracked pack and the roadmap
-        run: python engine/roadmap.py
-      - name: Validate built pages
-        run: |
-          set -e
-          for f in dist/*.html; do
-            case "$f" in dist/index.html) ;; *) node engine/check.js "$f" ;; esac
-          done
+      - name: Build the allowlisted public course
+        run: python engine/public_build.py --cloud-config config/firebase.web.json
+      - name: Validate the public course page
+        run: node engine/check.js public-dist/course.html
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: public-dist
 
   deploy:
     needs: build
