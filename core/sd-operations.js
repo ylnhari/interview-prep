@@ -376,8 +376,8 @@ Once it's back to baseline, the incident isn't done - I'd open a postmortem, bec
 <li><b>Reconciliation.</b> Comparing an internal record against an external source of truth, such as a processor's settlement report, to catch drift.</li>
 <li><b>Chargeback.</b> A card payment reversed by the customer's bank after the fact, often the first real evidence that a transaction was fraudulent.</li>
 <li><b>Exactly-once effect.</b> One outcome from retried calls; see <a href="#queues-and-streams/qs-f4">Delivery guarantees and ordering</a>.</li>
-<li><b>Streaming features.</b> Features kept fresh from a stream; see <a href="#data-features/df-f5">Features computed on a stream: freshness, duplicates and backfills</a>.</li>
-<li><b>Label latency.</b> The wait for ground truth; see <a href="#data-features/df-f4">Label latency: when the answer arrives long after the prediction</a>.</li>
+<li><b>Streaming features.</b> Features kept fresh from a stream; see <a href="#data-features/df-v2-transformations-replay">Features computed on a stream: freshness, duplicates and backfills</a>.</li>
+<li><b>Label latency.</b> The wait for ground truth; see <a href="#data-features/df-v2-time-leakage">Label latency: when the answer arrives long after the prediction</a>.</li>
 <li><b>Retrieval-augmented generation (RAG).</b> Answering from fetched text; see <a href="#rag-and-agents/raa-f1">When to use retrieval versus fine-tuning</a>.</li>
 <li><b>Context window.</b> A model's input size limit; see <a href="#rag-and-agents/raa-f6">How a model's memory works in practice</a>.</li>
 <li><b>Token (LLM).</b> The unit a model reads and writes; see <a href="#llm-inference-engineering/lie-f1">How a token is generated: prefill versus decode</a>.</li>

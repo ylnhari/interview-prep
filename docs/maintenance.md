@@ -8,9 +8,8 @@ entry point; no workflow depends on that tool, a conversation or native memory.
 ## Scope and sources of truth
 
 - `core/`, `packs/course/` and the generic renderer are canonical public source.
-- Public Pages is guest-only, with browser-local progress and export/import.
-- An owner-authorized private companion may consume a committed course snapshot
-  and renderer. It is a separate deployment, not part of this public build.
+- Public Pages is static and builds only `packs/course`. Guest learning, browser-local progress and export/import must work with no Firebase configuration.
+- Optional public Google sync uses a separate Spark project and a bounded per-user progress document. It is not a course-content store and does not include private packs, user profile data or grading history. Its detailed contract is `public-sync.md`.
 - Never publish local private packs or put private deployment credentials in
   public Actions. This public repository must work for unrelated contributors.
 
@@ -39,7 +38,10 @@ entry point; no workflow depends on that tool, a conversation or native memory.
 python engine/public_build.py
 node engine/check.js public-dist/course.html
 node engine/test_io.js
-node engine/test_cloud_progress.js
+node engine/test_public_progress.js
+node engine/test_public_shell_behavior.cjs
+node engine/test_rag_architecture.cjs
+python -m unittest engine.test_public_build
 node engine/test_teaching_order.cjs
 node engine/test_initial_hydration.cjs
 node --test engine/test_progress_compatibility.cjs
@@ -54,26 +56,35 @@ It does not prove that new prose is accurate, or that old completion marks mean
 the reader has studied a rewritten lesson. Do not remove the guard merely to
 make a release pass; agree a scoped content/progress migration when necessary.
 
-## Downstream handoff for the owner's paired dashboards
+The full pull-request check suite also requires Node 20+, Java 21, and the
+pinned development dependencies. Run `npm ci` and `npm run test:public-rules`
+to test access rules using the local Firestore emulator. See
+`public-rules-testing.md`. No production account or credentials are needed.
 
-This is a maintainer obligation only when the private companion is authorized
-and accessible. It does not require public contributors to access private data.
+## Public sync and Pages release boundaries
 
-1. Record the exact public commit that was reviewed and published.
-2. Open the separately authorized private repository and read its `AGENTS.md`,
-   `README.md` and `docs/maintenance.md`. Use its `sync-public-course.cjs` tool;
-   do not copy a dirty working tree or embed private content in public output.
-3. Refresh both the immutable course snapshot and matching renderer. Publish
-   changed private content using its revision-checked content publisher; deploy
-   Hosting only when the built runtime changed. Preserve personal packs and all
-   progress. Run the private readback and live verification gates.
-4. Report the two results independently. If private access, login, connectivity
-   or review is unavailable, state **public updated; private sync pending** with
-   the public SHA and the missing step. Never claim background synchronization.
+1. A pull request to `main` runs only secret-free checks. It must not receive Firebase service-account credentials, deploy rules, or write progress.
+2. A reviewed merge runs the static Pages build and deploys only `public-dist/`. It uses reviewed `config/public-sync.json` when present, otherwise a guest build; a present malformed file fails instead of falling back. It never writes, migrates, deletes or resets progress.
+3. If Firestore rules change, an authorized operator deploys and verifies them separately after review. Do not attach rules deployment to content releases or assume a Pages success proves the rules were released.
+4. Verify the canonical Pages URL and the guest path after deployment. When optional sync is enabled, use a synthetic account only to verify the documented sign-in/save/read behavior; never use private packs or real candidate data.
 
-Private and public deployments cannot be atomically released together. After an
-interruption, inspect the actual published revisions and finish the remaining
-steps; do not blindly repeat a content write with an uncertain outcome.
+The project plans for roughly 1,000 registered users, not a guaranteed daily-active-user rate, quota reservation or availability level. Monitor the separate Spark project's actual quota and errors before expanding usage.
+
+## Owner-authorized downstream handoff
+
+The public course is independent of any private companion. External
+contributors need only this repository. When the owner's private app is also
+in the approved task scope, record the reviewed public commit and follow that
+private repository's maintenance runbook for its content and renderer update.
+Do not copy private content or configuration into this repository or Actions.
+
+Keep the private app on its known-good revision until its own compatibility,
+authentication, rendering, and progress checks pass. Moving a private general
+course to the public app requires working public sign-in, a backed-up progress
+transfer without overwriting an existing target, and readback verification.
+Keep the old course and source progress as recovery data. Do not redirect users
+to an unverified destination or assume a public renderer is a compatible private
+replacement. Report public publication and private synchronization separately.
 
 ## Recovery
 

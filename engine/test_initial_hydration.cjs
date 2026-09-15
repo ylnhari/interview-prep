@@ -50,9 +50,9 @@ ordered([
   'function renderAll()'
 ], 'private book is guarded synchronously before its first render');
 assert(shell.includes("if (privateHost && !privateReady) privateInitialRoute = { view: state.view, pendingScroll: state.pendingScroll };"), 'validated hash route is captured before hydration');
-assert(shell.includes('renderAccountState(records, cached, oldBase, initialRoute);'), 'initial hydration uses cached/remote progress rather than transient empty UI state');
+assert(shell.includes('renderAccountState(records, cloudRevision === hydrationRevision ? cached : state, hydrationBase, initialRoute);'), 'initial hydration uses its start baseline and preserves edits made while the server read is pending');
 assert(shell.includes('if (initialRoute && initialRoute.view) merged.view = initialRoute.view;'), 'hydration restores the validated deep-linked view');
-assert(shell.includes('hydrateCloud().then(function () { settlePrivateReady(); }, function (error) { settlePrivateReady(error); });'), 'book readiness follows hydration completion');
+assert(shell.includes('hydrateCloud().then(function () { if (publicMode) saveButton.hidden = false; settlePrivateReady(); }, function (error) { settlePrivateReady(error); });'), 'book readiness follows hydration completion');
 assert(shell.includes('whenReady: function () { return privateReadyPromise; }'), 'private host can await renderer readiness');
 
 console.log('test_initial_hydration: OK (real merge semantics plus structural DOM guard/route checks; no browser DOM in dependency-free suite)');

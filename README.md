@@ -1,6 +1,6 @@
 # Interview Prep
 
-A free course for machine learning and software engineering interviews, with chapters, worked examples, and practice questions. The same local engine can also build private interview notes from packs that are not part of the public course.
+A free course for machine learning engineering interviews, with chapters, worked examples, and practice questions. The same local engine can also build private interview notes from packs that are not part of the public course.
 
 **What's inside:** forty-two chapters in six tracks: system design (fourteen chapters from requirements and APIs through databases, caching, distributed systems, storage engines, queues, search, counting, realtime delivery and reliability, to ten worked cases), production ML systems, LLMs in production (inference engineering, fine-tuning, retrieval and agents), maths and ML foundations, decision systems (forecasting, optimisation, control, reinforcement learning), and practice (scenarios, coding drills, five question banks with about three hundred questions). Every chapter defines its terms first, has animated concept diagrams, practice exercises with marking guides, and a short list of the best videos and articles on the subject.
 
@@ -11,23 +11,29 @@ Private packs are excluded from the public build. The GitHub Pages site builds o
 - Chapters in importance order, each with a Key terms section (every term defined before use), animated concept diagrams (inline SVG, both themes), primary-source readings with a time estimate, quick checks, a "map it onto your own work" recall exercise, practice exercises with marking guides, and a spoken answer to rehearse against the interviewer's question.
 - Question banks with answers inline (toggle to self-test) and a general glossary. Private packs can add a round or interviewer profile with confirmed facts separated from inferences.
 - A roadmap page (`index.html` on the public site, `dist/index.html` for local builds) linking tracks, chapters and sections with browser-saved progress.
-- Progress is saved in the browser and can be exported or imported as a JSON file. The public site has no account or cloud-sync feature: progress, answer drafts and grading history stay in the current browser unless the visitor exports a backup and imports it on another device. Exercises include a strong answer to compare against and can be self-marked as practised. Owner-only sync belongs to the separate private app and is never included in the public Pages artifact.
+- Progress is saved in the browser and can be exported or imported as a JSON file. Google sign-in is optional: when the public Spark configuration is present, a visitor can choose to sync compact course progress between devices. Guest learning always works without it. Sync covers completion, checks, quiz choices, exercise status and bounded answer drafts—not grading history—and does not include course content, private packs or profile data.
 
 ## See it online
 
-The public course and roadmap are published from this repository with GitHub Pages: **https://ylnhari.github.io/interview-prep/** (rebuilt on every push by `.github/workflows/pages.yml`). The public site is open to any engineer and has no sign-in or cloud-sync feature. Progress stays in the current browser and moves between devices only through Export progress and Import progress. No private interview pack is part of the Pages artifact. The separate private app may provide owner-only sync, but it is optional and independent of this public deployment.
+The public course and roadmap are published from this repository with GitHub Pages: **https://ylnhari.github.io/interview-prep/**. A reviewed merge to `main` runs the static Pages workflow; pull requests receive secret-free checks first. The site remains useful without sign-in. When its explicitly public Firebase configuration is included, each visitor may opt into Google sign-in and sync their compact progress document. No private interview pack is part of the Pages artifact, and deployment never migrates, clears or writes user progress.
 
 ## Quick start
 
 ```
 python engine/roadmap.py            # local workflow: builds available packs under packs/ plus dist/index.html
 python engine/public_build.py       # public workflow: builds only packs/course into public-dist/
+# Optional public-only Firebase web config; omit this for a fully working guest build.
+python engine/public_build.py --public-sync-config config/public-sync.json
 python engine/serve.py              # loopback server; prints http://127.0.0.1:<port>/
 node engine/check.js dist/course.html
 node engine/test_io.js               # progress export/import round-trip
 ```
 
-Python 3.9+ and Node 18+ (Node is used only for validation and the roadmap summary). No other dependencies.
+The static build and dependency-free checks need Python 3.9+ and Node 18+.
+The full pull-request checks also test Firestore rules locally: use Node 20+,
+Java 21, and `npm ci` to install the pinned development dependencies, then
+`npm run test:public-rules`. These tools are not shipped to visitors. See
+[the rules testing guide](docs/public-rules-testing.md).
 
 ## Your own packs stay private
 
@@ -42,6 +48,8 @@ history, specific assistant subscription or private repository is needed to work
 on the public course.
 
 `docs/extending.md` explains how to add a chapter or a diagram in its own file. `docs/content-schema.md` is the contract: the content object, the two voices (coach vs candidate), define-before-use, the honesty rule, diagrams by id, importance ordering. `engine/viz-catalog.md` lists the diagrams (about 170). Add a diagram to `engine/viz-lib.js` following its helper conventions (CSS-variable colours only, `uid`-prefixed ids, the shell's animation classes).
+
+For the optional public sync design, data boundary, configuration shape and release path, see [docs/public-sync.md](docs/public-sync.md) and [docs/architecture-public-sync.md](docs/architecture-public-sync.md). The planning target is approximately 1,000 registered users; it is not a daily-active-user, availability or Firebase-quota guarantee.
 
 ## Layout
 
