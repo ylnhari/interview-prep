@@ -199,20 +199,31 @@ async function testPermanentHydrationFailureStopsIdleRetries() {
 }
 
 async function testCleanHydrationStartsSaveWindowAtFirstEdit() {
-  const timers = []; let now = 100000, scheduled = 0;
+  const timers = [], statuses = []; let now = 100000, scheduled = 0;
   const context = {
     publicMode: true, cloudDirty: false, cloudBaselineState: null, state: { topics: {} }, baselineKey: 'baseline', accountKey: 'account', localPersistenceFailed: false, guestPersistenceFailed: false,
     progressApi: Public, remoteState(records) { return records; }, saveState() { return true; }, renderPreservingTextFocus() { context.state.topics.materializedByRender = { said: false, connect: { status: 'none' } }; }, scheduleCloudSave() { scheduled++; },
     cloudClient: {}, cloudUid: 'u', publicFirstDirtyAt: 0, publicLastSaveAt: 0, window: { navigator: { onLine: true } }, Date: { now() { return now; } }, saveTimer: {},
-    setSync() {}, clearTimeout() {}, setTimeout(fn, delay) { timers.push({ fn, delay }); return timers.length; }
+    setSync(...args) { statuses.push(args); }, clearTimeout() {}, setTimeout(fn, delay) { timers.push({ fn, delay }); return timers.length; }
   };
   runFunction('renderAccountState', context)({ topics: {} }, { topics: {} }, { topics: {} });
   assert.strictEqual(scheduled, 0, 'clean hydration creates no pending save');
   assert.strictEqual(context.cloudDirty, false, 'clean hydration does not mark state dirty');
+  assert.deepStrictEqual(statuses[0], ['on'], 'clean hydration reports the acknowledged account state without writing');
   context.state = { topics: { topic: { learn: { firstRealEdit: true } } } }; now = 104000;
   runFunction('scheduleCloudSave', context)();
   assert.strictEqual(context.publicFirstDirtyAt, 104000, 'first real edit, not hydration, starts the batching window');
   assert.strictEqual(timers[0].delay, 5000, 'first edit at t=4s cannot flush before t=9s');
+}
+
+async function testCleanHydrationNeverClaimsSyncedOverPendingWrite() {
+  const statuses = [];
+  const context = {
+    publicMode: true, cloudDirty: true, cloudBaselineState: null, state: { topics: {} }, baselineKey: 'baseline', accountKey: 'account', localPersistenceFailed: false, guestPersistenceFailed: false,
+    progressApi: Public, remoteState(records) { return records; }, saveState() { return true; }, renderPreservingTextFocus() {}, scheduleCloudSave() { throw new Error('clean hydration must not overwrite an existing pending write'); }, setSync(...args) { statuses.push(args); }
+  };
+  runFunction('renderAccountState', context)({ topics: {} }, { topics: {} }, { topics: {} });
+  assert.strictEqual(statuses.some(status => status[0] === 'on'), false, 'a pending write is never represented as synced by clean hydration');
 }
 
 async function testRetryBackoffNeedsDirtySignedInState() {
@@ -341,7 +352,7 @@ async function testRecoveredBaselineAllowsSignoutFlush() {
 
 async function testColdPopupRequiresSecondDirectGesture() {
   let listener, popups = 0;
-  const auth = { currentUser: null, onAuthStateChanged(fn) { listener = fn; return () => {}; }, signInWithPopup() { popups++; this.currentUser = { uid: 'u' }; return Promise.resolve({ user: this.currentUser }); } };
+  const auth = { currentUser: null, onAuthStateChanged(fn) { listener = fn; Promise.resolve().then(() => fn(this.currentUser)); return () => {}; }, signInWithPopup() { popups++; this.currentUser = { uid: 'u' }; return Promise.resolve({ user: this.currentUser }); } };
   const client = Public.create({ purpose: 'public-progress-v1', enabled: true, firebase: { apiKey: 'a', authDomain: 'b', projectId: 'c', appId: 'd' } }, { auth, db: {} });
   client.onAuthState(() => {});
   await assert.rejects(client.signIn(), /ready\. Select Sign in to sync once more/, 'cold click loads SDK without a delayed popup');
@@ -351,5 +362,5 @@ async function testColdPopupRequiresSecondDirectGesture() {
   client.close();
 }
 
-Promise.all([testDraftOnlySave(), testOfflineSignoutIsBounded(), testStaleRefreshCannotRollbackEdit(), testTransactionRerendersCurrentState(), testInitialHydrationKeepsEditMadeDuringRead(), testHydrationWithoutBaselineKeepsCachedProgress(), testGuestWriteFailureSurvivesAccountCacheWrites(), testCleanHydrationShowsGuestDurabilityWarning(), testHydrationFailureRecoversAndKeepsEdit(), testPermanentHydrationFailureStopsIdleRetries(), testCleanHydrationStartsSaveWindowAtFirstEdit(), testRetryBackoffNeedsDirtySignedInState(), testCleanOnlineEventRefreshesWithoutWrite(), testCleanRefreshAppliesRemoteState(), testPrivateImportCannotReachPublicPersistence(), testStorageFailureNeverClaimsSaved(), testFailedCloudWriteKeepsStorageWarning(), testUndefinedCloudFailureKeepsStorageWarning(), testAccountActionFailureNeverClaimsFailedStorageIsDurable(), testMigrationStorageFailureStaysVisible(), testOnlineMissingBaselineSignoutIsBounded(), testRecoveredBaselineAllowsSignoutFlush(), testColdPopupRequiresSecondDirectGesture()])
+Promise.all([testDraftOnlySave(), testOfflineSignoutIsBounded(), testStaleRefreshCannotRollbackEdit(), testTransactionRerendersCurrentState(), testInitialHydrationKeepsEditMadeDuringRead(), testHydrationWithoutBaselineKeepsCachedProgress(), testGuestWriteFailureSurvivesAccountCacheWrites(), testCleanHydrationShowsGuestDurabilityWarning(), testHydrationFailureRecoversAndKeepsEdit(), testPermanentHydrationFailureStopsIdleRetries(), testCleanHydrationStartsSaveWindowAtFirstEdit(), testCleanHydrationNeverClaimsSyncedOverPendingWrite(), testRetryBackoffNeedsDirtySignedInState(), testCleanOnlineEventRefreshesWithoutWrite(), testCleanRefreshAppliesRemoteState(), testPrivateImportCannotReachPublicPersistence(), testStorageFailureNeverClaimsSaved(), testFailedCloudWriteKeepsStorageWarning(), testUndefinedCloudFailureKeepsStorageWarning(), testAccountActionFailureNeverClaimsFailedStorageIsDurable(), testMigrationStorageFailureStaysVisible(), testOnlineMissingBaselineSignoutIsBounded(), testRecoveredBaselineAllowsSignoutFlush(), testColdPopupRequiresSecondDirectGesture()])
   .then(() => console.log('test_public_shell_behavior: OK'), error => { console.error(error); process.exitCode = 1; });

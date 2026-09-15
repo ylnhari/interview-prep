@@ -43,7 +43,7 @@ async function testAdapter() {
   let authListener;
   const auth = {
     currentUser: { uid: 'account-a' },
-    onAuthStateChanged(fn) { authListener = fn; return () => {}; },
+    onAuthStateChanged(fn) { authListener = fn; Promise.resolve().then(() => fn(this.currentUser)); return () => {}; },
     signInWithPopup() { throw new Error('popup should not be needed for existing auth'); },
     signOut() { this.currentUser = null; authListener(null); return Promise.resolve(); }
   };
@@ -88,7 +88,7 @@ async function testAdapter() {
 
 async function testOfflineErrors() {
   let listener;
-  const auth = { currentUser: { uid: 'offline-user' }, onAuthStateChanged(fn) { listener = fn; return () => {}; } };
+  const auth = { currentUser: { uid: 'offline-user' }, onAuthStateChanged(fn) { listener = fn; Promise.resolve().then(() => fn(this.currentUser)); return () => {}; } };
   const offline = new Error('offline fixture');
   const db = {
     collection() { return { doc() { return { collection() { return { doc() { return { get() { return Promise.reject(offline); } }; } }; } }; } }; },
@@ -104,7 +104,7 @@ async function testOfflineErrors() {
 
 async function testExplicitRestore() {
   let listener, events = 0;
-  const auth = { currentUser: { uid: 'returning-user' }, onAuthStateChanged(fn) { listener = fn; return () => {}; } };
+  const auth = { currentUser: { uid: 'returning-user' }, onAuthStateChanged(fn) { listener = fn; Promise.resolve().then(() => fn(this.currentUser)); return () => {}; } };
   const client = Public.create({ purpose: 'public-progress-v1', enabled: true, firebase: { apiKey: 'a', authDomain: 'b', projectId: 'c', appId: 'd' } }, { auth, db: {} });
   client.onAuthState(() => { events++; });
   assert.strictEqual(listener, undefined, 'showing the public guest UI alone does not initialize Firebase');
@@ -116,11 +116,66 @@ async function testExplicitRestore() {
   client.close();
 }
 
+async function testColdSignInWaitsForInitialAuthState() {
+  let listener, settled = false; const events = [];
+  const auth = { currentUser: null, onAuthStateChanged(fn) { listener = fn; return () => {}; }, signInWithPopup() { throw new Error('cold click must not open a popup'); } };
+  const client = Public.create({ purpose: 'public-progress-v1', enabled: true, firebase: { apiKey: 'a', authDomain: 'b', projectId: 'c', appId: 'd' } }, { auth, db: {} });
+  client.onAuthState(event => events.push(event));
+  const first = client.signIn().then(() => { settled = true; }, error => { settled = true; return Promise.reject(error); });
+  await Promise.resolve(); await Promise.resolve();
+  assert.strictEqual(settled, false, 'cold sign-in waits for Firebase initial auth state instead of racing its late callback');
+  listener(null);
+  await assert.rejects(first, /ready\. Select Sign in to sync once more/);
+  assert.strictEqual(events[events.length - 1].status, 'error', 'the cold-load readiness hint is emitted after the initial signed-out callback');
+  assert.match(events[events.length - 1].error.message, /Select Sign in to sync once more/);
+  client.close();
+}
+
+async function testCloseCancelsPendingInitialAuth() {
+  async function assertCancelled(method) {
+    let listener, unsubscribed = 0;
+    const auth = { currentUser: null, onAuthStateChanged(fn) { listener = fn; return () => { unsubscribed++; }; } };
+    const client = Public.create({ purpose: 'public-progress-v1', enabled: true, firebase: { apiKey: 'a', authDomain: 'b', projectId: 'c', appId: 'd' } }, { auth, db: {} });
+    client.onAuthState(() => {});
+    const pending = client[method](); await Promise.resolve(); await Promise.resolve();
+    assert.strictEqual(typeof listener, 'function', method + ' registers the initial Firebase callback');
+    client.close();
+    await assert.rejects(pending, /sync was closed/, method + ' rejects promptly when close wins the initial auth race');
+    assert.strictEqual(unsubscribed, 1, 'close unsubscribes the pending initial auth observer');
+  }
+  await assertCancelled('signIn');
+  await assertCancelled('restore');
+}
+
+async function testFailedInitialAuthUnsubscribesBeforeRetry() {
+  const listeners = [];
+  const auth = {
+    currentUser: null,
+    onAuthStateChanged(success, failure) {
+      const listener = { success, failure, active: true };
+      listeners.push(listener);
+      return () => { listener.active = false; };
+    }
+  };
+  const client = Public.create({ purpose: 'public-progress-v1', enabled: true, firebase: { apiKey: 'a', authDomain: 'b', projectId: 'c', appId: 'd' } }, { auth, db: {} });
+  client.onAuthState(() => {});
+  const first = client.restore(); await Promise.resolve(); await Promise.resolve();
+  listeners[0].failure(new Error('initial auth fixture'));
+  await assert.rejects(first, /initial auth fixture/);
+  assert.strictEqual(listeners[0].active, false, 'a failed pre-ready observer is unsubscribed before retry');
+  const retry = client.restore(); await Promise.resolve(); await Promise.resolve();
+  assert.strictEqual(listeners.length, 2, 'retry registers a fresh observer');
+  assert.strictEqual(listeners.filter(listener => listener.active).length, 1, 'retry leaves exactly one Firebase auth observer live');
+  listeners[1].success(null);
+  await retry;
+  client.close();
+}
+
 async function testSignOutFailureRestoresVerifiedContext() {
   let listener, events = 0;
   const auth = {
     currentUser: { uid: 'still-signed-in' },
-    onAuthStateChanged(fn) { listener = fn; return () => {}; },
+    onAuthStateChanged(fn) { listener = fn; Promise.resolve().then(() => fn(this.currentUser)); return () => {}; },
     signOut() { return Promise.reject(new Error('sign-out fixture')); }
   };
   const client = Public.create({ purpose: 'public-progress-v1', enabled: true, firebase: { apiKey: 'a', authDomain: 'b', projectId: 'c', appId: 'd' } }, { auth, db: {} });
@@ -134,7 +189,7 @@ async function testSignOutFailureRestoresVerifiedContext() {
 
 async function testTransactionRetryUsesFreshRemote() {
   let listener; const writes = [];
-  const auth = { currentUser: { uid: 'retry-user' }, onAuthStateChanged(fn) { listener = fn; return () => {}; } };
+  const auth = { currentUser: { uid: 'retry-user' }, onAuthStateChanged(fn) { listener = fn; Promise.resolve().then(() => fn(this.currentUser)); return () => {}; } };
   const remotes = [
     { topics: { topic: { learn: { firstAttemptOnly: true } } } },
     { topics: { topic: { learn: { secondAttemptOnly: true } } } }
@@ -164,15 +219,15 @@ async function testTransactionRetryUsesFreshRemote() {
 }
 
 async function testSdkLoadFailureCanRetry() {
-  const priorDocument = global.document; const scripts = []; let failFirst = true;
-  const auth = { currentUser: { uid: 'retry-sdk-user' }, onAuthStateChanged() { return () => {}; } };
-  const db = {};
+  const priorDocument = global.document; const scripts = []; let failFirst = true, autoLoad = true;
+  const auth = { currentUser: { uid: 'retry-sdk-user' }, onAuthStateChanged(fn) { Promise.resolve().then(() => fn(this.currentUser)); return () => {}; } };
+  const db = {}; let activeAuth = auth, activeDb = db;
   window.firebase.apps = [];
-  window.firebase.initializeApp = function () { const app = { name: 'interview-prep-public-c', auth() { return auth; }, firestore() { return db; } }; window.firebase.apps.push(app); return app; };
+  window.firebase.initializeApp = function () { const app = { name: 'interview-prep-public-c', auth() { return activeAuth; }, firestore() { return activeDb; } }; window.firebase.apps.push(app); return app; };
   global.document = {
     querySelector() { return null; },
     createElement() { return { dataset: {}, getAttribute(name) { return this.attributes && this.attributes[name] || null; }, setAttribute() {}, addEventListener() {}, parentNode: null }; },
-    head: { appendChild(script) { script.parentNode = this; scripts.push(script); Promise.resolve().then(() => { if (failFirst) { failFirst = false; script.onerror(); } else script.onload(); }); }, removeChild(script) { const index = scripts.indexOf(script); if (index >= 0) scripts.splice(index, 1); script.parentNode = null; } }
+    head: { appendChild(script) { script.parentNode = this; scripts.push(script); if (autoLoad) Promise.resolve().then(() => { if (failFirst) { failFirst = false; script.onerror(); } else script.onload(); }); }, removeChild(script) { const index = scripts.indexOf(script); if (index >= 0) scripts.splice(index, 1); script.parentNode = null; } }
   };
   try {
     const client = Public.create({ purpose: 'public-progress-v1', enabled: true, firebase: { apiKey: 'a', authDomain: 'b', projectId: 'c', appId: 'd' } });
@@ -182,7 +237,20 @@ async function testSdkLoadFailureCanRetry() {
     assert.strictEqual(client.getContext().uid, 'retry-sdk-user', 'a transient SDK script failure can be retried without reload');
     assert.strictEqual(scripts.length, 3, 'retry replaces the failed script and completes all SDK loads');
     client.close();
+    // Closing during the lazy first script load must stop before Firebase app
+    // initialization and observer registration, even when that script later loads.
+    scripts.length = 0; autoLoad = false; window.firebase.apps = [];
+    let observers = 0;
+    activeAuth = { currentUser: null, onAuthStateChanged() { observers++; return () => {}; } }; activeDb = {};
+    const closingClient = Public.create({ purpose: 'public-progress-v1', enabled: true, firebase: { apiKey: 'a', authDomain: 'b', projectId: 'c', appId: 'd' } });
+    closingClient.onAuthState(() => {});
+    const pending = closingClient.signIn(); await Promise.resolve(); await Promise.resolve();
+    assert.strictEqual(scripts.length, 1, 'cold sign-in begins only the first deferred SDK script');
+    closingClient.close(); scripts[0].onload();
+    await assert.rejects(pending, /sync was closed/, 'close during lazy SDK load rejects the pending sign-in');
+    assert.strictEqual(observers, 0, 'lazy script completion after close registers no Firebase observer');
+    assert.strictEqual(window.firebase.apps.length, 0, 'lazy script completion after close initializes no Firebase app');
   } finally { global.document = priorDocument; }
 }
 
-Promise.all([testAdapter(), testOfflineErrors(), testExplicitRestore(), testSignOutFailureRestoresVerifiedContext(), testTransactionRetryUsesFreshRemote(), testSdkLoadFailureCanRetry()]).then(() => console.log('test_public_progress: OK'), error => { console.error(error); process.exitCode = 1; });
+Promise.all([testAdapter(), testOfflineErrors(), testExplicitRestore(), testColdSignInWaitsForInitialAuthState(), testCloseCancelsPendingInitialAuth(), testFailedInitialAuthUnsubscribesBeforeRetry(), testSignOutFailureRestoresVerifiedContext(), testTransactionRetryUsesFreshRemote(), testSdkLoadFailureCanRetry()]).then(() => console.log('test_public_progress: OK'), error => { console.error(error); process.exitCode = 1; });

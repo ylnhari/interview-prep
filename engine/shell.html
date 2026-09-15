@@ -67,14 +67,14 @@
   .stat.accent b { color: var(--accent-ink); }
   .ring { width: 26px; height: 26px; border-radius: 50%; flex: none; background: conic-gradient(var(--accent) calc(var(--pct, 0) * 1%), var(--surface-3) 0); display: grid; place-items: center; }
   .ring::after { content: ""; width: 18px; height: 18px; border-radius: 50%; background: var(--surface); }
-  .progress-tools { flex: none; position: relative; }
+  .progress-tools { flex: none; position: relative; margin-left: auto; }
   .progress-tools summary { list-style: none; cursor: pointer; padding: 5px 10px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); font-size: 12px; font-weight: 500; line-height: 1.3; white-space: nowrap; }
   .progress-tools summary::-webkit-details-marker { display: none; }
   .progress-tools summary::after { content: "\25be"; margin-left: 6px; color: var(--ink-dim); font-size: 10px; }
   .progress-tools[open] summary { border-color: var(--accent); background: var(--accent-weak); color: var(--accent-ink); }
   .io { position: absolute; right: 0; top: calc(100% + 6px); z-index: 25; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; width: min(360px, calc(100vw - 28px)); padding: 8px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); box-shadow: var(--shadow); }
   .btn.sm { padding: 5px 10px; font-size: 12px; border-radius: 8px; font-weight: 500; }
-  .sync { flex: none; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-dim); display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .sync { flex: 0 1 320px; min-width: 0; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-dim); display: flex; align-items: center; gap: 6px; white-space: normal; overflow-wrap: anywhere; }
   .sync::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--surface-3); flex: none; }
   .sync.on::before { background: var(--good); }
   .sync.local::before { background: var(--border-strong); }
@@ -1209,6 +1209,7 @@ window.PREP_IO = (function () {
     // the five-second user-edit window until an actual local edit occurs.
     if (hasLocalDiff) scheduleCloudSave();
     else if (localPersistenceFailed) setSync('error', 'Progress was not saved in this browser. Keep this page open and export a backup.');
+    else if (publicMode && !cloudDirty) setSync('on');
   }
   function beginAccount(context) {
     if (!context || !context.uid || cloudUid === context.uid) return;
