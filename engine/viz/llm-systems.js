@@ -69,9 +69,9 @@
     b += DT(140, 56, 8, { f: 'var(--accent)' });
     b += T(140, 36, 'entry point', { s: 9, c: 'var(--accent)' });
     b += DT(560, 188, 8, { f: 'var(--good)', cls: 'v-pulse' });
-    b += T(560, 208, 'nearest neighbour found', { s: 9, c: 'var(--good)' });
-    b += T(400, 20, 'top layers are sparse with long links; the search narrows one layer at a time', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
-    return S(224, b);
+    b += T(560, 208, 'candidate neighbour found', { s: 9, c: 'var(--good)' });
+    b += T(400, 238, 'top layers are sparse with long links; the search narrows one layer at a time', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
+    return S(252, b);
   };
   C['hnsw-layers'] = 'The search enters at the top, sparse layer, greedily hops toward the query, then drops one layer down at the same point and keeps narrowing until the bottom, dense layer gives the answer.';
 
