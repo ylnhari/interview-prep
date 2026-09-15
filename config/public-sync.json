@@ -1,0 +1,11 @@
+{
+  "purpose": "public-progress-v1",
+  "enabled": true,
+  "firebase": {
+    "apiKey": "AIzaSyA3kdxzPqPq5lxxrVRPy6A7--QvkJUjQh4",
+    "authDomain": "interview-prep-public-ylh2.firebaseapp.com",
+    "projectId": "interview-prep-public-ylh2",
+    "appId": "1:313956829111:web:74ed4f1533d29386238a32",
+    "messagingSenderId": "313956829111"
+  }
+}
