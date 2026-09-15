@@ -8,7 +8,7 @@ window.PREP_CONTENT = {
     title: "Machine learning engineering interview prep",
     eyebrow: "Interview study",
     heading: "ML engineering prep",
-    footer: "Your progress stays in this browser. Open Progress tools to export or import it between devices."
+    footer: "Open Progress tools to check where progress is saved and to export or import a backup."
   },
 
   honesty: "Honesty rule: mark the answer on whether it is correct and well reasoned. If it claims specific production experience, treat that claim as unchecked rather than true.",

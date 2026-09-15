@@ -199,7 +199,7 @@
     return error;
   }
   function create(config, testDeps) {
-    var enabled = validConfig(config), auth = null, db = null, app = null, context = null, callback = null, authUnsub = null, readyPromise = null, sdkReady = false, closed = false, authGeneration = 0;
+    var enabled = validConfig(config), auth = null, db = null, app = null, context = null, callback = null, authUnsub = null, readyPromise = null, sdkReady = false, closed = false, authGeneration = 0, cancelInitialAuth = null;
     function emit(status, error, uid) { if (callback) { try { callback({ status: status, context: context, error: error || null, uid: uid || null }); } catch (e) {} } }
     function authorize(user) {
       if (!closed && user && user.uid && context && context.uid === user.uid && auth && auth.currentUser && auth.currentUser.uid === user.uid) return Promise.resolve(context);
@@ -213,26 +213,56 @@
         context = { user: user, uid: user.uid, db: db }; emit('authorized', null, user.uid); return context;
       });
     }
+    function assertOpen() { if (closed) throw new Error('Public progress sync was closed.'); }
+    function observeInitialAuth() {
+      return new Promise(function (resolve, reject) {
+        var settled = false, observerUnsub = null, cleanupRequested = false;
+        function cleanupFailedObserver() {
+          cleanupRequested = true;
+          if (!observerUnsub) return;
+          if (authUnsub === observerUnsub) authUnsub = null;
+          observerUnsub(); observerUnsub = null;
+        }
+        function cancel() { settle(reject, new Error('Public progress sync was closed.'), true); }
+        function settle(next, value, failed) {
+          if (settled) return;
+          settled = true;
+          if (cancelInitialAuth === cancel) cancelInitialAuth = null;
+          if (failed) cleanupFailedObserver();
+          next(value);
+        }
+        cancelInitialAuth = cancel;
+        authUnsub = auth.onAuthStateChanged(function (user) {
+          // Firebase's first callback is authoritative for this SDK start.
+          // Waiting for it prevents a late signed_out event from replacing the
+          // cold-load "select once more" instruction in the shell.
+          Promise.resolve(authorize(user)).then(function () { settle(resolve, { auth: auth, db: db }); }, function (error) { settle(reject, error, true); });
+        }, function (error) { authGeneration++; context = null; emit('error', error); settle(reject, error, true); });
+        observerUnsub = authUnsub;
+        if (cleanupRequested) cleanupFailedObserver();
+      });
+    }
     function ensure() {
+      if (closed) return Promise.reject(new Error('Public progress sync was closed.'));
       if (!enabled) return Promise.reject(new Error('Public progress sync is not configured.'));
       if (readyPromise) return readyPromise;
       if (testDeps && testDeps.auth && testDeps.db) {
         auth = testDeps.auth; db = testDeps.db;
-        authUnsub = auth.onAuthStateChanged(function (user) { authorize(user); }, function (error) { authGeneration++; context = null; emit('error', error); });
-        sdkReady = true; readyPromise = Promise.resolve({ auth: auth, db: db }); return readyPromise;
+        readyPromise = observeInitialAuth().then(function (result) { sdkReady = true; return result; });
+        readyPromise = readyPromise.catch(function (error) { readyPromise = null; throw error; });
+        return readyPromise;
       }
       readyPromise = Promise.resolve()
-        .then(function () { return loadScript('https://www.gstatic.com/firebasejs/' + SDK_VERSION + '/firebase-app-compat.js'); })
-        .then(function () { return loadScript('https://www.gstatic.com/firebasejs/' + SDK_VERSION + '/firebase-auth-compat.js'); })
-        .then(function () { return loadScript('https://www.gstatic.com/firebasejs/' + SDK_VERSION + '/firebase-firestore-compat.js'); })
+        .then(function () { assertOpen(); return loadScript('https://www.gstatic.com/firebasejs/' + SDK_VERSION + '/firebase-app-compat.js'); })
+        .then(function () { assertOpen(); return loadScript('https://www.gstatic.com/firebasejs/' + SDK_VERSION + '/firebase-auth-compat.js'); })
+        .then(function () { assertOpen(); return loadScript('https://www.gstatic.com/firebasejs/' + SDK_VERSION + '/firebase-firestore-compat.js'); })
         .then(function () {
+          assertOpen();
           if (!root.firebase || !root.firebase.initializeApp) throw new Error('The optional sync service did not start. Progress is still saved in this browser.');
           var name = 'interview-prep-public-' + config.firebase.projectId;
           app = root.firebase.apps.filter(function (candidate) { return candidate.name === name; })[0] || root.firebase.initializeApp(config.firebase, name);
           auth = app.auth(); db = app.firestore();
-          authUnsub = auth.onAuthStateChanged(function (user) { authorize(user); }, function (error) { authGeneration++; context = null; emit('error', error); });
-          sdkReady = true;
-          return { auth: auth, db: db };
+          return observeInitialAuth().then(function (result) { sdkReady = true; return result; });
         });
       readyPromise = readyPromise.catch(function (error) { readyPromise = null; throw error; });
       return readyPromise;
@@ -301,7 +331,7 @@
           });
         });
       },
-      close: function () { closed = true; authGeneration++; context = null; callback = null; sdkReady = false; if (authUnsub) authUnsub(); }
+      close: function () { closed = true; authGeneration++; context = null; callback = null; sdkReady = false; if (cancelInitialAuth) cancelInitialAuth(); if (authUnsub) authUnsub(); }
     };
   }
   root.PREP_PUBLIC_PROGRESS = {
