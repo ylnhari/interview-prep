@@ -105,12 +105,12 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .tabs a{font-size:12.5px;font-weight:600;text-decoration:none;color:var(--ink-dim);padding:5px 10px;border-radius:999px;border:1px solid transparent}
 .tabs a:hover{color:var(--accent);background:var(--accent-weak)}
 .tabs a.cur{color:var(--accent-ink);background:var(--accent-weak)}
-.wrap{max-width:1680px;margin:0 auto;padding:36px 20px 64px}
-.hero{max-width:none;margin-bottom:28px}
+.wrap{max-width:1680px;margin:0 auto;padding:24px 20px 64px}
+.hero{max-width:none;margin-bottom:18px}
 .hero .eb{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink)}
-.hero h1{font-family:var(--font-display);font-size:clamp(28px,2.6vw+14px,40px);line-height:1.12;letter-spacing:-.025em;margin:8px 0 12px;text-wrap:balance}
-.hero p{font-size:16.5px;line-height:1.6;color:var(--ink-dim);margin:0 0 18px}
-.hero .cta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.hero h1{font-family:var(--font-display);font-size:clamp(28px,2.6vw+14px,40px);line-height:1.12;letter-spacing:-.025em;margin:6px 0 8px;text-wrap:balance}
+.hero p{font-size:16.5px;line-height:1.6;color:var(--ink-dim);margin:0 0 12px}
+.hero .cta{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap}
 .hero .cta > *{min-width:0;max-width:100%}
 .path,.track,.pack{min-width:0;max-width:100%}
 .pack .ph .t{min-width:0;max-width:100%}
@@ -122,7 +122,9 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .btn .k{font-family:var(--font-mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;opacity:.85}
 .stats{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-dim);font-variant-numeric:tabular-nums}
 .stats b{color:var(--ink);font-weight:500}
-.legend{display:flex;gap:6px 18px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--ink-dim);margin:0 0 24px;padding:10px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.legend{font-size:12px;color:var(--ink-dim);margin:0 0 24px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.legend summary{cursor:pointer;padding:9px 0;font-family:var(--font-mono);font-size:11px;color:var(--accent-ink)}
+.legend-body{display:flex;gap:6px 18px;flex-wrap:wrap;align-items:center;padding:0 0 10px}
 .legend .lg{display:inline-flex;align-items:center;gap:6px}
 .legend .sw{width:9px;height:9px;border-radius:50%;flex:none}
 .legend .sw.danger{background:var(--danger)}.legend .sw.warning{background:var(--warning)}.legend .sw.good{background:var(--good)}
@@ -172,12 +174,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 footer{max-width:1680px;margin:0 auto;padding:16px 20px 48px;border-top:1px solid var(--border);font-size:12px;line-height:1.5;color:var(--ink-dim);font-family:var(--font-mono)}
 """
 
-PROMISE = ("A free course for machine learning and software engineering interviews. Each chapter teaches one "
-           "subject: it defines every term before using it, draws the mechanism in a diagram, points you at the "
-           "best pages and videos on that subject, and gives you exercises with a list of what a good answer "
-           "contains. Take the tracks in order, or start with the one your interview will test most. Progress "
-           "stays in this browser unless signed-in sync is explicitly configured; you can also export it to a "
-           "file and import it on another device.")
+PROMISE = ("Production ML, foundations, LLM systems and decision systems, with the system design and coding "
+           "needed to make models reliable in production.")
 
 
 def render_pack(e, n_packs):
@@ -192,14 +190,16 @@ def render_pack(e, n_packs):
     n_ex = sum(c["exercises"] for g in s["groups"] for c in g["chapters"])
     prereq = [c for g in s["groups"] for c in g["chapters"] if c.get("kind") == "prereqs"]
     out = []
-    out.append('<section class="pack" id="pack-%s" data-key="%s" data-page="%s">' % (esc(e["slug"]), esc(key), esc(page)))
-    out.append('<div class="ph"><div class="t"><div class="eb">%s</div><h2>%s</h2></div>'
-               '<a class="btn quiet" href="%s">Open the chapters &rarr;</a></div>' % (esc(eb), esc(title), esc(page)))
-    pm = ['<span><b>%d</b> tracks</span><span><b>%d</b> chapters</span><span><b>%d</b> sections</span><span><b>%d</b> exercises</span>'
-          % (len(s["groups"]), n_ch, n_sec, n_ex), '<span class="pp"><b class="pv">0%</b> done</span>']
-    if prereq:
-        pm.append('<span class="pre" data-prereq="%s">Before you start: <b>0</b> of %d course chapters done</span>' % (esc(prereq[0]["id"]), len(prereq[0]["sections"])))
-    out.append('<div class="pm">%s</div>' % "".join(pm))
+    solo = n_packs == 1
+    out.append('<section class="pack%s" id="pack-%s" data-key="%s" data-page="%s">' % (" solo" if solo else "", esc(e["slug"]), esc(key), esc(page)))
+    if not solo:
+        out.append('<div class="ph"><div class="t"><div class="eb">%s</div><h2>%s</h2></div>'
+                   '<a class="btn quiet" href="%s">Open the chapters &rarr;</a></div>' % (esc(eb), esc(title), esc(page)))
+        pm = ['<span><b>%d</b> tracks</span><span><b>%d</b> chapters</span><span><b>%d</b> sections</span><span><b>%d</b> exercises</span>'
+              % (len(s["groups"]), n_ch, n_sec, n_ex), '<span class="pp"><b class="pv">0%</b> done</span>']
+        if prereq:
+            pm.append('<span class="pre" data-prereq="%s">Before you start: <b>0</b> of %d course chapters done</span>' % (esc(prereq[0]["id"]), len(prereq[0]["sections"])))
+        out.append('<div class="pm">%s</div>' % "".join(pm))
     out.append('<div class="path">')
     for gi, g in enumerate(s["groups"]):
         out.append('<div class="track" data-n="%d"><div class="th"><h3>%s</h3>%s</div><div class="chs">' % (
@@ -292,16 +292,16 @@ def render_index(entries):
             '<a href="#pack-%s">%s</a>' % (esc(e["slug"]), esc(e["summary"].get("meta", {}).get("title") or e["pack"])) for e in entries)
     parts.append('<header class="top"><div class="top-inner"><a class="site" href="index.html">Interview prep</a>%s</div></header>' % tabs)
     parts.append('<main class="wrap">')
-    parts.append('<div class="hero"><div class="eb">Course</div><h1>%s</h1><p>%s</p>'
+    parts.append('<div class="hero"><div class="eb">Free study path</div><h1>%s</h1><p>%s</p>'
                  '<div class="cta"><a class="btn" id="continue" href="#"><span><span class="k">Start the course</span><br><span class="v"></span></span>&rarr;</a>'
                  '<span class="stats"><b>%d</b> track%s &middot; <b>%d</b> chapters &middot; <b>%d</b> sections &middot; <b>%d</b> exercises</span></div></div>' % (
                      esc(course_title), esc(PROMISE), n_tr, "" if n_tr == 1 else "s", n_ch, n_sec, n_ex))
-    parts.append('<div class="legend" aria-label="Legend">'
-                 '<span class="lg"><span class="sw danger"></span> asked most often</span>'
-                 '<span class="lg"><span class="sw warning"></span> asked regularly</span>'
-                 '<span class="lg"><span class="sw good"></span> asked less often</span>'
-                 '<span class="lg"><span class="tk">&#10003;</span> section you have marked as read</span>'
-                 '<span class="lg"><span class="bar"><i style="width:60%"></i></span> how much of the chapter you have read</span></div>')
+    parts.append('<details class="legend"><summary>How to read this roadmap</summary><div class="legend-body">'
+                 '<span class="lg"><span class="sw danger"></span> core focus</span>'
+                 '<span class="lg"><span class="sw warning"></span> recommended depth</span>'
+                 '<span class="lg"><span class="sw good"></span> supporting depth</span>'
+                 '<span class="lg"><span class="tk">&#10003;</span> section marked as read</span>'
+                 '<span class="lg"><span class="bar"><i style="width:60%"></i></span> chapter reading progress</span></div></details>')
     if not entries:
         parts.append('<p class="stats">Nothing is built yet. Add a course under packs/ and run python engine/roadmap.py.</p>')
     for e in entries:

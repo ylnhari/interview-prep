@@ -1,0 +1,134 @@
+{
+  "version": 1,
+  "retirements": [
+    {
+      "pack": "course",
+      "topic": "data-features",
+      "role": "learn",
+      "id": "df-0",
+      "sha256": "4ee7d32d44674341091d485e197b91c0dd3b4cd7cd3e73137578eeb49bff871e",
+      "reason": "User-requested complete clean-room rewrite of Data and Features for general production ML. Preserve historical saved fields; use fresh replacement IDs without reinterpreting old answers.",
+      "replacements": [
+        "df-v2-key-terms"
+      ]
+    },
+    {
+      "pack": "course",
+      "topic": "data-features",
+      "role": "learn",
+      "id": "df-f1",
+      "sha256": "dfc3aefa4cb362bfec8bb26301fd74a620a587134729c96d800424112b3ecc2a",
+      "reason": "User-requested complete clean-room rewrite of Data and Features for general production ML. Preserve historical saved fields; use fresh replacement IDs without reinterpreting old answers.",
+      "replacements": [
+        "df-v2-offline-online-serving"
+      ]
+    },
+    {
+      "pack": "course",
+      "topic": "data-features",
+      "role": "learn",
+      "id": "df-f2",
+      "sha256": "1cc129e3eb90c2b184fb18bbc87c9514f9ac45a659f1e5474b4c7de29526c3db",
+      "reason": "User-requested complete clean-room rewrite of Data and Features for general production ML. Preserve historical saved fields; use fresh replacement IDs without reinterpreting old answers.",
+      "replacements": [
+        "df-v2-time-leakage"
+      ]
+    },
+    {
+      "pack": "course",
+      "topic": "data-features",
+      "role": "learn",
+      "id": "df-f3",
+      "sha256": "b88a5c955d2bf6c7539e0c0648c57797a36fcc9872d157ea454aecaa18d9e7b6",
+      "reason": "User-requested complete clean-room rewrite of Data and Features for general production ML. Preserve historical saved fields; use fresh replacement IDs without reinterpreting old answers.",
+      "replacements": [
+        "df-v2-offline-online-serving"
+      ]
+    },
+    {
+      "pack": "course",
+      "topic": "data-features",
+      "role": "learn",
+      "id": "df-f4",
+      "sha256": "fd08620e77a564b03798dba816b3b3165c5f9bdb9bdf4af8d9478c0652ae6368",
+      "reason": "User-requested complete clean-room rewrite of Data and Features for general production ML. Preserve historical saved fields; use fresh replacement IDs without reinterpreting old answers.",
+      "replacements": [
+        "df-v2-time-leakage"
+      ]
+    },
+    {
+      "pack": "course",
+      "topic": "data-features",
+      "role": "learn",
+      "id": "df-f5",
+      "sha256": "fd8ed4e32ceecdd407ec727f52b1c056a8fbcb3469d9eddd32029870678803b2",
+      "reason": "User-requested complete clean-room rewrite of Data and Features for general production ML. Preserve historical saved fields; use fresh replacement IDs without reinterpreting old answers.",
+      "replacements": [
+        "df-v2-requirements-ownership",
+        "df-v2-transformations-replay",
+        "df-v2-lifecycle-governance"
+      ]
+    },
+    {
+      "pack": "course",
+      "topic": "data-features",
+      "role": "activities",
+      "id": "df-a1",
+      "sha256": "e773e4fdbbca73e6460d0192c59b182f968a6be91636607ef2a2742a4b668e0d",
+      "reason": "User-requested complete clean-room rewrite of Data and Features for general production ML. Preserve historical saved fields; use fresh replacement IDs without reinterpreting old answers.",
+      "replacements": [
+        "df-v2-exercise-time-correct-join",
+        "df-v2-exercise-contract-response",
+        "df-v2-exercise-serving-choice"
+      ]
+    },
+    {
+      "pack": "course",
+      "topic": "data-features",
+      "role": "activities",
+      "id": "df-a2",
+      "sha256": "fcce0057e6b8aeb713e51344ff0c8cde0181ee38a559bd689ee5c92c2b771493",
+      "reason": "User-requested complete clean-room rewrite of Data and Features for general production ML. Preserve historical saved fields; use fresh replacement IDs without reinterpreting old answers.",
+      "replacements": [
+        "df-v2-exercise-time-correct-join",
+        "df-v2-exercise-contract-response",
+        "df-v2-exercise-serving-choice"
+      ]
+    },
+    {
+      "pack": "course",
+      "topic": "data-features",
+      "role": "activities",
+      "id": "df-a3",
+      "sha256": "3ea0c7c10f6f9f6566072d5feb54e7dd83cd44d3e1cad869978659438bf971a0",
+      "reason": "User-requested complete clean-room rewrite of Data and Features for general production ML. Preserve historical saved fields; use fresh replacement IDs without reinterpreting old answers.",
+      "replacements": [
+        "df-v2-exercise-time-correct-join",
+        "df-v2-exercise-contract-response",
+        "df-v2-exercise-serving-choice"
+      ]
+    },
+    {
+      "pack": "course",
+      "topic": "serving-and-scale",
+      "role": "learn",
+      "id": "ss-f1",
+      "sha256": "dd7b17bff5fb5dd312118239e2716091628bae4b112b6b01aedcb2c874421a81",
+      "reason": "User-requested plain-English rewrite of the latency explanation and quiz. Preserve old saved answers under the retired ID; do not apply them to revised quiz options.",
+      "replacements": [
+        "ss-v2-tail-latency"
+      ]
+    },
+    {
+      "pack": "course",
+      "topic": "rag-and-agents",
+      "role": "learn",
+      "id": "raa-f7",
+      "sha256": "c55d62316acb9b01fb311c43f6cdfa7440ba6d56031e7db97c55475037595bbe",
+      "reason": "The approved RAG rewrite changes this quiz option and explanation meaning. Preserve the stored answer under the retired ID and present the revised item as a fresh question.",
+      "replacements": [
+        "raa-v2-safe-agent-stopping"
+      ]
+    }
+  ]
+}

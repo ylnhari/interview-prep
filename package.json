@@ -1,0 +1,11 @@
+{
+  "name": "interview-prep-rules-tests",
+  "private": true,
+  "scripts": {
+    "test:public-rules": "firebase emulators:exec --only firestore --project demo-interview-prep-rules \"node --test test/public-rules.test.cjs\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "5.0.2",
+    "firebase-tools": "15.30.1"
+  }
+}

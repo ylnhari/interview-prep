@@ -1,6 +1,6 @@
 # viz-lib catalog
 
-`viz-lib.js` and the files under `viz/` define `window.VIZLIB` (about 170 functions, each taking a `uid` string and returning an inline
+`viz-lib.js` and the files under `viz/` define `window.VIZLIB` (about 170 functions, each taking a `uid` string and normally returning an inline
 `<svg viewBox="0 0 760 H">` string, H between 160 and 232) and `window.VIZLIB_CAPTIONS` (one caption per id,
 `<b>`/`<i>` allowed).
 
@@ -86,6 +86,7 @@ Column key: **id** — what the picture shows (and what moves) — concepts it f
 ## GenAI
 
 - `rag-pipeline` — query, embed, vector index, top-k chunks, prompt, LLM, answer, and a citations box. Fits: RAG architecture, grounding, retrieval quality, citation and auditability.
+- `rag-two-paths` — responsive semantic HTML flow: the offline document-update path (source through a validated published index) sits beside the online request path (authentication and authorization through a checked answer), with the published index visibly feeding permitted retrieval. It uses a responsive flow rather than a fixed SVG viewBox because its operational labels must remain readable as ordered steps on a phone. Fits: RAG architecture, index freshness, retrieval authorization, hybrid retrieval, citations, abstention, and evaluation.
 - `vector-similarity` — points in 2-D with a query vector, its nearest neighbours highlighted, and a small-angle annotation. Fits: embeddings, cosine similarity, ANN indexes, semantic search.
 - `llm-serving-batching` — KV-cache slots filling and freeing as sequences arrive and finish, feeding one decode step per live sequence. Fits: LLM inference, continuous batching, KV cache, GPU memory limits, throughput tuning.
 - `guardrails-io` — an input filter for PII and injection, the model, and an output filter for policy and grounding, with two blinking trigger badges. Fits: LLM safety, guardrails, PII redaction, prompt injection, responsible AI controls.

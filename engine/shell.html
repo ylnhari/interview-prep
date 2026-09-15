@@ -67,7 +67,12 @@
   .stat.accent b { color: var(--accent-ink); }
   .ring { width: 26px; height: 26px; border-radius: 50%; flex: none; background: conic-gradient(var(--accent) calc(var(--pct, 0) * 1%), var(--surface-3) 0); display: grid; place-items: center; }
   .ring::after { content: ""; width: 18px; height: 18px; border-radius: 50%; background: var(--surface); }
-  .io { flex: none; display: flex; gap: 6px; }
+  .progress-tools { flex: none; position: relative; }
+  .progress-tools summary { list-style: none; cursor: pointer; padding: 5px 10px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); font-size: 12px; font-weight: 500; line-height: 1.3; white-space: nowrap; }
+  .progress-tools summary::-webkit-details-marker { display: none; }
+  .progress-tools summary::after { content: "\25be"; margin-left: 6px; color: var(--ink-dim); font-size: 10px; }
+  .progress-tools[open] summary { border-color: var(--accent); background: var(--accent-weak); color: var(--accent-ink); }
+  .io { position: absolute; right: 0; top: calc(100% + 6px); z-index: 25; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; width: min(360px, calc(100vw - 28px)); padding: 8px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); box-shadow: var(--shadow); }
   .btn.sm { padding: 5px 10px; font-size: 12px; border-radius: 8px; font-weight: 500; }
   .sync { flex: none; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-dim); display: flex; align-items: center; gap: 6px; white-space: nowrap; }
   .sync::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--surface-3); flex: none; }
@@ -75,14 +80,20 @@
   .sync.local::before { background: var(--border-strong); }
   .sync.pending::before { background: var(--warning); }
   .sync.error::before { background: var(--danger); }
-  .sync-policy { flex: 1 1 100%; margin-left: auto; max-width: 920px; text-align: right; color: var(--ink-dim); font-size: 11px; line-height: 1.4; }
+  .sync-policy { flex: 1 1 100%; margin: 2px 0 0; padding-top: 8px; border-top: 1px solid var(--border); color: var(--ink-dim); font-size: 11px; line-height: 1.4; text-align: left; }
   @media (max-width: 760px) {
-    .top-inner { padding: 8px 14px; gap: 8px 10px; }
-    .brand { flex-basis: calc(100% - 140px); }
-    .home { border-right: 0; padding-right: 0; }
-    .sync { display: flex; white-space: normal; }
-    .io { margin-left: auto; }
-    .sync-policy { text-align: left; }
+    .top-inner { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; padding: 6px 14px; gap: 4px 8px; }
+    .home { grid-column: 1; grid-row: 1; border-right: 0; padding-right: 0; }
+    .brand { display: block; grid-column: 2; grid-row: 1; margin-right: 0; min-width: 0; }
+    .brand .eyebrow { display: none; }
+    .menu { grid-column: 3; grid-row: 1; }
+    .stat:not(.accent) { grid-column: 1 / span 2; grid-row: 2; justify-self: start; }
+    .progress-tools { grid-column: 3; grid-row: 2; margin-left: 0; }
+    .stat.accent { grid-column: 1 / -1; grid-row: 3; justify-self: start; }
+    .sync { grid-column: 1 / -1; grid-row: 3; display: flex; white-space: normal; }
+    header.top:has(#sync:not([hidden])) .stat:not(.accent) { display: none; }
+    header.top:has(#sync:not([hidden])) .sync { grid-column: 1 / span 2; grid-row: 2; }
+    .io { right: 0; }
   }
 
   /* shell */
@@ -149,7 +160,7 @@
   .chh .mastery .bar { flex: 1 1 140px; max-width: 220px; height: 6px; border-radius: 3px; }
   .chb { padding: 8px 36px 30px; }
   @media (max-width: 1100px) { .chh { padding-left: 28px; padding-right: 28px; } .chb { padding-left: 28px; padding-right: 28px; } }
-  @media (max-width: 600px) { .chh { padding: 20px 16px 16px; } .chb { padding-left: 16px; padding-right: 16px; } }
+   @media (max-width: 600px) { .chh { padding: 20px 16px 16px; } .chb { padding-left: 16px; padding-right: 16px; } .chh + .chb .sec:first-of-type { margin-top: 0; padding-top: 16px; } .chh .mastery { margin-top: 8px; } }
 
   /* diagrams: the drawing keeps a floor width so labels stay legible; the box scrolls on narrow screens */
   .viz, .cviz { margin: 14px 0 6px; padding: 12px 14px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto; }
@@ -375,14 +386,18 @@
     <div class="sync" id="sync" role="status" aria-live="polite" hidden></div>
     <div class="stat" title="How much of the course you have finished"><div class="ring" id="ring" style="--pct:0" aria-hidden="true"></div><span><b id="pct">0%</b> done</span></div>
     <div class="stat accent" id="countdown-wrap" hidden><span>interview in</span><b id="countdown"></b></div>
-    <div class="io">
+    <details class="progress-tools">
+      <summary>Progress tools</summary>
+      <div class="io">
       <button class="btn sm" id="cloud-btn" type="button" hidden>Sign in to sync</button>
+      <button class="btn sm" id="save-btn" type="button" hidden>Save now</button>
       <button class="btn sm" id="migrate-btn" type="button" hidden>Move browser progress to this account</button>
       <button class="btn sm" id="export-btn" type="button" title="Save your progress on this page to a file">Export progress</button>
       <button class="btn sm" id="import-btn" type="button" title="Load progress from a file you saved earlier">Import progress</button>
       <input type="file" id="import-file" accept="application/json,.json" hidden>
-    </div>
-    <div class="sync-policy" id="sync-policy" hidden>Personal sync includes completion, checklist, and quiz selections. Draft answers and grading history stay in this browser and are cleared from this account cache on sign-out; export first to keep a copy.</div>
+      <div class="sync-policy" id="sync-policy" hidden>Personal sync includes completion, checklist, and quiz selections. Draft answers and grading history stay in this browser and are cleared from this account cache on sign-out; export first to keep a copy.</div>
+      </div>
+    </details>
   </div>
 </header>
 
@@ -406,6 +421,9 @@
 </script>
 <script>
 /*__CLOUD__*/
+</script>
+<script>
+/*__PUBLIC_PROGRESS__*/
 </script>
 <script>
 // Progress export/import: pure functions, no DOM, so they can be unit-tested (engine/test_io.js).
@@ -461,6 +479,7 @@ window.PREP_IO = (function () {
     var heading = document.querySelector('.brand h1'); if (heading) heading.textContent = 'Prep';
     var footer = document.querySelector('footer'); if (footer) footer.textContent = 'Progress is saved in this browser. Use Export progress to save it to a file, and Import progress to load that file on another device.';
     var cloudButton = document.getElementById('cloud-btn'); if (cloudButton) { cloudButton.hidden = true; cloudButton.textContent = 'Sign in to sync'; }
+    var saveButton = document.getElementById('save-btn'); if (saveButton) saveButton.hidden = true;
     var migrateButton = document.getElementById('migrate-btn'); if (migrateButton) migrateButton.hidden = true;
     var policy = document.getElementById('sync-policy'); if (policy) policy.hidden = true;
     var sync = document.getElementById('sync'); if (sync) { sync.hidden = true; sync.className = 'sync'; sync.textContent = ''; }
@@ -556,9 +575,18 @@ window.PREP_IO = (function () {
   function saveState(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch (e) { return false; } }
   var storedGuest = readState(LS_KEY); if (storedGuest) state = storedGuest;
   var guestState = cloneState(state), accountKey = null, baselineKey = null, cloudBaselineState = null, cloudUid = null, cloudDirty = false, cloudGeneration = 0, cloudRevision = 0, cloudUnwatch = null, signoutBackupReadyUid = null;
-  var cloudButton = document.getElementById('cloud-btn'), migrateButton = document.getElementById('migrate-btn');
-  var cloudConfig = window.PREP_CLOUD_CONFIG || null;
-  var cloudClient = window.PREP_CLOUD && window.PREP_CLOUD.create ? window.PREP_CLOUD.create(cloudConfig) : null;
+  var cloudButton = document.getElementById('cloud-btn'), saveButton = document.getElementById('save-btn'), migrateButton = document.getElementById('migrate-btn');
+  // Public pages select the isolated one-document adapter only when explicit
+  // public config is present. The private PREP_CLOUD route remains unchanged.
+  var publicCourse = !privateHost && C.meta && C.meta.id === 'course';
+  var publicMode = publicCourse && !!window.PREP_PUBLIC_PROGRESS_CONFIG && !!(window.PREP_PUBLIC_PROGRESS && window.PREP_PUBLIC_PROGRESS.create);
+  var progressApi = publicMode ? window.PREP_PUBLIC_PROGRESS : window.PREP_CLOUD;
+  var cloudConfig = publicMode ? window.PREP_PUBLIC_PROGRESS_CONFIG : window.PREP_CLOUD_CONFIG || null;
+  var cloudClient = progressApi && progressApi.create ? progressApi.create(cloudConfig) : null;
+  var publicLastSaveAt = 0, publicFirstDirtyAt = 0, publicLastRefreshAt = 0, publicRetryDelay = 1000, publicHydrationRetryDelay = 1000, publicHydrationRetryCount = 0, localPersistenceFailed = false, guestPersistenceFailed = false;
+  var PUBLIC_SYNC_OPT_IN_KEY = 'prep-public-sync-opt-in-v1';
+  function publicSyncOptedIn() { try { return localStorage.getItem(PUBLIC_SYNC_OPT_IN_KEY) === '1'; } catch (e) { return false; } }
+  function setPublicSyncOptIn(enabled) { try { if (enabled) localStorage.setItem(PUBLIC_SYNC_OPT_IN_KEY, '1'); else localStorage.removeItem(PUBLIC_SYNC_OPT_IN_KEY); } catch (e) {} }
   function T(id) {
     if (!state.topics[id]) state.topics[id] = { learn: {}, checks: {}, reads: {}, connect: { status: 'none', attempts: 0 }, acts: {}, said: false, updatedAt: null };
     var t = state.topics[id]; t.learn = t.learn || {}; t.checks = t.checks || {}; t.reads = t.reads || {}; t.acts = t.acts || {}; t.connect = t.connect || { status: 'none', attempts: 0 }; return t;
@@ -567,9 +595,29 @@ window.PREP_IO = (function () {
   var sample = null, saveTimer = {}, intervals = [];
   function flushCloudBatch() {
     if (!cloudClient || !cloudUid || !cloudBaselineState || !cloudDirty || window.navigator && window.navigator.onLine === false) return Promise.resolve();
-    var uid = cloudUid, generation = cloudGeneration, revision = cloudRevision;
-    var desired = window.PREP_CLOUD.projectProgress(state);
-    var diff = window.PREP_CLOUD.diff(window.PREP_CLOUD.flatten(cloudBaselineState), window.PREP_CLOUD.flatten(desired));
+    var uid = cloudUid, generation = cloudGeneration, revision = cloudRevision, desired;
+    try { desired = progressApi.projectProgress(state); } catch (error) {
+      if (publicMode) { cloudDirty = true; setSync('error', error && error.message ? error.message : 'Progress could not be prepared for sync.'); return Promise.reject(error); }
+      throw error;
+    }
+    if (publicMode) {
+      var publicDiff = progressApi.diff(progressApi.flatten(cloudBaselineState), progressApi.flatten(desired));
+      if (!Object.keys(publicDiff).length) {
+        if (revision === cloudRevision && uid === cloudUid && generation === cloudGeneration) { cloudDirty = false; publicFirstDirtyAt = 0; setSync(localPersistenceFailed ? 'error' : 'on', localPersistenceFailed ? 'Progress was not saved in this browser. Keep this page open and export a backup.' : null); }
+        return Promise.resolve();
+      }
+      return cloudClient.writeBatch(C.meta.id, cloudBaselineState, desired).then(function (remote) {
+        if (uid !== cloudUid || generation !== cloudGeneration) return;
+        // Preserve edits made while the transaction was in flight.
+        cloudBaselineState = progressApi.projectProgress(remote); var savedBaseline = saveState(baselineKey, cloudBaselineState);
+        state = progressApi.mergeProgress(desired, state, cloudBaselineState); var savedAccount = saveState(accountKey, state); localPersistenceFailed = guestPersistenceFailed || !(savedBaseline && savedAccount);
+        renderPreservingTextFocus();
+        publicLastSaveAt = Date.now(); publicFirstDirtyAt = 0; publicRetryDelay = 1000;
+        if (revision === cloudRevision) { cloudDirty = false; setSync(localPersistenceFailed ? 'error' : 'on', localPersistenceFailed ? 'Synced progress to your account, but browser-only data was not saved locally. Keep this page open and export a backup.' : null); }
+        else { cloudDirty = true; setSync('pending', 'newer progress is waiting to sync'); scheduleCloudSave(); }
+      }).catch(function (error) { if (uid === cloudUid && generation === cloudGeneration) { cloudDirty = true; var message = syncFailureMessage(error, 'Saved here; sync failed'); setSync('error', message); if (!/under 4 KiB|too large/.test(message)) schedulePublicRetry(); } throw error; });
+    }
+    var diff = progressApi.diff(progressApi.flatten(cloudBaselineState), progressApi.flatten(desired));
     var keys = Object.keys(diff), index = 0;
     function next() {
       if (index >= keys.length) {
@@ -582,9 +630,9 @@ window.PREP_IO = (function () {
       var key = keys[index++], change = diff[key];
       return (change.deleted ? cloudClient.remove(C.meta.id, change.parts) : cloudClient.write(C.meta.id, change.parts, change.value)).then(function () {
         if (uid !== cloudUid || generation !== cloudGeneration || !cloudBaselineState) return;
-        var leaves = window.PREP_CLOUD.flatten(cloudBaselineState);
+        var leaves = progressApi.flatten(cloudBaselineState);
         if (change.deleted) delete leaves[key]; else leaves[key] = { parts: change.parts, value: change.value };
-        cloudBaselineState = window.PREP_CLOUD.applyRecords({}, leaves); saveState(baselineKey, cloudBaselineState);
+        cloudBaselineState = progressApi.applyRecords({}, leaves); saveState(baselineKey, cloudBaselineState);
         return next();
       });
     }
@@ -594,26 +642,56 @@ window.PREP_IO = (function () {
     }
     return next().catch(function (error) { if (uid === cloudUid && generation === cloudGeneration) { cloudDirty = true; setSync('error'); } throw error; });
   }
-  var cloudDrain = window.PREP_CLOUD && window.PREP_CLOUD.createSerialDrain ? window.PREP_CLOUD.createSerialDrain(flushCloudBatch) : null;
+  var cloudDrain = progressApi && progressApi.createSerialDrain ? progressApi.createSerialDrain(flushCloudBatch) : null;
+  function syncFailureMessage(error, fallback) {
+    if (error && typeof error.message === 'string' && error.message) return error.message;
+    return localPersistenceFailed ? 'Progress was not saved in this browser. Keep this page open and export a backup.' : fallback;
+  }
+  function schedulePublicRetry() {
+    if (!publicMode || !cloudUid || !cloudDirty || window.navigator && window.navigator.onLine === false) return;
+    clearTimeout(saveTimer.__publicRetry);
+    var delay = publicRetryDelay; publicRetryDelay = Math.min(publicRetryDelay * 2, 60000);
+    saveTimer.__publicRetry = setTimeout(function () {
+      if (cloudUid && cloudDirty && cloudDrain) cloudDrain.request().catch(function () {});
+    }, delay);
+  }
   function scheduleCloudSave() {
-    if (!cloudClient || !cloudUid || !window.PREP_CLOUD) return;
+    if (!cloudClient || !cloudUid || !progressApi) return;
     cloudDirty = true;
-    if (!cloudBaselineState) { setSync('pending', 'saved here; checking cloud progress'); return; }
-    if (window.navigator && window.navigator.onLine === false) { setSync('pending', 'saved here; waiting for internet'); return; }
-    setSync('pending', 'saved here; waiting for cloud confirmation');
+    if (publicMode && !publicFirstDirtyAt) publicFirstDirtyAt = Date.now();
+    if (!cloudBaselineState) { setSync('pending', localPersistenceFailed ? 'Progress was not saved in this browser; checking cloud progress. Keep this page open and export a backup.' : 'saved here; checking cloud progress'); return; }
+    if (window.navigator && window.navigator.onLine === false) { setSync('pending', localPersistenceFailed ? 'Progress was not saved in this browser; waiting for internet. Keep this page open and export a backup.' : 'saved here; waiting for internet'); return; }
+    setSync('pending', localPersistenceFailed ? 'Not saved in this browser; syncing to your account. Keep this page open.' : 'saved here; waiting for cloud confirmation');
     clearTimeout(saveTimer.__cloud);
-    saveTimer.__cloud = setTimeout(function () { if (cloudDrain) cloudDrain.request().catch(function () { if (cloudUid) setSync('error'); }); }, 400);
+    var delay = publicMode ? Math.max(0, Math.max(publicFirstDirtyAt + 5000, publicLastSaveAt + 60000) - Date.now()) : 400;
+    saveTimer.__cloud = setTimeout(function () { if (cloudDrain) cloudDrain.request().catch(function (error) { if (cloudUid) setSync('error', syncFailureMessage(error, 'Saved here; sync failed')); }); }, delay);
   }
   function persist(tid) {
-    saveState(accountKey || LS_KEY, state);
+    var localSaved = saveState(accountKey || LS_KEY, state);
     cloudRevision++;
+    if (!localSaved) {
+      localPersistenceFailed = true;
+      if (cloudUid && !(window.navigator && window.navigator.onLine === false)) { cloudDirty = true; scheduleCloudSave(); setSync('pending', 'Not saved in this browser; syncing to your account. Keep this page open.'); }
+      else setSync('error', 'Progress was not saved in this browser. Keep this page open and export a backup.');
+      return false;
+    }
+    localPersistenceFailed = guestPersistenceFailed;
     if (cloudUid) cloudDirty = true;
     if (tid) { clearTimeout(saveTimer[tid]); saveTimer[tid] = setTimeout(scheduleCloudSave, 400); }
     else scheduleCloudSave();
+    return true;
   }
   var draftTimer = null;
   function persistDraft(tid) {
-    clearTimeout(draftTimer); saveState(accountKey || LS_KEY, state); cloudRevision++;
+    clearTimeout(draftTimer); var localSaved = saveState(accountKey || LS_KEY, state); cloudRevision++;
+    if (!localSaved) {
+      localPersistenceFailed = true;
+      if (cloudUid && !(window.navigator && window.navigator.onLine === false)) { cloudDirty = true; scheduleCloudSave(); setSync('pending', 'Draft was not saved in this browser; syncing to your account. Keep this page open.'); }
+      else setSync('error', 'Draft was not saved in this browser. Keep this page open and export a backup.');
+      return false;
+    }
+    localPersistenceFailed = guestPersistenceFailed;
+    if (cloudUid && publicMode) { cloudDirty = true; setSync('pending', 'draft saved here; syncing'); draftTimer = setTimeout(scheduleCloudSave, 600); return; }
     if (cloudUid) setSync(cloudDirty ? 'pending' : 'on', cloudDirty ? 'draft saved locally; progress sync pending' : 'draft saved in this browser');
     draftTimer = setTimeout(function () { persist(tid); }, 600);
   }
@@ -820,7 +898,7 @@ window.PREP_IO = (function () {
       if (READINGS[topic.id] && READINGS[topic.id].length) {
         var rd = el('div', 'reads'); var rh = el('div', 'rh'); rh.appendChild(txt('span', 'lbl', 'Where to read more')); rh.appendChild(txt('span', 'sub', 'Start with the ones marked PRIMER if the basics are rusty. Tick each one when you have read it.')); rd.appendChild(rh);
         var readings = READINGS[topic.id];
-        if (window.PREP_CLOUD && window.PREP_CLOUD.migrateIndexedReads(t.reads, readings)) persist(topic.id);
+        if (progressApi && progressApi.migrateIndexedReads && progressApi.migrateIndexedReads(t.reads, readings)) persist(topic.id);
         readings.forEach(function (r, ri) {
           var readKey = r.u; var done = !!t.reads[readKey]; var row = el('div', 'rd' + (done ? ' done' : ''));
           var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = done; cb.id = 'rd-' + topic.id + '-' + ri; cb.setAttribute('aria-label', 'Mark read: ' + r.l); cb.addEventListener('change', function () { t.reads[readKey] = cb.checked; persist(topic.id); row.classList.toggle('done', cb.checked); });
@@ -875,7 +953,7 @@ window.PREP_IO = (function () {
         }
         if (c.viz && window.VIZLIB && window.VIZLIB[c.viz]) { var cv = el('div', 'cviz'); cv.innerHTML = window.VIZLIB[c.viz]('v' + Math.random().toString(36).slice(2, 8)) + (window.VIZLIB_CAPTIONS && window.VIZLIB_CAPTIONS[c.viz] ? '<div class="cap">' + window.VIZLIB_CAPTIONS[c.viz] + '</div>' : ''); sec.appendChild(cv); }
         if (c.check) {
-          var mq = el('div', 'mcq'); mq.appendChild(txt('div', 'q', c.check.question)); var opts = el('div', 'opts'); var chosen = t.checks[c.id];
+          var mq = el('div', 'mcq'); mq.appendChild(txt('div', 'q', c.check.question)); var opts = el('div', 'opts'); var chosen = t.checks[c.id]; if (typeof chosen !== 'number' || !isFinite(chosen) || Math.floor(chosen) !== chosen || chosen < 0 || chosen >= c.check.options.length) chosen = null;
           c.check.options.forEach(function (o, oi) { var ob = txt('button', 'opt', o); ob.type = 'button'; if (chosen != null) { ob.disabled = true; if (oi === c.check.answer) ob.classList.add('right'); else if (oi === chosen) ob.classList.add('wrong'); } ob.addEventListener('click', function () { t.checks[c.id] = oi; if (oi === c.check.answer) t.learn[c.id] = true; persist(topic.id); rerenderChapter(topic); }); opts.appendChild(ob); });
           mq.appendChild(opts); if (chosen != null) mq.appendChild(txt('div', 'ex', (chosen === c.check.answer ? 'Correct. ' : 'Not quite. ') + c.check.explain)); sec.appendChild(mq);
         }
@@ -1034,6 +1112,7 @@ window.PREP_IO = (function () {
     reader.onload = async function () {
       var parsed;
       try { parsed = window.PREP_IO.parse(String(reader.result)); } catch (e) { alert(e && e.message ? e.message : 'Could not read that file.'); return; }
+      if (publicCourse && parsed.key !== LS_KEY) { alert('For privacy, the public course accepts only an exported backup from this public course. Private-pack progress and raw progress files cannot be imported here.'); return; }
       var origin = parsed.key && parsed.key !== LS_KEY ? 'This file came from a different page (' + parsed.key + '). ' : '';
       if (!confirm(origin + 'Replace all progress currently saved on this page? A backup will be downloaded first.')) return;
       try { if (!await exportProgress()) { alert('Backup was not saved, so progress was not replaced.'); return; } } catch (e) { alert('Backup failed, so progress was not replaced.'); return; }
@@ -1100,7 +1179,7 @@ window.PREP_IO = (function () {
       return Object.keys(topic.acts || {}).some(function (key) { var act = topic.acts[key] || {}; return !!((typeof act.lastAnswer === 'string' && act.lastAnswer.length) || act.attempts || act.last || act.lastScore != null); });
     });
   }
-  function accountStateKey(uid) { return window.PREP_CLOUD.cacheKey(C.meta.id, uid); }
+  function accountStateKey(uid) { return progressApi.cacheKey(C.meta.id, uid); }
   function accountBaseKey(uid) { return accountStateKey(uid) + '-baseline'; }
   function emptyState() { return { topics: {}, whoOpen: true }; }
   function renderPreservingTextFocus() {
@@ -1115,63 +1194,108 @@ window.PREP_IO = (function () {
     try { next.focus({ preventScroll: true }); } catch (e) { next.focus(); }
     if (start !== null) { try { next.setSelectionRange(start, end, direction); } catch (e) {} }
   }
-  function remoteState(records) { return window.PREP_CLOUD.applyRecords(emptyState(), records); }
+  function remoteState(records) { return publicMode ? records : progressApi.applyRecords(emptyState(), records); }
   function renderAccountState(records, cached, oldBase, initialRoute) {
-    var remote = window.PREP_CLOUD.projectProgress(remoteState(records));
-    var merged = window.PREP_CLOUD.mergeProgress(oldBase || remote, cached || remote, remote);
+    var remote = progressApi.projectProgress(remoteState(records));
+    var merged = progressApi.mergeProgress(oldBase || remote, cached || remote, remote);
     var pendingScroll = initialRoute && initialRoute.pendingScroll;
     if (initialRoute && initialRoute.view) merged.view = initialRoute.view;
-    cloudBaselineState = remote; saveState(baselineKey, remote); state = merged; saveState(accountKey, state); renderPreservingTextFocus();
+    // Rendering materializes UI-only defaults (for example `said: false`).
+    // Decide whether there is a real sync projection before that mutation.
+    var hasLocalDiff = !publicMode || Object.keys(progressApi.diff(progressApi.flatten(remote), progressApi.flatten(progressApi.projectProgress(merged)))).length;
+    cloudBaselineState = remote; var savedBaseline = saveState(baselineKey, remote); state = merged; var savedAccount = saveState(accountKey, state); localPersistenceFailed = guestPersistenceFailed || !(savedBaseline && savedAccount); renderPreservingTextFocus();
     if (pendingScroll) { var target = document.getElementById(pendingScroll); if (target) target.scrollIntoView({ block: 'start' }); }
-    scheduleCloudSave();
+    // Clean public hydration has no local diff. Do not make it dirty or start
+    // the five-second user-edit window until an actual local edit occurs.
+    if (hasLocalDiff) scheduleCloudSave();
+    else if (localPersistenceFailed) setSync('error', 'Progress was not saved in this browser. Keep this page open and export a backup.');
   }
   function beginAccount(context) {
     if (!context || !context.uid || cloudUid === context.uid) return;
     if (cloudUid) leaveAccount(false);
-    clearTimeout(draftTimer); guestState = cloneState(state); saveState(LS_KEY, guestState);
-    cloudUid = context.uid; cloudGeneration++; var generation = cloudGeneration;
+    clearTimeout(draftTimer); guestState = cloneState(state); guestPersistenceFailed = !saveState(LS_KEY, guestState); if (guestPersistenceFailed) localPersistenceFailed = true;
+    cloudUid = context.uid; cloudGeneration++; publicHydrationRetryCount = 0; publicHydrationRetryDelay = 1000; var generation = cloudGeneration;
     accountKey = accountStateKey(cloudUid); baselineKey = accountBaseKey(cloudUid);
-    var cached = readState(accountKey), oldBase = readState(baselineKey), initialRoute = privateInitialRoute; privateInitialRoute = null;
-    state = cached || emptyState(); if (initialRoute && initialRoute.view) state.view = initialRoute.view; saveState(accountKey, state); renderAll();
+    // A cache without its acknowledged baseline is an unconfirmed local copy.
+    // Treat it as an empty-base diff so a reconnect unions it with remote data
+    // instead of mistaking it for the remote snapshot and dropping its fields.
+    var cached = readState(accountKey), oldBase = readState(baselineKey), hydrationBase = oldBase || emptyState(), initialRoute = privateInitialRoute, hydrationRevision = cloudRevision; privateInitialRoute = null;
+    state = cached || emptyState(); if (initialRoute && initialRoute.view) state.view = initialRoute.view; localPersistenceFailed = guestPersistenceFailed || !saveState(accountKey, state); renderAll();
     setSync('pending', 'checking your saved progress');
     hydrateCloud = function () {
       if (cloudBaselineState) return Promise.resolve(true);
       if (hydrationPromise) return hydrationPromise;
       var attempt = cloudClient.read(C.meta.id).then(function (records) {
         if (!cloudUid || context.uid !== cloudUid || generation !== cloudGeneration || !cloudClient.getContext() || cloudClient.getContext().uid !== context.uid) throw transitionError('Account access changed while progress was loading.');
-        renderAccountState(records, cached, oldBase, initialRoute);
+        // A visitor can mark progress while the initial server read is running.
+        // Merge that current state rather than restoring the earlier cache.
+        renderAccountState(records, cloudRevision === hydrationRevision ? cached : state, hydrationBase, initialRoute);
         migrateButton.hidden = !hasProgress(guestState);
+        if (publicMode) { publicLastRefreshAt = Date.now(); return null; }
         return cloudClient.watch(C.meta.id, function (next, meta) {
           if (!cloudUid || context.uid !== cloudUid || generation !== cloudGeneration || meta.fromCache || meta.hasPendingWrites) return;
           renderAccountState(next, state, cloudBaselineState);
-        }, function () { if (cloudUid === context.uid) setSync('error'); }).then(function (unsub) { if (cloudUid === context.uid) cloudUnwatch = unsub; else unsub(); });
+        }, function () { if (cloudUid === context.uid) setSync('error'); }).then(function (unsub) { if (cloudUid === context.uid) cloudUnwatch = unsub; else if (unsub) unsub(); });
       });
       hydrationPromise = attempt;
-      attempt.catch(function () { if (hydrationPromise === attempt) hydrationPromise = null; if (cloudUid === context.uid) setSync('error'); });
+      attempt.catch(function (error) { if (hydrationPromise === attempt) hydrationPromise = null; if (cloudUid === context.uid) { setSync('error', error && error.message ? error.message : 'Could not load account progress.'); if (publicMode) { saveButton.hidden = false; retryPublicHydration(); } } });
       return attempt;
     };
     if (accountStartResolve) { accountStartResolve(true); accountStartResolve = null; }
-    hydrateCloud().then(function () { settlePrivateReady(); }, function (error) { settlePrivateReady(error); });
+    hydrateCloud().then(function () { if (publicMode) saveButton.hidden = false; settlePrivateReady(); }, function (error) { settlePrivateReady(error); });
   }
   function leaveAccount(clearCache, targetUid) {
-    cloudGeneration++; clearTimeout(saveTimer.__cloud);
+    var locallyRetained = true;
+    cloudGeneration++; clearTimeout(saveTimer.__cloud); clearTimeout(saveTimer.__publicHydration); publicHydrationRetryDelay = 1000; publicHydrationRetryCount = 0;
     if (cloudUnwatch) { try { cloudUnwatch(); } catch (e) {} cloudUnwatch = null; }
     if (cloudUid) {
-      saveState(accountKey, state);
-      if (clearCache === true && (!targetUid || targetUid === cloudUid)) { try { window.PREP_CLOUD.clearAccountCache(localStorage, C.meta.id, cloudUid); } catch (e) {} }
+      if (!saveState(accountKey, state)) { localPersistenceFailed = true; locallyRetained = false; }
+      if (clearCache === true && (!targetUid || targetUid === cloudUid)) { try { progressApi.clearAccountCache(localStorage, C.meta.id, cloudUid); } catch (e) {} }
       cloudUid = null; accountKey = null; baselineKey = null; cloudBaselineState = null; cloudDirty = false; hydrateCloud = null; hydrationPromise = null;
-      state = readState(LS_KEY) || cloneState(guestState); renderAll(); migrateButton.hidden = true; setSync('local');
+      state = guestPersistenceFailed ? cloneState(guestState) : readState(LS_KEY) || cloneState(guestState);
+      if (guestPersistenceFailed) guestPersistenceFailed = !saveState(LS_KEY, state);
+      localPersistenceFailed = !locallyRetained || guestPersistenceFailed;
+      renderAll(); migrateButton.hidden = true;
+      setSync(locallyRetained && !localPersistenceFailed ? 'local' : 'error', locallyRetained && !localPersistenceFailed ? null : 'Progress was not saved in this browser. Keep this page open and export a backup.');
     }
-    if (clearCache === true && targetUid && targetUid !== cloudUid) { try { window.PREP_CLOUD.clearAccountCache(localStorage, C.meta.id, targetUid); } catch (e) {} }
+    if (clearCache === true && targetUid && targetUid !== cloudUid) { try { progressApi.clearAccountCache(localStorage, C.meta.id, targetUid); } catch (e) {} }
+    return locallyRetained;
   }
-  function signOutCloud() {
+  function publicBackupAndSignOut(message) {
+    if (!confirm(message + ' Download a backup and sign out without cloud confirmation?')) return Promise.resolve(false);
+    var ticket = progressApi.accountTicket(cloudUid, cloudGeneration, accountKey), revision = cloudRevision;
+    return Promise.resolve(exportProgress()).then(function (saved) {
+      if (!saved || !progressApi.matchesAccountTicket(ticket, cloudUid, cloudGeneration, accountKey) || revision !== cloudRevision) return false;
+      signoutBackupReadyUid = ticket.uid;
+      return cloudClient.signOut().then(function () { return true; }).catch(function (error) { signoutBackupReadyUid = null; throw error; });
+    }).catch(function (error) { setSync('error', error && error.message ? error.message : 'Backup failed; you are still signed in.'); return false; });
+  }
+  function signOutCloud(publicFlushAttempted) {
     if (!cloudClient) return Promise.resolve(true);
+    if (publicMode && cloudDirty && cloudDrain) {
+      if (window.navigator && window.navigator.onLine === false) {
+        setSync('error', 'You are offline. Export a backup before signing out.');
+        return publicBackupAndSignOut(localPersistenceFailed ? 'Your public progress was not saved in this browser and cannot be confirmed online while offline.' : 'Your public progress cannot be confirmed online while offline.');
+      }
+      if (publicFlushAttempted) {
+        setSync('error', 'Progress was not confirmed. Export a backup before signing out.');
+        return publicBackupAndSignOut('Progress was not confirmed.');
+      }
+      setSync('pending', 'saving progress before sign-out');
+      return cloudDrain.request().then(function () {
+        if (cloudDirty) { setSync('error', 'Progress was not confirmed. Export a backup before signing out.'); return publicBackupAndSignOut('Progress was not confirmed.'); }
+        return signOutCloud(true);
+      }, function (error) {
+        setSync('error', error && error.message ? error.message : 'Progress was not saved. Export a backup before signing out.');
+        return publicBackupAndSignOut('Progress was not confirmed.');
+      });
+    }
     if ((cloudDirty || hasLocalOnlyData(state)) && !confirm('Unsynced progress or browser-only drafts/grading history are on this device. Download a backup before signing out? Cancel keeps you signed in.')) return Promise.resolve(false);
-    var ticket = window.PREP_CLOUD.accountTicket(cloudUid, cloudGeneration, accountKey), revision = cloudRevision;
+    var ticket = progressApi.accountTicket(cloudUid, cloudGeneration, accountKey), revision = cloudRevision;
     var backup = cloudDirty || hasLocalOnlyData(state) ? exportProgress() : Promise.resolve(true);
     return Promise.resolve(backup).then(function (saved) {
       if (!saved) return false;
-      if (!window.PREP_CLOUD.matchesAccountTicket(ticket, cloudUid, cloudGeneration, accountKey)) return false;
+      if (!progressApi.matchesAccountTicket(ticket, cloudUid, cloudGeneration, accountKey)) return false;
       if (revision !== cloudRevision) { alert('Progress changed while the backup was being saved. Save a fresh backup before signing out.'); return false; }
       signoutBackupReadyUid = ticket.uid;
       return cloudClient.signOut().then(function () { return true; }).catch(function (error) { signoutBackupReadyUid = null; throw error; });
@@ -1180,21 +1304,25 @@ window.PREP_IO = (function () {
   function migrateGuestProgress() {
     if (!cloudUid || !hasProgress(guestState)) return;
     if (!confirm('Replace this account’s progress with the progress saved in this browser? A backup of the current account progress will be downloaded first.')) return;
-    var ticket = window.PREP_CLOUD.accountTicket(cloudUid, cloudGeneration, accountKey), snapshot = cloneState(guestState), revision = cloudRevision;
+    var ticket = progressApi.accountTicket(cloudUid, cloudGeneration, accountKey), snapshot = cloneState(guestState), revision = cloudRevision;
     exportProgress().then(function (saved) {
-      if (!saved || !window.PREP_CLOUD.matchesAccountTicket(ticket, cloudUid, cloudGeneration, accountKey)) return;
+      if (!saved || !progressApi.matchesAccountTicket(ticket, cloudUid, cloudGeneration, accountKey)) return;
       if (cloudRevision !== revision) { alert('Progress changed while the backup was being saved. Retry the migration so the newest account state is backed up.'); return; }
-      state = snapshot; saveState(ticket.key, state); cloudRevision++; cloudDirty = true; renderAll(); scheduleCloudSave();
+      state = snapshot; var localSaved = saveState(ticket.key, state); guestPersistenceFailed = !localSaved; localPersistenceFailed = guestPersistenceFailed; cloudRevision++; cloudDirty = true; renderAll();
+      if (!localSaved) setSync('error', 'Progress was not saved in this browser. Keep this page open and export a backup.');
+      scheduleCloudSave();
       migrateButton.hidden = true;
     }).catch(function () { alert('The account backup failed, so progress was not replaced.'); });
   }
   function authChanged(event) {
     try { window.dispatchEvent(new CustomEvent('prep:cloud-auth', { detail: event })); } catch (e) {}
-    if (event.status === 'authorized') { cloudButton.textContent = 'Sign out'; beginAccount(event.context); return; }
+    if (event.status === 'authorized') { if (publicMode) { setPublicSyncOptIn(true); saveButton.hidden = true; } cloudButton.textContent = 'Sign out'; beginAccount(event.context); return; }
     if (event.status === 'signed_out' || event.status === 'disabled') {
+      if (publicMode) { setPublicSyncOptIn(false); saveButton.hidden = true; }
       cloudButton.textContent = 'Sign in to sync';
       var canClear = event.status === 'disabled' || (!cloudDirty && !hasLocalOnlyData(state)) || signoutBackupReadyUid === cloudUid;
-      leaveAccount(canClear, cloudUid); signoutBackupReadyUid = null; setSync('local');
+      var locallyRetained = leaveAccount(canClear, cloudUid); signoutBackupReadyUid = null;
+      setSync(locallyRetained && !localPersistenceFailed ? 'local' : 'error', locallyRetained && !localPersistenceFailed ? null : 'Progress was not saved in this browser. Keep this page open and export a backup.');
       if ((privateHost || C.meta && C.meta.id !== 'course') && (privateHost || event.status === 'signed_out')) window.PREP_SHELL.unmount(event.status === 'signed_out' ? 'signed_out' : 'disabled');
       return;
     }
@@ -1211,23 +1339,65 @@ window.PREP_IO = (function () {
       if (switching && (privateHost || C.meta && C.meta.id !== 'course')) window.PREP_SHELL.unmount('checking');
       return;
     }
-    if (event.status === 'error') { setSync('error', 'Saved here; account access or sync failed'); }
+    if (event.status === 'error') { setSync('error', localPersistenceFailed ? 'Progress was not saved in this browser; account access or sync failed. Keep this page open and export a backup.' : 'Saved here; account access or sync failed'); }
+  }
+  function refreshPublicProgress() {
+    if (!publicMode || !cloudUid || !cloudBaselineState || cloudDirty || cloudDrain && cloudDrain.isRunning() || Date.now() - publicLastRefreshAt < 60000 || window.navigator && window.navigator.onLine === false) return;
+    var uid = cloudUid, generation = cloudGeneration, revision = cloudRevision; publicLastRefreshAt = Date.now();
+    cloudClient.read(C.meta.id).then(function (remote) {
+      // A local edit or write began after this read. Do not let its stale
+      // snapshot overwrite the acknowledged baseline or current UI state.
+      if (uid !== cloudUid || generation !== cloudGeneration || revision !== cloudRevision || cloudDirty || cloudDrain && cloudDrain.isRunning()) return;
+      var nextBaseline = progressApi.projectProgress(remote);
+      state = progressApi.mergeProgress(cloudBaselineState, state, nextBaseline);
+      cloudBaselineState = nextBaseline; var savedBaseline = saveState(baselineKey, nextBaseline), savedAccount = saveState(accountKey, state); localPersistenceFailed = guestPersistenceFailed || !(savedBaseline && savedAccount); renderPreservingTextFocus();
+      if (cloudDirty) scheduleCloudSave(); else setSync(localPersistenceFailed ? 'error' : 'on', localPersistenceFailed ? 'Synced progress to your account, but browser-only data was not saved locally. Keep this page open and export a backup.' : null);
+    }).catch(function (error) { if (uid === cloudUid && generation === cloudGeneration) setSync('error', syncFailureMessage(error, 'Saved here; sync refresh failed')); });
+  }
+  function retryPublicHydration(resetBudget) {
+    if (!publicMode || !cloudUid || cloudBaselineState || !hydrateCloud || hydrationPromise || window.navigator && window.navigator.onLine === false) return;
+    if (resetBudget) { publicHydrationRetryCount = 0; publicHydrationRetryDelay = 1000; }
+    // A failed optional read may be permanent (rules/schema/account). Avoid
+    // idle polling: automatic retries stop after this small bounded budget.
+    if (publicHydrationRetryCount >= 3) return;
+    publicHydrationRetryCount++;
+    var uid = cloudUid, generation = cloudGeneration, delay = publicHydrationRetryDelay;
+    publicHydrationRetryDelay = Math.min(publicHydrationRetryDelay * 2, 60000);
+    clearTimeout(saveTimer.__publicHydration);
+    saveTimer.__publicHydration = setTimeout(function () {
+      if (uid !== cloudUid || generation !== cloudGeneration || cloudBaselineState || !hydrateCloud || hydrationPromise) return;
+      hydrateCloud().then(function () {
+        if (uid !== cloudUid || generation !== cloudGeneration || !cloudBaselineState) return;
+        publicHydrationRetryDelay = 1000; publicHydrationRetryCount = 0; saveButton.hidden = false;
+      }, function () {});
+    }, delay);
   }
   var hashHandler = function () { if (applyHash()) { renderAll(); if (state.pendingScroll) { var e = document.getElementById(state.pendingScroll); if (e) e.scrollIntoView({ block: 'start' }); state.pendingScroll = null; } else window.scrollTo({ top: 0 }); } };
-  var onlineHandler = function () { if (cloudUid) scheduleCloudSave(); };
-  var offlineHandler = function () { if (cloudUid) setSync('pending', 'saved here; waiting for internet'); };
+  function handleOnline() { if (!cloudUid) return; if (publicMode && !cloudBaselineState) { retryPublicHydration(true); return; } if (publicMode && !cloudDirty) { refreshPublicProgress(); return; } scheduleCloudSave(); if (!publicMode) refreshPublicProgress(); }
+  var onlineHandler = handleOnline;
+  var visibilityHandler = function () { if (document.visibilityState !== 'visible') return; if (publicMode && !cloudBaselineState) retryPublicHydration(true); else refreshPublicProgress(); };
+  function handleOffline() { if (cloudUid) setSync('pending', localPersistenceFailed ? 'Progress was not saved in this browser; waiting for internet. Keep this page open and export a backup.' : 'saved here; waiting for internet'); }
+  var offlineHandler = handleOffline;
+  function signOutFailure(error) { setSync('error', syncFailureMessage(error, 'Sign-out failed; progress is still saved here.')); }
   var cloudButtonClickHandler = function () {
     if (!cloudClient) return;
-    if (cloudClient.getUser()) signOutCloud();
-    else { setSync('pending', 'opening Google sign-in'); cloudClient.signIn().catch(function () { setSync('error', 'Sign-in failed; progress is still saved here'); }); }
+    if (cloudClient.getUser()) signOutCloud().catch(signOutFailure);
+    else { setSync('pending', 'opening Google sign-in'); cloudClient.signIn().catch(function (error) { var message = syncFailureMessage(error, 'Sign-in failed; progress is still saved here'); setSync(/ready\. Select Sign in to sync once more/.test(message) ? 'local' : 'error', message); }); }
   };
   cloudButton.addEventListener('click', cloudButtonClickHandler);
+  var saveButtonClickHandler = function () { if (!cloudUid) { setSync('local', 'Sign in before saving progress to your account.'); return; } if (!cloudBaselineState) { setSync('pending', 'Retrying your saved account progress.'); retryPublicHydration(true); return; } if (!cloudDirty) { setSync(localPersistenceFailed ? 'error' : 'on', localPersistenceFailed ? 'Browser-only data was not saved locally. Keep this page open and export a backup.' : null); return; } clearTimeout(saveTimer.__cloud); if (cloudDrain) { setSync('pending', 'saving progress now'); cloudDrain.request().catch(function (error) { if (cloudUid) setSync('error', syncFailureMessage(error, 'Saved here; sync failed')); }); } };
+  saveButton.addEventListener('click', saveButtonClickHandler);
   migrateButton.addEventListener('click', migrateGuestProgress);
   window.addEventListener('hashchange', hashHandler);
   window.addEventListener('online', onlineHandler);
   window.addEventListener('offline', offlineHandler);
+  document.addEventListener('visibilitychange', visibilityHandler);
   if (cloudClient && cloudClient.enabled) {
-    cloudButton.hidden = false; document.getElementById('sync-policy').hidden = false; cloudClient.onAuthState(authChanged);
+    cloudButton.hidden = false; saveButton.hidden = true;
+    var syncPolicy = document.getElementById('sync-policy'); syncPolicy.hidden = false;
+    if (publicMode) syncPolicy.textContent = 'Optional sync stores completion, checklist, quiz selections, and answer drafts up to 4 KiB each. Grading history stays in this browser. Use Save now before closing or signing out.';
+    cloudClient.onAuthState(authChanged);
+    if (publicMode && publicSyncOptedIn() && cloudClient.restore) cloudClient.restore().catch(function () { setSync('error', localPersistenceFailed ? 'Progress was not saved in this browser; account restore failed. Keep this page open and export a backup.' : 'Saved here; account restore failed. Select Sign in to retry.'); });
   } else setSync('local');
   function teardown(reason) {
     if (privateHost) {
@@ -1240,12 +1410,12 @@ window.PREP_IO = (function () {
     if (cloudUnwatch) { try { cloudUnwatch(); } catch (e) {} cloudUnwatch = null; }
     if (cloudClient) cloudClient.close();
     document.removeEventListener('click', anchorClickHandler); document.removeEventListener('keydown', escapeHandler);
-    window.removeEventListener('hashchange', hashHandler); window.removeEventListener('online', onlineHandler); window.removeEventListener('offline', offlineHandler);
-    cloudButton.removeEventListener('click', cloudButtonClickHandler); migrateButton.removeEventListener('click', migrateGuestProgress);
+    window.removeEventListener('hashchange', hashHandler); window.removeEventListener('online', onlineHandler); window.removeEventListener('offline', offlineHandler); document.removeEventListener('visibilitychange', visibilityHandler);
+    cloudButton.removeEventListener('click', cloudButtonClickHandler); saveButton.removeEventListener('click', saveButtonClickHandler); migrateButton.removeEventListener('click', migrateGuestProgress);
     exportButton.removeEventListener('click', exportProgress); importButton.removeEventListener('click', importButtonHandler);
     importInput.removeEventListener('change', importChangeHandler); menuBtn.removeEventListener('click', menuClickHandler);
     if (reason === 'signed_out' && cloudUid) {
-      if ((!cloudDirty && !hasLocalOnlyData(state)) || signoutBackupReadyUid === cloudUid) { try { window.PREP_CLOUD.clearAccountCache(localStorage, C.meta.id, cloudUid); } catch (e) {} }
+      if ((!cloudDirty && !hasLocalOnlyData(state)) || signoutBackupReadyUid === cloudUid) { try { progressApi.clearAccountCache(localStorage, C.meta.id, cloudUid); } catch (e) {} }
       else saveState(accountKey, state);
     }
     state = emptyState(); cloudUid = null; cloudBaselineState = null;

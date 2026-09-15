@@ -38,6 +38,10 @@ Readings for a chapter go in the public course pack, `packs/course/content.js`, 
 
 Read the helper signatures at the top of `engine/viz-lib.js` and copy the style of two or three existing diagrams before writing one. Constraints: ES5, `viewBox="0 0 760 H"` with H between 160 and 232 (use `S(H, body)`), colours only through CSS variables, every internal id prefixed with `u`, animation only through the shell's classes (`.v-flow .v-flow-slow .v-pulse .v-blink .v-move-x .v-grow .v-fade-seq .v-rotate`), no scripts or external resources. Add each new id to `engine/viz-catalog.md` under a heading for the track.
 
+### Narrow responsive-flow exception
+
+`rag-two-paths` is the one current exception to the fixed-viewBox rule. It returns a self-contained semantic HTML/CSS flow with ordered-list steps and decorative CSS arrows, because shrinking its two operational RAG paths into a 760px drawing would make the labels unreadable on a phone. Its style is scoped to the supplied `uid`, all meaning is present in headings and text, it uses only existing theme tokens, and it has no controls, scripts, external assets, network dependencies, or shell changes. New diagrams remain SVG by default; use this exception only when a fixed diagram cannot keep required labels readable at 14px or larger on a narrow viewport.
+
 ## Validate
 
 ```

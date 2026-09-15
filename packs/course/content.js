@@ -5,10 +5,10 @@
 window.PREP_CONTENT = {
   meta: {
     id: "course",
-    title: "Interview Prep Course",
-    eyebrow: "Machine learning and software engineering interviews",
-    heading: "The course",
-    footer: "Your progress stays in this browser. Use Export progress and Import progress to move it between devices."
+    title: "Machine learning engineering interview prep",
+    eyebrow: "Interview study",
+    heading: "ML engineering prep",
+    footer: "Your progress stays in this browser. Open Progress tools to export or import it between devices."
   },
 
   honesty: "Honesty rule: mark the answer on whether it is correct and well reasoned. If it claims specific production experience, treat that claim as unchecked rather than true.",
@@ -16,13 +16,13 @@ window.PREP_CONTENT = {
   interviewAt: null,
 
   groups: [
-    { id: "start", label: "Start here", sub: "what the course covers, and the order to work through it", ids: ["start-here"] },
+    { id: "start", label: "Start with the MLE path", sub: "choose a starting point, then use the supporting systems and coding material as you need it", ids: ["start-here"] },
     { id: "track1", label: "Track 1 \u00b7 System design", sub: "how networks work, requirements, APIs, databases, caching, distributed systems, storage, queues, search, counting, realtime, reliability, and ten worked cases", ids: ["system-design-fundamentals", "networking-basics", "requirements-and-capacity", "apis-and-communication", "sql-databases", "nosql-partitioning-ids", "caching", "distributed-coordination", "storage-engines", "queues-and-streams", "search-and-retrieval", "counting-and-sketches", "realtime-and-feeds", "sre-practices", "system-design-cases"] },
     { id: "track2", label: "Track 2 \u00b7 Production ML systems", sub: "how a model gets built and shipped, features, serving, reliability, the tools, and training on GPUs at scale", ids: ["ml-lifecycle-platform", "data-features", "serving-and-scale", "reliability-ops", "mlops-tooling", "training-at-scale"] },
     { id: "track3", label: "Track 3 \u00b7 LLMs in production", sub: "serving and cost, inference engineering, fine-tuning and alignment, retrieval and agents", ids: ["genai-platform", "llm-inference-engineering", "llm-fine-tuning-and-alignment", "rag-and-agents"] },
     { id: "track4", label: "Track 4 \u00b7 Maths and ML foundations", sub: "the maths, data and generalisation, classical models, evaluation, and deep learning", ids: ["ml-math-essentials", "data-and-generalization", "classical-models", "evaluation-and-selection", "deep-learning-essentials"] },
     { id: "track5", label: "Track 5 \u00b7 Decision systems", sub: "forecasting with uncertainty, optimisation, feedback loops that re-plan, and when to let a model learn the decision", ids: ["forecasting-uq", "or-tooling", "control-theory", "rl-judgment"] },
-    { id: "track6", label: "Track 6 \u00b7 Practice", sub: "scenario questions, coding drills, and about three hundred questions with the answers hidden", ids: ["scenario-questions", "coding-drills", "question-bank-system-design", "question-bank-mle", "question-bank-ml-foundations", "question-bank-llm", "question-bank-fundamentals"] }
+    { id: "track6", label: "Track 6 \u00b7 Practice", sub: "scenario questions, coding drills, and about three hundred questions with the answers hidden", ids: ["coding-drills", "scenario-questions", "question-bank-system-design", "question-bank-mle", "question-bank-ml-foundations", "question-bank-llm", "question-bank-fundamentals"] }
   ],
 
   useCore: [
@@ -90,11 +90,36 @@ window.PREP_CONTENT = {
       { l: "Argo CD documentation", u: "https://argo-cd.readthedocs.io/en/stable/", w: "What a GitOps reconciliation controller actually does, described by the tool that does it.", m: 15 }
     ],
     "data-features": [
-      { l: "PRIMER: Feast concepts - feature views", u: "https://docs.feast.dev/getting-started/concepts/feature-view", w: "The words an interviewer expects when they ask about feature stores: entity, feature view, online store and offline store.", m: 12 },
-      { l: "Feast: feature store concepts", u: "https://docs.feast.dev/getting-started/concepts", w: "Entity, feature view, online store, offline store and point-in-time join, in the open-source wording everyone borrows.", m: 18 },
-      { l: "Apache Beam: streaming pipeline basics", u: "https://beam.apache.org/documentation/basics/", w: "Event time against processing time, windows and watermarks, from the project that defined those terms.", m: 20 },
-      { l: "Apache Beam programming guide", u: "https://beam.apache.org/documentation/programming-guide/", w: "Read the windowing, watermark and triggering sections. They give you the exact words to use about late data.", m: 30 },
-      { l: "Google: Rules of Machine Learning", u: "https://developers.google.com/machine-learning/guides/rules-of-ml", w: "Read the rules about training-serving skew in particular. They are the shortest correct description of the problem.", m: 15 }
+      {
+        "l": "Google: Rules of Machine Learning, especially training-serving skew",
+        "u": "https://developers.google.com/machine-learning/guides/rules-of-ml",
+        "w": "Primary engineering guidance on feature logging, reuse of transformations, time-aware evaluation, and training-serving skew.",
+        "m": 20
+      },
+      {
+        "l": "Feast: Point-in-time joins",
+        "u": "https://docs.feast.dev/getting-started/concepts/point-in-time-joins",
+        "w": "Official open-source feature-store documentation on historical retrieval, event timestamps, created timestamps, and availability-aware filtering.",
+        "m": 12
+      },
+      {
+        "l": "Feast: Feature serving and model inference",
+        "u": "https://docs.feast.dev/getting-started/architecture/model-inference",
+        "w": "Official comparison of online inference with online features and precomputed predictions, including freshness and latency trade-offs.",
+        "m": 12
+      },
+      {
+        "l": "TensorFlow Data Validation guide",
+        "u": "https://www.tensorflow.org/tfx/guide/tfdv",
+        "w": "Official documentation on schema-based validation, missing values, anomalies, skew, and drift.",
+        "m": 15
+      },
+      {
+        "l": "NIST AI Risk Management Framework 1.0",
+        "u": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=936225",
+        "w": "Primary public guidance connecting data provenance, privacy, monitoring, and documented system requirements.",
+        "m": 20
+      }
     ],
     "serving-and-scale": [
       { l: "Horizontal Pod Autoscaling", u: "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/", w: "What the HPA measures, how the stabilisation window works, and why it cannot create new nodes.", m: 18 },
@@ -276,44 +301,44 @@ window.PREP_CONTENT = {
   topics: [
     {
       id: "start-here",
-      title: "Start here",
+      title: "Choose your MLE path",
       level: "good",
       levelLabel: "Five minutes, then pick a track",
-      why: `Forty-one chapters in six tracks, for machine learning and software engineering interviews. Every chapter defines its terms before it uses them, draws the diagrams, points you at the best pages and videos on the subject, and gives you exercises to answer.`,
+      why: `Learn to design, ship and operate ML systems, then explain the data, model and service trade-offs behind them.`,
       learn: [
         {
           id: "sh-1",
           part: "field",
-          title: "What this is",
+          title: "What to focus on",
           viz: null,
-          body: `<p>Forty-one chapters in six tracks, covering what machine learning and backend engineering interviews really draw on. It is written as a course, not a checklist: every chapter starts by defining the words it uses, and builds from there.</p>
-<p>None of this is about one person or one employer. The chapters teach the subject, and adding your own systems on top is up to you.</p>`,
-          deeper: `<p>The order means something: chapters, exercises and questions are listed most important first, so what you see first is what you are most likely to be asked. The coloured label on each chapter says the same thing in words - how often that subject comes up in interviews, not how hard it is and not how much you already know about it.</p>`
+          body: `<p>Start with production ML systems, ML foundations and the practice questions. Add LLM systems or decision systems when the role needs them. System design and coding are supporting material: use them to explain the services, data paths and trade-offs around a model in production.</p>
+<p>Each chapter teaches one subject. It defines the terms it uses, explains the mechanism, links to readings and gives you practice.</p>`,
+          deeper: `<p>The order inside each track is a recommended learning sequence based on prerequisites and course priorities. The coloured chapter labels show the course's recommended focus, not how hard a subject is or how much you already know.</p>`
         },
         {
           id: "sh-2",
           part: "field",
-          title: "The order to work through it",
+          title: "Choose a starting point",
           viz: null,
-          body: `<p>Take the tracks in order if you are starting from scratch. If you are preparing for a specific interview, start with the track it will test most. The hours are reading plus exercises.</p>
+          body: `<p>For a general MLE interview, begin with Tracks 2 and 4, then use Track 6 to find gaps. Add Track 3 for LLM roles and Track 5 for forecasting, optimisation or decision roles. Track 1 gives the system design you need to explain the production environment. The hours are reading plus exercises.</p>
 <ul>
 <li><b>Track 1 - System design</b> (about 32 hours, fifteen chapters). The fundamentals first, then how networks actually work, requirements and capacity, APIs and load balancing, relational and NoSQL databases, caching, distributed systems, storage engines, queues and streams, search, counting at scale, realtime delivery, reliability practices, and ten worked cases. Most interview processes ask these before the machine learning questions.</li>
 <li><b>Track 2 - Production ML systems</b> (about 14 hours, six chapters). How a model gets built and shipped, the feature and data layer, serving and autoscaling, keeping it up and correct, the tools you would use, and training on GPUs at scale.</li>
 <li><b>Track 3 - LLMs in production</b> (about 10 hours, four chapters). What it costs to serve a large language model, inference engineering from the KV cache to quantization, fine-tuning and alignment, and retrieval and agents.</li>
 <li><b>Track 4 - Maths and ML foundations</b> (about 12 hours, five chapters). The maths every interviewer expects, data and generalisation, classical models, evaluation and metrics, and deep learning essentials. Read this track first if the maths and the classical models feel rusty.</li>
 <li><b>Track 5 - Decision systems</b> (about 10 hours, four chapters). Forecasting with a range instead of a single number, optimisation under constraints, the feedback loop that joins the two, and when to learn a policy instead.</li>
-<li><b>Track 6 - Practice</b> (about 12 hours). Scenario questions, coding drills, and about three hundred questions with the answers hidden, to test yourself on rather than to read.</li>
+<li><b>Track 6 - Practice</b> (about 12 hours). Coding practice, scenario questions, and about three hundred questions with the answers hidden, to test yourself on rather than to read.</li>
 </ul>
-<p>Two shortcuts, if you do not have the time. If you have a week, read the Key terms section of every chapter in Tracks 1 and 2, then work through the question banks in Track 6 and let the questions you cannot answer decide what you read next. If you have two days, do Track 6 only, and read the chapter behind every question that went badly.</p>`,
-          deeper: `<p>The tracks are ordered by what depends on what, not by how hard they are. Track 5 is not harder than Track 4; it is separate, and it matters most for jobs built on forecasting, scheduling, routing, capacity or pricing. If the job you are preparing for has none of those, Track 5 is extra depth you can leave until last. The other way round, a job that is mostly decision systems can treat Track 3 as optional and should not skip Track 5. Tracks 1 and 2 are the two nobody should skip, whatever the role.</p>`
+<p>If you have a week, read the Key terms sections in Tracks 2 and 4, then work through the MLE and foundations question banks in Track 6. Let the questions you cannot answer choose the next chapter. If you have two days, do those question banks first and read the linked chapters behind the gaps.</p>`,
+          deeper: `<p>Tracks 3 and 5 are specialised depth, not harder versions of Track 4. Use Track 5 when the job involves forecasting, scheduling, routing, capacity or pricing. Use Track 3 when it involves LLM serving, retrieval, fine-tuning or agents.</p>`
         },
         {
           id: "sh-3",
           part: "field",
-          title: "Your progress",
+          title: "Keep your place",
           viz: null,
-          body: `<p>The public course has no account or cloud sync. Your answers, completion marks, checklist marks, quiz selections and grading history stay in this browser.</p>
-<p>Press Export progress in the header to save a backup, and Import progress to load it in another browser or on another device. Compare exercises with the strong answers and mark them practised; automatic AI grading is not included. Course content and progress are stored separately, so routine content updates preserve your completion marks.</p>`,
+          body: `<p>Your progress is saved in this browser. Use Progress tools in the header to export a backup or import one on another device. When sign-in sync is available, it can also keep your course progress between devices.</p>
+<p>Compare exercises with the strong answers and mark them practised. Course content and progress are stored separately, so routine course updates preserve your completion marks.</p>`,
           deeper: null,
           check: null
         }

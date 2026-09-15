@@ -1,25 +1,21 @@
-name: Build and deploy the public course
+name: Public pull request checks
 
 on:
-  push:
+  pull_request:
     branches: [main]
-  workflow_dispatch:
-    inputs:
-      baseline_sha:
-        description: Full committed public baseline SHA to compare with this run
-        required: true
-        type: string
 
+# Fork pull requests must be able to run every check without Firebase, Pages,
+# deployment credentials, or any other secret.
 permissions:
   contents: read
 
 concurrency:
-  group: pages
+  group: public-pr-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
   public-rules:
-    # Emulator only: no Firebase credentials, rules deployment, or data access.
+    name: Public Firestore rules checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -36,7 +32,8 @@ jobs:
       - name: Test public Firestore rules in the emulator
         run: npm run test:public-rules
 
-  build:
+  public-course:
+    name: Public course checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -50,53 +47,32 @@ jobs:
           node-version: "20"
       - name: Test public delivery boundary
         run: python -m unittest engine.test_public_build
+      - name: Test guest progress import and export
+        run: node engine/test_io.js
       - name: Test optional public progress adapter
         run: node engine/test_public_progress.js
       - name: Test public shell behavior
         run: node engine/test_public_shell_behavior.cjs
-      - name: Test guest backups and teaching order
+      - name: Test teaching order and responsive architecture
         run: |
-          node engine/test_io.js
           node engine/test_teaching_order.cjs
           node engine/test_rag_architecture.cjs
       - name: Test progress compatibility guard
         run: node engine/test_progress_compatibility.cjs
       - name: Verify saved-progress compatibility
         env:
-          BASE_SHA: ${{ github.event_name == 'push' && github.event.before || inputs.baseline_sha }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.sha }}
-        run: |
-          if [ "$GITHUB_EVENT_NAME" = "push" ] && [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
-            echo "No predecessor exists for this first push; tests and schema checks run, but continuity is not proven."
-          else
-            node engine/check_progress_compatibility.cjs "$BASE_SHA" "$HEAD_SHA"
-          fi
+        run: node engine/check_progress_compatibility.cjs "$BASE_SHA" "$HEAD_SHA"
       - name: Build and validate the guest public course
         run: |
           python engine/public_build.py --output-dir public-dist-guest
           node engine/check.js public-dist-guest/course.html
-      - name: Build the published public course
+      - name: Build and validate configured public course when reviewed config exists
         run: |
           if [ -f config/public-sync.json ]; then
             python engine/public_build.py --public-sync-config config/public-sync.json
+            node engine/check.js public-dist/course.html
           else
-            python engine/public_build.py
+            echo "No reviewed public sync configuration: guest build is the production shape."
           fi
-      - name: Validate the published public course page
-        run: node engine/check.js public-dist/course.html
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: public-dist
-
-  deploy:
-    needs: [build, public-rules]
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4

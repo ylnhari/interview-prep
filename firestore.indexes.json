@@ -1,0 +1,15 @@
+{
+  "indexes": [],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "progress",
+      "fieldPath": "payload",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "progress",
+      "fieldPath": "updatedAt",
+      "indexes": []
+    }
+  ]
+}

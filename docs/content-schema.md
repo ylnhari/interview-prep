@@ -159,12 +159,14 @@ displaying that saved field, but the stored field remains untouched. Do not sile
 progress. A future deliberate migration must preserve the existing export/import format and include an
 explicit backup and user confirmation before changing local progress.
 
-Public course pages have no account or cloud-sync feature. Progress, free-form answer drafts and grading
-history stay in the current browser. Visitors can move progress between devices only by exporting a
-backup and importing it in the other browser. The public build rejects cloud configuration and must not
-contain owner-sync settings or offer sign-in. Owner-only sync belongs to the separate private app.
-Content deployment must remain independent of progress data. Any hosting of private content is an
-optional, independent deployment, not a dependency of the public course.
+Public course pages must work as guests: progress stays in the current browser and visitors can use
+Export/Import for a portable backup. An optional, separate Firebase Spark project may offer Google
+sign-in and sync compact progress: completion, checks, quiz choices, exercise status and bounded answer
+drafts. It never stores course content, private packs, profile data or grading history. The public build
+accepts only the explicitly typed public web configuration and rejects owner `PREP_CLOUD` configuration.
+Content deployment remains independent of progress data: it must never migrate, reset, clear or delete
+progress. Any hosting of private content is an optional, independent deployment, not a dependency of the
+public course.
 
 ### Committed public compatibility check
 

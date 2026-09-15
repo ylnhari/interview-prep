@@ -14,7 +14,7 @@ maintainer; tool-specific entry files must only reference them.
 - `engine/serve.py` — loopback-only static server for `dist/` (see Local server below).
 - `engine/check.js` — schema validation for a built page or a content file (`node engine/check.js dist/<file>.html`).
 - `engine/roadmap.py` — builds every pack round and `dist/index.html`, the course home page: each pack as a card, its tracks as a vertical path of chapters and sections with deep links and progress; packs with a `kind: "prereqs"` chapter are listed after the course with a "Prerequisites: n of m" line. Change only `render_index`, its CSS and its script; standard library only.
-- `engine/public_build.py` — builds the explicitly allowlisted `packs/course` into `public-dist/`, with public-only roadmap, metadata, `robots.txt` and sitemap. It never scans local packs or reads from `dist/`, and it rejects cloud configuration. The public artifact has browser-local progress plus export/import only; owner sync belongs to the separate private app.
+- `engine/public_build.py` — builds the explicitly allowlisted `packs/course` into `public-dist/`, with public-only roadmap, metadata, `robots.txt` and sitemap. It never scans local packs or reads from `dist/`. A guest build has browser-local progress plus export/import. `--public-sync-config` accepts only the typed, public Firebase web configuration described in `docs/public-sync.md`; production uses the reviewed `config/public-sync.json` when present, rejects owner `PREP_CLOUD` configuration and all generic config channels, and fails malformed present config rather than silently disabling sync.
 - `engine/test_io.js` — unit test for the progress export/import functions in the shell (`node engine/test_io.js`). Progress lives in `localStorage` under `prep-state-<meta.id>-v1`; the header's Export/Import buttons move it between devices as a JSON file.
 - `core/library.js` plus `core/<track>.js` — shared GENERIC chapters (`window.PREP_CORE[<topicId>] = topic`; the build loads `library.js` first, then the rest in name order), field-level only: no candidate, employer or role-specific text; rubrics carry the placeholder `{{HONESTY}}` which the engine replaces with the pack's sentence. A pack lists the chapters it uses in `useCore`.
 - `packs/<pack>/<round>/content.js` — one round's content (`window.PREP_CONTENT = {...}`) with `honesty`, `useCore`, and optional `overlays.js` (`window.PREP_OVERLAYS = { topicId: { learn, activities, connect, sayQuestion, sayItOutLoud } }`) that splices candidate-specific material into core chapters at runtime. `notes*.md` hold the round's intel and sources. Only `packs/_template/` and `packs/course/` are tracked; every other pack is ignored and private.
@@ -35,7 +35,7 @@ maintainer; tool-specific entry files must only reference them.
 
 Bind `127.0.0.1` only. Resolve the port through the vendored resolver (`engine/portlib.py`): `--port` → `INTERVIEW_PREP_PORT` → workspace `ports.json` (walked up from the repository) → documented default `8781`. Never hunt for a free port. Run `python engine/serve.py` and open the printed URL; it lists `dist/`.
 
-The GitHub Pages site is open to any engineer and builds only the public course. It has no sign-in or cloud-sync feature. Progress, answer drafts and grading history stay in the current browser; visitors can move progress between devices with Export progress and Import progress. Owner-only sync belongs to the separate private app. Hosting private content is an optional, independent deployment and is not part of the public Pages build.
+The GitHub Pages site is open to any engineer and builds only the public course. Guest learning, browser-local progress and Export/Import always work. A separate Firebase Spark project can optionally provide Google sign-in and one compact per-user public-progress document; it never hosts course content or private packs. Sync is limited to completion, checks, quiz choices, exercise status and bounded answer drafts—not grading history. Static Pages deployment never migrates, deletes or writes that data. Hosting private content is an independent deployment and is not part of this public Pages build.
 
 ## Working alongside other tools
 
@@ -57,7 +57,7 @@ git status --short
 Scan changed tracked files for credentials and absolute user paths.
 
 Public Pages validation uses `python engine/public_build.py`, then validates `public-dist/course.html` with
-`node engine/check.js`. Upload only `public-dist/`; never upload `dist/` or all of `packs/`.
+`node engine/check.js`. Test the optional public adapter with `node engine/test_public_progress.js` when it is changed. Upload only `public-dist/`; never upload `dist/`, all of `packs/`, Firebase credentials, or a private configuration. A rules deployment is a separate reviewed operator action, never a Pages-release step.
 
 ## Living artifacts
 

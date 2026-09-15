@@ -6,6 +6,7 @@ const { assertProgressCompatible } = require("./progress-compatibility.cjs");
 
 const FULL_SHA = /^(?:[0-9a-f]{40}|[0-9a-f]{64})$/i;
 const COURSE_FILE = "packs/course/content.js";
+const REVISIONS_FILE = "content-revisions.json";
 const CORE_FILE = /^core\/[A-Za-z0-9][A-Za-z0-9._-]*\.js$/;
 const ID = /^[A-Za-z0-9_-]{1,150}$/;
 
@@ -52,6 +53,21 @@ function publicFiles(sha) {
 
 function sourceAt(sha, name) {
   return git(["show", sha + ":" + name], { maxBuffer: 16 * 1024 * 1024 });
+}
+
+function manifestAt(sha) {
+  const entries = git(["ls-tree", "-z", sha, "--", REVISIONS_FILE]).split("\0").filter(Boolean);
+  if (!entries.length) return undefined;
+  if (entries.length !== 1) throw new Error(sha + " has an ambiguous " + REVISIONS_FILE);
+  const match = /^(\d+) ([a-z]+) ([0-9a-f]+)\t(.+)$/.exec(entries[0]);
+  if (!match || match[4] !== REVISIONS_FILE || match[2] !== "blob" || !/^100(?:644|755)$/.test(match[1])) {
+    throw new Error(sha + " content revision manifest is not a regular blob");
+  }
+  try {
+    return JSON.parse(sourceAt(sha, REVISIONS_FILE));
+  } catch (error) {
+    throw new Error(sha + " content revision manifest is invalid JSON: " + error.message);
+  }
 }
 
 function snapshotAt(sha) {
@@ -109,7 +125,7 @@ function main(argv) {
   }
   const baselineSha = commit(argv[0], "BASE_SHA");
   const headSha = commit(argv[1], "HEAD_SHA");
-  assertProgressCompatible(snapshotAt(baselineSha), snapshotAt(headSha));
+  assertProgressCompatible(snapshotAt(baselineSha), snapshotAt(headSha), manifestAt(headSha));
   console.log("progress compatibility passed: " + baselineSha + " -> " + headSha);
   return 0;
 }
@@ -123,4 +139,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { snapshotAt };
+module.exports = { snapshotAt, manifestAt };

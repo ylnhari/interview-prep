@@ -1,9 +1,12 @@
 """Build the allowlisted public course into a clean, separate Pages directory.
 
 Usage: python engine/public_build.py [--output-dir public-dist] [--base-url https://.../]
+                                    [--public-sync-config public-sync.json]
 
-Public output is guest-only: browser-local progress plus export/import, with no
-cloud configuration. Owner sync belongs to the separate private app.
+The default artifact is fully functional for guests: progress stays in the
+browser and export/import remain available.  An explicitly supplied, typed
+Firebase *public web* configuration enables the separate public progress
+adapter.  This builder never accepts owner ``PREP_CLOUD`` configuration.
 """
 import argparse
 import html
@@ -18,7 +21,11 @@ import xml.etree.ElementTree as ET
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_BASE_URL = "https://ylnhari.github.io/interview-prep/"
 PUBLIC_FILES = {"index.html", "course.html", "robots.txt", "sitemap.xml"}
-DESCRIPTION = ("A free, open course for machine learning and software engineering interviews, "
+PUBLIC_PROGRESS_MARKER = "/*__PUBLIC_PROGRESS__*/"
+PUBLIC_PROGRESS_CONFIG_GLOBAL = "window.PREP_PUBLIC_PROGRESS_CONFIG"
+PUBLIC_FIREBASE_KEYS = {"apiKey", "authDomain", "projectId", "appId", "messagingSenderId"}
+REQUIRED_PUBLIC_FIREBASE_KEYS = {"apiKey", "authDomain", "projectId", "appId"}
+DESCRIPTION = ("A free, open course for machine learning engineering interviews, "
                "with technical chapters, worked examples, and practice questions.")
 
 
@@ -49,17 +56,101 @@ def add_metadata(page, *, title, canonical, description=DESCRIPTION):
     return page
 
 
+def ensure_html_document(page):
+    """Give the public course a standards-mode document envelope.
+
+    The reusable shell is intentionally a fragment so local/private consumers
+    can embed it.  Pages receives a complete document: the style and metadata
+    precede the header, while the rendered course begins at ``<header>``.
+    """
+    if re.match(r"^\ufeff?\s*<!doctype\s+html", page, flags=re.IGNORECASE):
+        return page
+    header = re.search(r"<header\b", page, flags=re.IGNORECASE)
+    if not header:
+        raise ValueError("generated public course has no document boundary")
+    head = page[:header.start()]
+    body = page[header.start():]
+    return "<!doctype html>\n<html lang=\"en\">\n<head>\n" + head + "\n</head>\n<body>\n" + body + "\n</body>\n</html>\n"
+
+
 def reject_cloud_config(page):
-    """Fail closed if public HTML defines cloud settings or exposes shared sync controls."""
+    """Fail closed if public HTML defines owner-only cloud configuration.
+
+    ``PREP_CLOUD_CONFIG`` belongs to the existing private implementation.  The
+    public course may contain the separately named public adapter and its
+    public-only controls, but must never receive the owner configuration.
+    """
     if re.search(r"\bwindow\.PREP_CLOUD_CONFIG\s*=", page):
-        raise ValueError("public output must not define cloud configuration")
-    for element_id in ("cloud-btn", "migrate-btn", "sync-policy"):
-        element = re.search(
-            r"<[^>]+\bid=[\"']" + re.escape(element_id) + r"[\"'][^>]*>",
-            page, flags=re.IGNORECASE)
-        if element and not re.search(r"\bhidden(?:\s|=|>)", element.group(0), flags=re.IGNORECASE):
-            raise ValueError("public output must not expose cloud-sync controls: " + element_id)
+        raise ValueError("public output must not define owner cloud configuration")
     return page
+
+
+def read_public_sync_config(path):
+    """Read the only configuration type accepted by the public build.
+
+    Firebase web settings identify a project in browser code; they are not a
+    service account or a deployment secret.  Keeping this exact, narrow shape
+    prevents a convenient build flag from becoming a generic config channel.
+    """
+    try:
+        import json
+        config = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise ValueError("public sync config must be readable JSON") from exc
+    if not isinstance(config, dict) or set(config) != {"purpose", "enabled", "firebase"}:
+        raise ValueError("public sync config must contain exactly purpose, enabled and firebase")
+    if config["purpose"] != "public-progress-v1":
+        raise ValueError("public sync config purpose must be public-progress-v1")
+    if config["enabled"] is not True:
+        raise ValueError("public sync config enabled must be true")
+    firebase = config["firebase"]
+    if not isinstance(firebase, dict) or not REQUIRED_PUBLIC_FIREBASE_KEYS <= set(firebase) or set(firebase) - PUBLIC_FIREBASE_KEYS:
+        raise ValueError("public sync config must contain only supported Firebase public web settings")
+    for key, value in firebase.items():
+        if not isinstance(value, str) or not value or len(value) > 512:
+            raise ValueError("public sync config Firebase values must be non-empty strings up to 512 characters")
+    return config
+
+
+def inline_public_progress(page, root, config):
+    """Replace the public-only shell marker and optionally inject its config."""
+    progress_path = Path(root) / "engine" / "public-progress.js"
+    if not progress_path.is_file():
+        raise FileNotFoundError("public progress adapter is missing")
+    if page.count(PUBLIC_PROGRESS_MARKER) != 1:
+        raise ValueError("generated public course must contain exactly one public progress marker")
+    progress_source = progress_path.read_text(encoding="utf-8")
+    page = page.replace(PUBLIC_PROGRESS_MARKER, progress_source, 1)
+    if config is not None:
+        import json
+        encoded = json.dumps(config, ensure_ascii=True, separators=(",", ":")).replace("<", "\\u003c")
+        head = re.search(r"<head\b[^>]*>", page, flags=re.IGNORECASE)
+        if not head:
+            raise ValueError("generated public course has no head for public sync config")
+        script = "\n<script>" + PUBLIC_PROGRESS_CONFIG_GLOBAL + "=" + encoded + ";</script>"
+        page = page[:head.end()] + script + page[head.end():]
+    try:
+        page.encode("ascii")
+    except UnicodeEncodeError as exc:
+        raise ValueError("public progress adapter must be ASCII-safe for the self-contained build") from exc
+    return page
+
+
+def strip_owner_progress(page, root):
+    """Remove the private adapter that ``build.py`` normally inlines.
+
+    The generic builder also serves private packs and intentionally retains its
+    owner adapter.  Public delivery cannot carry that adapter, even inertly:
+    keeping it would make a typed public configuration build contain two
+    progress implementations and the private listener-capable code.
+    """
+    owner_path = Path(root) / "engine" / "cloud-progress.js"
+    if not owner_path.is_file():
+        raise FileNotFoundError("owner progress adapter is missing")
+    owner_script = "<script>\n" + owner_path.read_text(encoding="utf-8") + "\n</script>"
+    if page.count(owner_script) != 1:
+        raise ValueError("generated public course must contain exactly one owner progress adapter")
+    return page.replace(owner_script, "", 1)
 
 
 def output_names(directory):
@@ -108,10 +199,13 @@ def make_sitemap(base_url):
     return ET.tostring(urlset, encoding="unicode", xml_declaration=True) + "\n"
 
 
-def build_public(root=ROOT, output_dir=None, base_url=DEFAULT_BASE_URL, cloud_config_path=None):
+def build_public(root=ROOT, output_dir=None, base_url=DEFAULT_BASE_URL, cloud_config_path=None,
+                 public_sync_config_path=None):
     if cloud_config_path is not None:
-        raise ValueError("public builds do not accept cloud configuration; owner sync belongs in the private app")
+        raise ValueError("public builds do not accept owner cloud configuration")
     root = Path(root).resolve()
+    public_sync_config = (read_public_sync_config(public_sync_config_path)
+                          if public_sync_config_path is not None else None)
     output_dir = Path(output_dir or root / "public-dist")
     reject_reparse_path(output_dir)
     output_dir = output_dir.resolve()
@@ -132,10 +226,13 @@ def build_public(root=ROOT, output_dir=None, base_url=DEFAULT_BASE_URL, cloud_co
         "--out", str(course_path),
     ])
     course_html = course_path.read_text(encoding="utf-8")
-    title = "Interview preparation course"
+    course_html = ensure_html_document(course_html)
+    course_html = strip_owner_progress(course_html, root)
+    course_html = inline_public_progress(course_html, root, public_sync_config)
+    title = "Machine learning engineering interview preparation course"
     course_html = add_metadata(
         course_html, title=title, canonical=base_url + "course.html",
-        description="Read the free course for machine learning and software engineering interviews, with technical chapters and practice questions.")
+        description="Read the free course for machine learning engineering interviews, with technical chapters and practice questions.")
     course_html = reject_cloud_config(course_html)
     course_path.write_text(course_html, encoding="utf-8")
 
@@ -147,8 +244,8 @@ def build_public(root=ROOT, output_dir=None, base_url=DEFAULT_BASE_URL, cloud_co
     roadmap_entry = roadmap.public_course_entry(root=str(root), page="course.html")
     index_html = roadmap.render_index([roadmap_entry])
     index_html = add_metadata(
-        index_html, title="Interview preparation course | Roadmap", canonical=base_url,
-        description="Follow the free interview preparation course roadmap, with chapters, sections and browser-saved progress.")
+        index_html, title="Machine learning engineering interview preparation | Roadmap", canonical=base_url,
+        description="Follow the free machine learning engineering interview course roadmap, with chapters, sections and browser-saved progress.")
     index_html = reject_cloud_config(index_html)
     (output_dir / "index.html").write_text(index_html, encoding="utf-8")
     (output_dir / "robots.txt").write_text(
@@ -165,8 +262,11 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", default=str(ROOT / "public-dist"))
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL)
+    parser.add_argument("--public-sync-config",
+                        help="JSON containing only typed public Firebase web settings")
     args = parser.parse_args(argv)
-    return build_public(output_dir=args.output_dir, base_url=args.base_url)
+    return build_public(output_dir=args.output_dir, base_url=args.base_url,
+                        public_sync_config_path=args.public_sync_config)
 
 
 if __name__ == "__main__":

@@ -643,7 +643,7 @@
   V['latency-budget-bar'] = function (u) {
     var b = D(u, 'ar ad'), i, x = 60;
     b += HD('latency budget', 'p99 must fit inside');
-    var segs = [['gateway', 70, 'var(--surface-3)'], ['features', 150, 'var(--accent-weak)'], ['model', 210, 'var(--accent)'], ['post-process~+ policy', 90, 'var(--surface-3)']];
+    var segs = [['gateway', 70, 'var(--surface-3)'], ['features', 150, 'var(--accent-weak)'], ['model', 210, 'var(--accent)'], ['response', 90, 'var(--surface-3)']];
     for (i = 0; i < segs.length; i++) {
       b += R(x, 60, segs[i][1], 40, { f: segs[i][2], sk: 'var(--border)' });
       b += T(x + segs[i][1] / 2, 84, segs[i][0], { s: 10, c: i === 2 ? 'var(--accent-ink)' : 'var(--ink)' });
@@ -656,7 +656,7 @@
     b += T(700, 126, '250 ms budget', { a: 'end', s: 10, c: 'var(--ink-dim)' });
     b += LN(580, 44, 580, 116, { c: 'var(--danger)', w: 2 });
     b += T(580, 38, 'p99 today', { s: 10, c: 'var(--danger)' });
-    b += T(380, 158, 'every hop spends the same budget; the model is only one slice of it', { s: 10, c: 'var(--ink-dim)' });
+    b += T(380, 158, 'All stages share one time budget.', { s: 10, c: 'var(--ink-dim)' });
     return S(172, b);
   };
 
@@ -1413,7 +1413,7 @@
     'label-latency': 'When labels arrive weeks after the event, today cannot be scored yet; use <b>leading proxies</b> while the real labels mature.',
     'data-contract-validation': 'A data contract states schema and quality expectations. Valid rows proceed; invalid rows are <b>rejected or quarantined</b>, the producer is notified, and repair or replay follows an explicit policy rather than an automatic bounce.',
     'gitops-loop': 'In GitOps, the repository contains declarative, versioned desired state and a controller continuously <b>reconciles</b> the cluster to it. Git records desired-state changes; preserve approval metadata and controller/deployment audit events separately.',
-    'latency-budget-bar': 'A latency budget is spent by every hop; the model is one slice, and the <b>headroom</b> is what absorbs a bad day.',
+    'latency-budget-bar': 'Each stage uses part of the response-time budget. Leave <b>spare time</b> for delays.',
     'load-balancer-replicas': 'A failed readiness check removes a replica from <b>new load-balancer selections</b>. Gracefully draining existing connections and in-flight requests is a separate shutdown behavior.',
     'autoscaling-queue': 'Queue depth can be a better autoscaling signal than central processing unit (CPU) use for queued work, but the right signal depends on what predicts saturation for that workload.',
     'request-batching': 'Batching many small requests into one forward pass raises utilisation, paying the <b>batching window</b> in latency.',
