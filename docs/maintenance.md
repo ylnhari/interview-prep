@@ -31,8 +31,9 @@ entry point; no workflow depends on that tool, a conversation or native memory.
    paths. Push normally; never force-push to bypass the checks.
 6. Confirm the Pages run succeeded and inspect the actual public page. A green
    build alone does not prove that the page is live or correct.
-7. When maintaining the owner's paired dashboards, follow the downstream handoff
-   below before reporting the combined task complete.
+7. When the owner's private companion is explicitly in scope, link the downstream
+   handoff below and report its work separately; a public release is not blocked
+   on refreshing an archived private clone.
 
 ```sh
 python engine/public_build.py
@@ -74,9 +75,11 @@ The project plans for roughly 1,000 registered users, not a guaranteed daily-act
 
 The public course is independent of any private companion. External
 contributors need only this repository. When the owner's private app is also
-in the approved task scope, record the reviewed public commit and follow that
-private repository's maintenance runbook for its content and renderer update.
-Do not copy private content or configuration into this repository or Actions.
+in the approved task scope, record the reviewed public commit and link that
+private repository's handoff. Do not copy the course into the private app as a
+routine step or automatically vendor its renderer; any private renderer update
+is an independently reviewed and tested change. Do not copy private content or
+configuration into this repository or Actions.
 
 Keep the private app on its known-good revision until its own compatibility,
 authentication, rendering, and progress checks pass. Moving a private general
@@ -84,7 +87,8 @@ course to the public app requires working public sign-in, a backed-up progress
 transfer without overwriting an existing target, and readback verification.
 Keep the old course and source progress as recovery data. Do not redirect users
 to an unverified destination or assume a public renderer is a compatible private
-replacement. Report public publication and private synchronization separately.
+replacement. Report public publication and any private recovery or renderer work
+separately.
 
 ## Recovery
 
