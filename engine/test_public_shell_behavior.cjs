@@ -44,6 +44,13 @@ async function testDraftOnlySave() {
   assert.strictEqual(context.scheduled, 1, 'draft debounce schedules a public save');
 }
 
+async function testExternalUrlsRejectActiveSchemes() {
+  const safe = runFunction('safeExternalUrl', { window: { location: { href: 'https://example.test/course.html' } } });
+  assert.strictEqual(safe('javascript:alert(1)'), null, 'active javascript URLs are rejected');
+  assert.strictEqual(safe('data:text/html,alert(1)'), null, 'data URLs are rejected');
+  assert.match(safe('https://docs.example.test/guide'), /^https:\/\/docs\.example\.test\/guide$/);
+}
+
 async function testOfflineSignoutIsBounded() {
   const messages = [];
   const context = {
@@ -362,5 +369,5 @@ async function testColdPopupRequiresSecondDirectGesture() {
   client.close();
 }
 
-Promise.all([testDraftOnlySave(), testOfflineSignoutIsBounded(), testStaleRefreshCannotRollbackEdit(), testTransactionRerendersCurrentState(), testInitialHydrationKeepsEditMadeDuringRead(), testHydrationWithoutBaselineKeepsCachedProgress(), testGuestWriteFailureSurvivesAccountCacheWrites(), testCleanHydrationShowsGuestDurabilityWarning(), testHydrationFailureRecoversAndKeepsEdit(), testPermanentHydrationFailureStopsIdleRetries(), testCleanHydrationStartsSaveWindowAtFirstEdit(), testCleanHydrationNeverClaimsSyncedOverPendingWrite(), testRetryBackoffNeedsDirtySignedInState(), testCleanOnlineEventRefreshesWithoutWrite(), testCleanRefreshAppliesRemoteState(), testPrivateImportCannotReachPublicPersistence(), testStorageFailureNeverClaimsSaved(), testFailedCloudWriteKeepsStorageWarning(), testUndefinedCloudFailureKeepsStorageWarning(), testAccountActionFailureNeverClaimsFailedStorageIsDurable(), testMigrationStorageFailureStaysVisible(), testOnlineMissingBaselineSignoutIsBounded(), testRecoveredBaselineAllowsSignoutFlush(), testColdPopupRequiresSecondDirectGesture()])
+Promise.all([testDraftOnlySave(), testExternalUrlsRejectActiveSchemes(), testOfflineSignoutIsBounded(), testStaleRefreshCannotRollbackEdit(), testTransactionRerendersCurrentState(), testInitialHydrationKeepsEditMadeDuringRead(), testHydrationWithoutBaselineKeepsCachedProgress(), testGuestWriteFailureSurvivesAccountCacheWrites(), testCleanHydrationShowsGuestDurabilityWarning(), testHydrationFailureRecoversAndKeepsEdit(), testPermanentHydrationFailureStopsIdleRetries(), testCleanHydrationStartsSaveWindowAtFirstEdit(), testCleanHydrationNeverClaimsSyncedOverPendingWrite(), testRetryBackoffNeedsDirtySignedInState(), testCleanOnlineEventRefreshesWithoutWrite(), testCleanRefreshAppliesRemoteState(), testPrivateImportCannotReachPublicPersistence(), testStorageFailureNeverClaimsSaved(), testFailedCloudWriteKeepsStorageWarning(), testUndefinedCloudFailureKeepsStorageWarning(), testAccountActionFailureNeverClaimsFailedStorageIsDurable(), testMigrationStorageFailureStaysVisible(), testOnlineMissingBaselineSignoutIsBounded(), testRecoveredBaselineAllowsSignoutFlush(), testColdPopupRequiresSecondDirectGesture()])
   .then(() => console.log('test_public_shell_behavior: OK'), error => { console.error(error); process.exitCode = 1; });
