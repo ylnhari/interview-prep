@@ -2253,6 +2253,36 @@ window.PREP_CORE = {
     'The other three are arguments for a smaller model, schema-constrained output with validation, or retrieval - all still machine learning.');
 }(window.PREP_CORE));
 
+// Final coding-round precision pass: keep the representative exercises exact
+// without changing their stable IDs or saved-answer mappings.
+;(function (core) {
+  'use strict';
+  var topic = core['coding-drills'];
+  var find = function (items, id) {
+    for (var i = 0; i < items.length; i++) if (items[i].id === id) return items[i];
+    throw new Error('Missing coding item: ' + id);
+  };
+  var cdrA1 = find(topic.activities, 'cdr-a1');
+  cdrA1.model = cdrA1.model.replace(
+    'At-least-once delivery plus this key gives effectively-once processing within the horizon.',
+    'At-least-once delivery plus a durable idempotency record committed atomically with the effect gives effectively-once processing within the chosen horizon; a memory-only key check is not enough.');
+  var cdrF3 = find(topic.learn, 'cdr-f3');
+  cdrF3.deeper = cdrF3.deeper.replace(
+    'an approximate count for hot keys',
+    'an approximate top-k summary designed for scored items, with its error bound stated');
+  cdrF3.deeper = cdrF3.deeper.replace(
+    'That last one is what most production systems actually do, and naming it counts for a lot.',
+    'A heavy-hitter sketch such as count-min is not a drop-in replacement for arbitrary per-key ranking; any approximation must state which items or scores may be missed.');
+  var cdrA2 = find(topic.activities, 'cdr-a2');
+  cdrA2.rubric = cdrA2.rubric.replace(
+    'Bonus: notes that approximate top-k structures exist when even local state is too large, and names the exactness cost;',
+    'Bonus: notes that approximate top-k summaries for scored items exist when even local state is too large, states an error bound, and does not confuse them with a heavy-hitter sketch;');
+  var cdrA4 = find(topic.activities, 'cdr-a4');
+  cdrA4.model = cdrA4.model.replace(
+    '<p>The trap here is the whole point of the question: the boundary. CURRENT ROW includes the event itself, so the count must exclude it - here by subtracting one, which is only correct if no other row shares the exact timestamp. If ties are possible, the safer form is an inequality self-join with a strict comparison on time, which makes the exclusion explicit rather than arithmetic.</p>',
+    '<p>The trap here is the whole point of the question: the boundary. CURRENT ROW includes the event itself, so the count must exclude it - here by subtracting one, which is only correct if no other row shares the exact timestamp. If ties are possible, use an explicit strict inequality instead:</p><ul><li><code>SELECT e.customer_id, e.event_id, e.event_ts, COUNT(p.event_id) AS prior_1h</code></li><li><code>FROM events e LEFT JOIN events p</code></li><li><code>  ON p.customer_id = e.customer_id</code></li><li><code> AND p.event_ts &gt; e.event_ts - INTERVAL \'1\' HOUR</code></li><li><code> AND p.event_ts &lt; e.event_ts</code></li><li><code>GROUP BY e.customer_id, e.event_id, e.event_ts;</code></li></ul><p>The strict upper bound excludes the current event and every same-timestamp peer; if the product needs a deterministic order among ties, define a separate event sequence and use that contract consistently.</p>');
+}(window.PREP_CORE));
+
 /* Independent public-core correctness pass. These replacements deliberately
    preserve every stable topic, section, activity and quiz-answer index. */
 ;(function (core) {

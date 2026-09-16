@@ -76,7 +76,7 @@ Column key: **id** — what the picture shows (and what moves) — concepts it f
 
 - `canary-rollout` — traffic steps of 1%, 5%, 25%, 100% appearing in sequence with a metrics gate at each step. Fits: canary releases, progressive delivery, release gates, safe deploys.
 - `blue-green-swap` — a router pointing at green (n+1) while blue (n) stays warm and idle. Fits: blue-green deployment, instant rollback, cutover strategy, zero-downtime releases.
-- `shadow-traffic` — requests mirrored to a shadow model whose output is only logged, with the user path untouched. Fits: shadow deployment, offline-to-online validation, pre-launch model evaluation, zero blast radius.
+- `shadow-traffic` — requests mirrored to a shadow model whose output is only logged, with the user path untouched. Fits: shadow deployment, offline-to-online validation, pre-launch model evaluation, and a lower-risk user path; it still consumes capacity and can expose request data, so it is not literally zero blast radius.
 - `drift-monitor` — two distributions pulling apart with a shift arrow, a drift score against an alert threshold, and a retrain trigger. Fits: data drift, PSI/KL monitoring, retraining policy, model decay.
 - `rollback-path` — four versions with a bad release, and the traffic pointer moving back one step. Fits: rollback, release management, forward-compatible migrations, incident response.
 - `two-dashboards` — an all-green system health panel beside a decision-quality panel lighting up amber and red. Fits: metrics that matter, business vs system monitoring, ML observability, "green dashboards, bad outcomes".
