@@ -583,7 +583,7 @@ window.PREP_IO = (function () {
   var progressApi = publicMode ? window.PREP_PUBLIC_PROGRESS : window.PREP_CLOUD;
   var cloudConfig = publicMode ? window.PREP_PUBLIC_PROGRESS_CONFIG : window.PREP_CLOUD_CONFIG || null;
   var cloudClient = progressApi && progressApi.create ? progressApi.create(cloudConfig) : null;
-  var publicLastSaveAt = 0, publicFirstDirtyAt = 0, publicLastRefreshAt = 0, publicRetryDelay = 1000, publicHydrationRetryDelay = 1000, publicHydrationRetryCount = 0, localPersistenceFailed = false, guestPersistenceFailed = false;
+  var publicLastSaveAt = 0, publicFirstDirtyAt = 0, publicLastRefreshAt = 0, publicRetryDelay = 1000, publicHydrationRetryDelay = 1000, publicHydrationRetryCount = 0, publicNavigationRevision = 0, localPersistenceFailed = false, guestPersistenceFailed = false;
   var PUBLIC_SYNC_OPT_IN_KEY = 'prep-public-sync-opt-in-v1';
   function publicSyncOptedIn() { try { return localStorage.getItem(PUBLIC_SYNC_OPT_IN_KEY) === '1'; } catch (e) { return false; } }
   function setPublicSyncOptIn(enabled) { try { if (enabled) localStorage.setItem(PUBLIC_SYNC_OPT_IN_KEY, '1'); else localStorage.removeItem(PUBLIC_SYNC_OPT_IN_KEY); } catch (e) {} }
@@ -783,7 +783,18 @@ window.PREP_IO = (function () {
 
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
   function txt(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; e.textContent = text; return e; }
-  function extLink(link) { var a = txt('a', 'ext', (link && link.label) || 'Open in the course'); a.href = link.url; a.target = '_blank'; a.rel = 'noopener'; return a; }
+  function safeExternalUrl(value) {
+    try {
+      var parsed = new URL(String(value || ''), window.location.href);
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? parsed.href : null;
+    } catch (e) { return null; }
+  }
+  function extLink(link) {
+    var href = safeExternalUrl(link && link.url);
+    var a = txt('a', 'ext', (link && link.label) || 'Open in the course');
+    if (!href) { a.removeAttribute('href'); a.setAttribute('aria-disabled', 'true'); a.classList.add('invalid'); return a; }
+    a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; return a;
+  }
 
   // ---------- rail: course outline ----------
   var PART_SHORT = { field: 'The basics', experience: 'Your experience', role: 'In this role' };
@@ -864,7 +875,7 @@ window.PREP_IO = (function () {
     [['Background', w.background], ['Questions they are likely to ask', w.probes], ['Where your experience matches', w.overlap], ['Do not say this', w.avoid]].forEach(function (sec) {
       if (!sec[1] || !sec[1].length) return; var c = el('div'); c.appendChild(txt('h4', null, sec[0])); var ul = el('ul'); sec[1].forEach(function (li) { ul.appendChild(el('li', null, li)); }); c.appendChild(ul); wb.appendChild(c);
     });
-    if (w.sources && w.sources.length) { var sc = el('div', 'src'); sc.appendChild(document.createTextNode('Sources ' + DOT + ' ')); w.sources.forEach(function (sr) { var a = txt('a', null, sr.label); a.href = sr.url; a.target = '_blank'; a.rel = 'noopener'; sc.appendChild(a); }); wb.appendChild(sc); }
+    if (w.sources && w.sources.length) { var sc = el('div', 'src'); sc.appendChild(document.createTextNode('Sources ' + DOT + ' ')); w.sources.forEach(function (sr) { var href = safeExternalUrl(sr.url); if (!href) return; var a = txt('a', null, sr.label); a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; sc.appendChild(a); }); wb.appendChild(sc); }
     d.appendChild(wb); return d;
   }
 
@@ -900,9 +911,9 @@ window.PREP_IO = (function () {
         var readings = READINGS[topic.id];
         if (progressApi && progressApi.migrateIndexedReads && progressApi.migrateIndexedReads(t.reads, readings)) persist(topic.id);
         readings.forEach(function (r, ri) {
-          var readKey = r.u; var done = !!t.reads[readKey]; var row = el('div', 'rd' + (done ? ' done' : ''));
+          var readHref = safeExternalUrl(r.u); if (!readHref) return; var readKey = r.u; var done = !!t.reads[readKey]; var row = el('div', 'rd' + (done ? ' done' : ''));
           var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = done; cb.id = 'rd-' + topic.id + '-' + ri; cb.setAttribute('aria-label', 'Mark read: ' + r.l); cb.addEventListener('change', function () { t.reads[readKey] = cb.checked; persist(topic.id); row.classList.toggle('done', cb.checked); });
-          row.appendChild(cb); var a = txt('a', null, r.l); a.href = r.u; a.target = '_blank'; a.rel = 'noopener'; row.appendChild(a); row.appendChild(txt('span', 'mn', r.m ? '~' + r.m + ' min' : '')); if (r.w) row.appendChild(txt('div', 'w', r.w)); rd.appendChild(row);
+          row.appendChild(cb); var a = txt('a', null, r.l); a.href = readHref; a.target = '_blank'; a.rel = 'noopener noreferrer'; row.appendChild(a); row.appendChild(txt('span', 'mn', r.m ? '~' + r.m + ' min' : '')); if (r.w) row.appendChild(txt('div', 'w', r.w)); rd.appendChild(row);
         });
         body.appendChild(rd);
       }
@@ -1220,7 +1231,11 @@ window.PREP_IO = (function () {
     // A cache without its acknowledged baseline is an unconfirmed local copy.
     // Treat it as an empty-base diff so a reconnect unions it with remote data
     // instead of mistaking it for the remote snapshot and dropping its fields.
-    var cached = readState(accountKey), oldBase = readState(baselineKey), hydrationBase = oldBase || emptyState(), initialRoute = privateInitialRoute, hydrationRevision = cloudRevision; privateInitialRoute = null;
+    var cached = readState(accountKey), oldBase = readState(baselineKey), hydrationBase = oldBase || emptyState();
+    // Public navigation is deliberately UI-local, never part of the synced
+    // projection. Preserve the valid current route across account hydration.
+    var initialRoute = publicMode && state && state.view ? { view: state.view, pendingScroll: state.pendingScroll } : privateInitialRoute;
+    var hydrationRevision = cloudRevision, hydrationNavigationRevision = typeof publicNavigationRevision === 'number' ? publicNavigationRevision : 0; privateInitialRoute = null;
     state = cached || emptyState(); if (initialRoute && initialRoute.view) state.view = initialRoute.view; localPersistenceFailed = guestPersistenceFailed || !saveState(accountKey, state); renderAll();
     setSync('pending', 'checking your saved progress');
     hydrateCloud = function () {
@@ -1230,7 +1245,9 @@ window.PREP_IO = (function () {
         if (!cloudUid || context.uid !== cloudUid || generation !== cloudGeneration || !cloudClient.getContext() || cloudClient.getContext().uid !== context.uid) throw transitionError('Account access changed while progress was loading.');
         // A visitor can mark progress while the initial server read is running.
         // Merge that current state rather than restoring the earlier cache.
-        renderAccountState(records, cloudRevision === hydrationRevision ? cached : state, hydrationBase, initialRoute);
+        var route = initialRoute;
+        if (publicMode && (typeof publicNavigationRevision === 'number' ? publicNavigationRevision : 0) !== hydrationNavigationRevision && state && state.view) route = { view: state.view, pendingScroll: state.pendingScroll };
+        renderAccountState(records, cloudRevision === hydrationRevision ? cached : state, hydrationBase, route);
         migrateButton.hidden = !hasProgress(guestState);
         if (publicMode) { publicLastRefreshAt = Date.now(); return null; }
         return cloudClient.watch(C.meta.id, function (next, meta) {
@@ -1373,7 +1390,7 @@ window.PREP_IO = (function () {
       }, function () {});
     }, delay);
   }
-  var hashHandler = function () { if (applyHash()) { renderAll(); if (state.pendingScroll) { var e = document.getElementById(state.pendingScroll); if (e) e.scrollIntoView({ block: 'start' }); state.pendingScroll = null; } else window.scrollTo({ top: 0 }); } };
+  var hashHandler = function () { if (applyHash()) { if (publicMode) publicNavigationRevision++; renderAll(); if (state.pendingScroll) { var e = document.getElementById(state.pendingScroll); if (e) e.scrollIntoView({ block: 'start' }); state.pendingScroll = null; } else window.scrollTo({ top: 0 }); } };
   function handleOnline() { if (!cloudUid) return; if (publicMode && !cloudBaselineState) { retryPublicHydration(true); return; } if (publicMode && !cloudDirty) { refreshPublicProgress(); return; } scheduleCloudSave(); if (!publicMode) refreshPublicProgress(); }
   var onlineHandler = handleOnline;
   var visibilityHandler = function () { if (document.visibilityState !== 'visible') return; if (publicMode && !cloudBaselineState) retryPublicHydration(true); else refreshPublicProgress(); };
