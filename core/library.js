@@ -2267,10 +2267,10 @@ window.PREP_CORE = {
     'At-least-once delivery plus this key gives effectively-once processing within the horizon.',
     'At-least-once delivery plus a durable idempotency record committed atomically with the effect gives effectively-once processing within the chosen horizon; a memory-only key check is not enough.');
   var cdrF3 = find(topic.learn, 'cdr-f3');
-  cdrF3.deeper = cdrF3.deeper.replace(
+  cdrF3.body = cdrF3.body.replace(
     'an approximate count for hot keys',
     'an approximate top-k summary designed for scored items, with its error bound stated');
-  cdrF3.deeper = cdrF3.deeper.replace(
+  cdrF3.body = cdrF3.body.replace(
     'That last one is what most production systems actually do, and naming it counts for a lot.',
     'A heavy-hitter sketch such as count-min is not a drop-in replacement for arbitrary per-key ranking; any approximation must state which items or scores may be missed.');
   var cdrA2 = find(topic.activities, 'cdr-a2');
