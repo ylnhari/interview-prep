@@ -552,22 +552,22 @@ window.PREP_CORE = {
     }
    },
    {
-    "id": "ss-v2-tail-latency",
+    "id": "ss-v3-request-stages",
     "part": "field",
-    "title": "Decomposing the latency budget",
+    "title": "Request stages and time budget",
     "viz": "latency-budget-bar",
-    "body": "<p>Start with the total response-time target, then decide how much time each stage can use. A prediction request usually includes these stages.</p><ul><li><b>Receive and check the request.</b> The gateway checks identity, permissions, and the input format.</li><li><b>Read features.</b> Fetch the model inputs from storage. Several reads may run at the same time.</li><li><b>Prepare the inputs.</b> Apply any transformations that need information from this request.</li><li><b>Run the model.</b> Measure the time needed for the actual model and hardware; do not assume this is always the slowest stage.</li><li><b>Prepare and return the result.</b> Apply required checks, format the response, and send it back.</li></ul><p>Leave some time unused as a buffer for waiting, network delays, and unusually slow calls. Give each dependency a timeout that leaves enough time to finish the rest of the request. Move work into the background only when the result does not depend on it and the product's reliability requirements allow that. For example, a required audit record may need reliable storage before the response is sent.</p><p>State what happens when a timeout occurs. An illustrative rule is: “Stop waiting for features after 30 milliseconds, use a separately tested model that needs only request inputs, and record that the fallback was used.” The time limit and fallback must fit this system; they are not universal defaults. Never pass missing inputs to a model that was not tested for them.</p>",
-    "deeper": "<p><b>Several parallel calls can still delay one request.</b> Suppose a request needs five feature reads, each with p99 latency of 20 milliseconds. The request waits for the slowest read, not the sum of all five. Different reads can be slow on different requests. From the five p99 values, no more than about 5 in 100 requests would have a read slower than 20 milliseconds, assuming the measurements represent this workload.</p><p>If the reads slow down independently—one being slow does not make another more or less likely to be slow—that limit becomes about 4.9 in 100. This is an upper limit, not a promise that 4.9% of requests will be slow. These figures still do not tell you the whole request's p99. Measure the complete request under realistic load rather than adding or dividing the individual p99 values.</p><p>To reduce delays, combine related reads when practical and stop waiting for optional inputs when the time budget runs out. Sending a second copy of a slow read can sometimes help, but it adds load and can make an overloaded system worse. Use that approach only for safe-to-repeat operations and test the added load.</p>",
+    "body": "<p>Start with the response-time target, then map the path a prediction request takes. The usual stages are:</p><ul><li><b>Receive and check the request.</b> Validate identity, permissions, and input format.</li><li><b>Read features.</b> Fetch the model inputs from the serving store.</li><li><b>Prepare the inputs.</b> Apply request-time transformations that the model needs.</li><li><b>Run the model.</b> Measure the real model and hardware path instead of assuming it is the slowest step.</li><li><b>Check and return the result.</b> Apply policy, format the response, and send it back.</li></ul><p>Give every stage a budget and keep a buffer for waiting and unusually slow work. Each dependency needs a timeout and a defined fallback. Work that is not needed for the answer, such as a log write, can run after the response when the product allows it.</p><p>When a dependency times out, use only a fallback that was tested for the missing input and label the result as degraded. The timeout and fallback are design choices for the workload; they are not universal numbers.</p>",
+    "deeper": "<p>Several calls can run in parallel, but one slow required call can still delay the whole request. Percentiles from individual dependencies do not tell you the percentile of the complete request. Measure the end-to-end path under realistic load.</p><p>Reduce the risk by combining related reads, making non-essential reads optional, and setting deadlines that leave time for the remaining stages. A duplicate read can help only when the operation is safe to repeat and the added load is capped and measured.</p>",
     "check": {
-     "question": "A request makes five dependency calls in parallel. Each call has p99 latency of 20 ms. What can you conclude from those numbers alone?",
+     "question": "A model request reads several dependencies in parallel. What can you conclude from each dependency's latency percentile alone?",
      "options": [
-      "The request p99 is 100 ms, because the five latencies add",
-      "The request p99 is 20 ms, because parallel calls do not affect the tail",
-      "These numbers are not enough to determine the whole request's p99",
-      "The request p99 is 5 ms, because parallel work divides the latency"
+      "The whole request is always as slow as the sum of all dependency calls",
+      "Parallel calls cannot affect the slow tail of the whole request",
+      "The individual percentiles are not enough to determine the whole request's tail; measure it end to end",
+      "Parallel calls make dependency latency irrelevant"
      ],
      "answer": 2,
-     "explain": "The request waits for its slowest call. Different calls can be slow on different requests, so measure the complete request under realistic load."
+     "explain": "The request waits for its slowest required call, and dependencies can interact under load. Measure the complete path instead of adding, averaging, or dividing individual percentiles."
     }
    },
    {
