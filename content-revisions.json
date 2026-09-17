@@ -116,7 +116,18 @@
       "sha256": "dd7b17bff5fb5dd312118239e2716091628bae4b112b6b01aedcb2c874421a81",
       "reason": "User-requested plain-English rewrite of the latency explanation and quiz. Preserve old saved answers under the retired ID; do not apply them to revised quiz options.",
       "replacements": [
-        "ss-v2-tail-latency"
+        "ss-v3-request-stages"
+      ]
+    },
+    {
+      "pack": "course",
+      "topic": "serving-and-scale",
+      "role": "learn",
+      "id": "ss-v2-tail-latency",
+      "sha256": "5c874c2384866bb8735e54432179add6a92213a76eb1f282a46b45ed0df9156e",
+      "reason": "User-requested removal of the worked latency arithmetic and its specialised example. Preserve historical saved state under the retired ID and replace it with a shorter qualitative explanation of request stages, timeouts and end-to-end measurement.",
+      "replacements": [
+        "ss-v3-request-stages"
       ]
     },
     {
