@@ -51,6 +51,24 @@ async function testExternalUrlsRejectActiveSchemes() {
   assert.match(safe('https://docs.example.test/guide'), /^https:\/\/docs\.example\.test\/guide$/);
 }
 
+async function testMobileRailNavigationRestoresFocus() {
+  const calls = [];
+  const context = {
+    state: {},
+    document: { body: { classList: { contains(name) { return name === 'menu-open'; } } } },
+    persist() { calls.push('persist'); },
+    closeMenu() { calls.push('close'); },
+    renderAll() { calls.push('render'); },
+    setHash() { calls.push('hash'); },
+    window: { scrollTo() { calls.push('scroll'); } },
+    menuBtn: { focus(options) { calls.push(['focus', options]); } }
+  };
+  runFunction('go', context)('next-topic');
+  assert.deepStrictEqual(calls, [
+    'persist', 'close', 'render', 'hash', 'scroll', ['focus', { preventScroll: true }]
+  ], 'mobile navigation returns focus to the stable Contents button after replacing the rail');
+}
+
 async function testOfflineSignoutIsBounded() {
   const messages = [];
   const context = {
@@ -369,5 +387,5 @@ async function testColdPopupRequiresSecondDirectGesture() {
   client.close();
 }
 
-Promise.all([testDraftOnlySave(), testExternalUrlsRejectActiveSchemes(), testOfflineSignoutIsBounded(), testStaleRefreshCannotRollbackEdit(), testTransactionRerendersCurrentState(), testInitialHydrationKeepsEditMadeDuringRead(), testHydrationWithoutBaselineKeepsCachedProgress(), testGuestWriteFailureSurvivesAccountCacheWrites(), testCleanHydrationShowsGuestDurabilityWarning(), testHydrationFailureRecoversAndKeepsEdit(), testPermanentHydrationFailureStopsIdleRetries(), testCleanHydrationStartsSaveWindowAtFirstEdit(), testCleanHydrationNeverClaimsSyncedOverPendingWrite(), testRetryBackoffNeedsDirtySignedInState(), testCleanOnlineEventRefreshesWithoutWrite(), testCleanRefreshAppliesRemoteState(), testPrivateImportCannotReachPublicPersistence(), testStorageFailureNeverClaimsSaved(), testFailedCloudWriteKeepsStorageWarning(), testUndefinedCloudFailureKeepsStorageWarning(), testAccountActionFailureNeverClaimsFailedStorageIsDurable(), testMigrationStorageFailureStaysVisible(), testOnlineMissingBaselineSignoutIsBounded(), testRecoveredBaselineAllowsSignoutFlush(), testColdPopupRequiresSecondDirectGesture()])
+Promise.all([testDraftOnlySave(), testExternalUrlsRejectActiveSchemes(), testMobileRailNavigationRestoresFocus(), testOfflineSignoutIsBounded(), testStaleRefreshCannotRollbackEdit(), testTransactionRerendersCurrentState(), testInitialHydrationKeepsEditMadeDuringRead(), testHydrationWithoutBaselineKeepsCachedProgress(), testGuestWriteFailureSurvivesAccountCacheWrites(), testCleanHydrationShowsGuestDurabilityWarning(), testHydrationFailureRecoversAndKeepsEdit(), testPermanentHydrationFailureStopsIdleRetries(), testCleanHydrationStartsSaveWindowAtFirstEdit(), testCleanHydrationNeverClaimsSyncedOverPendingWrite(), testRetryBackoffNeedsDirtySignedInState(), testCleanOnlineEventRefreshesWithoutWrite(), testCleanRefreshAppliesRemoteState(), testPrivateImportCannotReachPublicPersistence(), testStorageFailureNeverClaimsSaved(), testFailedCloudWriteKeepsStorageWarning(), testUndefinedCloudFailureKeepsStorageWarning(), testAccountActionFailureNeverClaimsFailedStorageIsDurable(), testMigrationStorageFailureStaysVisible(), testOnlineMissingBaselineSignoutIsBounded(), testRecoveredBaselineAllowsSignoutFlush(), testColdPopupRequiresSecondDirectGesture()])
   .then(() => console.log('test_public_shell_behavior: OK'), error => { console.error(error); process.exitCode = 1; });
