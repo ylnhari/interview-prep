@@ -361,6 +361,11 @@
 <li><b>Slicing</b> -- evaluating a model separately on meaningful subgroups instead of only on the whole dataset at once. An overall accuracy of 92% can hide 60% accuracy on new users.</li>
 <li><b>A/B test, guardrail metric, interleaving</b> -- randomly splitting users between two versions to measure a causal difference; a secondary metric you watch to catch an unintended regression; mixing two systems' results into one list to compare them with far fewer users.</li>
 <li><b>Statistical power, effect size, sample size</b> -- the chance a test detects a real effect if one exists; how large that real effect actually is; how many observations are needed to detect it reliably.</li>
+<li><b>Peeking</b> -- checking a fixed-sample test repeatedly and stopping at the first significant result, which pushes the false-positive rate well above the stated level.</li>
+<li><b>Sequential test</b> -- a test designed for repeated looks, such as alpha spending or always-valid p-values, so stopping early does not inflate false positives.</li>
+<li><b>CUPED (controlled-experiment using pre-experiment data)</b> -- a variance-reduction method that adjusts each unit's outcome using its own value of the same metric from before the test.</li>
+<li><b>Interference</b> -- one unit's treatment changing another unit's outcome. It breaks the standard test's assumption, SUTVA (the stable unit treatment value assumption). <i>Treated and control customers competing for the same pool of agents.</i></li>
+<li><b>Switchback test, cluster randomisation</b> -- randomising the whole system between variants by time block; randomising groups, such as regions, that share nothing with each other.</li>
 </ul>`,
         deeper: `<p>Many common mistakes in this chapter come down to one of two things: comparing a metric to the wrong baseline (an ROC-AUC of 0.9 that still means an unusable number of false alarms), or letting information flow backward in time or across a split boundary that should have blocked it (leakage). Checking for both, every time, is worth more than knowing every formula by heart.</p>`,
         check: {
@@ -567,7 +572,37 @@
           answer: 1,
           explain: 'An offline ranking metric is computed against fixed historical labels and cannot capture how users actually respond to a genuinely different ranking, including feedback loops and behaviour change, which is exactly the offline-online gap online testing exists to catch.'
         }
-      }
+      },
+        {
+          id: 'es-f10',
+          part: 'field',
+          title: 'When an A/B test misleads: peeking, variance reduction and interference',
+          body: `<p>The A/B test and its sample-size formula in <a href="#evaluation-and-selection/es-f9">Offline versus online evaluation</a> assume the sample is fixed in advance and that units do not affect each other. Three things break that in practice.</p>
+<h4>1. Peeking</h4>
+<p>A fixed-sample test checked daily and stopped at the first p &lt; 0.05 has a false-positive rate far above 5%: about 19% with ten equally spaced looks. Either fix the sample in advance and look once, or use a sequential test built for repeated looks.</p>
+<h4>2. Variance reduction: CUPED</h4>
+<p>Use a pre-experiment measure X of the same unit as a covariate: Y<sub>adj</sub> = Y − θ(X − X̄), with θ = cov(X, Y) / var(X). The treatment effect is unchanged, because X was measured before assignment, but the variance falls by the factor (1 − ρ²), where ρ is the correlation between X and Y. With ρ = 0.6 it falls to 64%, so the same power needs about a third fewer units.</p>
+<h4>3. Interference</h4>
+<p>In a marketplace or a routing system, customers share one pool of workers. A routing policy that sends treated customers to the best agents takes those agents away from control customers, so treatment looks better and control worse than either would alone, and the measured lift is inflated. Designs that respect it:</p>
+<ul>
+<li><b>Switchback:</b> alternate the whole system between variants by time block, say 30-minute blocks per region, in random order, and discard a washout period after each switch so one variant's backlog does not count against the next.</li>
+<li><b>Cluster randomisation:</b> by region or skill pool, where the pools share no workers. Fewer units, so wider intervals.</li>
+<li><b>A simulator first:</b> compare policies on replayed demand, then confirm live with a switchback. A simulator is only as good as its arrival and handle-time models, so validate it against held-out real days.</li>
+</ul>
+<p>Whatever the design, report the effect with its interval, not a p-value alone.</p>`,
+          deeper: null,
+          check: {
+            question: 'A new routing policy is A/B tested by customer. Treated customers get faster agents and the lift looks large. What is the main problem?',
+            options: [
+              'The sample is too small',
+              'Interference: treatment takes the best agents from control, so control gets worse and the lift is inflated',
+              'The test should use a one-sided p-value',
+              'Nothing: randomising by customer is always correct'
+            ],
+            answer: 1,
+            explain: 'Customers share one pool of agents, so treatment and control are not independent and SUTVA fails. Randomise the whole system by time block (switchback) or by clusters that share no agents.'
+          }
+        }
     ],
     connect: null,
     activities: [
