@@ -841,9 +841,11 @@ window.PREP_IO = (function () {
   function setHash(h) { try { if (window.history && history.replaceState) history.replaceState(null, '', '#' + h); } catch (e) {} }
   function closeMenu() { document.body.classList.remove('menu-open'); document.getElementById('menu-btn').setAttribute('aria-expanded', 'false'); }
   function go(view, secId) {
+    var restoreMenuFocus = document.body.classList.contains('menu-open');
     state.view = view; persist(); closeMenu(); renderAll(); setHash(secId ? view + '/' + secId : view);
-    if (secId) { var s = document.getElementById('sec-' + secId); if (s) { s.scrollIntoView({ block: 'start' }); return; } }
+    if (secId) { var s = document.getElementById('sec-' + secId); if (s) { s.scrollIntoView({ block: 'start' }); if (restoreMenuFocus) menuBtn.focus({ preventScroll: true }); return; } }
     window.scrollTo({ top: 0 });
+    if (restoreMenuFocus) menuBtn.focus({ preventScroll: true });
   }
 
   // ---------- book: one view at a time ----------
