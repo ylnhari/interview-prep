@@ -8,7 +8,7 @@
     title: 'Question bank: system design',
     level: 'warning',
     levelLabel: 'Answers are hidden - try first',
-    why: `Fifty-four questions on system design, in the order interviewers actually ask them: estimation and the basics first, then APIs and databases, then the harder distributed-systems and reliability material that separates a senior answer from a staff one. The answers are hidden on purpose - try each question yourself before reading it, so you find out what you do not know rather than reading past it. This bank covers general system design only; the two older banks in this course cover decision systems (forecasting, optimisation, control) and production ML platform work, and the other two new banks cover machine learning foundations and language model engineering.`,
+    why: "Practice fifty-four system design questions in an editorial order from requirements and APIs to storage, coordination and reliability. Attempt an explanation before opening feedback, link it to a canonical lesson and defend one changed constraint.",
     learn: [
       {
         id: 'qbsd-1',
@@ -221,7 +221,7 @@
     title: 'Question bank: machine learning foundations',
     level: 'warning',
     levelLabel: 'Answers are hidden - try first',
-    why: `Fifty-two questions covering the maths, the classical models, and the deep learning and transformer mechanics that machine learning interviews return to again and again, ordered from the most universally asked to the more specialised. The answers are hidden so you have to try first. This bank stops at the modelling and maths; running a model in production is covered by the production ML engineering bank, and language models specifically by the LLM bank.`,
+    why: "Practice fifty-two questions on mathematical reasoning, classical models and deep-learning mechanisms. Attempt the calculation or explanation before feedback, verify assumptions against the linked lesson and retry with a changed input.",
     learn: [
       {
         id: 'qbmlf-1',

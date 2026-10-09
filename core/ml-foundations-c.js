@@ -8,7 +8,7 @@
     title: 'Deep learning essentials',
     level: 'danger',
     levelLabel: 'Frequently asked in machine learning and AI engineering interviews.',
-    why: `Before questions about drift, feature stores, or GPUs, interviewers often check whether you understand how a neural network learns: what a forward pass computes, how backpropagation applies the chain rule, and how initialization, normalization, residual connections, and suitable optimizers help stabilize deep-network training. They may also ask how transformers differ from recurrent neural networks (RNNs), including the ability to process sequence positions in parallel during training. Explaining attention or backpropagation with numbers helps show that you understand the mechanism, not just its name.`,
+    why: "Trace a forward pass, loss, backward gradients and optimizer update using concrete tensor shapes and numbers. Produce shape and gradient tests, diagnose a training failure and explain how the architecture affects the computation.",
     learn: [
       {
         id: 'dle-0',
@@ -338,7 +338,7 @@ def attention(q, k, v, mask=None):
     title: 'MLOps tooling, hands-on',
     level: 'warning',
     levelLabel: 'Common in interviews for roles that build or operate ML systems, not just train models.',
-    why: `Knowing the lifecycle stages by name gets you through a conceptual question. The next question is usually more specific: what actually goes in a dvc.yaml, what MLflow logs on every run, what a Dockerfile for a model server should avoid, how a FastAPI endpoint validates a request before it ever reaches the model. This chapter is the hands-on layer underneath the platform: the actual files, commands and code an engineer writes to make the lifecycle real, one tool at a time.`,
+    why: "Implement a reproducible local path from data and tests to a validated model API. Produce pinned artifacts, test output, a request trace and a rollout rehearsal; use the named tools as examples of contracts rather than mandatory choices.",
     learn: [
       {
         id: 'mot-0',

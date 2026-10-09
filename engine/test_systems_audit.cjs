@@ -20,3 +20,25 @@ assert.equal(reconstruct('unknown','same-key',fixture.cutoff,'west'),null);
 for(const [t,id,pattern] of [['caching','cache-0',/never disagree/],['distributed-coordination','dc-3',/always current/],['reliability-ops','ro-f4',/uniquely available|single most valuable/],['serving-and-scale','ss-f2',/almost every serving round/]])assert.doesNotMatch(section(t,id).body,pattern);
 assert.equal(section('enterprise-feature-platform','efp-0').title,'Key terms');assert.equal(w.PREP_CORE['system-design-cases'].learn[0].title,'Key terms');
 console.log('Systems arithmetic, counterexamples, tenant/time fixtures and content regression checks passed.');
+
+function activity(t,id){return w.PREP_CORE[t].activities.find(a=>a.id===id);}
+const scale=activity('serving-and-scale','ss-a2');
+assert.match(scale.rubric,/divided by/);assert.doesNotMatch(scale.rubric,/multiplied by the forecast peak/);
+assert.match(scale.model,/ceiling\(300,000 \/ 1,000\) = 300/);assert.equal(Math.ceil(300000/1000),300);
+const route=activity('rag-and-agents','raa-a2');assert.match(route.prompt,/Both route groups average 800 billable tokens/);assert.match(route.prompt,/one-shot/);
+assert.match(route.model,/\$37,750/);assert.equal(20e6*(.7*500+.3*1500),16e9);assert.equal(14e6*500/1e6*.25+6e6*1500/1e6*4,37750);assert.equal(16e9/1e6*(.7*.25+.3*4),22000);
+const serve=w.PREP_CORE['question-bank-mle'].learn.find(s=>s.id==='qb2-3').deeper;const inference=w.PREP_CORE['question-bank-mle'].learn.find(s=>s.id==='qb2-6').deeper;
+assert.doesNotMatch(serve,/worse decision, never no decision|It schedules pods|p99 is much worse/);assert.match(serve,/safe halt/);assert.match(serve,/scheduler places them/);assert.match(serve,/perfectly correlated/i);assert.ok(Math.abs((1-.99**5)*100-4.90099501)<1e-8);
+const perfectlyCorrelated=[...Array(99).fill([20,20,20,20,20]),[100,100,100,100,100]];assert.equal(perfectlyCorrelated.filter(xs=>Math.max(...xs)>20).length,1);
+assert.match(inference,/often compute-heavy/);assert.match(inference,/preempt\/recompute/);assert.doesNotMatch(inference,/once the cache is full, new requests queue/);
+const payment=section('system-design-cases','sdc-5');assert.match(payment.check.options[payment.check.answer],/verified processor contract/);assert.match(payment.check.explain,/expired keys|expired/i);assert.match(payment.body,/shard-local clearing/);
+const payExercise=activity('system-design-cases','sdc-a2');assert.match(payExercise.rubric,/transactional partition/);assert.match(payExercise.model,/cross-shard atomic|atomic transfer protocol/);
+assert.match(activity('queues-and-streams','qs-a2').rubric,/Accept durable RabbitMQ/);assert.match(activity('queues-and-streams','qs-a2').model,/already acknowledged history/);
+const wal=section('storage-engines','se-f3');assert.match(wal.body,/sync=false/);assert.match(wal.body,/operating-system buffers/);assert.match(wal.check.explain,/not sufficient alone/);
+assert.match(section('storage-engines','se-f2').body,/Retain a tombstone/);assert.match(section('storage-engines','se-0').deeper,/need not be at least one/);
+assert.match(section('system-design-cases','sdc-4').body,/silent network loss cannot be detected instantly/);assert.match(activity('networking-basics','nb-a1').model,/60 \+ 200 \+ 200 \+ 100 \+ 40 \+ 100 = 700/);assert.equal(60+200+200+100+40+100,700);
+const leakage=section('data-and-generalization','dag-f5');assert.match(leakage.check.question,/January 31/);assert.match(leakage.check.options[leakage.check.answer],/legitimate early-warning/);assert.doesNotMatch(activity('data-and-generalization','dag-a2').model,/would this value exist if the customer had not churned/);
+const split=section('evaluation-and-selection','es-f1');assert.match(split.check.question,/absent from its training data/);assert.match(split.deeper,/existing accounts/);assert.match(split.deeper,/unseen accounts/);assert.match(activity('evaluation-and-selection','es-a2').rubric,/does not prove leakage/);
+// Withdrawn claim stays correct: observed failures are input; allowance and burn are worked feedback.
+const build=section('mlops-tooling','mot-local-build-track');assert.match(build.body,/1,000 bad requests/);assert.match(build.deeper,/500 allowed bad requests and burn rate 2/);
+console.log('Independent review: effective optional answers, conditional contracts, arithmetic counterexamples and assessment consistency passed.');

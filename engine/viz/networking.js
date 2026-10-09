@@ -186,5 +186,5 @@
     b += T(24, 194, 'inside one data centre a round trip is about 0.5 ms, which is why a chatty design is cheap there and expensive across an ocean', { a: 'start', s: 10, c: 'var(--ink-dim)' });
     return S(206, b);
   };
-  C['round-trip-budget'] = 'Handshakes, not the server, dominate a first request across an ocean; <b>reusing the connection</b> removes all three of them.';
+  C['round-trip-budget'] = 'This separate illustrative New York-London budget totals 228 ms. Reusing an established connection removes its TCP and TLS handshakes; DNS may also be cached. The request/response propagation and server work remain, totaling 86 ms under these assumptions.';
 }(typeof window !== 'undefined' ? window : this));

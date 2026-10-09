@@ -82,3 +82,15 @@ routeEvent();assert.equal(routeContext.state.view,'home','Back to initial empty 
 routeContext.location.hash='#unknown';routeContext.state.view='one';routeEvent();assert.equal(routeContext.state.view,'one','unknown fragment leaves current chapter intact');
 routeContext.location.hash='';routeContext.publicCourse=false;routeEvent();assert.equal(routeContext.state.view,'one','private initial route is not replaced with public home');
 console.log('test_visual_course: browser history empty-fragment event and invalid/private route behavior OK');
+
+assert(shell.includes("teaching.open = !publicCourse && i === 0"),'public glossary starts collapsed; private disclosure contract retained');
+assert(shell.includes('selected.focus({preventScroll:true})'),'role selection restores focus after rendering');
+console.log('Public glossary default and role focus source contract passed; rendered checks recorded separately.');
+
+const chooseResource = new Function('return ('+source('selectedResource')+')')();
+const inheritedVideo={u:'https://www.youtube.com/watch?v=original',l:'Inherited overview'};
+const curated={u:'https://example.org/targeted',l:'Selected task teaching',featured:true};
+assert.equal(chooseResource([inheritedVideo,curated]),curated,'explicit curated teaching wins even when a direct video precedes it');
+assert.equal(chooseResource([{u:'https://example.org/ref'},inheritedVideo]),inheritedVideo,'video fallback remains useful without a curated choice');
+assert.equal(chooseResource([curated]),curated);
+assert.equal(chooseResource([]),undefined,'no fake media when resources are absent');

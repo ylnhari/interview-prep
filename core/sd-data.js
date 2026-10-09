@@ -8,7 +8,7 @@
     title: 'Relational databases',
     level: 'danger',
     levelLabel: 'Asked in almost every system design interview.',
-    why: `Almost every system design interview reaches the data layer, and the relational database is still the default answer, so the interviewer is checking whether you can turn a vague requirement into a schema, an index plan, and a story for what happens when two requests touch the same row at once. They are listening for the difference between reciting the letters ACID and actually knowing which isolation level you get by default and what it does not protect you from. They also want to hear that you know how a single database survives a crash and how it scales past one machine, because that is where a memorised answer runs out of things to say.`,
+    why: "Turn access patterns into a schema, an index plan and transaction boundaries. Inspect query and lock evidence, then document a migration and recovery plan that preserves the data contract.",
     learn: [
       {
         id: 'sql-0',
@@ -349,7 +349,7 @@ The real cost is on the database side: holding a snapshot open for ten-plus minu
     title: 'NoSQL, sharding and IDs',
     level: 'danger',
     levelLabel: 'Asked in almost every system design interview.',
-    why: `Once a design has to survive more data or more traffic than one relational database can comfortably hold, the interview moves onto this chapter's ground: which storage model actually fits the access pattern, how you split data across many machines without concentrating all the traffic on one of them, and how you hand out unique ids once no single machine is in charge of counting anymore. Interviewers use this material to separate someone who has memorised "NoSQL scales better" from someone who can say exactly which access pattern justifies which store, and what a hash ring or a Bloom filter actually buys you and what it costs.`,
+    why: "Choose a storage model and partition strategy from actual access patterns, consistency needs and load. Explain hot partitions, identifier collisions and recovery with a workload estimate and a documented trade-off.",
     learn: [
       {
         id: 'npi-0',
