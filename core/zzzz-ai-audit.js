@@ -104,4 +104,3 @@
   section('gp-f2b').body=section('gp-f2b').body.replace(/[^<]*real credit in an interview\./g,' Test prompt changes against explicit task targets.').replace(/Almost every production prompt/g,'A production prompt can');
   section('gp-f2b').deeper=section('gp-f2b').deeper.replace(/it is where most teams are weakest/g,'it makes changes auditable');
 })(window);
-
