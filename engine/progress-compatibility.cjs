@@ -125,6 +125,7 @@ function index(snapshot, label, withHashes) {
       const sectionId = addUnique(sections, section.id, "section id in topic " + topicId);
       sections.set(sectionId, {
         quiz: quiz(section.check, "section " + topicId + "/" + sectionId + ".check"),
+        revision: section.check && section.check.revision,
         sha256: withHashes ? canonicalItemSha256(section) : undefined
       });
     });
@@ -167,8 +168,8 @@ function manifestRoleMap(topic, role) {
 function validateRetirementManifest(manifest, before, after) {
   const retired = new Map();
   if (manifest === undefined) return retired;
-  exactKeys(manifest, ["retirements", "version"], "content revision manifest");
-  if (manifest.version !== 1) fail("content revision manifest version must be 1");
+  exactKeys(manifest, manifest.version === 2 ? ["retirements", "quizRevisions", "version"] : ["retirements", "version"], "content revision manifest");
+  if (manifest.version !== 1 && manifest.version !== 2) fail("content revision manifest version must be 1 or 2");
   const entries = array(manifest.retirements, "content revision manifest.retirements");
   const seen = new Set();
   entries.forEach((entry, index) => {
@@ -216,12 +217,39 @@ function validateRetirementManifest(manifest, before, after) {
   return retired;
 }
 
+function validateQuizRevisions(manifest, before, after) {
+  const reviewed = new Set();
+  if (!manifest || manifest.version !== 2) return reviewed;
+  array(manifest.quizRevisions, "quizRevisions").forEach((entry) => {
+    exactKeys(entry, ["pack", "topic", "id", "before", "after", "revision", "reason"], "quiz revision");
+    [entry.pack, entry.topic, entry.id, entry.revision].forEach((value) => id(value, "quiz revision identifier"));
+    if (entry.pack !== before.packId || entry.pack !== after.packId) fail("quiz revision pack mismatch");
+    if (typeof entry.reason !== "string" || !entry.reason.trim() || entry.reason.length > 1000) fail("quiz revision reason required");
+    if (![entry.before, entry.after].every((hash) => /^[a-f0-9]{64}$/.test(hash))) fail("quiz revision hashes required");
+    const old = before.topics.get(entry.topic)?.sections.get(entry.id);
+    const current = after.topics.get(entry.topic)?.sections.get(entry.id);
+    const key = entry.topic + "/" + entry.id;
+    if (reviewed.has(key)) fail("duplicate quiz revision: " + key);
+    if (!old || !current || !old.quiz || !current.quiz) fail("quiz revision requires retained quiz IDs");
+    if (canonicalItemSha256(current.quiz) !== entry.after || current.revision !== entry.revision) fail("quiz revision candidate hash/version mismatch");
+    const oldHash = canonicalItemSha256(old.quiz);
+    // A historical reviewed entry may remain only when the baseline is already
+    // exactly the revised mapping; every other baseline fails closed.
+    if (oldHash !== entry.before && !(oldHash === entry.after && old.revision === entry.revision)) fail("quiz revision baseline hash mismatch");
+    if (entry.before === entry.after) fail("quiz revision must change the mapping");
+    if (oldHash === entry.before && old.revision === entry.revision) fail("quiz revision must use a new version");
+    reviewed.add(key);
+  });
+  return reviewed;
+}
+
 function assertProgressCompatible(baseline, candidate, manifest) {
   const withHashes = manifest !== undefined;
   const before = index(baseline, "baseline", withHashes);
   const after = index(candidate, "candidate", withHashes);
   if (before.packId !== after.packId) fail("changed pack id: " + before.packId + " -> " + after.packId);
   const retired = validateRetirementManifest(manifest, before, after);
+  const reviewedQuizzes = validateQuizRevisions(manifest, before, after);
   requireExisting(after.topics, before.topics, "topic");
 
   for (const [topicId, beforeTopic] of before.topics) {
@@ -231,7 +259,10 @@ function assertProgressCompatible(baseline, candidate, manifest) {
     for (const [sectionId, beforeSection] of beforeTopic.sections) {
       const afterSection = afterTopic.sections.get(sectionId);
       if (!afterSection && retired.get(topicId + "/learn")?.has(sectionId)) continue;
-      sameQuiz(beforeSection.quiz, afterSection.quiz, topicId + "/" + sectionId);
+      if (!reviewedQuizzes.has(topicId + "/" + sectionId)) {
+        sameQuiz(beforeSection.quiz, afterSection.quiz, topicId + "/" + sectionId);
+        if (beforeSection.quiz && beforeSection.revision !== afterSection.revision) fail("changed saved quiz storage version: " + topicId + "/" + sectionId);
+      }
     }
   }
   return true;

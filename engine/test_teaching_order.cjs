@@ -24,16 +24,8 @@ function inOrder(source, markers, label) {
   }
 }
 
-const normalisation = between(
-  shell,
-  '// Reading normalisation, applied once after merging:',
-  'var META = C.meta || {};',
-  'reading normalisation'
-);
-inOrder(normalisation, [
-  "c.body = (c.body || '') + c.deeper",
-  'c.deeper = null'
-], 'deeper text remains part of the body before rendering');
+assert(!shell.includes("c.body = (c.body || '') + c.deeper"), 'extended text remains optional depth');
+assert(!shell.includes('c.check = {'), 'canonical quiz mapping is not mutated');
 
 const sections = between(
   shell,
@@ -45,11 +37,14 @@ inOrder(sections, [
   "sh.appendChild(txt('h3', null, c.title))",
   'if (c.link && c.link.url) sec.appendChild(extLink(c.link));',
   'if (qbank && c.deeper)',
-  'sec.appendChild(pr);',
-  "sec.appendChild(el('div', 'prose', c.body));",
+  'review.appendChild(pr);',
+  "teaching.appendChild(el('div', 'prose', c.body));",
   'if (c.viz && window.VIZLIB && window.VIZLIB[c.viz])',
-  'if (c.check)'
-], 'section DOM order is title/link, teaching text or question bank, diagram, quiz');
+  'sec.insertBefore(cv, sec.children[1] || null)',
+  "if (c.deeper && !qbank)",
+  'if (c.check && !c.check.auditCaution)'
+], 'diagram is inserted before optional teaching, depth and prediction check');
+assert(sections.includes("cv.setAttribute('aria-label', c.title + ' diagram and text explanation')"), 'scrollable diagram has accessible region label');
 
 assert(
   sections.includes("window.VIZLIB_CAPTIONS[c.viz] ? '<div class=\"cap\">' + window.VIZLIB_CAPTIONS[c.viz]"),
@@ -57,10 +52,10 @@ assert(
 );
 inOrder(sections, [
   'body.appendChild(sec);',
-  'if (i === 0) appendReadings();',
   '});',
-  'appendTopicViz();'
-], 'readings follow the first learn section and topic summary follows all learn sections');
+  'appendTopicViz();',
+  'appendReadings();'
+], 'extended resources follow all learn sections');
 
 const prereqs = between(
   shell,

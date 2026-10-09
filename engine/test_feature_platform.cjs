@@ -1,0 +1,11 @@
+const fs=require('fs'),vm=require('vm'),assert=require('node:assert/strict'),w={};
+for(const f of ['engine/viz-lib.js','engine/viz/interactive-practice.js','engine/viz/z-feature-platform-practice.js'])vm.runInNewContext(fs.readFileSync(f,'utf8'),{window:w});
+const h=w.HARBOR_PRACTICE;
+for(const [d,value] of [[5,2],[300,3],[2760,4]])assert.equal(h.eligible(h.rows,'harbor-a',d,21600).value,value);
+assert.equal(h.eligible(h.rows,'harbor-a',25000,21600),null);
+assert(!h.architecture('test-1',1).includes('Event stream'));assert(h.architecture('test-2',2).includes('Event stream'));assert(!h.architecture('test-2',2).includes('Policy:'));assert(h.architecture('test-3',3).includes('Policy:'));assert(!h.architecture('test-3',3).includes('Home writer'));assert(h.architecture('test-4',4).includes('Home writer'));assert(w.PREP_PRACTICE.styles.includes('max-width:100%'));assert.equal(h.eligible(h.rows,'missing',300,21600),null);
+assert.deepEqual(JSON.parse(JSON.stringify(h.allocate(100).allocation)),{A:60,B:20,C:20});assert.equal(h.allocate(100).backlog.A,30);assert.equal(h.allocate(100).backfill,0);
+assert.deepEqual(JSON.parse(JSON.stringify(h.allocate(60).allocation)),{A:20,B:20,C:20});assert.equal(h.allocate(60).backlog.A,70);
+const current={asof:720,rev:2,value:7};assert.equal(h.publish(current,{asof:0,rev:9,value:4}).value,current);assert.equal(h.publish(current,{asof:720,rev:2,value:7}).value,current);assert.equal(h.publish(current,{asof:780,rev:1,value:8}).value.value,8);
+assert.ok(Math.abs(100000000/86400-1157.4074)<.001);assert.ok(Math.abs(100000000/86400*20-23148.148)<.001);assert.equal(100000000*500/1e9,50);
+console.log('Harbor: tenant/time/age eligibility, capacity reservations, no-regression replay and synthetic capacity arithmetic passed');

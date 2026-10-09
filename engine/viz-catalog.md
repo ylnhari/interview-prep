@@ -258,3 +258,7 @@ Column key: **id** — what the picture shows (and what moves) — concepts it f
 - `http-versions` — three panels: HTTP/1.1 queueing one request behind another, HTTP/2 interleaving three streams on one TCP connection with a lost packet stalling all of them, HTTP/3 over QUIC where the loss stalls only its own stream. Fits: HTTP versions compared, multiplexing, head-of-line blocking at the transport, why HTTP/3 moved to UDP.
 - `dns-lookup` — a browser asking a recursive resolver that walks root to top-level domain to authoritative, and the answer coming back with a time to live and being cached. Fits: how a name becomes an address, DNS caching, time to live trade-offs, why the first request to a host is slower.
 - `round-trip-budget` — one first request across the Atlantic broken into DNS, TCP handshake, TLS handshake, travel and server work, beside the same request on a reused connection, with the speed-of-light numbers below. Fits: latency budgets, where the time actually goes, keep-alive and connection pooling, why bandwidth does not fix latency.
+
+## Enterprise feature platform
+
+- `enterprise-feature-path` / `enterprise-feature-platform`: tenant-aware durable changelog, offline/online sinks and availability evidence. Interactive Harbor stages and labs are mounted alongside the diagram.

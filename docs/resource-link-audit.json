@@ -1,0 +1,1377 @@
+{
+  "checkedAt": "2026-10-09",
+  "method": "HTTP GET of public course URLs without browser cookies; 512-byte response sample. Reachability is not media playback or proof of account-free linked tools.",
+  "results": [
+    {
+      "url": "https://github.com/donnemartin/system-design-primer",
+      "status": 200,
+      "final": "https://github.com/donnemartin/system-design-primer",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://martinfowler.com/bliki/CircuitBreaker.html",
+      "status": 200,
+      "final": "https://martinfowler.com/bliki/CircuitBreaker.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://aws.amazon.com/caching/best-practices/",
+      "status": 200,
+      "final": "https://aws.amazon.com/caching/best-practices/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://aws.amazon.com/builders-library/",
+      "status": 200,
+      "final": "https://builder.aws.com/learn/topics/builders-library",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://kubernetes.io/docs/concepts/services-networking/ingress/",
+      "status": 200,
+      "final": "https://kubernetes.io/docs/concepts/services-networking/ingress/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://sre.google/sre-book/table-of-contents/",
+      "status": 200,
+      "final": "https://sre.google/sre-book/table-of-contents/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.cloudflare.com/learning/ddos/glossary/open-systems-interconnection-model-osi/",
+      "status": 403,
+      "result": "access/rate-limit/server uncertainty"
+    },
+    {
+      "url": "https://hpbn.co/building-blocks-of-tcp/",
+      "status": 200,
+      "final": "https://hpbn.co/building-blocks-of-tcp/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=jE_FcgpQ7Co",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=jE_FcgpQ7Co",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Evolution_of_HTTP",
+      "status": 200,
+      "final": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Evolution_of_HTTP",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=a-sBfyiXysI",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=a-sBfyiXysI",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.cloudflare.com/learning/ssl/what-happens-in-a-tls-handshake/",
+      "status": 403,
+      "result": "access/rate-limit/server uncertainty"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=27r4Bzuj5NQ",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=27r4Bzuj5NQ",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://hpbn.co/primer-on-latency-and-bandwidth/",
+      "status": 200,
+      "final": "https://hpbn.co/primer-on-latency-and-bandwidth/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://gist.github.com/jboner/2841832",
+      "status": 200,
+      "final": "https://gist.github.com/jboner/2841832",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/High_availability",
+      "status": 200,
+      "final": "https://en.wikipedia.org/wiki/High_availability",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "http://dbmsmusings.blogspot.com/2010/04/problems-with-cap-and-yahoos-little.html",
+      "status": 200,
+      "final": "http://dbmsmusings.blogspot.com/2010/04/problems-with-cap-and-yahoos-little.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://martinfowler.com/bliki/MonolithFirst.html",
+      "status": 200,
+      "final": "https://martinfowler.com/bliki/MonolithFirst.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Amdahl%27s_law",
+      "status": 200,
+      "final": "https://en.wikipedia.org/wiki/Amdahl%27s_law",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://bytebytego.com/courses/system-design-interview/back-of-the-envelope-estimation",
+      "status": 200,
+      "final": "https://bytebytego.com/courses/system-design-interview/back-of-the-envelope-estimation",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=eR5pIYfxKgY",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=eR5pIYfxKgY",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/design-principles.html",
+      "status": 200,
+      "final": "https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/design-principles.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/",
+      "status": 200,
+      "final": "https://builder.aws.com/content/3EumjoZascWd1oZiEgL8ORlv3qE/timeouts-retries-and-backoff-with-jitter",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.barroso.org/publications/TheTailAtScale.pdf",
+      "status": 200,
+      "final": "https://www.barroso.org/publications/TheTailAtScale.pdf",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://grpc.io/docs/what-is-grpc/introduction/",
+      "status": 200,
+      "final": "https://grpc.io/docs/what-is-grpc/introduction/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://graphql.org/learn/",
+      "status": 200,
+      "final": "https://graphql.org/learn/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/",
+      "status": 200,
+      "final": "https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API",
+      "status": 200,
+      "final": "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.cloudflare.com/learning/ddos/glossary/user-datagram-protocol-udp/",
+      "status": 403,
+      "result": "access/rate-limit/server uncertainty"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=AMNWLz_f6qM",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=AMNWLz_f6qM",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://use-the-index-luke.com/",
+      "status": 200,
+      "final": "https://use-the-index-luke.com/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.postgresql.org/docs/current/mvcc.html",
+      "status": 200,
+      "final": "https://www.postgresql.org/docs/current/mvcc.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.postgresql.org/docs/current/transaction-iso.html",
+      "status": 200,
+      "final": "https://www.postgresql.org/docs/current/transaction-iso.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.postgresql.org/docs/current/wal-intro.html",
+      "status": 200,
+      "final": "https://www.postgresql.org/docs/current/wal-intro.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=JWSObwhGGxY",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=JWSObwhGGxY",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://blog.bytebytego.com/p/database-indexing-strategies",
+      "status": 200,
+      "final": "https://blog.bytebytego.com/p/database-indexing-strategies",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://github.blog/news-insights/company-news/gh-ost-github-s-online-migration-tool-for-mysql/",
+      "status": 200,
+      "final": "https://github.blog/news-insights/company-news/gh-ost-github-s-online-migration-tool-for-mysql/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://blog.bytebytego.com/p/sql-vs-nosql-choosing-the-right-database",
+      "status": 200,
+      "final": "https://blog.bytebytego.com/p/sql-vs-nosql-choosing-the-right-database",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=UF9Iqmg94tk",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=UF9Iqmg94tk",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=g3BV_holJK4",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=g3BV_holJK4",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Bloom_filter",
+      "status": 200,
+      "final": "https://en.wikipedia.org/wiki/Bloom_filter",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.mongodb.com/docs/manual/reference/bson-types/",
+      "status": 200,
+      "final": "https://www.mongodb.com/docs/manual/reference/bson-types/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://aws.amazon.com/blogs/database/choosing-the-right-dynamodb-partition-key",
+      "status": 200,
+      "final": "https://aws.amazon.com/blogs/database/choosing-the-right-dynamodb-partition-key/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://use-the-index-luke.com/sql/partial-results/fetch-next-page",
+      "status": 200,
+      "final": "https://use-the-index-luke.com/sql/partial-results/fetch-next-page",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://cloud.google.com/storage/docs/storage-classes",
+      "status": 200,
+      "final": "https://docs.cloud.google.com/storage/docs/storage-classes",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://blog.bytebytego.com/p/top-caching-strategies",
+      "status": 200,
+      "final": "https://blog.bytebytego.com/p/top-caching-strategies",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://redis.io/docs/latest/develop/reference/eviction/",
+      "status": 200,
+      "final": "https://redis.io/docs/latest/develop/reference/eviction/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://aws.amazon.com/builders-library/caching-challenges-and-strategies/",
+      "status": 200,
+      "final": "https://aws.amazon.com/builders-library/caching-challenges-and-strategies/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.hellointerview.com/learn/system-design/core-concepts/caching",
+      "status": 200,
+      "final": "https://www.hellointerview.com/learn/system-design/core-concepts/caching",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=kiCbLOPmBh4",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=kiCbLOPmBh4",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=NCePGsRZFus",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=NCePGsRZFus",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html",
+      "status": 200,
+      "final": "https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://martin.kleppmann.com/2015/05/11/please-stop-calling-databases-cp-or-ap.html",
+      "status": 200,
+      "final": "https://martin.kleppmann.com/2015/05/11/please-stop-calling-databases-cp-or-ap.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://raft.github.io/",
+      "status": 200,
+      "final": "https://raft.github.io/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "http://thesecretlivesofdata.com/raft/",
+      "status": 200,
+      "final": "http://thesecretlivesofdata.com/raft/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/",
+      "status": 200,
+      "final": "https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://lamport.azurewebsites.net/pubs/time-clocks.pdf",
+      "status": 200,
+      "final": "https://lamport.azurewebsites.net/pubs/time-clocks.pdf",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=rvKKj7JU92g",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=rvKKj7JU92g",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://highscalability.com/gossip-protocol-explained/",
+      "status": 200,
+      "final": "https://highscalability.com/gossip-protocol-explained/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://riak.com/assets/bitcask-intro.pdf",
+      "status": 200,
+      "final": "https://riak.com/assets/bitcask-intro.pdf",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.scylladb.com/wp-content/uploads/ScyllaDB-Designing-Data-Intensive-Applications.pdf",
+      "status": 200,
+      "final": "https://www.scylladb.com/wp-content/uploads/ScyllaDB-Designing-Data-Intensive-Applications.pdf",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://github.com/facebook/rocksdb/wiki/Compaction",
+      "status": 200,
+      "final": "https://github.com/facebook/rocksdb/wiki/Compaction",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://github.com/google/leveldb/blob/main/doc/table_format.md",
+      "status": 200,
+      "final": "https://github.com/google/leveldb/blob/main/doc/table_format.md",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=I6jB0nM9SKU",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=I6jB0nM9SKU",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://blog.bytebytego.com/p/b-trees-vs-lsm-trees-comparison-and",
+      "status": 200,
+      "final": "https://blog.bytebytego.com/p/b-trees-vs-lsm-trees-comparison-and",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arpitbhayani.me/notes/how-erasure-coding-achieves-s3-durability-with-reduced-storage-costs",
+      "status": 200,
+      "final": "https://arpitbhayani.me/notes/how-erasure-coding-achieves-s3-durability-with-reduced-storage-costs/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.nan.fyi/database",
+      "status": 200,
+      "final": "https://www.nan.fyi/database",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=e5uAhoT1hhU",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=e5uAhoT1hhU",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html",
+      "status": 200,
+      "final": "https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html",
+      "status": 200,
+      "final": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.confluent.io/blog/exactly-once-semantics-are-possible-heres-how-apache-kafka-does-it/",
+      "status": 200,
+      "final": "https://www.confluent.io/blog/exactly-once-semantics-are-possible-heres-how-apache-kafka-does-it/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/idempotent-consumer",
+      "status": 200,
+      "final": "https://learn.microsoft.com/en-us/azure/architecture/patterns/idempotent-consumer",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.prisma.io/blog/you-dont-need-a-job-queue-postgres-already-has-skip-locked",
+      "status": 200,
+      "final": "https://www.prisma.io/blog/you-dont-need-a-job-queue-postgres-already-has-skip-locked",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/backfill.html",
+      "status": 200,
+      "final": "https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/backfill.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.techinterview.org/post/3233474168/system-design-twitter-news-feed-timeline-fanout-on-write-fanout-on-read-celebrity-problem-ranking-caching/",
+      "status": 200,
+      "final": "https://www.techinterview.org/post/3233474168/system-design-twitter-news-feed-timeline-fanout-on-write-fanout-on-read-celebrity-problem-ranking-caching/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://nlp.stanford.edu/IR-book/html/htmledition/tokenization-1.html",
+      "status": 200,
+      "final": "https://nlp.stanford.edu/IR-book/html/htmledition/tokenization-1.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.elastic.co/blog/practical-bm25-part-2-the-bm25-algorithm-and-its-variables",
+      "status": 200,
+      "final": "https://www.elastic.co/blog/practical-bm25-part-2-the-bm25-algorithm-and-its-variables",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://lucene.apache.org/core/9_11_1/core/org/apache/lucene/search/similarities/BM25Similarity.html",
+      "status": 200,
+      "final": "https://lucene.apache.org/core/9_11_1/core/org/apache/lucene/search/similarities/BM25Similarity.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.elastic.co/guide/en/elasticsearch/reference/current/near-real-time.html",
+      "status": 200,
+      "final": "https://www.elastic.co/docs/manage-data/data-store/near-real-time-search",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion",
+      "status": 200,
+      "final": "https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.pinecone.io/learn/series/faiss/hnsw/",
+      "status": 200,
+      "final": "https://www.pinecone.io/learn/series/faiss/hnsw/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developers.google.com/search/docs/fundamentals/how-search-works",
+      "status": 200,
+      "final": "https://developers.google.com/search/docs/fundamentals/how-search-works",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=TZ_LSourdUc",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=TZ_LSourdUc",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.oreilly.com/radar/the-world-beyond-batch-streaming-101/",
+      "status": 200,
+      "final": "https://www.oreilly.com/radar/the-world-beyond-batch-streaming-101/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.oreilly.com/radar/the-world-beyond-batch-streaming-102/",
+      "status": 200,
+      "final": "https://www.oreilly.com/radar/the-world-beyond-batch-streaming-102/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://redis.io/docs/latest/develop/data-types/probabilistic/hyperloglogs/",
+      "status": 200,
+      "final": "https://redis.io/docs/latest/develop/data-types/probabilistic/hyperloglogs/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "http://antirez.com/news/75",
+      "status": 200,
+      "final": "https://antirez.com/news/75",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://redis.io/docs/latest/develop/data-types/probabilistic/count-min-sketch/",
+      "status": 200,
+      "final": "https://redis.io/docs/latest/develop/data-types/probabilistic/count-min-sketch/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=fU9hR3kiOK0",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=fU9hR3kiOK0",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://github.com/tdunning/t-digest",
+      "status": 200,
+      "final": "https://github.com/tdunning/t-digest",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.datadoghq.com/blog/engineering/computing-accurate-percentiles-with-ddsketch/",
+      "status": 200,
+      "final": "https://www.datadoghq.com/blog/engineering/computing-accurate-percentiles-with-ddsketch/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events",
+      "status": 200,
+      "final": "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://ably.com/blog/websockets-vs-long-polling",
+      "status": 200,
+      "final": "https://ably.com/blog/websockets-vs-long-polling",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=gzIcGhJC8hA",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=gzIcGhJC8hA",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=ugAZsDdmwJQ",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=ugAZsDdmwJQ",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://github.com/twitter-archive/flockdb",
+      "status": 200,
+      "final": "https://github.com/twitter-archive/flockdb",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=QmX2NPkJTKg",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=QmX2NPkJTKg",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=e8cX9pQdu7Y",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=e8cX9pQdu7Y",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://sre.google/sre-book/monitoring-distributed-systems/",
+      "status": 200,
+      "final": "https://sre.google/sre-book/monitoring-distributed-systems/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://sre.google/sre-book/service-level-objectives/",
+      "status": 200,
+      "final": "https://sre.google/sre-book/service-level-objectives/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://sre.google/sre-book/embracing-risk/",
+      "status": 200,
+      "final": "https://sre.google/sre-book/embracing-risk/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://sre.google/workbook/alerting-on-slos/",
+      "status": 200,
+      "final": "https://sre.google/workbook/alerting-on-slos/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://sre.google/sre-book/postmortem-culture/",
+      "status": 200,
+      "final": "https://sre.google/sre-book/postmortem-culture/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://martinfowler.com/bliki/ParallelChange.html",
+      "status": 200,
+      "final": "https://martinfowler.com/bliki/ParallelChange.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=ONSCQWLD9d0",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=ONSCQWLD9d0",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=YXkOdWBwqaA",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=YXkOdWBwqaA",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
+      "status": 200,
+      "final": "https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://c4model.com/",
+      "status": 200,
+      "final": "https://c4model.com/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developers.google.com/machine-learning/guides/rules-of-ml",
+      "status": 200,
+      "final": "https://developers.google.com/machine-learning/guides/rules-of-ml",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html",
+      "status": 200,
+      "final": "https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning",
+      "status": 200,
+      "final": "https://docs.cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://argo-cd.readthedocs.io/en/stable/",
+      "status": 200,
+      "final": "https://argo-cd.readthedocs.io/en/stable/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://docs.feast.dev/getting-started/concepts/point-in-time-joins",
+      "status": 200,
+      "final": "https://docs.feast.dev/getting-started/concepts/point-in-time-joins",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://docs.feast.dev/getting-started/architecture/model-inference",
+      "status": 200,
+      "final": "https://docs.feast.dev/getting-started/architecture/model-inference",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.tensorflow.org/tfx/guide/tfdv",
+      "status": 200,
+      "final": "https://www.tensorflow.org/tfx/guide/tfdv",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=936225",
+      "status": 200,
+      "final": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=936225",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/",
+      "status": 200,
+      "final": "https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://sre.google/workbook/implementing-slos/",
+      "status": 200,
+      "final": "https://sre.google/workbook/implementing-slos/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://dvc.org/doc/start",
+      "status": 200,
+      "final": "https://doc.dvc.org/start",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://mlflow.org/docs/latest/ml/tracking/",
+      "status": 200,
+      "final": "https://mlflow.org/docs/latest/ml/tracking/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://fastapi.tiangolo.com/tutorial/",
+      "status": 200,
+      "final": "https://fastapi.tiangolo.com/tutorial/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://kubernetes.io/docs/concepts/workloads/pods/",
+      "status": 200,
+      "final": "https://kubernetes.io/docs/concepts/workloads/pods/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://prometheus.io/docs/introduction/overview/",
+      "status": 200,
+      "final": "https://prometheus.io/docs/introduction/overview/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://docs.greatexpectations.io/docs/home/",
+      "status": 200,
+      "final": "https://docs.greatexpectations.io/docs/home/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=TlHvYWVUZyc",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=TlHvYWVUZyc",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://cs336.stanford.edu/",
+      "status": 200,
+      "final": "https://cs336.stanford.edu/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://owasp.org/www-project-top-10-for-large-language-model-applications/",
+      "status": 200,
+      "final": "https://owasp.org/projects/top-10-for-large-language-model-applications",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://docs.vllm.ai/en/latest/",
+      "status": 200,
+      "final": "https://docs.vllm.ai/en/latest/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arxiv.org/abs/2309.06180",
+      "status": 200,
+      "final": "https://arxiv.org/abs/2309.06180",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arxiv.org/abs/2205.14135",
+      "status": 200,
+      "final": "https://arxiv.org/abs/2205.14135",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=zy8ChVd_oTM",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=zy8ChVd_oTM",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arxiv.org/abs/2211.17192",
+      "status": 200,
+      "final": "https://arxiv.org/abs/2211.17192",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arxiv.org/abs/2306.00978",
+      "status": 200,
+      "final": "https://arxiv.org/abs/2306.00978",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arxiv.org/abs/2210.17323",
+      "status": 200,
+      "final": "https://arxiv.org/abs/2210.17323",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arxiv.org/abs/2506.04645",
+      "status": 200,
+      "final": "https://arxiv.org/abs/2506.04645",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arxiv.org/abs/2106.09685",
+      "status": 200,
+      "final": "https://arxiv.org/abs/2106.09685",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=PXWYUTMt-AU",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=PXWYUTMt-AU",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arxiv.org/abs/2305.14314",
+      "status": 200,
+      "final": "https://arxiv.org/abs/2305.14314",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arxiv.org/abs/2305.11206",
+      "status": 200,
+      "final": "https://arxiv.org/abs/2305.11206",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arxiv.org/abs/2203.02155",
+      "status": 200,
+      "final": "https://arxiv.org/abs/2203.02155",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=qGyFrqc34yc",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=qGyFrqc34yc",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arxiv.org/abs/2305.18290",
+      "status": 200,
+      "final": "https://arxiv.org/abs/2305.18290",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arxiv.org/abs/2402.03300",
+      "status": 200,
+      "final": "https://arxiv.org/abs/2402.03300",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://docs.langchain.com/oss/python/langgraph/functional-api",
+      "status": 200,
+      "final": "https://docs.langchain.com/oss/python/langgraph/functional-api",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
+      "status": 200,
+      "final": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.anthropic.com/engineering/contextual-retrieval",
+      "status": 200,
+      "final": "https://www.anthropic.com/engineering/contextual-retrieval",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/secure-multitenant-rag",
+      "status": 200,
+      "final": "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/secure-multitenant-rag",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=4KiiKQ9RVvA",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=4KiiKQ9RVvA",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://research.google/pubs/sufficient-context-a-new-lens-on-retrieval-augmented-generation-systems/",
+      "status": 200,
+      "final": "https://research.google/pubs/sufficient-context-a-new-lens-on-retrieval-augmented-generation-systems/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/azure/search/search-document-level-access-overview",
+      "status": 200,
+      "final": "https://learn.microsoft.com/en-us/azure/search/search-document-level-access-overview",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developers.llamaindex.ai/python/framework/understanding/rag/",
+      "status": 200,
+      "final": "https://developers.llamaindex.ai/python/framework/understanding/rag/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.pinecone.io/learn/chunking-strategies/",
+      "status": 200,
+      "final": "https://www.pinecone.io/learn/chunking-strategies/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.elastic.co/search-labs/blog/hybrid-search-elasticsearch",
+      "status": 200,
+      "final": "https://www.elastic.co/search-labs/blog/hybrid-search-elasticsearch",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arxiv.org/abs/1603.09320",
+      "status": 200,
+      "final": "https://arxiv.org/abs/1603.09320",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.anthropic.com/research/building-effective-agents",
+      "status": 200,
+      "final": "https://www.anthropic.com/engineering/building-effective-agents",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf",
+      "status": 200,
+      "final": "https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/",
+      "status": 200,
+      "final": "https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab",
+      "status": 200,
+      "final": "https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr",
+      "status": 200,
+      "final": "https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=VMj-3S1tku0",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=VMj-3S1tku0",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=9wCnvr7Xw4E",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=9wCnvr7Xw4E",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=XepXtl9YKwc",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=XepXtl9YKwc",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://colah.github.io/posts/2015-09-Visual-Information/",
+      "status": 200,
+      "final": "https://colah.github.io/posts/2015-09-Visual-Information/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Softmax_function",
+      "status": 200,
+      "final": "https://en.wikipedia.org/wiki/Softmax_function",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://ruder.io/optimizing-gradient-descent/",
+      "status": 200,
+      "final": "https://www.ruder.io/optimizing-gradient-descent/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=EuBBz3bI-aA",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=EuBBz3bI-aA",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=Q81RR3yKn30",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=Q81RR3yKn30",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=NGf0voTMlcs",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=NGf0voTMlcs",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.kaggle.com/code/alexisbcook/data-leakage/tutorial",
+      "status": 200,
+      "final": "https://www.kaggle.com/code/alexisbcook/data-leakage/tutorial",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developers.google.com/machine-learning/guides/rules-of-ml#rule_37_measure_trainingserving_skew",
+      "status": 200,
+      "final": "https://developers.google.com/machine-learning/guides/rules-of-ml#rule_37_measure_trainingserving_skew",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Probably_approximately_correct_learning",
+      "status": 200,
+      "final": "https://en.wikipedia.org/wiki/Probably_approximately_correct_learning",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://huyenchip.com/2022/02/07/data-distribution-shifts-and-monitoring.html",
+      "status": 200,
+      "final": "https://huyenchip.com/2022/02/07/data-distribution-shifts-and-monitoring.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://scikit-learn.org/stable/modules/preprocessing.html",
+      "status": 200,
+      "final": "https://scikit-learn.org/stable/modules/preprocessing.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developers.google.com/machine-learning/crash-course/classification",
+      "status": 200,
+      "final": "https://developers.google.com/machine-learning/crash-course/classification",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=4jRBRDbJemM",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=4jRBRDbJemM",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=Kdsp6soqA7o",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=Kdsp6soqA7o",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=fSytzGwwBVw",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=fSytzGwwBVw",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+      "status": 200,
+      "final": "https://scikit-learn.org/stable/modules/cross_validation.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://scikit-learn.org/stable/modules/model_evaluation.html",
+      "status": 200,
+      "final": "https://scikit-learn.org/stable/modules/model_evaluation.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.evidentlyai.com/classification-metrics/confusion-matrix",
+      "status": 200,
+      "final": "https://www.evidentlyai.com/classification-metrics/confusion-matrix",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.evanmiller.org/how-not-to-run-an-ab-test.html",
+      "status": 200,
+      "final": "https://www.evanmiller.org/how-not-to-run-an-ab-test.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://karpathy.ai/zero-to-hero.html",
+      "status": 200,
+      "final": "https://karpathy.ai/zero-to-hero.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://otexts.com/fpp3/what-can-be-forecast.html",
+      "status": 200,
+      "final": "https://otexts.com/fpp3/what-can-be-forecast.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://otexts.com/fpp3/accuracy.html",
+      "status": 200,
+      "final": "https://otexts.com/fpp3/accuracy.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://otexts.com/fpp3/prediction-intervals.html",
+      "status": 200,
+      "final": "https://otexts.com/fpp3/prediction-intervals.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://otexts.com/fpp3/tscv.html",
+      "status": 200,
+      "final": "https://otexts.com/fpp3/tscv.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arxiv.org/abs/2107.07511",
+      "status": 200,
+      "final": "https://arxiv.org/abs/2107.07511",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Simple_linear_regression#Confidence_intervals",
+      "status": 200,
+      "final": "https://en.wikipedia.org/wiki/Simple_linear_regression#Confidence_intervals",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Jackknife_resampling",
+      "status": 200,
+      "final": "https://en.wikipedia.org/wiki/Jackknife_resampling",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Mathematical_optimization",
+      "status": 200,
+      "final": "https://en.wikipedia.org/wiki/Mathematical_optimization",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developers.google.com/optimization/introduction",
+      "status": 200,
+      "final": "https://developers.google.com/optimization/introduction",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Integer_programming",
+      "status": 200,
+      "final": "https://en.wikipedia.org/wiki/Integer_programming",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developers.google.com/optimization/cp",
+      "status": 200,
+      "final": "https://developers.google.com/optimization/cp",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Metaheuristic",
+      "status": 200,
+      "final": "https://en.wikipedia.org/wiki/Metaheuristic",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Simulated_annealing",
+      "status": 200,
+      "final": "https://en.wikipedia.org/wiki/Simulated_annealing",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developers.google.com/optimization/assignment/assignment_example",
+      "status": 200,
+      "final": "https://developers.google.com/optimization/assignment/assignment_example",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developers.google.com/optimization/routing/vrptw",
+      "status": 200,
+      "final": "https://developers.google.com/optimization/routing/vrptw",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developers.google.com/optimization/scheduling/employee_scheduling",
+      "status": 200,
+      "final": "https://developers.google.com/optimization/scheduling/employee_scheduling",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developers.google.com/optimization/routing/routing_options",
+      "status": 200,
+      "final": "https://developers.google.com/optimization/routing/routing_options",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.cvxpy.org/tutorial/intro/index.html",
+      "status": 200,
+      "final": "https://www.cvxpy.org/tutorial/intro/index.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.gurobi.com/solutions/gurobi-optimizer/",
+      "status": 200,
+      "final": "https://www.gurobi.com/product",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Feedback",
+      "status": 200,
+      "final": "https://en.wikipedia.org/wiki/Feedback",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Control_theory#Open-loop_and_closed-loop_(feedback)_control",
+      "status": 200,
+      "final": "https://en.wikipedia.org/wiki/Control_theory#Open-loop_and_closed-loop_(feedback)_control",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#algorithm-details",
+      "status": 200,
+      "final": "https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Model_predictive_control",
+      "status": 200,
+      "final": "https://en.wikipedia.org/wiki/Model_predictive_control",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Reinforcement_learning",
+      "status": 200,
+      "final": "https://en.wikipedia.org/wiki/Reinforcement_learning",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Multi-armed_bandit",
+      "status": 200,
+      "final": "https://en.wikipedia.org/wiki/Multi-armed_bandit",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "http://incompleteideas.net/book/the-book-2nd.html",
+      "status": 200,
+      "final": "http://incompleteideas.net/book/the-book-2nd.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://docs.python.org/3/library/heapq.html",
+      "status": 200,
+      "final": "https://docs.python.org/3/library/heapq.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.postgresql.org/docs/current/tutorial-window.html",
+      "status": 200,
+      "final": "https://www.postgresql.org/docs/current/tutorial-window.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://blog.bytebytego.com/p/a-crash-course-in-caching-part-1",
+      "status": 200,
+      "final": "https://blog.bytebytego.com/p/a-crash-course-in-caching-part-1",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=zaRkONvyGr8",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=zaRkONvyGr8",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://antirez.com/news/75",
+      "status": 200,
+      "final": "https://antirez.com/news/75",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=P-9FwZxO1zE",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=P-9FwZxO1zE",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://huyenchip.com/ml-interviews-book/",
+      "status": 200,
+      "final": "https://huyenchip.com/ml-interviews-book/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developers.google.com/machine-learning/crash-course",
+      "status": 200,
+      "final": "https://developers.google.com/machine-learning/crash-course",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=3CC4N4z3GJc",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=3CC4N4z3GJc",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=tIeHLnjs5U8",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=tIeHLnjs5U8",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=eMlx5fFNoYc",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=eMlx5fFNoYc",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://fanout.sh/blog/llm-inference-interview-questions",
+      "status": 200,
+      "final": "https://fanout.sh/blog/llm-inference-interview-questions",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://vllm.ai/blog/2023-06-20-vllm",
+      "status": 200,
+      "final": "https://vllm.ai/blog/2023-06-20-vllm",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://magazine.sebastianraschka.com/p/practical-tips-for-finetuning-llms",
+      "status": 200,
+      "final": "https://magazine.sebastianraschka.com/p/practical-tips-for-finetuning-llms",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developers.openai.com/api/docs/guides/function-calling",
+      "status": 200,
+      "final": "https://developers.openai.com/api/docs/guides/function-calling",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.deeplearning.ai/the-batch/how-agents-can-improve-llm-performance/",
+      "status": 200,
+      "final": "https://www.deeplearning.ai/the-batch/how-agents-can-improve-llm-performance",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://docs.aws.amazon.com/whitepapers/latest/saas-tenant-isolation-strategies/isolation-security-or-noisy-neighbor.html",
+      "status": 200,
+      "final": "https://docs.aws.amazon.com/whitepapers/latest/saas-tenant-isolation-strategies/isolation-security-or-noisy-neighbor.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://beam.apache.org/documentation/basics/",
+      "status": 200,
+      "final": "https://beam.apache.org/documentation/basics/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://nightlies.apache.org/flink/flink-docs-stable/docs/connectors/datastream/guarantees/",
+      "status": 200,
+      "final": "https://nightlies.apache.org/flink/flink-docs-stable/docs/connectors/datastream/guarantees/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developers.google.com/machine-learning/recommendation",
+      "status": 200,
+      "final": "https://developers.google.com/machine-learning/recommendation",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.microsoft.com/en-us/research/publication/a-dirty-dozen-twelve-common-metric-interpretation-pitfalls-in-online-controlled-experiments/",
+      "status": 200,
+      "final": "https://www.microsoft.com/en-us/research/publication/a-dirty-dozen-twelve-common-metric-interpretation-pitfalls-in-online-controlled-experiments/",
+      "result": "reachable; playback/login of linked material not verified"
+    }
+  ]
+}

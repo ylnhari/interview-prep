@@ -46,16 +46,16 @@
 
   V['error-budget-burn'] = function (u) {
     var b = D(u, 'ar ad ag'), i, inner = '';
-    b += HD('error budget burn: 30-day window, 99.9% SLO');
+    b += HD('request budget: 1 million requests, 99.95% success');
     b += LN(50, 150, 720, 150, { c: 'var(--border)' });
     b += T(40, 154, '0%', { s: 9, c: 'var(--ink-dim)', a: 'end' });
     b += T(40, 40, '100%', { s: 9, c: 'var(--ink-dim)', a: 'end' });
     b += R(50, 40, 12, 110, { f: 'var(--good-weak)' });
     var steps = [
-      { x: 62, h: 20, lab: 'normal~~0.2%/day' },
-      { x: 174, h: 55, lab: 'bad deploy~~1x budget/day' },
-      { x: 286, h: 92, lab: 'still bad~~3x burn rate', warn: true },
-      { x: 398, h: 108, lab: 'rollback~~budget nearly gone', warn: true }
+      { x: 62, h: 20, lab: 'first window~~91 bad requests' },
+      { x: 174, h: 55, lab: 'next window~~250 cumulative' },
+      { x: 286, h: 92, lab: 'continued errors~~418 cumulative', warn: true },
+      { x: 398, h: 108, lab: 'mitigation~~491 cumulative', warn: true }
     ];
     for (i = 0; i < steps.length; i++) {
       var s = steps[i], g = '';
@@ -67,11 +67,11 @@
     b += SQ(inner);
     b += LN(400, 30, 400, 150, { c: 'var(--danger)', d: '3 4' });
     b += T(400, 20, 'budget exhausted: freeze releases, fix reliability', { s: 10, c: 'var(--danger)', cls: 'v-blink' });
-    b += T(600, 175, '43.2 min of allowed failure this month', { s: 10, c: 'var(--ink-dim)' });
+    b += T(600, 175, '500 bad requests allowed; uneven traffic matters', { s: 10, c: 'var(--ink-dim)' });
     b += T(150, 175, 'a fast burn empties the budget long before day 30', { s: 10, c: 'var(--ink-dim)' });
     return S(196, b);
   };
-  C['error-budget-burn'] = 'A <b>burn rate</b> above 1x spends the month\'s error budget faster than the month allows; a sustained fast burn should page someone well before the budget hits zero.';
+  C['error-budget-burn'] = 'Illustrative cumulative request failures against a <b>500-request budget</b>. Burn rate is observed bad-request fraction divided by the allowed fraction, not downtime minutes or a slope without traffic counts. Alert severity also depends on impact and time-to-harm.';
 
   V['expand-contract-migration'] = function (u) {
     var b = D(u, 'ar aa ag'), i, inner = '';

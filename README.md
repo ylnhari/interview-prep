@@ -1,14 +1,18 @@
 # Interview Prep
 
-A free course for machine learning engineering interviews, with chapters, worked examples, and practice questions. The same local engine can also build private interview notes from packs that are not part of the public course.
+A free, visual course for ML engineers, AI engineers, forward-deployed AI engineers and staff engineers. Learn a mechanism, predict an outcome, change a constraint, inspect feedback and produce evidence you can use at work or explain in an interview.
 
-**What's inside:** forty-two chapters in six tracks: system design (fourteen chapters from requirements and APIs through databases, caching, distributed systems, storage engines, queues, search, counting, realtime delivery and reliability, to ten worked cases), production ML systems, LLMs in production (inference engineering, fine-tuning, retrieval and agents), maths and ML foundations, decision systems (forecasting, optimisation, control, reinforcement learning), and practice (scenarios, coding drills, five question banks with about three hundred questions). Every chapter defines its terms first, has animated concept diagrams, practice exercises with marking guides, and a short list of the best videos and articles on the subject.
+Choose one of four recommended role paths, skip ahead or search the complete catalogue. Six browse groups cover ML foundations, systems foundations and cases, production ML, AI engineering, optional decision systems, and practice/question banks. Paths change recommendations and project framing; they never restrict access or confer a job level.
+
+Chapters combine existing animated diagrams with concise explanations, selected external teaching and applied tasks. Original learner-controlled models explore decision thresholds, historical availability, request budgets and tenant scheduling. Exercises include design, explanation, debugging and code; only exercises explicitly labeled code are runnable code tasks. Long explanations, checks and reference answers are optional disclosures rather than the default reading experience.
+
+Progress is self-recorded learning evidence, not mastery, a credential or a prediction of interview success. Reading budgets are editorial estimates unless a resource explicitly gives a publisher duration.
 
 Private packs are excluded from the public build. The GitHub Pages site builds only `packs/course` into `public-dist/`; it does not scan or upload the local `dist/` directory.
 
 **What a page gives you**
 
-- Chapters in importance order, each with a Key terms section (every term defined before use), animated concept diagrams (inline SVG, both themes), primary-source readings with a time estimate, quick checks, a "map it onto your own work" recall exercise, practice exercises with marking guides, and a spoken answer to rehearse against the interviewer's question.
+- Chapters in recommended order, each with a Key terms section (every term defined before use), animated concept diagrams (inline SVG, both themes), selected resources with format, provider, access labels and estimated study budgets, quick checks, a "map it onto your own work" recall exercise, practice exercises with marking guides, and optional explain-it-back practice.
 - Question banks with answers inline (toggle to self-test) and a general glossary. Private packs can add a round or interviewer profile with confirmed facts separated from inferences.
 - A roadmap page (`index.html` on the public site, `dist/index.html` for local builds) linking tracks, chapters and sections with browser-saved progress.
 - Progress is saved in the browser and can be exported or imported as a JSON file. Google sign-in is optional: when the public Spark configuration is present, a visitor can choose to sync compact course progress between devices. Guest learning always works without it. Sync covers completion, checks, quiz choices, exercise status and bounded answer drafts—not grading history—and does not include course content, private packs or profile data.
@@ -47,7 +51,7 @@ publication checks and the optional owner-authorized downstream handoff. No chat
 history, specific assistant subscription or private repository is needed to work
 on the public course.
 
-`docs/extending.md` explains how to add a chapter or a diagram in its own file. `docs/content-schema.md` is the contract: the content object, the two voices (coach vs candidate), define-before-use, the honesty rule, diagrams by id, importance ordering. `engine/viz-catalog.md` lists the diagrams (about 170). Add a diagram to `engine/viz-lib.js` following its helper conventions (CSS-variable colours only, `uid`-prefixed ids, the shell's animation classes).
+`docs/extending.md` explains how to add a chapter or a diagram in its own file. `docs/content-schema.md` is the contract: the content object, the two voices (coach vs candidate), define-before-use, the honesty rule, diagrams by id, recommended ordering. `engine/viz-catalog.md` lists the diagrams (about 170). Add a diagram to `engine/viz-lib.js` following its helper conventions (CSS-variable colours only, `uid`-prefixed ids, the shell's animation classes).
 
 For the optional public sync design, data boundary, configuration shape and release path, see [docs/public-sync.md](docs/public-sync.md) and [docs/architecture-public-sync.md](docs/architecture-public-sync.md). The planning target is approximately 1,000 registered users; it is not a daily-active-user, availability or Firebase-quota guarantee.
 

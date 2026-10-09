@@ -236,6 +236,6 @@
     b += T(60, 156, 'any single 0 bit found means "definitely absent" - never a false negative', { s: 10, c: 'var(--ink-dim)', a: 'start' });
     return S(180, b);
   };
-  C['bloom-filter'] = 'Checking y finds every one of its <b>k bits already set by other items</b>, so the filter reports "maybe present" even though y was never inserted - a false positive, never a false negative.';
+  C['bloom-filter'] = 'Checking y finds every one of its <b>k bits already set by other items</b>, so the filter reports "might be present" even though y was never inserted. No false negatives assumes represented insertions and sound hashing/bits; a stale filter can miss new origin records. More hashes improve the rate only up to the optimum.';
 
 }(typeof window !== 'undefined' ? window : this));

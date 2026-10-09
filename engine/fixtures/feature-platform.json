@@ -1,0 +1,14 @@
+{
+  "cutoff": "2026-01-01T09:30:00Z",
+  "region": "west",
+  "records": [
+    {"tenant":"a","entity":"same-key","event_id":"e1","version":1,"event_time":"2026-01-01T09:00:00Z","source_received":"2026-01-01T09:01:00Z","computed":"2026-01-01T09:02:00Z","online_available":{"east":"2026-01-01T09:03:00Z","west":"2026-01-01T09:04:00Z"},"warehouse_written":"2026-01-01T09:05:00Z","value":10},
+    {"tenant":"a","entity":"same-key","event_id":"e1","version":2,"event_time":"2026-01-01T09:00:00Z","source_received":"2026-01-01T09:45:00Z","computed":"2026-01-01T09:46:00Z","online_available":{"east":"2026-01-01T09:47:00Z","west":"2026-01-01T09:48:00Z"},"warehouse_written":"2026-01-01T09:49:00Z","value":99},
+    {"tenant":"b","entity":"same-key","event_id":"e2","version":1,"event_time":"2026-01-01T09:00:00Z","source_received":"2026-01-01T09:01:00Z","computed":"2026-01-01T09:02:00Z","online_available":{"east":"2026-01-01T09:03:00Z","west":"2026-01-01T09:04:00Z"},"warehouse_written":"2026-01-01T09:05:00Z","value":500},
+    {"tenant":"a","entity":"replica-lag","event_id":"e3","version":1,"event_time":"2026-01-01T09:20:00Z","source_received":"2026-01-01T09:21:00Z","computed":"2026-01-01T09:22:00Z","online_available":{"east":"2026-01-01T09:23:00Z","west":"2026-01-01T09:35:00Z"},"warehouse_written":"2026-01-01T09:24:00Z","value":20}
+  ],
+  "observed_decisions": [
+    {"tenant":"a","entity":"same-key","region":"west","at":"2026-01-01T09:30:00Z","observed_event_id":"e1","observed_version":1,"observed_value":10},
+    {"tenant":"a","entity":"replica-lag","region":"west","at":"2026-01-01T09:30:00Z","observed_value":null}
+  ]
+}

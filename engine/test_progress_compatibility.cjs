@@ -63,6 +63,7 @@ rejects("changed option text", (candidate) => { candidate.topics[0].learn[0].che
 rejects("changed option order", (candidate) => { candidate.topics[0].learn[0].check.options.reverse(); });
 rejects("changed option count", (candidate) => { candidate.topics[0].learn[0].check.options.push("C"); });
 rejects("changed answer index", (candidate) => { candidate.topics[0].learn[0].check.answer = 0; });
+rejects("unreviewed quiz storage version", (candidate) => { candidate.topics[0].learn[0].check.revision = 'unreviewed'; });
 rejects("removed quiz", (candidate) => { candidate.topics[0].learn[0].check = null; });
 rejects("lost topic", (candidate) => { candidate.topics = []; });
 rejects("lost section", (candidate) => { candidate.topics[0].learn = []; });
@@ -275,3 +276,27 @@ withFixture({}, ({ root, sha }) => {
 });
 
 console.log("progress compatibility tests passed");
+
+// A retained quiz correction requires exact old/new hashes and a fresh storage
+// version. This is narrower than waiving all content changes.
+const corrected = clone(course());
+corrected.topics[0].learn[0].check.question = 'Source-backed corrected question';
+corrected.topics[0].learn[0].check.revision = 'audit-2026-10';
+const normalQuiz = q => ({question:q.question, options:q.options, answer:q.answer});
+const quizManifest = {version:2, retirements:[], quizRevisions:[{
+  pack:'public_course', topic:'systems_caching', id:'cache_basics',
+  before:canonicalItemSha256(normalQuiz(course().topics[0].learn[0].check)),
+  after:canonicalItemSha256(normalQuiz(corrected.topics[0].learn[0].check)),
+  revision:'audit-2026-10', reason:'Correct a verified synthetic teaching defect.'
+}]};
+assert.strictEqual(assertProgressCompatible(course(), corrected, quizManifest), true);
+assert.strictEqual(assertProgressCompatible(corrected, clone(corrected), quizManifest), true, 'reviewed history can remain');
+const badHash = clone(quizManifest); badHash.quizRevisions[0].before = '0'.repeat(64);
+assert.throws(()=>assertProgressCompatible(course(), corrected, badHash), /baseline hash mismatch/);
+const badVersion = clone(corrected); delete badVersion.topics[0].learn[0].check.revision;
+assert.throws(()=>assertProgressCompatible(course(), badVersion, quizManifest), /candidate hash\/version mismatch/);
+const wrongCandidate = clone(corrected); wrongCandidate.topics[0].learn[0].check.answer = 0;
+assert.throws(()=>assertProgressCompatible(course(), wrongCandidate, quizManifest), /candidate hash\/version mismatch/);
+const duplicateRevision = clone(quizManifest); duplicateRevision.quizRevisions.push(clone(duplicateRevision.quizRevisions[0]));
+assert.throws(()=>assertProgressCompatible(course(), corrected, duplicateRevision), /duplicate quiz revision/);
+assert.throws(()=>assertProgressCompatible(course(), corrected, {version:2,retirements:[],quizRevisions:[]}), /changed saved quiz mapping/);
