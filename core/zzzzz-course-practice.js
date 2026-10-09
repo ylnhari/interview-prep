@@ -7,3 +7,10 @@ if(sq&&!sq.activities.some(a=>a.id==='sq-staff-delivery-extension'))sq.activitie
 const mot=core['mlops-tooling'];
 if(mot&&!mot.learn.some(s=>s.id==='mot-local-build-track'))mot.learn.push({id:'mot-local-build-track',part:'field',title:'Optional no-cloud build track: prove the boundaries',viz:null,body:'<p>Use <a href="#mlops-tooling/mot-a2">the bounded batch API task</a>. Validate per-item results, strict types/ranges, request deadlines and partial failures. Inject a timeout and duplicate delivery; record test output and one annotated trace. A timeout can leave compute running, so demonstrate cancellation or bounded completion rather than assume it stopped.</p><p>Rehearse a compatible schema/model rollout in an isolated local fixture using <a href="#sql-databases/sql-f9">parallel schema change</a>. Then calculate a fixed hypothetical request budget: 1,000,000 eligible requests, 99.95% target, 1,000 bad requests. Save the units, allowed bad events and burn rate; compare with <a href="#sre-practices/srep-0">the SLO explanation</a>.</p>',deeper:'<p>Expected arithmetic: 500 allowed bad requests and burn rate 2. Evidence includes tests, a trace, compatibility checks, a recovery rehearsal and an SLO worksheet. Cloud services are optional. If you choose a different architecture, prove the same contract, permission, bounded-work and recovery outcomes.</p>',check:null});
 })(window);
+
+// Public chapter orientation describes usefulness, never guessed hiring frequency.
+(function () { Object.keys(window.PREP_CORE).forEach(function (id) {
+  var t=window.PREP_CORE[id];
+  if (/interview|round|asked|comes up|preparation/i.test(t.levelLabel || ''))
+    t.levelLabel = /^question-bank-/.test(id) ? 'Optional explanation practice' : /forecast|or-tooling|control-theory|rl-judgment/.test(id) ? 'Optional specialist depth' : 'Foundational and applied engineering';
+}); })();
