@@ -87,13 +87,28 @@ class DisplayedReferences(unittest.TestCase):
         with self.assertRaises(ValueError):
             top([('x', float('nan'), 'a', {})], 1)
 
-    def test_displayed_logistic_functions(self):
+    def displayed_logistic_scope(self):
         # This older answer uses one <code> line per <li>; execute those lines.
         lines = re.findall(r'<li><code>(.*?)</code></li>', self.activities['cdr-a3']['model'], re.S)
         scope = {}
-        exec('from math import exp\nfrom random import Random\n' + '\n'.join(html.unescape(x) for x in lines), scope)
+        exec('\n'.join(html.unescape(x) for x in lines), scope)
+        return scope
+
+    def test_displayed_sigmoid_standalone(self):
+        scope = self.displayed_logistic_scope()
+        self.assertEqual(scope['sigmoid'](0), 0.5)
         self.assertEqual(scope['sigmoid'](-1000), 0)
         self.assertEqual(scope['sigmoid'](1000), 1)
+
+    def test_displayed_train_standalone(self):
+        scope = self.displayed_logistic_scope()
+        weights, bias = scope['train']([[-1], [1]], [0, 1], epochs=1)
+        self.assertEqual(len(weights), 1)
+        self.assertGreater(weights[0], 0)
+        self.assertTrue(isinstance(bias, float))
+
+    def test_displayed_logistic_functions(self):
+        scope = self.displayed_logistic_scope()
         self.assertEqual(scope['prec_rec'](2, 1, 1), (2/3, 2/3))
         self.assertEqual(scope['confusion']([0, 1, 1], [0.2, 0.8, 0.3], 0.5), (1, 0, 1, 1))
         weights, bias = scope['train']([[-2],[-1],[1],[2]], [0,0,1,1], epochs=100)

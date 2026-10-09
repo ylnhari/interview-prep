@@ -10,7 +10,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 
 def course():
-    script = "global.window=global;global.PREP_CORE={};['ml-foundations-a','ml-foundations-b','ml-foundations-c','applied-evaluation'].forEach(x=>require('./core/'+x+'.js'));console.log(JSON.stringify(PREP_CORE))"
+    script = "global.window=global;require('./core/library.js');require('fs').readdirSync('./core').filter(x=>x.endsWith('.js')&&x!=='library.js').sort().forEach(x=>require('./core/'+x));console.log(JSON.stringify(PREP_CORE))"
     return json.loads(subprocess.check_output(['node', '-e', script], cwd=ROOT, text=True, encoding='utf-8'))
 
 class DisplayedMLFixtures(unittest.TestCase):
@@ -41,6 +41,41 @@ class DisplayedMLFixtures(unittest.TestCase):
             self.attention([[1, 2]], [[1]], [[2]])
         out = self.attention([[10000]], [[10000], [-10000]], [[3], [99]])
         self.assertEqual(out, [[3.0]])
+
+    def test_mask_broadcast_equivalence_and_invalid_shapes(self):
+        q, k, v = [[1, 0], [0, 1]], [[1, 0], [0, 1], [0, 0]], [[2], [10], [99]]
+        key = [True, True, False]
+        expected = self.attention(q, k, v, [key, key])
+        self.assertEqual(self.attention(q, k, v, key), expected)
+        self.assertEqual(self.attention(q, k, v, [key]), expected)
+        for mask in ([True], [[True, False]], [key, key, key],
+                     [[True, True, False], [True]], [1, 1, 0],
+                     [[[True, True, False]]], 'all'):
+            with self.subTest(mask=mask):
+                with self.assertRaisesRegex(ValueError, 'mask must be boolean'):
+                    self.attention(q, k, v, mask)
+
+    def test_packed_examples_need_attention_boundary(self):
+        batch = json.loads((ROOT / 'engine/fixtures/ai-diagnostics.json').read_text(encoding='utf-8'))['batch']
+        ids, positions = batch['example_ids'], batch['position_ids']
+        size = len(ids)
+        # Q/K use the actual reset positions: both examples have identical
+        # within-example position representations, but no boundary is implied.
+        q = [[float(position), 1.0] for position in positions]
+        k = [row[:] for row in q]
+        v = [[float(i+1)] for i in range(size)]
+        perturbed = [[row[0]+1000 if ids[i] == ids[0] else row[0]] for i,row in enumerate(v)]
+        causal = [[j <= i for j in range(size)] for i in range(size)]
+        isolated = [[j <= i and ids[j] == ids[i] for j in range(size)] for i in range(size)]
+        causal_before = self.attention(q, k, v, causal)
+        causal_after = self.attention(q, k, perturbed, causal)
+        isolated_before = self.attention(q, k, v, isolated)
+        isolated_after = self.attention(q, k, perturbed, isolated)
+        second = [i for i,example in enumerate(ids) if example != ids[0]]
+        self.assertTrue(second)
+        for i in second:
+            self.assertGreater(abs(causal_after[i][0]-causal_before[i][0]), 1)
+            self.assertEqual(isolated_after[i], isolated_before[i])
 
     def test_threshold_counterexample_and_auc_ties(self):
         labels = [1, 0, 1]
