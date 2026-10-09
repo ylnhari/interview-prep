@@ -69,9 +69,9 @@
 
   V['norm-layers'] = function (u) {
     var b = D(u, 'ar'), panels = [
-      { x: 40, title: 'BatchNorm', sub: 'normalize each feature~down the batch', use: 'CNNs; needs a real batch', axis: 'col' },
+      { x: 40, title: 'BatchNorm', sub: 'normalize each feature~down the batch', use: 'training uses batch statistics', axis: 'col' },
       { x: 300, title: 'LayerNorm', sub: 'normalize each example~across its features', use: 'transformers, RNNs; batch of 1 is fine', axis: 'row' },
-      { x: 560, title: 'RMSNorm', sub: 'like LayerNorm, skips~the mean-centring step', use: 'most current large language models', axis: 'row' }
+      { x: 560, title: 'RMSNorm', sub: 'like LayerNorm, skips~the mean-centring step', use: 'scale without mean subtraction', axis: 'row' }
     ], p, r, c, cell = 16;
     for (p = 0; p < panels.length; p++) {
       var px = panels[p].x;
@@ -89,7 +89,7 @@
     b += T(380, 192, 'the highlighted cells are normalized together (RMSNorm: scale only, no mean subtraction)', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
     return S(208, b);
   };
-  C['norm-layers'] = 'The three normalisers differ only in which axis they average over: BatchNorm goes down the batch for one feature, LayerNorm and RMSNorm go across the features of one example.';
+  C['norm-layers'] = 'The highlighted cells show the normalization groups in a simple batch-by-feature view. BatchNorm uses per-feature batch statistics during training; LayerNorm centers and scales each example across its normalized features; RMSNorm scales by root mean square without subtracting the mean.';
 
   V['lr-schedule'] = function (u) {
     var b = D(u, 'ar'), i, pts = '', x0 = 60, x1 = 700, y0 = 156, yTop = 46, warm = 15, total = 100, n = 40;

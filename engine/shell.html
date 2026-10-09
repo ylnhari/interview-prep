@@ -944,7 +944,23 @@ window.PREP_IO = (function () {
     var n = orderedTopics().indexOf(t) + 1;
     book.appendChild(renderChapter(t, n)); book.appendChild(renderNav(t.id));
   }
-  function rerenderChapter(topic) { if (state.view !== topic.id) { renderRail(); return; } var y = window.scrollY; renderBook(); renderRail(); window.scrollTo({ top: y }); }
+  function rerenderChapter(topic) {
+    if (state.view !== topic.id) { renderRail(); return; }
+    var y = window.scrollY, disclosures = Array.prototype.map.call(book.querySelectorAll('details'), function (d) { return d.open; });
+    renderBook(); renderRail();
+    Array.prototype.forEach.call(book.querySelectorAll('details'), function (d, i) { if (i < disclosures.length) d.open = disclosures[i]; });
+    window.scrollTo({ top: y });
+  }
+  function rerenderCheck(topic, sectionId) {
+    rerenderChapter(topic);
+    if (state.view !== topic.id) return;
+    var section = document.getElementById('sec-' + sectionId), panel = section && section.querySelector('details.mcq');
+    if (!panel) return;
+    panel.open = true;
+    var feedback = panel.querySelector('.ex'), target = feedback || panel.querySelector('.opt');
+    if (feedback) feedback.tabIndex = -1;
+    if (target) target.focus({preventScroll:true});
+  }
   function titleOf(v) { if (v === 'home') return 'Course home'; if (v === 'who') return 'Who is interviewing you'; if (v === 'glossary') return 'Glossary'; var t = topicById(v); return t ? t.title : v; }
   function renderNav(cur) {
     var order = viewOrder(), i = order.indexOf(cur); var nav = el('div', 'chnav');
@@ -1080,8 +1096,8 @@ window.PREP_IO = (function () {
         if (c.check && c.check.auditCaution) sec.appendChild(txt('p', 'note', 'Review note: ' + c.check.auditCaution + ' Historical selections remain in your backup; this check is paused pending revision.'));
         if (c.check && !c.check.auditCaution) {
           var legacyAnswer = legacyQuizIndex(topic.id, c.id, c.check.answer, c.check.options.length); var mq = el('details', 'mcq'); mq.appendChild(txt('summary', null, 'Optional prediction check')); mq.appendChild(txt('div', 'q', c.check.question)); var opts = el('div', 'opts'); var checkKey = c.check.revision ? c.id + '@' + c.check.revision : c.id; var chosen = t.checks[checkKey]; if (typeof chosen !== 'number' || !isFinite(chosen) || Math.floor(chosen) !== chosen || chosen < 0 || chosen >= c.check.options.length) chosen = null;
-          quizDisplayOrder(topic.id, c.id, c.check.options.length).forEach(function (oi) { var o = c.check.options[oi], storedIndex = legacyQuizIndex(topic.id, c.id, oi, c.check.options.length); var ob = txt('button', 'opt', o); ob.type = 'button'; if (chosen != null) { ob.disabled = true; if (oi === c.check.answer) ob.classList.add('right'); else if (storedIndex === chosen) ob.classList.add('wrong'); } ob.addEventListener('click', function () { t.checks[checkKey] = storedIndex; if (oi === c.check.answer) t.learn[c.id] = true; persist(topic.id); rerenderChapter(topic); }); opts.appendChild(ob); });
-          mq.appendChild(opts); if (chosen != null) { mq.appendChild(txt('div', 'ex', (chosen === legacyAnswer ? 'Correct. ' : 'Not quite. ') + c.check.explain)); var retry = txt('button', 'btn', 'Try again'); retry.type = 'button'; retry.addEventListener('click', function () { delete t.checks[checkKey]; persist(topic.id); rerenderChapter(topic); }); mq.appendChild(retry); } sec.appendChild(mq);
+          quizDisplayOrder(topic.id, c.id, c.check.options.length).forEach(function (oi) { var o = c.check.options[oi], storedIndex = legacyQuizIndex(topic.id, c.id, oi, c.check.options.length); var ob = txt('button', 'opt', o); ob.type = 'button'; if (chosen != null) { ob.disabled = true; if (oi === c.check.answer) ob.classList.add('right'); else if (storedIndex === chosen) ob.classList.add('wrong'); } ob.addEventListener('click', function () { t.checks[checkKey] = storedIndex; if (oi === c.check.answer) t.learn[c.id] = true; persist(topic.id); rerenderCheck(topic, c.id); }); opts.appendChild(ob); });
+          mq.appendChild(opts); if (chosen != null) { var feedback = txt('div', 'ex', (chosen === legacyAnswer ? 'Correct. ' : 'Not quite. ') + c.check.explain); feedback.setAttribute('role', 'status'); mq.appendChild(feedback); var retry = txt('button', 'btn', 'Try again'); retry.type = 'button'; retry.addEventListener('click', function () { delete t.checks[checkKey]; persist(topic.id); rerenderCheck(topic, c.id); }); mq.appendChild(retry); } sec.appendChild(mq);
         }
         var row = el('div', 'row');
         var doneLabel = c.link ? 'Mark done' : 'Mark as read';
