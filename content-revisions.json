@@ -181,6 +181,15 @@
     },
     {
       "pack": "course",
+      "topic": "storage-engines",
+      "id": "se-f3",
+      "before": "261dc1fce0739361c196b726c61470cd5c125bddbd2ef498e8eeaded1abd4719",
+      "after": "4a4833ded96195f0c31564b7aebfed33396ff586cc8322371dcdd2442c04d985",
+      "revision": "independent-review-2026-10-09",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
       "topic": "search-and-retrieval",
       "id": "sr-f5",
       "before": "e32ab52049aecbf084d3d0c23ca85bb09f4e0e1b4e3dbd29e6d0604cd2d68f22",
@@ -195,6 +204,15 @@
       "before": "e9df73a634f2640bc37809128d94198a88abc6763d236ba2a10b35e654c96232",
       "after": "c42799dd8ed0199a0e7061f3dd6832b90141fdf6f6ef849986914cab88f259c0",
       "revision": "audit-2026-10",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
+      "topic": "system-design-cases",
+      "id": "sdc-5",
+      "before": "ffb6d47ecf21a288c8ece12733743468cc3d137a584631aafdb26562036b959f",
+      "after": "91520018029b4efc2df8d612c796c1cd658bf4d3a0043b7f4928ec753b840b86",
+      "revision": "independent-review-2026-10-09",
       "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
     },
     {
@@ -452,6 +470,15 @@
     {
       "pack": "course",
       "topic": "data-and-generalization",
+      "id": "dag-f5",
+      "before": "8b4eb7debe94ccdeecaa244e0ddba43962913cc40bc8a155302fc67eb1037292",
+      "after": "1d7ffaedae358e9e4166aaae0febf2589a96e8c9cbf33701f3d09914b65b4cc5",
+      "revision": "independent-review-2026-10-09",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
+      "topic": "data-and-generalization",
       "id": "dag-f6",
       "before": "a7393a1193f130317512bf930dc1ff4fec2456d71d5491463fa8b9084700f2a1",
       "after": "b4c2e65a689fd72d0213c6802d160811a21a550a8fb348c214e5b70ce7cef48e",
@@ -474,6 +501,15 @@
       "before": "c80bdb5e9e16d0cca6c983aa1df55a19c2db8769780b59a0b236b3cd11d7c077",
       "after": "c18df651a4914a2ca6d4843836b0e4c41068eac5c861e1feb345a3152b156b95",
       "revision": "audit-2026-10",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
+      "topic": "evaluation-and-selection",
+      "id": "es-f1",
+      "before": "b71a891b96e4d7c50d8b83993153293ea45e1e15740359dd1a3f2c367e8237cb",
+      "after": "005d3f33a12f55a85360a2ca096345a74684bb767de3332d5743824f62827c88",
+      "revision": "independent-review-2026-10-09",
       "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
     },
     {

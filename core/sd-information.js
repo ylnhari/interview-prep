@@ -8,7 +8,7 @@
     title: 'Search and retrieval systems',
     level: 'warning',
     levelLabel: 'Common in system design interviews for any product with a search box.',
-    why: `Almost any product with more than a shelf of items ends up needing a search box, and an interviewer uses it to see whether you know what happens between a user typing three letters and a ranked list appearing. This is one of the few system design topics with real mathematics behind it - a scoring formula, a fusion rule, a ranking metric - so it is also used to check whether you can go one level below a box-and-arrow diagram. The strongest answers show the mechanism (tokens, a posting list, a scoring formula) and then the trade-offs a real search team argues about: freshness against load, and precision against recall.`,
+    why: "Trace a query from tokenization and candidate retrieval to ranking and evaluation. Compare lexical, dense and fused baselines on query slices, then produce an evaluation plan covering relevance, freshness, permissions and latency.",
     learn: [
       {
         id: 'sr-0',
@@ -331,7 +331,7 @@ If instead the delay is upstream of indexing entirely - a slow ingestion or batc
     title: 'Counting at scale and probabilistic data structures',
     level: 'good',
     levelLabel: 'Comes up occasionally, often as a follow-up in an analytics, ads, or infrastructure interview.',
-    why: `Any system that reports a view count, a unique-visitor number, or a p99 latency is quietly running into the fact that exact counting does not scale the way a single database row does. Interviewers ask about this to see whether you know when approximate is not just acceptable but the only workable answer, and whether you can back that judgment with real numbers rather than a vague "use a sketch." The mathematics here is small and checkable - a standard error formula, an error bound - so it is also one of the few places in a system design interview where you can show precise, quantitative reasoning instead of only architecture.`,
+    why: "Choose exact or approximate counting from the required error, memory and throughput budgets. Calculate the stated error assumptions, test a counterexample and document when the sketch result is unsuitable for a decision.",
     learn: [
       {
         id: 'cs-0',
@@ -620,7 +620,7 @@ To get a real answer, I'd need the underlying distributions from both regions, o
     title: 'Realtime delivery, feeds and notifications',
     level: 'danger',
     levelLabel: 'Asked in most system design interviews in some form - a chat feature, a feed, or a notification system.',
-    why: `A chat app, a live feed and a notification system all sit on top of the same small set of ideas: how a server pushes something to a client without being asked again and again, and how a system decides what to show one user out of everything happening across everyone they follow. Interviewers reach for this because it rewards knowing the actual mechanism - a persistent connection, a fan-out strategy, a graph model - rather than a general "add a cache and a queue" answer. It also has a genuinely hard case built in, the celebrity problem, that separates someone who has only memorised "fan-out on write" from someone who understands why that alone breaks.`,
+    why: "Trace delivery, reconnect and fan-out in a chat, feed or notification system. Produce a recovery and load plan that distinguishes durable messages from best-effort presence and tests a high-fan-out account.",
     learn: [
       {
         id: 'rf-0',

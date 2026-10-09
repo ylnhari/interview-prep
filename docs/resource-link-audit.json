@@ -284,7 +284,7 @@
     {
       "url": "https://aws.amazon.com/builders-library/caching-challenges-and-strategies/",
       "status": 200,
-      "final": "https://aws.amazon.com/builders-library/caching-challenges-and-strategies/",
+      "final": "https://builder.aws.com/content/3K9TeXp6strMiJ4vhakpRD7BQWO/caching-challenges-and-strategies",
       "result": "reachable; playback/login of linked material not verified"
     },
     {
@@ -648,6 +648,48 @@
       "result": "reachable; playback/login of linked material not verified"
     },
     {
+      "url": "https://code.flickr.net/2010/02/08/ticket-servers-distributed-unique-primary-keys-on-the-cheap/",
+      "status": 200,
+      "final": "https://code.flickr.net/2010/02/08/ticket-servers-distributed-unique-primary-keys-on-the-cheap/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://stripe.com/blog/idempotency",
+      "status": 200,
+      "final": "https://stripe.com/blog/idempotency",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://stripe.dev/blog/ledger-stripe-system-for-tracking-and-validating-money-movement",
+      "status": 200,
+      "final": "https://stripe.dev/blog/ledger-stripe-system-for-tracking-and-validating-money-movement",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=Ox-aXX2qekU",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=Ox-aXX2qekU",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://blog.bytebytego.com/p/how-stripe-detects-fraudulent-transactions",
+      "status": 200,
+      "final": "https://blog.bytebytego.com/p/how-stripe-detects-fraudulent-transactions",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.anyscale.com/blog/continuous-batching-llm-inference",
+      "status": 200,
+      "final": "https://www.anyscale.com/blog/continuous-batching-llm-inference",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://eugeneyan.com/writing/system-design-for-discovery/",
+      "status": 200,
+      "final": "https://eugeneyan.com/writing/system-design-for-discovery/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
       "url": "https://developers.google.com/machine-learning/guides/rules-of-ml",
       "status": 200,
       "final": "https://developers.google.com/machine-learning/guides/rules-of-ml",
@@ -756,6 +798,54 @@
       "result": "reachable; playback/login of linked material not verified"
     },
     {
+      "url": "https://horace.io/brrr_intro.html",
+      "status": 200,
+      "final": "https://horace.io/brrr_intro.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arxiv.org/abs/1910.02054",
+      "status": 200,
+      "final": "https://arxiv.org/abs/1910.02054",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://docs.pytorch.org/tutorials/intermediate/FSDP_tutorial.html",
+      "status": 200,
+      "final": "https://docs.pytorch.org/tutorials/intermediate/FSDP_tutorial.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://docs.pytorch.org/tutorials/intermediate/ddp_tutorial.html",
+      "status": 200,
+      "final": "https://docs.pytorch.org/tutorials/intermediate/ddp_tutorial.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arxiv.org/abs/2205.14135",
+      "status": 200,
+      "final": "https://arxiv.org/abs/2205.14135",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=l8pRSuU81PU",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=l8pRSuU81PU",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=7EJjdDLK4cg",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=7EJjdDLK4cg",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://developer.nvidia.com/nccl",
+      "status": 200,
+      "final": "https://developer.nvidia.com/nccl",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
       "url": "https://owasp.org/www-project-top-10-for-large-language-model-applications/",
       "status": 200,
       "final": "https://owasp.org/projects/top-10-for-large-language-model-applications",
@@ -771,12 +861,6 @@
       "url": "https://arxiv.org/abs/2309.06180",
       "status": 200,
       "final": "https://arxiv.org/abs/2309.06180",
-      "result": "reachable; playback/login of linked material not verified"
-    },
-    {
-      "url": "https://arxiv.org/abs/2205.14135",
-      "status": 200,
-      "final": "https://arxiv.org/abs/2205.14135",
       "result": "reachable; playback/login of linked material not verified"
     },
     {
@@ -1044,6 +1128,54 @@
       "result": "reachable; playback/login of linked material not verified"
     },
     {
+      "url": "https://www.youtube.com/watch?v=7VeUPuFGJHk",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=7VeUPuFGJHk",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=J4Wdy0Wc_xQ",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=J4Wdy0Wc_xQ",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=3CC4N4z3GJc",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=3CC4N4z3GJc",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://xgboost.readthedocs.io/en/stable/tutorials/model.html",
+      "status": 200,
+      "final": "https://xgboost.readthedocs.io/en/stable/tutorials/model.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://lightgbm.readthedocs.io/en/latest/Features.html",
+      "status": 200,
+      "final": "https://lightgbm.readthedocs.io/en/latest/Features.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://scikit-learn.org/stable/modules/calibration.html",
+      "status": 200,
+      "final": "https://scikit-learn.org/stable/modules/calibration.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=yIYKR4sgzI8",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=yIYKR4sgzI8",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://christophm.github.io/interpretable-ml-book/shap.html",
+      "status": 200,
+      "final": "https://christophm.github.io/interpretable-ml-book/shap.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
       "url": "https://www.youtube.com/watch?v=4jRBRDbJemM",
       "status": 200,
       "final": "https://www.youtube.com/watch?v=4jRBRDbJemM",
@@ -1089,6 +1221,48 @@
       "url": "https://karpathy.ai/zero-to-hero.html",
       "status": 200,
       "final": "https://karpathy.ai/zero-to-hero.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=aircAruvnKk",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=aircAruvnKk",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=tIeHLnjs5U8",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=tIeHLnjs5U8",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=kCc8FmEb1nY",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=kCc8FmEb1nY",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://jalammar.github.io/illustrated-transformer/",
+      "status": 200,
+      "final": "https://jalammar.github.io/illustrated-transformer/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=IN2XmBhILt4",
+      "status": 200,
+      "final": "https://www.youtube.com/watch?v=IN2XmBhILt4",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://d2l.ai/",
+      "status": 200,
+      "final": "https://d2l.ai/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://arxiv.org/abs/2104.09864",
+      "status": 200,
+      "final": "https://arxiv.org/abs/2104.09864",
       "result": "reachable; playback/login of linked material not verified"
     },
     {
@@ -1296,18 +1470,6 @@
       "result": "reachable; playback/login of linked material not verified"
     },
     {
-      "url": "https://www.youtube.com/watch?v=3CC4N4z3GJc",
-      "status": 200,
-      "final": "https://www.youtube.com/watch?v=3CC4N4z3GJc",
-      "result": "reachable; playback/login of linked material not verified"
-    },
-    {
-      "url": "https://www.youtube.com/watch?v=tIeHLnjs5U8",
-      "status": 200,
-      "final": "https://www.youtube.com/watch?v=tIeHLnjs5U8",
-      "result": "reachable; playback/login of linked material not verified"
-    },
-    {
       "url": "https://www.youtube.com/watch?v=eMlx5fFNoYc",
       "status": 200,
       "final": "https://www.youtube.com/watch?v=eMlx5fFNoYc",
@@ -1371,6 +1533,18 @@
       "url": "https://www.microsoft.com/en-us/research/publication/a-dirty-dozen-twelve-common-metric-interpretation-pitfalls-in-online-controlled-experiments/",
       "status": 200,
       "final": "https://www.microsoft.com/en-us/research/publication/a-dirty-dozen-twelve-common-metric-interpretation-pitfalls-in-online-controlled-experiments/",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.ndcg_score.html",
+      "status": 200,
+      "final": "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.ndcg_score.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.permutation_test.html",
+      "status": 200,
+      "final": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.permutation_test.html",
       "result": "reachable; playback/login of linked material not verified"
     }
   ]

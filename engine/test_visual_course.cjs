@@ -82,3 +82,33 @@ routeEvent();assert.equal(routeContext.state.view,'home','Back to initial empty 
 routeContext.location.hash='#unknown';routeContext.state.view='one';routeEvent();assert.equal(routeContext.state.view,'one','unknown fragment leaves current chapter intact');
 routeContext.location.hash='';routeContext.publicCourse=false;routeEvent();assert.equal(routeContext.state.view,'one','private initial route is not replaced with public home');
 console.log('test_visual_course: browser history empty-fragment event and invalid/private route behavior OK');
+
+assert(shell.includes("teaching.open = !publicCourse && i === 0"),'public glossary starts collapsed; private disclosure contract retained');
+assert(shell.includes('selected.focus({preventScroll:true})'),'role selection restores focus after rendering');
+console.log('Public glossary default and role focus source contract passed; rendered checks recorded separately.');
+
+const chooseResource = new Function('return ('+source('selectedResource')+')')();
+const inheritedVideo={u:'https://www.youtube.com/watch?v=original',l:'Inherited overview'};
+const curated={u:'https://example.org/targeted',l:'Selected task teaching',featured:true};
+assert.equal(chooseResource([inheritedVideo,curated]),curated,'explicit curated teaching wins even when a direct video precedes it');
+assert.equal(chooseResource([{u:'https://example.org/ref'},inheritedVideo]),inheritedVideo,'video fallback remains useful without a curated choice');
+assert.equal(chooseResource([curated]),curated);
+assert.equal(chooseResource([]),undefined,'no fake media when resources are absent');
+const optionalVideo={u:inheritedVideo.u,l:'OPTIONAL overview',featured:true};
+const relevantReading={u:'https://example.org/evidence',l:'Evidence diagnostic'};
+assert.equal(chooseResource([optionalVideo,relevantReading]),relevantReading,'optional video cannot displace relevant reading');
+assert.equal(chooseResource([{...curated,optional:true},relevantReading]),relevantReading,'optional flag wins over a featured flag');
+assert.equal(chooseResource([optionalVideo]),undefined,'only optional references means no default teaching card');
+
+let panels=[{open:true},{open:false},{open:true}],scrollRestored;
+const rerenderContext={state:{view:'topic'},book:{querySelectorAll(){return panels;}},window:{scrollY:417,scrollTo(v){scrollRestored=v.top;}},renderBook(){panels=[{open:false},{open:true},{open:false}];},renderRail(){}};
+const redraw=new Function('context','with(context){return ('+source('rerenderChapter')+');}')(rerenderContext);
+redraw({id:'topic'});assert.deepEqual(panels.map(p=>p.open),[true,false,true],'marking a section preserves the learner-opened disclosures');assert.equal(scrollRestored,417);
+let focused=0;const feedback={focus(){focused++;}},checkPanel={open:false,querySelector(sel){return sel==='.ex'?feedback:null;}};
+const checkContext={state:{view:'topic'},rerenderChapter(){},document:{getElementById(id){assert.equal(id,'sec-cutoff');return {querySelector(){return checkPanel;}};}}};
+const redrawCheck=new Function('context','with(context){return ('+source('rerenderCheck')+');}')(checkContext);
+redrawCheck({id:'topic'},'cutoff');assert.equal(checkPanel.open,true);assert.equal(focused,1);assert.equal(feedback.tabIndex,-1,'feedback is a focus destination without entering the tab order');
+const retryOption={focus(){focused++;}};checkPanel.querySelector=sel=>sel==='.opt'?retryOption:null;
+redrawCheck({id:'topic'},'cutoff');assert.equal(focused,2,'retry returns focus to an answer option');
+
+assert.equal(retryOption.tabIndex,undefined,'retry preserves the native option tab order');

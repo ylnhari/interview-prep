@@ -812,6 +812,10 @@ window.PREP_IO = (function () {
 
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
   function txt(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; e.textContent = text; return e; }
+  function selectedResource(resources) {
+    var eligible = resources.filter(function (r) { return !r.optional && !/^optional\b/i.test(r.l || ''); });
+    return eligible.filter(function (r) { return r.featured; })[0] || eligible.filter(function (r) { return /youtube\.com|youtu\.be/.test(r.u || ''); })[0] || eligible[0];
+  }
   function safeExternalUrl(value) {
     try {
       var parsed = new URL(String(value || ''), window.location.href);
@@ -852,11 +856,11 @@ window.PREP_IO = (function () {
     var practice = txt('button', 'btn', 'Open practical diagnostics'); practice.addEventListener('click', function () { go('coding-drills', 'cdr-diagnostic'); }); actions.appendChild(practice); home.appendChild(actions);
     home.appendChild(txt('h3', null, 'Choose a recommended path'));
     var paths = el('div', 'path-grid'); (C.paths || []).forEach(function (path) {
-      var card = txt('button', 'path-card' + (path.id === roleId ? ' selected' : ''), path.label); card.type = 'button'; card.setAttribute('aria-pressed', path.id === roleId ? 'true' : 'false');
+      var card = txt('button', 'path-card' + (path.id === roleId ? ' selected' : ''), path.label); card.type = 'button'; card.dataset.path = path.id; card.setAttribute('aria-pressed', path.id === roleId ? 'true' : 'false');
       card.appendChild(txt('span', null, path.capstone || 'Create an artifact and defend its trade-offs.'));
-      card.addEventListener('click', function () { roleId = path.id; try { localStorage.setItem('prep-course-role', roleId); } catch (e) {} renderAll(); }); paths.appendChild(card);
+      card.addEventListener('click', function () { roleId = path.id; try { localStorage.setItem('prep-course-role', roleId); } catch (e) {} renderAll(); var selected = document.querySelector('.path-card[data-path="' + path.id + '"]'); if(selected) selected.focus({preventScroll:true}); }); paths.appendChild(card);
     }); home.appendChild(paths);
-    var path = selectedPath(); if (path) { home.appendChild(txt('h3', null, path.label + ': recommended order')); var sequence = el('div', 'path-sequence'); path.ids.forEach(function (id, i) { var t = topicById(id); if (!t) return; var link = txt('a', null, (i + 1) + '. ' + t.title); link.href = '#' + id; sequence.appendChild(link); }); home.appendChild(sequence); }
+    var path = selectedPath(); if (path) { home.appendChild(txt('h3', null, path.label + ': recommended order')); var sequence = el('div', 'path-sequence'); path.ids.forEach(function (id, i) { var t = topicById(id); if (!t) return; var link = txt('a', null, (i + 1) + '. ' + t.title); link.href = '#' + id; sequence.appendChild(link); }); home.appendChild(sequence); if(path.background)home.appendChild(txt('p','note',path.background)); if(path.entryReviewIds && path.entryReviewIds.length){var review=el('details','path-background');review.appendChild(txt('summary',null,'Background check / optional refreshers'));var links=el('div','path-sequence');path.entryReviewIds.forEach(function(id){var t=topicById(id);if(!t)return;var a=txt('a',null,t.title);a.href=id==='coding-drills'?'#coding-drills/cdr-diagnostic':'#'+id;links.appendChild(a);});review.appendChild(links);home.appendChild(review);} }
     home.appendChild(txt('h3', null, 'Search concepts and lessons'));
     var input = document.createElement('input'); input.type = 'search'; input.placeholder = 'Try: cache preemption, leakage, schema migration'; input.setAttribute('aria-label', 'Search all course lessons'); home.appendChild(input);
     var results = el('div', 'search-results'); results.setAttribute('aria-live', 'polite'); home.appendChild(results);
@@ -941,7 +945,23 @@ window.PREP_IO = (function () {
     var n = orderedTopics().indexOf(t) + 1;
     book.appendChild(renderChapter(t, n)); book.appendChild(renderNav(t.id));
   }
-  function rerenderChapter(topic) { if (state.view !== topic.id) { renderRail(); return; } var y = window.scrollY; renderBook(); renderRail(); window.scrollTo({ top: y }); }
+  function rerenderChapter(topic) {
+    if (state.view !== topic.id) { renderRail(); return; }
+    var y = window.scrollY, disclosures = Array.prototype.map.call(book.querySelectorAll('details'), function (d) { return d.open; });
+    renderBook(); renderRail();
+    Array.prototype.forEach.call(book.querySelectorAll('details'), function (d, i) { if (i < disclosures.length) d.open = disclosures[i]; });
+    window.scrollTo({ top: y });
+  }
+  function rerenderCheck(topic, sectionId) {
+    rerenderChapter(topic);
+    if (state.view !== topic.id) return;
+    var section = document.getElementById('sec-' + sectionId), panel = section && section.querySelector('details.mcq');
+    if (!panel) return;
+    panel.open = true;
+    var feedback = panel.querySelector('.ex'), target = feedback || panel.querySelector('.opt');
+    if (feedback) feedback.tabIndex = -1;
+    if (target) target.focus({preventScroll:true});
+  }
   function titleOf(v) { if (v === 'home') return 'Course home'; if (v === 'who') return 'Who is interviewing you'; if (v === 'glossary') return 'Glossary'; var t = topicById(v); return t ? t.title : v; }
   function renderNav(cur) {
     var order = viewOrder(), i = order.indexOf(cur); var nav = el('div', 'chnav');
@@ -987,6 +1007,7 @@ window.PREP_IO = (function () {
       var guide = (C.chapterGuides || {})[topic.id] || {}, orient = el('div', 'chapter-orientation');
       orient.appendChild(txt('p', 'outcome', 'Outcome: ' + (guide.outcome || 'Explain this mechanism, diagnose a failure and justify an applied decision.')));
       orient.appendChild(txt('p', null, 'Work artifact: ' + (guide.artifact || 'Annotated diagram, evidence-backed solution or decision record.')));
+      if (guide.background) orient.appendChild(txt('p', null, 'Optional background: ' + guide.background));
       var pre = el('p'); pre.appendChild(document.createTextNode('Recommended prerequisites: '));
       var prereqIds = guide.prerequisites || []; if (!prereqIds.length) pre.appendChild(document.createTextNode('Use the practical diagnostic; start here if the terms are familiar.'));
       prereqIds.slice(0,3).forEach(function (id) { var pt = topicById(id); if (!pt) return; var a = txt('a', null, pt.title); a.href = '#' + id; pre.appendChild(a); pre.appendChild(document.createTextNode(' · ')); }); orient.appendChild(pre);
@@ -996,7 +1017,7 @@ window.PREP_IO = (function () {
     }
     ch.appendChild(hd);
     if (publicCourse) {
-      var resources = READINGS[topic.id] || [], featured = resources.filter(function (r) { return /youtube\.com|youtu\.be/.test(r.u || ''); })[0] || resources.filter(function (r) { return r.featured; })[0] || resources[0];
+      var resources = READINGS[topic.id] || [], featured = selectedResource(resources);
       if (featured) {
         var featuredHref = safeExternalUrl(featured.u);
         if (featuredHref) {
@@ -1070,15 +1091,15 @@ window.PREP_IO = (function () {
           pr.appendChild(qlist); if (ps.length > 1) pr.appendChild(ps[ps.length - 1].cloneNode(true));
           var review = el('details', 'bank-review'); review.appendChild(txt('summary', null, 'Optional retrieval practice / reference questions')); review.appendChild(pr); sec.appendChild(review);
         } else if (c.body) {
-          var teaching = el('details', 'teaching'); teaching.open = i === 0; teaching.appendChild(txt('summary', null, i === 0 ? 'Key terms and orientation' : 'Read the explanation')); teaching.appendChild(el('div', 'prose', c.body)); sec.appendChild(teaching);
+          var teaching = el('details', 'teaching'); teaching.open = !publicCourse && i === 0; teaching.appendChild(txt('summary', null, i === 0 ? (publicCourse ? 'Key terms / optional reference' : 'Key terms and orientation') : 'Read the explanation')); teaching.appendChild(el('div', 'prose', c.body)); sec.appendChild(teaching);
         }
         if (c.viz && window.VIZLIB && window.VIZLIB[c.viz]) { var cv = el('div', 'cviz'); cv.innerHTML = window.VIZLIB[c.viz]('v' + Math.random().toString(36).slice(2, 8)) + (window.VIZLIB_CAPTIONS && window.VIZLIB_CAPTIONS[c.viz] ? '<div class="cap">' + window.VIZLIB_CAPTIONS[c.viz] + '</div>' : ''); cv.setAttribute('role', 'region'); cv.setAttribute('aria-label', c.title + ' diagram and text explanation'); cv.tabIndex = 0; sec.insertBefore(cv, sec.children[1] || null); sec.appendChild(txt('p', 'visual-task', 'Trace the arrows. Predict what changes if one input, dependency or constraint fails; then explain the mechanism aloud.')); }
         if (c.deeper && !qbank) { var depth = el('details', 'depth'); depth.appendChild(txt('summary', null, 'Go deeper')); depth.appendChild(el('div', 'prose', c.deeper)); sec.appendChild(depth); }
         if (c.check && c.check.auditCaution) sec.appendChild(txt('p', 'note', 'Review note: ' + c.check.auditCaution + ' Historical selections remain in your backup; this check is paused pending revision.'));
         if (c.check && !c.check.auditCaution) {
           var legacyAnswer = legacyQuizIndex(topic.id, c.id, c.check.answer, c.check.options.length); var mq = el('details', 'mcq'); mq.appendChild(txt('summary', null, 'Optional prediction check')); mq.appendChild(txt('div', 'q', c.check.question)); var opts = el('div', 'opts'); var checkKey = c.check.revision ? c.id + '@' + c.check.revision : c.id; var chosen = t.checks[checkKey]; if (typeof chosen !== 'number' || !isFinite(chosen) || Math.floor(chosen) !== chosen || chosen < 0 || chosen >= c.check.options.length) chosen = null;
-          quizDisplayOrder(topic.id, c.id, c.check.options.length).forEach(function (oi) { var o = c.check.options[oi], storedIndex = legacyQuizIndex(topic.id, c.id, oi, c.check.options.length); var ob = txt('button', 'opt', o); ob.type = 'button'; if (chosen != null) { ob.disabled = true; if (oi === c.check.answer) ob.classList.add('right'); else if (storedIndex === chosen) ob.classList.add('wrong'); } ob.addEventListener('click', function () { t.checks[checkKey] = storedIndex; if (oi === c.check.answer) t.learn[c.id] = true; persist(topic.id); rerenderChapter(topic); }); opts.appendChild(ob); });
-          mq.appendChild(opts); if (chosen != null) { mq.appendChild(txt('div', 'ex', (chosen === legacyAnswer ? 'Correct. ' : 'Not quite. ') + c.check.explain)); var retry = txt('button', 'btn', 'Try again'); retry.type = 'button'; retry.addEventListener('click', function () { delete t.checks[checkKey]; persist(topic.id); rerenderChapter(topic); }); mq.appendChild(retry); } sec.appendChild(mq);
+          quizDisplayOrder(topic.id, c.id, c.check.options.length).forEach(function (oi) { var o = c.check.options[oi], storedIndex = legacyQuizIndex(topic.id, c.id, oi, c.check.options.length); var ob = txt('button', 'opt', o); ob.type = 'button'; if (chosen != null) { ob.disabled = true; if (oi === c.check.answer) ob.classList.add('right'); else if (storedIndex === chosen) ob.classList.add('wrong'); } ob.addEventListener('click', function () { t.checks[checkKey] = storedIndex; if (oi === c.check.answer) t.learn[c.id] = true; persist(topic.id); rerenderCheck(topic, c.id); }); opts.appendChild(ob); });
+          mq.appendChild(opts); if (chosen != null) { var feedback = txt('div', 'ex', (chosen === legacyAnswer ? 'Correct. ' : 'Not quite. ') + c.check.explain); feedback.setAttribute('role', 'status'); mq.appendChild(feedback); var retry = txt('button', 'btn', 'Try again'); retry.type = 'button'; retry.addEventListener('click', function () { delete t.checks[checkKey]; persist(topic.id); rerenderCheck(topic, c.id); }); mq.appendChild(retry); } sec.appendChild(mq);
         }
         var row = el('div', 'row');
         var doneLabel = c.link ? 'Mark done' : 'Mark as read';

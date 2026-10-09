@@ -77,7 +77,7 @@
 
   V['wal-recovery'] = function (u) {
     var b = D(u, 'ar aa ag');
-    b += HD('write-ahead log: log first, data later');
+    b += HD('WAL: one durable-acknowledgement path');
     b += B(20, 38, 100, 40, 'write~request', { ts: 10 });
     b += A(u, 122, 58, 158, 58);
     b += F('M122 58H158');
@@ -94,11 +94,11 @@
     b += DT(628, 58, 5, { f: 'var(--danger)' });
     b += AP(u, 'M628 82C560 130 420 150 300 158', { c: 'var(--accent)', m: 'aa' });
     b += F('M628 82C560 130 420 150 300 158', { c: 'var(--accent)' });
-    b += B(80, 160, 220, 44, 'recovery: redo from~checkpoint, then undo open work', { ts: 10, f: 'var(--accent-weak)', sk: 'var(--accent)' });
-    b += T(380, 208, 'data pages are a cache of the log; the log is the source of truth', { s: 10, c: 'var(--ink-dim)' });
+    b += B(80, 160, 220, 44, 'replay durable WAL~restore valid engine state', { ts: 10, f: 'var(--accent-weak)', sk: 'var(--accent)' });
+    b += T(380, 208, 'Durable checkpoints can supersede WAL; retire it after safe publication.', { s: 10, c: 'var(--ink-dim)' });
     return S(214, b);
   };
-  C['wal-recovery'] = 'The log is flushed before the data pages are touched; after a <b>crash</b>, recovery replays it forward from the last checkpoint instead of trusting the data files alone.';
+  C['wal-recovery'] = 'This illustration synchronizes recovery records before a <b>durable acknowledgement</b> and dependent data-page writes. In-memory pages may change earlier. Configured non-synchronous acknowledgements can lose recent writes on machine or power failure. Recovery uses durable WAL and checkpoints; safe checkpoint publication can permit covered WAL to be retired.';
 
   V['read-replicas-lag'] = function (u) {
     var b = D(u, 'ar aa aw');

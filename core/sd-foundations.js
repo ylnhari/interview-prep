@@ -337,7 +337,7 @@ Yes, I'd still scale up when measured load is comfortably inside a larger machin
     title: 'APIs, load balancing and communication',
     level: 'danger',
     levelLabel: 'Asked in almost every system design interview.',
-    why: `Once the whiteboard has a client and a server on it, the very next questions are almost always about the contract between them and about what sits in between: what the API looks like, what happens when a call fails, and how does traffic actually get spread across replicas. Interviewers use this ground to see whether you have actually operated a service under real network conditions - where calls fail, time out, and arrive twice - rather than only having designed one on paper. Getting the retry and load-balancing story right is often worth more than the box diagram itself.`,
+    why: "Define an API contract and trace calls through routing, load balancing and dependency failures. Produce a retry and deadline policy that handles duplicate requests, ambiguous outcomes and capacity limits.",
     learn: [
       {
         id: 'apc-0',

@@ -8,7 +8,7 @@
     title: 'Caching',
     level: 'danger',
     levelLabel: 'Asked in almost every system design interview.',
-    why: `Almost every system design interview reaches a point where the obvious database design is too slow or too expensive, and the fix the interviewer is fishing for is a cache. They are listening for whether you know where a cache actually belongs, what happens to correctness when you add one, and what happens when it fails - not just the word "cache" said with confidence. Someone who can name cache-aside versus write-through, explain why an eviction policy exists, and describe what a cache stampede is and how to stop one is covering a large share of what gets asked in this part of the interview. The system design fundamentals chapter introduces caching in a few paragraphs; this chapter is the full version of the same material.`,
+    why: "Compare a cache with an uncached baseline using latency, load and correctness evidence. Define freshness, invalidation, stampede protection and partial-failure behavior in a cache policy you can test.",
     learn: [
       {
         id: 'cache-0',
@@ -319,7 +319,7 @@ I'd treat 17 to 18 gigabytes as the number to provision against today, and I'd w
     title: 'Distributed systems and coordination',
     level: 'danger',
     levelLabel: 'Asked in almost every system design interview.',
-    why: `Once a design has more than one machine, the interviewer's questions stop being about any single component and start being about what happens between them: what a node cannot know for certain about another node, what a client is actually guaranteed to see after a write, and what breaks when a leader disappears mid-request. This is where someone who has only memorised component names (a queue, a cache, a database) runs out of things to say, and where someone who can reason about partial failure, ordering, and quorums keeps going. Interviewers are listening for whether you know that these guarantees have precise names and real trade-offs, not just that "distributed systems are hard."`,
+    why: "Reason about ordering, partial failure and what a client can observe across replicas. State the assumptions behind a read or write guarantee and produce a failure trace that tests the coordination protocol.",
     learn: [
       {
         id: 'dc-0',
