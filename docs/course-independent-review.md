@@ -44,13 +44,23 @@ The proposed `mot-local-build-track` SLO defect was withdrawn after reconciliati
 
 A browser-observed normalization caption also incorrectly said the methods differ only by axis. It now separates BatchNorm training statistics, LayerNorm centering/scaling and RMSNorm root-mean-square scaling without centering, consistent with the diagram and [PyTorch RMSNorm reference](https://docs.pytorch.org/docs/stable/generated/torch.nn.RMSNorm.html).
 
-Learning reviewer final report: pending reconciliation before publication.
+The concrete residuals supplied by the final learning review are reconciled below. The prerequisite-order finding was mostly addressed already; its remaining math wording is treated as optional background rather than a compulsory coding dependency.
+
+| Final residual | Resolution | Evidence |
+|---|---|---|
+| L2: optional or unrelated video selected by default | RAG selects Google Research's sufficient-context paper; coordination selects the Raft interactive explanation. Explicitly optional entries are excluded from default selection and remain in Go deeper; ByteMonk is visibly labeled optional and sponsored. | Actual renderer-selection execution and effective resource metadata assertions. |
+| L3: two inherited references still shadowed | Preserve the recommendation NDCG and experiment permutation-test references alongside curated teaching, without duplicate URLs. | Effective inheritance tests and fresh HTTP GET results for both references. |
+| L4: math/coding prerequisite wording | Math has no mandatory coding chapter prerequisite. Its orientation explains arithmetic/algebra background and optional Python/NumPy verification; the MLE entry diagnostic remains available. | Effective guide and optional-background assertions. |
+| L5: fixed model family, cluster-balance and bottleneck grading | `dle-a2` accepts justified tree, linear, network, CNN/vision-transformer and forecasting alternatives. `cm-a2` permits useful rare segments. `ss-a1` follows measured traces rather than requiring feature-fetch dominance. | Rubric/model agreement and effective alternative-answer regressions. |
+| L6: batch contract mismatch | The local build track uses `mot-a2` all-or-nothing validation: mixed-invalid batches return 422 before inference. Partial-result semantics require a separately declared extension contract. | Effective contract regression; existing extracted API fixtures remain in the required suite. |
+| Regional simulator assumption | The selector explicitly changes the regional scenario to a 60-second target with five-minute lag. Feedback distinguishes the original six-hour target, and generation-path feedback follows the selected target. | Executed mounted controller tests cover selection and return to the original contract. |
+| WAL duplicate definitions | Storage and SQL key terms/glossaries, the storage answer and WAL diagram distinguish durable acknowledgements, memory mutation before sync, configured non-synchronous loss and safe checkpoint/WAL retirement. | Effective definitions and generated diagram/caption regressions. |
 
 ## Compatibility and validation scope
 
 Four semantic assessment corrections (`se-f3`, `sdc-5`, `dag-f5`, `es-f1`) have exact old/new quiz hashes and the fresh `independent-review-2026-10-09` version. Historical choices and completion remain recorded; new answers use separate versioned keys. No storage reset or progress-schema change is used.
 
-Current catalogue: 45 chapters, 376 lessons, 309 checks, 129 activities, nine explicitly typed code activities and 206 visual references. The resource census now contains 282 entries and 256 unique URLs. Cookie-free GET checks on 2026-10-09 returned 253 successes and three Cloudflare 403 responses, with no confirmed 404/410. A reachable URL does not establish playback, login requirements or external compute availability. See [machine-readable link results](resource-link-audit.json).
+Current catalogue: 45 chapters, 376 lessons, 309 checks, 129 activities, nine explicitly typed code activities and 206 visual references. The resource census now contains 284 entries and 258 unique URLs. Cookie-free GET checks on 2026-10-09 returned 255 successes and three Cloudflare 403 responses, with no confirmed 404/410. A reachable URL does not establish playback, login requirements or external compute availability. See [machine-readable link results](resource-link-audit.json).
 
 Rendered QA used the supported Codex in-app browser. Both reviewed baseline and patched preview opened all 45 catalogue routes at a 320 px viewport without page-wide horizontal overflow. Patched Back/Forward routes, collapsed resource/reference panels and curated resource choice were inspected. The SQL diagnostic reaches `cdr-f4`; testing/explanation reaches the actual `cdr-testing-explanation` task. Home search returned relevant results for a natural-language latency query, offered a useful empty state and exposed keyboard focus. Contents opened with Enter and closed with Escape, returning focus to its trigger. A synthetic localhost read mark and answer draft survived actual Export/Import controls and reload.
 

@@ -94,6 +94,11 @@ assert.equal(chooseResource([inheritedVideo,curated]),curated,'explicit curated 
 assert.equal(chooseResource([{u:'https://example.org/ref'},inheritedVideo]),inheritedVideo,'video fallback remains useful without a curated choice');
 assert.equal(chooseResource([curated]),curated);
 assert.equal(chooseResource([]),undefined,'no fake media when resources are absent');
+const optionalVideo={u:inheritedVideo.u,l:'OPTIONAL overview',featured:true};
+const relevantReading={u:'https://example.org/evidence',l:'Evidence diagnostic'};
+assert.equal(chooseResource([optionalVideo,relevantReading]),relevantReading,'optional video cannot displace relevant reading');
+assert.equal(chooseResource([{...curated,optional:true},relevantReading]),relevantReading,'optional flag wins over a featured flag');
+assert.equal(chooseResource([optionalVideo]),undefined,'only optional references means no default teaching card');
 
 let panels=[{open:true},{open:false},{open:true}],scrollRestored;
 const rerenderContext={state:{view:'topic'},book:{querySelectorAll(){return panels;}},window:{scrollY:417,scrollTo(v){scrollRestored=v.top;}},renderBook(){panels=[{open:false},{open:true},{open:false}];},renderRail(){}};

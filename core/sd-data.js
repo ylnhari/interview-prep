@@ -35,7 +35,7 @@
 <li><b>Lost update.</b> Two transactions each read a value, compute a new value from it, and write it back; the second write overwrites the first, and the first transaction's change is silently gone.</li>
 <li><b>Dirty read, non-repeatable read, phantom read.</b> Three anomalies that isolation levels are defined by: seeing another transaction's uncommitted write; re-reading the same row twice in one transaction and getting a different value; re-running the same filtered query twice in one transaction and getting a different set of rows.</li>
 <li><b>MVCC (multi-version concurrency control).</b> Keeping several versions of a row so that readers can see a consistent snapshot without blocking writers, and writers do not block readers.</li>
-<li><b>Write-ahead log (WAL).</b> A durable log of changes. The relevant log record must reach durable storage before the changed data page is allowed to reach its durable data file; the in-memory page may be changed earlier. A commit is acknowledged only after its commit record is durable.</li>
+<li><b>Write-ahead log (WAL).</b> A durable log of changes. The relevant log record must reach durable storage before the changed data page is allowed to reach its durable data file; the in-memory page may be changed earlier. A durable commit acknowledgement waits for its commit record to be durable; a configured non-synchronous acknowledgement has a weaker contract and can lose recent commits on machine or power failure.</li>
 <li><b>Checkpoint.</b> A recovery marker that records enough progress and state for restart to begin from a bounded point in the log instead of scanning all history; exact checkpoint mechanics vary by database.</li>
 <li><b>Connection pool.</b> A small set of open database connections that many application threads share, instead of opening a new one per request.</li>
 <li><b>Read replica.</b> A copy of the database kept up to date from the primary, used to serve reads and take load off the primary.</li>
@@ -334,7 +334,7 @@ The real cost is on the database side: holding a snapshot open for ten-plus minu
           ['Lost update', 'Two transactions each read, compute, and write; one write silently overwrites the other', 'isolation'],
           ['Phantom read', 'A repeated filtered query returns a different set of rows within one transaction', 'isolation'],
           ['MVCC', 'Keeping several row versions so readers use a snapshot and never block writers', 'concurrency'],
-          ['Write-ahead log', 'A durable log whose relevant record reaches storage before the changed data page does; a commit is acknowledged after its commit record is durable', 'crash recovery'],
+          ['Write-ahead log', 'A durable log whose relevant record reaches storage before the changed data page does; a durable commit acknowledgement waits for its commit record; non-synchronous acknowledgements may lose recent commits on machine/power failure', 'crash recovery'],
           ['Checkpoint', 'The point recovery can start replaying from, instead of the start of the whole log', 'crash recovery'],
           ['Replication lag', 'How far behind the primary a read replica currently is', 'scaling'],
           ['Read-your-writes', 'A guarantee that a client sees its own just-committed write, even with replicas in play', 'scaling'],

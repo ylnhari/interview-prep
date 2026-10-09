@@ -813,7 +813,8 @@ window.PREP_IO = (function () {
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
   function txt(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; e.textContent = text; return e; }
   function selectedResource(resources) {
-    return resources.filter(function (r) { return r.featured; })[0] || resources.filter(function (r) { return /youtube\.com|youtu\.be/.test(r.u || ''); })[0] || resources[0];
+    var eligible = resources.filter(function (r) { return !r.optional && !/^optional\b/i.test(r.l || ''); });
+    return eligible.filter(function (r) { return r.featured; })[0] || eligible.filter(function (r) { return /youtube\.com|youtu\.be/.test(r.u || ''); })[0] || eligible[0];
   }
   function safeExternalUrl(value) {
     try {
@@ -1006,6 +1007,7 @@ window.PREP_IO = (function () {
       var guide = (C.chapterGuides || {})[topic.id] || {}, orient = el('div', 'chapter-orientation');
       orient.appendChild(txt('p', 'outcome', 'Outcome: ' + (guide.outcome || 'Explain this mechanism, diagnose a failure and justify an applied decision.')));
       orient.appendChild(txt('p', null, 'Work artifact: ' + (guide.artifact || 'Annotated diagram, evidence-backed solution or decision record.')));
+      if (guide.background) orient.appendChild(txt('p', null, 'Optional background: ' + guide.background));
       var pre = el('p'); pre.appendChild(document.createTextNode('Recommended prerequisites: '));
       var prereqIds = guide.prerequisites || []; if (!prereqIds.length) pre.appendChild(document.createTextNode('Use the practical diagnostic; start here if the terms are familiar.'));
       prereqIds.slice(0,3).forEach(function (id) { var pt = topicById(id); if (!pt) return; var a = txt('a', null, pt.title); a.href = '#' + id; pre.appendChild(a); pre.appendChild(document.createTextNode(' · ')); }); orient.appendChild(pre);

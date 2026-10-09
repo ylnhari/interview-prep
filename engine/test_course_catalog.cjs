@@ -19,13 +19,22 @@ for(const p of c.paths){
  }
 }
 assert(c.paths.find(p=>p.id==='fde').ids.includes('search-and-retrieval'));
-for(const id of ['classical-models','deep-learning-essentials','training-at-scale','system-design-cases']){
+for(const id of ['classical-models','deep-learning-essentials','training-at-scale','system-design-cases','recommendation-systems','experimentation-and-causal-measurement']){
  const rs=c.readings[id];assert(rs.some(r=>r.featured),id+' curated choice');
  for(const original of w.PREP_CORE[id].readings)assert(rs.some(r=>r.u===original.u),id+' preserves useful reference '+original.u);
  assert.equal(new Set(rs.map(r=>r.u)).size,rs.length,id+' no duplicated URL');
  for(const r of rs)assert(r.provider&&r.format&&r.purpose&&r.access&&r.budgetLabel,id+' honest metadata');
 }
 console.log('Role prerequisite order/background and inherited external references passed.');
+assert.equal(c.chapterGuides['ml-math-essentials'].prerequisites.length,0,'coding is optional numerical practice, not a mathematical prerequisite');
+assert.match(c.chapterGuides['ml-math-essentials'].background,/optional background/);
+for(const [id,url] of [['rag-and-agents','https://research.google/pubs/sufficient-context-a-new-lens-on-retrieval-augmented-generation-systems/'],['distributed-coordination','http://thesecretlivesofdata.com/raft/']]){
+ const rs=c.readings[id]||w.PREP_CORE[id].readings;
+ assert.equal(rs.filter(r=>r.featured).length,1);
+ assert.equal(rs.find(r=>r.featured).u,url);
+ assert(rs.find(r=>r.featured).provider&&rs.find(r=>r.featured).format);
+}
+assert((c.readings['rag-and-agents']||w.PREP_CORE['rag-and-agents'].readings).some(r=>r.optional&&/ByteMonk/.test(r.l)),'sponsored overview remains an optional reference');
 
 const metadataOnly={};vm.runInNewContext(fs.readFileSync('packs/course/content.js','utf8'),{window:metadataOnly});assert.equal(metadataOnly.PREP_CONTENT.paths.length,4,'roadmap metadata extraction works without core loaded');
 

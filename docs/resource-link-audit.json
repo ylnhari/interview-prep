@@ -1534,6 +1534,18 @@
       "status": 200,
       "final": "https://www.microsoft.com/en-us/research/publication/a-dirty-dozen-twelve-common-metric-interpretation-pitfalls-in-online-controlled-experiments/",
       "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.ndcg_score.html",
+      "status": 200,
+      "final": "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.ndcg_score.html",
+      "result": "reachable; playback/login of linked material not verified"
+    },
+    {
+      "url": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.permutation_test.html",
+      "status": 200,
+      "final": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.permutation_test.html",
+      "result": "reachable; playback/login of linked material not verified"
     }
   ]
 }

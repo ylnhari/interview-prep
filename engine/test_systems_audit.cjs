@@ -20,6 +20,26 @@ assert.equal(reconstruct('unknown','same-key',fixture.cutoff,'west'),null);
 for(const [t,id,pattern] of [['caching','cache-0',/never disagree/],['distributed-coordination','dc-3',/always current/],['reliability-ops','ro-f4',/uniquely available|single most valuable/],['serving-and-scale','ss-f2',/almost every serving round/]])assert.doesNotMatch(section(t,id).body,pattern);
 assert.equal(section('enterprise-feature-platform','efp-0').title,'Key terms');assert.equal(w.PREP_CORE['system-design-cases'].learn[0].title,'Key terms');
 console.log('Systems arithmetic, counterexamples, tenant/time fixtures and content regression checks passed.');
+const walTerms=section('storage-engines','se-0').body;
+const walGlossary=w.PREP_CORE['storage-engines'].glossary.flatMap(g=>g.rows).find(r=>r[0]==='Write-ahead log')[1];
+for(const text of [walTerms,walGlossary]){
+ assert.match(text,/durable acknowledgement/);
+ assert.match(text,/memory/i);
+ assert.match(text,/machine|power/);
+ assert.doesNotMatch(text,/never lose|before a change touches|before the change itself/);
+}
+assert.match(section('sql-databases','sql-0').body,/non-synchronous acknowledgement/);
+const diagramWindow={};for(const file of ['engine/viz-lib.js','engine/viz/sd-data.js'])vm.runInNewContext(fs.readFileSync(file,'utf8'),{window:diagramWindow});
+assert.match(diagramWindow.VIZLIB_CAPTIONS['wal-recovery'],/In-memory pages may change earlier/);
+assert.match(diagramWindow.VIZLIB_CAPTIONS['wal-recovery'],/non-synchronous acknowledgements/);
+assert.doesNotMatch(diagramWindow.VIZLIB['wal-recovery']('wal-test'),/log is the source of truth|undo open work/);
+const modelChoices=activity=>w.PREP_CORE[activity[0]].activities.find(a=>a.id===activity[1]);
+assert.match(modelChoices(['deep-learning-essentials','dle-a2']).rubric,/CNN or vision transformer/);
+assert.match(modelChoices(['classical-models','cm-a2']).rubric,/Unequal cluster sizes are a diagnostic hypothesis/);
+assert.match(modelChoices(['serving-and-scale','ss-a1']).rubric,/inference, authorization or another hop may dominate/);
+assert.doesNotMatch(modelChoices(['serving-and-scale','ss-a1']).rubric,/normally the feature fetch|feature fetch treated as the largest/);
+assert.match(section('mlops-tooling','mot-local-build-track').body,/mixed valid\/invalid batch returns 422 before inference/);
+assert.match(section('mlops-tooling','mot-local-build-track').body,/partial-result API is a separate optional extension/);
 
 function activity(t,id){return w.PREP_CORE[t].activities.find(a=>a.id===id);}
 const scale=activity('serving-and-scale','ss-a2');
