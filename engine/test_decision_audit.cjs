@@ -73,4 +73,14 @@ assert(section('question-bank-fundamentals','qb-2').deeper.includes('UNKNOWN/no 
 assert(section('question-bank-fundamentals','qb-4').deeper.includes('Direct/model-based or FQE'));
 assert(task('scenario-questions','sq-a2').rubric.includes('defer'));
 assert(task('scenario-questions','sq-a4').model.includes('approved tool'));
+const rlChoice=section('rl-judgment','rl-1').check;
+assert(rlChoice.question.includes('observes only the chosen'));
+assert(rlChoice.question.includes('no consequential effect on future contexts'));
+assert(rlChoice.options[rlChoice.answer].includes('contextual bandit'));
+assert(!/most widely used|dominate industrial use/.test(JSON.stringify(rlChoice)),'final-loaded RL choice must not teach prevalence');
+const leakageChoice=section('scenario-questions','sq-1').check;
+assert(leakageChoice.options[leakageChoice.answer].includes('containment'));
+assert(leakageChoice.options[leakageChoice.answer].includes('in parallel'));
+assert(!/quantify harm before choosing|before considering any containment/.test(leakageChoice.options[leakageChoice.answer]),'investigation completion must not gate risk-aware containment');
+assert(leakageChoice.explain.includes('before investigation is complete'));
 console.log('Decision audit: displayed Python, changed constraints, arithmetic, stable routes and synchronized bank references pass.');

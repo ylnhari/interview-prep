@@ -48,3 +48,7 @@ Codex In-app Browser became available after the initial access failure. The Fano
 Rendered public-artifact QA used the repository loopback server in Codex/IAB. At a 320px viewport, both home and the Harbor chapter had document scroll width equal to client width (305px excluding the scrollbar). Desktop width was 1265px with no overflow. Semantic search for “diagnose slow requests” returned relevant system/ML/LLM lessons. Harbor at 10:05 selected value 3; replaying an older as-of record rejected online regression while retaining history. Chapter navigation, Back and Forward restored the correct view. Keyboard Tab moved from search to the first catalogue link; an unmatched query displayed a useful suggested-mechanism empty state. Structural keyboard focus, heading, reduced-motion and labeled scroll checks also pass. This bounded review is not a claim to have manually exercised every chapter or external video.
 
 No private content was inspected or edited for this public release. Local Java is absent, so Firestore emulator verification is delegated to the existing secret-free GitHub checks, which remain mandatory for deployment. No rules deployment or account action is part of this release.
+
+## Independent review follow-up
+
+[Residual accuracy fixes and their verification](course-review-followup.md) record the scoped corrections found after PR 12. The original release report is not a blanket all-clear; this checklist distinguishes the supplied audit work from subsequent independent findings.

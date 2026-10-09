@@ -260,10 +260,10 @@
         id: 'dle-a3',
         type: 'code',
         title: 'Exercise: implement scaled dot-product attention',
-        prompt: `<p>Trace general attention with Q shape (nq,dk), K shape (nk,dk), V shape (nk,dv). Predict score and output shapes before calculating. Use nq=2, nk=3, dk=2, dv=4. Then add a broadcastable mask and explain a fully masked row policy. Reattempt with self-attention and a causal mask.</p>`,
+        prompt: `<p>Trace general attention with Q shape (nq,dk), K shape (nk,dk), V shape (nk,dv). Predict score and output shapes before calculating. Use nq=2, nk=3, dk=2, dv=4. Test boolean key masks (nk,), shared-row masks (1,nk) and per-query masks (nq,nk), and explain a fully masked row policy. This reference covers unbatched single-head 2-D CPU attention, not batched heads or GPU kernels. Reattempt with causal self-attention, then isolate two packed examples with a block-diagonal causal mask.</p>`,
         timeboxSec: 300,
         rubric: `<p>Require score shape (nq,nk), row-wise normalization over keys, output shape (nq,dv), compatible feature dimensions and explicit mask/broadcasting tests. Accept a documented rejection or safe policy for fully masked rows. Self-attention has equal query/key lengths; cross-attention need not. Ask for actual test output and a 60–90-second explanation. {{HONESTY}}</p>`,
-        model: `<p>Q K-transpose has shape (nq,nk); row-normalized weights times V produce (nq,dv). This small reference rejects fully masked rows. Inspect its explicit per-query mask, then test cross-attention and a causal mask.</p><pre><code class="language-python">import math
+        model: `<p>Q K-transpose has shape (nq,nk); row-normalized weights times V produce (nq,dv). This unbatched single-head CPU reference accepts boolean key, shared-row or per-query masks, with True meaning allowed, and rejects other mask shapes and fully masked rows. Position resets alone do not prevent cross-example attention: combine causal order with an example-membership boundary when packing independent examples.</p><pre><code class="language-python">import math
 
 def attention(q, k, v, mask=None):
     if not q or not q[0]:
@@ -274,9 +274,20 @@ def attention(q, k, v, mask=None):
     dv = len(v[0])
     if any(len(x) != dv for x in v):
         raise ValueError(&quot;ragged values&quot;)
+    nq, nk = len(q), len(k)
+    if mask is None:
+        rows = [[True]*nk for _ in range(nq)]
+    elif isinstance(mask, (list, tuple)) and len(mask) == nk and all(type(x) is bool for x in mask):
+        rows = [mask]*nq
+    elif (isinstance(mask, (list, tuple)) and len(mask) in (1, nq)
+          and all(isinstance(row, (list, tuple)) and len(row) == nk
+                  and all(type(x) is bool for x in row) for row in mask)):
+        rows = [mask[0]]*nq if len(mask) == 1 else mask
+    else:
+        raise ValueError(&quot;mask must be boolean (nk,), (1,nk) or (nq,nk)&quot;)
     out = []
     for i, query in enumerate(q):
-        allowed = [j for j in range(len(k)) if mask is None or mask[i][j]]
+        allowed = [j for j in range(nk) if rows[i][j]]
         if not allowed:
             raise ValueError(&quot;fully masked query&quot;)
         scores = [sum(a*b for a,b in zip(query,k[j])) / math.sqrt(dk) for j in allowed]

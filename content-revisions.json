@@ -262,6 +262,15 @@
     },
     {
       "pack": "course",
+      "topic": "training-at-scale",
+      "id": "tas-f7",
+      "before": "7b3f2aa2ead9187794a8137f34b5744af0c22e0c4db072ee6d597ae968e464ae",
+      "after": "16577f69e4585abd6c0239ea7060e8393496888ef3a7be3a0d89f304e00cc90e",
+      "revision": "audit-review-2026-10-09",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
       "topic": "genai-platform",
       "id": "gp-0",
       "before": "94165eab6d7d7c91a48afe48e26f7e3c5f675c75587bb3d8e6d0d3440b7d81dc",
@@ -294,6 +303,15 @@
       "before": "d50495a7fe551c818f822b8b9a2711060990b64b725abef4eca6a42a26272ed5",
       "after": "056e48667cf742a4c815afe65c3a8953600296823e8e9acfb9d443efa970d528",
       "revision": "audit-2026-10",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
+      "topic": "llm-inference-engineering",
+      "id": "lie-f2",
+      "before": "d5a73a89021564c8baf3a810d566815c89eb7c613eb62059be269fd0ce994ab8",
+      "after": "6059c56b2972a1221fdadb24dca074180d55ae087c55c811d54d7497a6482b12",
+      "revision": "audit-review-2026-10-09",
       "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
     },
     {
@@ -380,6 +398,15 @@
     {
       "pack": "course",
       "topic": "rag-and-agents",
+      "id": "raa-0",
+      "before": "6fc971f34532d53597abea2009c96899f380a8a1130bc97fce5acb9daf173d9f",
+      "after": "8d213448d33a14b4bc795ae760f51736078acc34f4e2dd7161df32d40c49d6dd",
+      "revision": "audit-review-2026-10-09",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
+      "topic": "rag-and-agents",
       "id": "raa-f3",
       "before": "e1cc7247d84882e1fb471bae3d50a7c755ef739994e3082504fe861f7593523f",
       "after": "661843189c798ea1952af3ed32201308d6b0745a0f8f38135547d7fdf52495fc",
@@ -393,6 +420,15 @@
       "before": "025cbbd638e35fb7a7c2fd5ff755a97d4c5e66fcae3f8dc7400cec1d8ddead41",
       "after": "aa715c1be596dcc6da495be2db3cd465f078a31889260f5c753c6abe16bb7806",
       "revision": "audit-2026-10",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
+      "topic": "rag-and-agents",
+      "id": "raa-f8",
+      "before": "77ae871206ae28c49153671369010f8dda262c40c98246bd1e1d6d53a63c5bf4",
+      "after": "78fd986387080f313cc706e3c3ed7d4c4042749f6aa8101d7d1dfe14b8023947",
+      "revision": "audit-review-2026-10-09",
       "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
     },
     {
@@ -497,6 +533,15 @@
     {
       "pack": "course",
       "topic": "rl-judgment",
+      "id": "rl-1",
+      "before": "4e1afafd93ae52b9871db96db857e0de6cc1db19ac840bcb2ab8186761358f65",
+      "after": "b5fd536701d82e310ac9bf7c22b96e612681830ec0386ed0d945c93293adb6ef",
+      "revision": "audit-review-2026-10-09",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
+      "topic": "rl-judgment",
       "id": "rl-4",
       "before": "64b6cb69eee5af5ddf6d4ed9cce64de5df19d55bd3da61c03343841d5d1dfac1",
       "after": "a68daae91f33d809319c1e68cf55d36ed86279ba172924c63ae243eba35b601e",
@@ -516,9 +561,9 @@
       "pack": "course",
       "topic": "scenario-questions",
       "id": "sq-1",
-      "before": "622e1ec5ee44e839fb949eb2333042ab991b12cb7536e4ec746a018bfb2b9d73",
-      "after": "4a45d93a2f49e2da70b518654760cb354d8797b17bfb4560607f386fff99b996",
-      "revision": "audit-2026-10",
+      "before": "4a45d93a2f49e2da70b518654760cb354d8797b17bfb4560607f386fff99b996",
+      "after": "301c357c7fbadce7d13f01bcb9b30598bf884e178f067334190811c8c6b0d8f6",
+      "revision": "audit-review-2026-10-09",
       "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
     },
     {
