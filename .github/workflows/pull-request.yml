@@ -57,6 +57,16 @@ jobs:
         run: |
           node engine/test_teaching_order.cjs
           node engine/test_rag_architecture.cjs
+      - name: Test visual learning and audited executable examples
+        run: |
+          node engine/test_visual_course.cjs
+          node engine/test_course_catalog.cjs
+          node engine/test_interactive_practice.cjs
+          node engine/test_feature_platform.cjs
+          node engine/test_ai_audit.cjs
+          node engine/test_decision_audit.cjs
+          node engine/test_systems_audit.cjs
+          python -m unittest engine.test_ml_content engine.test_coding_sql
       - name: Test progress compatibility guard
         run: node engine/test_progress_compatibility.cjs
       - name: Verify saved-progress compatibility

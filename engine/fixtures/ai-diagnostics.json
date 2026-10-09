@@ -1,0 +1,19 @@
+{
+  "description": "Original synthetic diagnostic data; milliseconds and decimal bytes, not measured production results.",
+  "requests": [
+    {"id":"A","input_tokens":128,"output_tokens":64,"queue_ms":800,"prefill_ms":80,"upstream_ms":20,"ttft_ms":900,"median_intertoken_ms":20,"largest_stall_ms":25,"cache_preemptions":0},
+    {"id":"B","input_tokens":4096,"output_tokens":64,"queue_ms":20,"prefill_ms":600,"upstream_ms":20,"ttft_ms":640,"median_intertoken_ms":20,"largest_stall_ms":30,"cache_preemptions":0},
+    {"id":"C","input_tokens":1024,"output_tokens":256,"queue_ms":30,"prefill_ms":100,"upstream_ms":20,"ttft_ms":150,"median_intertoken_ms":20,"largest_stall_ms":900,"cache_preemptions":3}
+  ],
+  "batch": {
+    "tokens":["<user>","question","<assistant>","answer","<user>","held-out-id-7","<assistant>","answer"],
+    "example_ids":[0,0,0,0,1,1,1,1],
+    "loss_mask":[0,0,0,1,0,0,0,1],
+    "position_ids":[0,1,2,3,0,1,2,3],
+    "held_out_ids":["held-out-id-7"],
+    "defects":["held-out contamination","position resets without an attention boundary do not isolate examples"]
+  },
+  "memory": {"parameters":1000000000,"parameter_bytes":2,"gradient_bytes":2,"optimizer_master_bytes":12,"ranks":4,"activation_bytes":3000000000,"temporary_bytes":1000000000,"headroom_bytes":1000000000},
+  "lora": [{"rank":8,"input":4096,"output":4096,"parameters":65536},{"rank":8,"input":4096,"output":1024,"parameters":40960}],
+  "speculative": {"p":[0.6,0.3,0.1],"q":[0.2,0.4,0.4],"normalized_positive_residual":[1,0,0]}
+}

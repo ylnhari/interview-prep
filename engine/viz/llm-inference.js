@@ -60,7 +60,7 @@
     b += HD('one wide pass, then one token at a time');
     b += T(20, 50, 'prefill', { a: 'start', s: 11, w: 1, c: 'var(--accent)' });
     b += B(110, 36, 560, 34, 'every prompt token processed together, one pass');
-    b += T(390, 84, 'compute-bound: limited by how fast the chip can multiply', { s: 10, c: 'var(--ink-dim)' });
+    b += T(390, 84, 'often compute-heavy; profile this workload', { s: 10, c: 'var(--ink-dim)' });
     b += T(20, 116, 'decode', { a: 'start', s: 11, w: 1, c: 'var(--accent)' });
     var steps = '';
     for (i = 0; i < 7; i++) {
@@ -69,14 +69,14 @@
     }
     b += steps;
     b += DT(110, 150, 5, { cls: 'v-move-x', st: '--dx: 468px' });
-    b += T(390, 168, 'memory-bandwidth-bound: each step re-reads the whole KV cache for one new token', { s: 10, c: 'var(--ink-dim)' });
+    b += T(390, 168, 'small-batch decode is often bandwidth-heavy', { s: 10, c: 'var(--ink-dim)' });
     return S(184, b);
   };
-  C['prefill-vs-decode'] = 'Prefill reads the whole prompt in one parallel, <b>compute-bound</b> pass; decode produces one token per step and is <b>memory-bandwidth-bound</b> because each step still touches the whole cache.';
+  C['prefill-vs-decode'] = 'Prefill processes input; decode generates subsequent tokens. Prefill is often compute-heavy and small-batch decode often bandwidth-heavy. Batch, context, kernels, architecture, communication and scheduling change the bottleneck; measure rather than assume.';
 
   V['kv-cache-growth'] = function (u) {
-    var b = D(u, 'ar aw'), xs = [100, 190, 280, 370, 460, 550], hs = [15, 28, 45, 65, 90, 112], i, bars = '';
-    b += HD('the KV cache grows with every token generated');
+    var b = D(u, 'ar aw'), xs = [100, 190, 280, 370, 460, 550], hs = [18, 36, 54, 72, 90, 108], i, bars = '';
+    b += HD('full-attention cache grows with retained tokens');
     b += LN(60, 45, 700, 45, { c: 'var(--warning)', d: '5 4' });
     b += T(706, 42, 'GPU memory limit', { a: 'end', s: 9, c: 'var(--warning)' });
     b += LN(60, 140, 700, 140, { c: 'var(--border)' });
@@ -84,16 +84,16 @@
       bars += '<g' + IX(i) + '>' + GROW(R(xs[i], 140 - hs[i], 50, hs[i], { f: i === xs.length - 1 ? 'var(--danger)' : 'var(--accent)' })) + '</g>';
     }
     b += SQ(bars);
-    b += T(625, 105, 'new requests~queue here', { s: 9, c: 'var(--danger)' });
+    b += T(625, 105, 'policy-dependent~admission pressure', { s: 9, c: 'var(--danger)' });
     b += T(380, 158, 'tokens generated over the life of the request', { s: 10, c: 'var(--ink-dim)' });
-    b += T(380, 188, 'bytes per token = 2 x layers x heads x head_dim x bytes per value', { s: 10, c: 'var(--ink-dim)' });
+    b += T(380, 188, 'bytes per token = 2 x layers x KV heads x head_dim x element bytes', { s: 10, c: 'var(--ink-dim)' });
     return S(200, b);
   };
-  C['kv-cache-growth'] = 'Every generated token adds a fixed slice to the KV cache; once the running total meets the memory limit, new requests wait instead of the server slowing down gently.';
+  C['kv-cache-growth'] = 'A full-attention cache grows linearly with retained tokens and KV heads. Architecture and retention policy matter. Memory pressure can trigger queuing, preemption, rejection or scaling; the pictured limit is illustrative.';
 
   V['continuous-batching'] = function (u) {
     var b = D(u, 'ar aa'), rowY = [50, 84, 118, 152], i, lens = [280, 170, 240, 110];
-    b += HD('static batching waits; continuous batching does not', '');
+    b += HD('fixed membership versus capacity reuse', '');
     b += T(190, 34, 'static batching', { s: 11, w: 1 });
     b += LN(370, 30, 370, 176, { c: 'var(--border)' });
     b += T(560, 34, 'continuous batching', { s: 11, w: 1 });
@@ -110,7 +110,7 @@
     b += T(680, 190, 'a finished slot is reused at once', { s: 9, c: 'var(--good)', a: 'end' });
     return S(204, b);
   };
-  C['continuous-batching'] = 'Static batching pads every sequence to the length of the slowest one; continuous batching drops a finished sequence out and slides a new one into its slot immediately.';
+  C['continuous-batching'] = 'Fixed batch membership can hold finished slots until the batch ends, while still allowing streaming or completed results to return. Continuous batching reuses capacity subject to scheduler, memory and token budgets.';
 
   V['paged-attention-blocks'] = function (u) {
     var b = D(u, 'ar aa'), i, map = [0, 3, 1, 2], px = [420, 560, 490, 630, 420, 560, 490, 630], py = [50, 50, 110, 110, 170, 170, 170, 170];
@@ -162,14 +162,14 @@
     b += B(80, 110, 450, 34, 'verifies all five candidates in one forward pass', { ts: 10 });
     b += T(113, 168, 'accept', { s: 9, c: 'var(--good)' });
     b += T(203, 168, 'accept', { s: 9, c: 'var(--good)' });
-    b += T(293, 168, 'accept', { s: 9, c: 'var(--danger)' });
+    b += T(293, 168, 'reject', { s: 9, c: 'var(--danger)' });
     b += T(293, 180, '(mismatch)', { s: 8, c: 'var(--danger)' });
     b += B(530, 56, 70, 32, 'new~token', { ts: 9, sk: 'var(--good)', f: 'var(--surface-2)' });
     b += A(u, 350, 72, 528, 72, { c: 'var(--good)', d: '4 4', m: 'ag' });
-    b += T(440, 200, 'the model resamples from the first mismatch onward', { s: 10, c: 'var(--ink-dim)' });
+    b += T(440, 200, 'greedy illustration; sampled verification uses a residual', { s: 10, c: 'var(--ink-dim)' });
     return S(216, b);
   };
-  C['speculative-decoding'] = 'The draft model proposes several tokens fast; the target model checks them all in one pass, keeps every token that matches what it would have picked, and resamples from the first mismatch.';
+  C['speculative-decoding'] = 'This illustrates greedy matching-prefix verification. Exact stochastic sampling accepts x with min(1,p(x)/q(x)); after rejection it samples normalized max(0,p−q), conditioned on the accepted prefix. It preserves the target distribution under its assumptions, not identical text.';
 
   V['tensor-vs-pipeline-parallel'] = function (u) {
     var b = D(u, 'ar aa');
@@ -211,6 +211,6 @@
     b += T(700, 60, 'done', { s: 10, a: 'end', c: 'var(--ink-dim)' });
     return S(168, b);
   };
-  C['ttft-tpot-timeline'] = '<b>Time to first token</b> is how long the user waits before anything appears; <b>time per output token</b> is the gap between every token after that.';
+  C['ttft-tpot-timeline'] = 'Time to first token includes upstream processing, queueing and generation before the first token. Aggregate time per output token summarizes later generation; inspect individual inter-token stalls because the average can hide them.';
 
 }(typeof window !== 'undefined' ? window : this));

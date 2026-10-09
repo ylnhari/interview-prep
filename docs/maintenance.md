@@ -57,6 +57,26 @@ It does not prove that new prose is accurate, or that old completion marks mean
 the reader has studied a rewritten lesson. Do not remove the guard merely to
 make a release pass; agree a scoped content/progress migration when necessary.
 
+### Reviewed quiz corrections
+
+An audited retained-ID quiz correction uses a version-2 `content-revisions.json`
+entry with exact normalized old/new quiz SHA-256 hashes, a reason and a new
+`check.revision`. The guard still rejects every unlisted mapping change, changed
+hash, missing revision, removed quiz or missing ID. The renderer saves the revised
+choice under `section-id@revision` in the existing `checks` map. Original choices
+remain under their original key and are never graded against the corrected quiz.
+Completion marks remain self-recorded history; they are not recertified mastery.
+Export/import and optional public progress preserve both keys without clearing
+storage or changing the progress schema.
+
+After all audit edits, run `node engine/prepare_quiz_revisions.cjs BASE_SHA` with
+the full reviewed public baseline SHA. Review every generated entry against the
+domain resolution ledgers, and commit the exact manifest and generated version
+module together. This preparation is an explicit maintenance action, never an
+automatic release/build waiver. Then run the committed compatibility comparison.
+For a later correction, supply a fresh storage-safe revision as the third command
+argument; unchanged historical versions are retained by preparation.
+
 The full pull-request check suite also requires Node 20+, Java 21, and the
 pinned development dependencies. Run `npm ci` and `npm run test:public-rules`
 to test access rules using the local Firestore emulator. See

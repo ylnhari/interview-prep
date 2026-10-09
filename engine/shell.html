@@ -373,6 +373,35 @@
 
   .empty { color: var(--ink-dim); font-size: 13.5px; padding: 40px; text-align: center; }
   footer { max-width: 1680px; margin: 24px auto 0; padding: 16px 20px 48px; border-top: 1px solid var(--border); font-size: 12px; line-height: 1.5; color: var(--ink-dim); font-family: var(--font-mono); }
+
+  .course-home { padding: clamp(18px,4vw,50px); }
+  .course-home h2 { font-size: clamp(32px,5vw,60px); line-height:1.06; max-width:800px; }
+  .home-intro { max-width:760px; font-size:18px; }
+  .path-grid,.catalog-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr)); gap:14px; margin:20px 0; }
+  .path-card,.catalog-card { border:1px solid var(--border); border-radius:14px; padding:20px; background:var(--surface); color:inherit; text-align:left; font:inherit; text-decoration:none; }
+  .path-card.selected { outline:3px solid var(--accent); }
+  .path-card span,.catalog-card span { display:block; font-size:13px; opacity:.8; margin-top:12px; }
+  .path-sequence,.search-results,.lesson-outline { display:grid; gap:10px; }
+  .course-home input { width:100%; max-width:750px; padding:14px; font:inherit; border-radius:10px; }
+  .chapter-orientation { margin-top:20px; padding:18px; border:1px solid var(--border); border-radius:12px; }
+  .outcome { font-weight:650; }
+  summary { cursor:pointer; padding:12px 0; font-weight:600; }
+  .cviz { overflow:auto; max-width:100%; border-radius:12px; }
+  .cviz svg { min-width:380px; width:100%; }
+  .visual-task { padding:12px 16px; border-left:3px solid var(--accent); font-size:14px; }
+  .teaching,.depth { margin:12px 0; }
+  .featured-resource { margin:16px 24px; padding:18px; background:var(--accent-weak); border:1px solid var(--border); border-radius:12px; }
+  .featured-resource > a { display:block; margin:10px 0; font-weight:650; }
+  .featured-resource p { margin:8px 0; }
+  input,select,textarea,button { min-width:0; max-width:100%; }
+  .resource-meta { grid-column:2 / -1; font-size:12px; opacity:.75; }
+  .course-home-link { width:100%; margin-bottom:12px; }
+  .book,.chb,.sec,.act { min-width:0; }
+  pre { max-width:100%; overflow:auto; }
+  :focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+  @media(max-width:420px) { .row { flex-wrap:wrap; } .chapter-orientation { padding:12px; } }
+  @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } * { animation-duration:0.01ms!important; transition-duration:0.01ms!important; } }
+
 </style>
 
 <header class="top">
@@ -532,21 +561,21 @@ window.PREP_IO = (function () {
   // honesty sentence substitution
   var HON = C.honesty || 'Honesty rule: no candidate record was supplied; grade on correctness and reasoning and flag any claim of specific production experience as unverified.';
   C.topics.forEach(function (t) { if (t.connect && t.connect.rubric) t.connect.rubric = t.connect.rubric.split('{{HONESTY}}').join(HON); t.activities.forEach(function (a) { if (a.rubric) a.rubric = a.rubric.split('{{HONESTY}}').join(HON); }); });
-  // Reading normalisation, applied once after merging:
-  //  - extra detail is part of the reading, not a button (question banks keep it: body holds the questions, deeper the answers);
-  //  - quiz options are rotated per section so the correct one is not always in the same place.
   function idHash(str) { var h = 0, i; for (i = 0; i < str.length; i++) { h = (h * 31 + str.charCodeAt(i)) | 0; } return Math.abs(h); }
-  C.topics.forEach(function (t) {
-    var bank = /question-bank/.test(t.id);
-    t.learn.forEach(function (c) {
-      if (c.deeper && !bank) { c.body = (c.body || '') + c.deeper; c.deeper = null; }
-      if (c.check && c.check.options && c.check.options.length > 1) {
-        var n = c.check.options.length, k = idHash(t.id + '/' + c.id) % n, opts = [], map = [], i;
-        for (i = 0; i < n; i++) { var j = (i + k) % n; opts.push(c.check.options[j]); map.push(j); }
-        c.check = { question: c.check.question, options: opts, answer: map.indexOf(c.check.answer), explain: c.check.explain };
-      }
-    });
-  });
+  function legacyQuizIndex(topicId, sectionId, canonicalIndex, count) {
+    return (canonicalIndex - idHash(topicId + '/' + sectionId) % count + count) % count;
+  }
+  // Display permutation maps onto the historical rotated indices. Stored selections
+  // retain exactly their old meaning; author-defined answer indices remain unchanged.
+  function quizDisplayOrder(topicId, sectionId, count) {
+    var order = [], seed = idHash('display-v2/' + topicId + '/' + sectionId) || 1;
+    for (var i = 0; i < count; i++) order.push(i);
+    for (var j = count - 1; j > 0; j--) {
+      seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; seed >>>= 0;
+      var k = seed % (j + 1), temp = order[j]; order[j] = order[k]; order[k] = temp;
+    }
+    return order;
+  }
   var META = C.meta || {};
   if (META.title) document.title = META.title;
   (function () { var eb = document.querySelector('.brand .eyebrow'), h1 = document.querySelector('.brand h1'); if (eb && META.eyebrow) eb.textContent = META.eyebrow; if (h1 && META.heading) h1.textContent = META.heading; var ft = document.querySelector('footer'); if (ft && META.footer) ft.textContent = META.footer; })();
@@ -765,7 +794,7 @@ window.PREP_IO = (function () {
   }
   function overall() { if (!TOPICS.length) return 0; var s = 0; TOPICS.forEach(function (tp) { s += topicProgress(tp).pct; }); return Math.round(s / TOPICS.length); }
   function nextUnfinished() {
-    var ts = orderedTopics();
+    var ts = publicCourse ? recommendedTopics() : orderedTopics();
     for (var i = 0; i < ts.length; i++) { var t = ts[i], st = T(t.id); for (var j = 0; j < t.learn.length; j++) { if (!st.learn[t.learn[j].id]) return { topic: t, section: t.learn[j] }; } }
     for (var k = 0; k < ts.length; k++) { if (!topicProgress(ts[k]).complete) return { topic: ts[k], section: null }; }
     return null;
@@ -798,13 +827,50 @@ window.PREP_IO = (function () {
 
   // ---------- rail: course outline ----------
   var PART_SHORT = { field: 'The basics', experience: 'Your experience', role: 'In this role' };
-  function viewOrder() { var v = []; if (C.interviewer) v.push('who'); orderedTopics().forEach(function (t) { v.push(t.id); }); if (GLOSSARY.length) v.push('glossary'); return v; }
+  var roleId = ''; try { roleId = new URLSearchParams(location.search || '').get('role') || localStorage.getItem('prep-course-role') || ''; } catch (e) {}
+  function selectedPath() { return (C.paths || []).filter(function (p) { return p.id === roleId; })[0]; }
+  function recommendedTopics() {
+    var path = selectedPath(), result = [];
+    if (path) path.ids.forEach(function (id) { var t = topicById(id); if (t) result.push(t); });
+    orderedTopics().forEach(function (t) { if (result.indexOf(t) < 0) result.push(t); }); return result;
+  }
+  function searchLessons(query) {
+    var stop = /^(how|can|do|does|i|we|the|a|an|to|for|of|in|with|and|is|are|what)$/;
+    var aliases = {debug:['debug','diagnos','trace','failure'],slow:['slow','latency','queue'],crash:['crash','recovery','failure'],permissions:['permission','authorization','access'],privacy:['privacy','tenant','access'],historical:['historical','point-in-time','availability'],avoid:['avoid','prevent','leakage','guardrail'],cost:['cost','budget','price'],testing:['test','validation','oracle'],gpu:['gpu','accelerator','memory'],freshness:['freshness','stale','availability']};
+    var words = query.toLowerCase().replace(/[^a-z0-9-]+/g,' ').trim().split(/\s+/).filter(function(w){return w && !stop.test(w);}), matches = [];
+    orderedTopics().forEach(function (t) { t.learn.forEach(function (c) {
+      var text = stripHtml(t.id + ' ' + t.title + ' ' + c.id + ' ' + c.title + ' ' + (c.body || '') + ' ' + (c.deeper || '')).toLowerCase();
+      if (words.every(function (w) { return (aliases[w] || [w]).some(function(term){return text.indexOf(term) >= 0;}); })) matches.push({topic:t, section:c});
+    }); }); return matches;
+  }
+  function renderHome() {
+    var home = el('section', 'course-home'); home.appendChild(txt('div', 'eyebrow', 'Open engineering course'));
+    home.appendChild(txt('h2', null, 'See the mechanism. Test the decision.'));
+    home.appendChild(txt('p', 'home-intro', 'Explore machine learning, AI and production systems through diagrams, failure cases and practical work. Skip ahead freely. Your saved progress records practice, not mastery or a credential.'));
+    var actions = el('div', 'row'), next = resumeRoute() || nextUnfinished();
+    if (next) { var resume = txt('button', 'btn primary', 'Resume learning'); resume.addEventListener('click', function () { go(next.topic.id, next.section && next.section.id); }); actions.appendChild(resume); }
+    var practice = txt('button', 'btn', 'Open practical diagnostics'); practice.addEventListener('click', function () { go('coding-drills', 'cdr-diagnostic'); }); actions.appendChild(practice); home.appendChild(actions);
+    home.appendChild(txt('h3', null, 'Choose a recommended path'));
+    var paths = el('div', 'path-grid'); (C.paths || []).forEach(function (path) {
+      var card = txt('button', 'path-card' + (path.id === roleId ? ' selected' : ''), path.label); card.type = 'button'; card.setAttribute('aria-pressed', path.id === roleId ? 'true' : 'false');
+      card.appendChild(txt('span', null, path.capstone || 'Create an artifact and defend its trade-offs.'));
+      card.addEventListener('click', function () { roleId = path.id; try { localStorage.setItem('prep-course-role', roleId); } catch (e) {} renderAll(); }); paths.appendChild(card);
+    }); home.appendChild(paths);
+    var path = selectedPath(); if (path) { home.appendChild(txt('h3', null, path.label + ': recommended order')); var sequence = el('div', 'path-sequence'); path.ids.forEach(function (id, i) { var t = topicById(id); if (!t) return; var link = txt('a', null, (i + 1) + '. ' + t.title); link.href = '#' + id; sequence.appendChild(link); }); home.appendChild(sequence); }
+    home.appendChild(txt('h3', null, 'Search concepts and lessons'));
+    var input = document.createElement('input'); input.type = 'search'; input.placeholder = 'Try: cache preemption, leakage, schema migration'; input.setAttribute('aria-label', 'Search all course lessons'); home.appendChild(input);
+    var results = el('div', 'search-results'); results.setAttribute('aria-live', 'polite'); home.appendChild(results);
+    input.addEventListener('input', function () { results.innerHTML = ''; if (!input.value.trim()) return; var matches = searchLessons(input.value); results.appendChild(txt('p', null, matches.length ? matches.length + ' matching lessons' : 'No matching lesson. Try fewer words or a related mechanism, such as latency, evaluation or rollback.')); matches.slice(0, 30).forEach(function (match) { var a = txt('a', null, match.topic.title + ' / ' + match.section.title); a.href = '#' + match.topic.id + '/' + match.section.id; results.appendChild(a); }); });
+    home.appendChild(txt('h3', null, 'Browse every chapter')); GROUPS.forEach(function (group) { var section = el('section', 'catalog-group'); section.appendChild(txt('h4', null, group.label)); var grid = el('div', 'catalog-grid'); group.ids.forEach(function (id) { var t = topicById(id); if (!t) return; var a = txt('a', 'catalog-card', t.title); a.href = '#' + id; var guide = (C.chapterGuides || {})[id] || {}; a.appendChild(txt('span', null, guide.outcome || stripHtml(t.why || 'Explain the mechanism and apply it to a practical case.'))); grid.appendChild(a); }); section.appendChild(grid); home.appendChild(section); }); return home;
+  }
+  function viewOrder() { var v = publicCourse ? ['home'] : []; if (C.interviewer) v.push('who'); recommendedTopics().forEach(function (t) { v.push(t.id); }); if (GLOSSARY.length) v.push('glossary'); return v; }
   function renderRail() {
     var rail = document.getElementById('rail'); rail.innerHTML = '';
+    if (publicCourse) { var homeButton = txt('button', 'btn course-home-link', 'Course home / paths / search'); homeButton.type = 'button'; homeButton.addEventListener('click', function () { go('home'); }); rail.appendChild(homeButton); }
     var nxt = nextUnfinished();
     var cont = el('button', 'continue'); cont.type = 'button';
-    cont.appendChild(txt('div', 'k', nxt ? (overall() ? 'Continue' : 'Start here') : 'Course finished'));
-    cont.appendChild(txt('div', 'v', nxt ? nxt.topic.title : 'Every chapter is done'));
+    cont.appendChild(txt('div', 'k', nxt ? (overall() ? 'Continue' : 'Start here') : 'Review your learning evidence'));
+    cont.appendChild(txt('div', 'v', nxt ? nxt.topic.title : 'Browse or revisit any chapter'));
     if (nxt && nxt.section) cont.appendChild(txt('div', 's', nxt.section.title));
     if (nxt) cont.addEventListener('click', function () { go(nxt.topic.id, nxt.section ? nxt.section.id : null); });
     rail.appendChild(cont);
@@ -838,7 +904,22 @@ window.PREP_IO = (function () {
     if (GLOSSARY.length) { var gl = el('div', 'toc'); var ga = el('button', 'ti gl' + (state.view === 'glossary' ? ' cur' : '')); ga.type = 'button'; ga.appendChild(el('span', 't', '<span>Glossary</span>')); ga.addEventListener('click', function () { go('glossary'); }); gl.appendChild(ga); rail.appendChild(gl); }
     var o = overall(); document.getElementById('ring').style.setProperty('--pct', o); document.getElementById('pct').textContent = o + '%';
   }
-  function setHash(h) { try { if (window.history && history.replaceState) history.replaceState(null, '', '#' + h); } catch (e) {} }
+  function rememberRoute(route) {
+    var parts = String(route || '').split('/'), topicId = parts[0], topic = topicById(topicId);
+    if (!topic) return;
+    var section = topic.learn.filter(function (c) { return c.id === parts[1]; })[0];
+    var safeRoute = topicId + (section ? '/' + section.id : '');
+    try { localStorage.setItem('prep-' + (META.id || 'pack') + '-last-route', safeRoute); } catch (e) {}
+  }
+  function resumeRoute() {
+    try {
+      var route = localStorage.getItem('prep-' + (META.id || 'pack') + '-last-route') || '';
+      var parts = route.split('/'), topic = topicById(parts[0]); if (!topic) return null;
+      var section = topic.learn.filter(function (c) { return c.id === parts[1]; })[0];
+      return {topic:topic, section:section || null};
+    } catch (e) { return null; }
+  }
+  function setHash(h) { rememberRoute(h); try { if (window.history && history.pushState) history.pushState(null, '', '#' + h); } catch (e) {} }
   function closeMenu() { document.body.classList.remove('menu-open'); document.getElementById('menu-btn').setAttribute('aria-expanded', 'false'); }
   function go(view, secId) {
     var restoreMenuFocus = document.body.classList.contains('menu-open');
@@ -853,6 +934,7 @@ window.PREP_IO = (function () {
     book.innerHTML = '';
     var order = viewOrder(); if (!order.length) { book.appendChild(el('div', 'empty', 'This course has no chapters yet.')); return; }
     if (order.indexOf(state.view) < 0) state.view = order[0];
+    if (state.view === 'home') { book.appendChild(renderHome()); return; }
     if (state.view === 'who') { book.appendChild(renderWho(C.interviewer)); book.appendChild(renderNav('who')); return; }
     if (state.view === 'glossary') { book.appendChild(renderGlossary()); book.appendChild(renderNav('glossary')); return; }
     var t = topicById(state.view);
@@ -860,7 +942,7 @@ window.PREP_IO = (function () {
     book.appendChild(renderChapter(t, n)); book.appendChild(renderNav(t.id));
   }
   function rerenderChapter(topic) { if (state.view !== topic.id) { renderRail(); return; } var y = window.scrollY; renderBook(); renderRail(); window.scrollTo({ top: y }); }
-  function titleOf(v) { if (v === 'who') return 'Who is interviewing you'; if (v === 'glossary') return 'Glossary'; var t = topicById(v); return t ? t.title : v; }
+  function titleOf(v) { if (v === 'home') return 'Course home'; if (v === 'who') return 'Who is interviewing you'; if (v === 'glossary') return 'Glossary'; var t = topicById(v); return t ? t.title : v; }
   function renderNav(cur) {
     var order = viewOrder(), i = order.indexOf(cur); var nav = el('div', 'chnav');
     if (i > 0) { var pb = el('button', 'navbtn prev'); pb.type = 'button'; pb.appendChild(txt('span', 'k', 'Previous')); pb.appendChild(txt('span', 'v', titleOf(order[i - 1]))); pb.addEventListener('click', function () { go(order[i - 1]); }); nav.appendChild(pb); } else nav.appendChild(el('span'));
@@ -895,13 +977,39 @@ window.PREP_IO = (function () {
     var ch = el('section', 'chapter'); ch.id = 'ch-' + topic.id; ch.dataset.n = n;
     var hd = el('div', 'chh');
     var eb = el('div', 'eyebrow'); eb.appendChild(txt('span', null, 'Chapter ' + n + (GROUPS.length ? ' ' + DOT + ' ' + groupOf(topic.id).label : ''))); if (topic.levelLabel) eb.appendChild(txt('span', 'pill ' + (topic.level || 'good'), topic.levelLabel)); hd.appendChild(eb);
-    hd.appendChild(txt('h2', null, topic.title));
+    var chapterTitle = txt('h2', null, topic.title); chapterTitle.id = 'chapter-title-' + topic.id; hd.appendChild(chapterTitle);
     if (topic.why) hd.appendChild(el('div', 'why', topic.why));
     var ms = el('div', 'mastery'); var mb = el('span', 'bar', '<i></i>'); mb.style.setProperty('--pct', p.pct); ms.appendChild(mb);
     var msText = prereqs ? p.rL + ' of ' + p.nL + ' done' : p.pct + '% ' + DOT + ' ' + p.label + ' ' + DOT + ' ' + p.rL + '/' + p.nL + ' sections read' + (p.nA ? ' ' + DOT + ' ' + p.pA + '/' + p.nA + ' exercises' : '');
     ms.appendChild(txt('span', null, msText)); hd.appendChild(ms);
-    if (qbank) { var tg = txt('button', 'btn' + (state.hideAnswers ? ' primary' : ''), state.hideAnswers ? 'Show the answers' : 'Hide the answers and test yourself'); tg.type = 'button'; tg.style.marginTop = '10px'; tg.addEventListener('click', function () { state.hideAnswers = !state.hideAnswers; persist(); renderBook(); }); hd.appendChild(tg); }
+    if (qbank) { var tg = txt('button', 'btn' + (state.hideAnswers !== false ? ' primary' : ''), state.hideAnswers !== false ? 'Show the answers' : 'Hide the answers and test yourself'); tg.type = 'button'; tg.style.marginTop = '10px'; tg.addEventListener('click', function () { state.hideAnswers = state.hideAnswers === false; persist(); renderBook(); }); hd.appendChild(tg); }
+    if (publicCourse) {
+      var guide = (C.chapterGuides || {})[topic.id] || {}, orient = el('div', 'chapter-orientation');
+      orient.appendChild(txt('p', 'outcome', 'Outcome: ' + (guide.outcome || 'Explain this mechanism, diagnose a failure and justify an applied decision.')));
+      orient.appendChild(txt('p', null, 'Work artifact: ' + (guide.artifact || 'Annotated diagram, evidence-backed solution or decision record.')));
+      var pre = el('p'); pre.appendChild(document.createTextNode('Recommended prerequisites: '));
+      var prereqIds = guide.prerequisites || []; if (!prereqIds.length) pre.appendChild(document.createTextNode('Use the practical diagnostic; start here if the terms are familiar.'));
+      prereqIds.slice(0,3).forEach(function (id) { var pt = topicById(id); if (!pt) return; var a = txt('a', null, pt.title); a.href = '#' + id; pre.appendChild(a); pre.appendChild(document.createTextNode(' · ')); }); orient.appendChild(pre);
+      var modes = ['reading', 'explain aloud']; if (topic.learn.some(function (c) { return !!c.viz; })) modes.push('animated diagrams'); if (topic.activities.length) modes.push('applied tasks'); if ((READINGS[topic.id] || []).some(function (r) { return /youtube|youtu.be|video/i.test(r.u + ' ' + r.l); })) modes.push('linked video');
+      orient.appendChild(txt('p', 'modalities', 'Available: ' + modes.join(' · ')));
+      var outline = el('details', 'lesson-outline'); outline.appendChild(txt('summary', null, 'Lesson outline / skip ahead')); topic.learn.forEach(function (c) { var a = txt('a', null, c.title); a.href = '#sec-' + c.id; outline.appendChild(a); }); orient.appendChild(outline); hd.appendChild(orient);
+    }
     ch.appendChild(hd);
+    if (publicCourse) {
+      var resources = READINGS[topic.id] || [], featured = resources.filter(function (r) { return /youtube\.com|youtu\.be/.test(r.u || ''); })[0] || resources.filter(function (r) { return r.featured; })[0] || resources[0];
+      if (featured) {
+        var featuredHref = safeExternalUrl(featured.u);
+        if (featuredHref) {
+          var resource = el('aside', 'featured-resource'); resource.setAttribute('aria-label', 'Selected external teaching');
+          resource.appendChild(txt('span', 'eyebrow', /youtube\.com|youtu\.be/.test(featuredHref) ? 'Watch a selected explanation' : 'Selected external teaching'));
+          var featuredLink = txt('a', null, featured.l); featuredLink.href = featuredHref; featuredLink.target = '_blank'; featuredLink.rel = 'noopener noreferrer'; resource.appendChild(featuredLink);
+          resource.appendChild(txt('p', 'resource-meta', (featured.provider || new URL(featuredHref).hostname.replace(/^www\./, '')) + ' · ' + (featured.format || (/youtube\.com|youtu\.be/.test(featuredHref) ? 'Video' : 'Reading / reference')) + ' · ' + (featured.access || 'External access requirements may vary')));
+          if (featured.purpose || featured.w) resource.appendChild(txt('p', null, featured.purpose || featured.w));
+          if (featured.m) resource.appendChild(txt('p', 'resource-meta', 'Estimated study budget: ' + featured.m + ' min; this is not a verified media runtime.'));
+          ch.appendChild(resource);
+        }
+      }
+    }
     var body = el('div', 'chb');
 
     function appendTopicViz() {
@@ -909,13 +1017,13 @@ window.PREP_IO = (function () {
     }
     function appendReadings() {
       if (READINGS[topic.id] && READINGS[topic.id].length) {
-        var rd = el('div', 'reads'); var rh = el('div', 'rh'); rh.appendChild(txt('span', 'lbl', 'Where to read more')); rh.appendChild(txt('span', 'sub', 'Start with the ones marked PRIMER if the basics are rusty. Tick each one when you have read it.')); rd.appendChild(rh);
+        var rd = el('details', 'reads'); rd.appendChild(txt('summary', null, 'Go deeper: selected external resources')); var rh = el('div', 'rh'); rh.appendChild(txt('span', 'lbl', 'Where to read more')); rh.appendChild(txt('span', 'sub', 'Start with the ones marked PRIMER if the basics are rusty. Tick each one when you have read it.')); rd.appendChild(rh);
         var readings = READINGS[topic.id];
         if (progressApi && progressApi.migrateIndexedReads && progressApi.migrateIndexedReads(t.reads, readings)) persist(topic.id);
         readings.forEach(function (r, ri) {
           var readHref = safeExternalUrl(r.u); if (!readHref) return; var readKey = r.u; var done = !!t.reads[readKey]; var row = el('div', 'rd' + (done ? ' done' : ''));
           var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = done; cb.id = 'rd-' + topic.id + '-' + ri; cb.setAttribute('aria-label', 'Mark read: ' + r.l); cb.addEventListener('change', function () { t.reads[readKey] = cb.checked; persist(topic.id); row.classList.toggle('done', cb.checked); });
-          row.appendChild(cb); var a = txt('a', null, r.l); a.href = readHref; a.target = '_blank'; a.rel = 'noopener noreferrer'; row.appendChild(a); row.appendChild(txt('span', 'mn', r.m ? '~' + r.m + ' min' : '')); if (r.w) row.appendChild(txt('div', 'w', r.w)); rd.appendChild(row);
+          row.appendChild(cb); var provider = r.provider || new URL(readHref).hostname.replace(/^www\./, ''); var format = r.format || (/youtube|youtu.be/i.test(readHref) ? 'video' : 'reading / reference'); row.appendChild(txt('span', 'resource-meta', provider + ' · ' + format + ' · ' + (r.access || 'External access requirements may vary'))); var a = txt('a', null, r.l); a.href = readHref; a.target = '_blank'; a.rel = 'noopener noreferrer'; row.appendChild(a); row.appendChild(txt('span', 'mn', r.m ? 'Estimated study budget: ' + r.m + ' min' : '')); if (r.purpose || r.w) row.appendChild(txt('div', 'w', r.purpose || r.w)); rd.appendChild(row);
         });
         body.appendChild(rd);
       }
@@ -956,27 +1064,30 @@ window.PREP_IO = (function () {
           var qlist = el('ul', 'qa');
           qs.forEach(function (q, k) {
             var li = el('li'); var qd = el('div', 'qa-q'); qd.innerHTML = q.innerHTML; li.appendChild(qd);
-            if (as[k]) { var ad = el('div', 'qa-a' + (state.hideAnswers ? ' hidden-a' : '')); ad.innerHTML = as[k].innerHTML.replace(/^\s*<b>A\d+\.<\/b>\s*/, ''); li.appendChild(ad); }
+            if (as[k]) { var ad = el('div', 'qa-a' + (state.hideAnswers !== false ? ' hidden-a' : '')); ad.innerHTML = as[k].innerHTML.replace(/^\s*<b>A\d+\.<\/b>\s*/, ''); li.appendChild(ad); }
             qlist.appendChild(li);
           });
           pr.appendChild(qlist); if (ps.length > 1) pr.appendChild(ps[ps.length - 1].cloneNode(true));
-          sec.appendChild(pr);
+          var review = el('details', 'bank-review'); review.appendChild(txt('summary', null, 'Optional retrieval practice / reference questions')); review.appendChild(pr); sec.appendChild(review);
         } else if (c.body) {
-          sec.appendChild(el('div', 'prose', c.body));
+          var teaching = el('details', 'teaching'); teaching.open = i === 0; teaching.appendChild(txt('summary', null, i === 0 ? 'Key terms and orientation' : 'Read the explanation')); teaching.appendChild(el('div', 'prose', c.body)); sec.appendChild(teaching);
         }
-        if (c.viz && window.VIZLIB && window.VIZLIB[c.viz]) { var cv = el('div', 'cviz'); cv.innerHTML = window.VIZLIB[c.viz]('v' + Math.random().toString(36).slice(2, 8)) + (window.VIZLIB_CAPTIONS && window.VIZLIB_CAPTIONS[c.viz] ? '<div class="cap">' + window.VIZLIB_CAPTIONS[c.viz] + '</div>' : ''); sec.appendChild(cv); }
-        if (c.check) {
-          var mq = el('div', 'mcq'); mq.appendChild(txt('div', 'q', c.check.question)); var opts = el('div', 'opts'); var chosen = t.checks[c.id]; if (typeof chosen !== 'number' || !isFinite(chosen) || Math.floor(chosen) !== chosen || chosen < 0 || chosen >= c.check.options.length) chosen = null;
-          c.check.options.forEach(function (o, oi) { var ob = txt('button', 'opt', o); ob.type = 'button'; if (chosen != null) { ob.disabled = true; if (oi === c.check.answer) ob.classList.add('right'); else if (oi === chosen) ob.classList.add('wrong'); } ob.addEventListener('click', function () { t.checks[c.id] = oi; if (oi === c.check.answer) t.learn[c.id] = true; persist(topic.id); rerenderChapter(topic); }); opts.appendChild(ob); });
-          mq.appendChild(opts); if (chosen != null) mq.appendChild(txt('div', 'ex', (chosen === c.check.answer ? 'Correct. ' : 'Not quite. ') + c.check.explain)); sec.appendChild(mq);
+        if (c.viz && window.VIZLIB && window.VIZLIB[c.viz]) { var cv = el('div', 'cviz'); cv.innerHTML = window.VIZLIB[c.viz]('v' + Math.random().toString(36).slice(2, 8)) + (window.VIZLIB_CAPTIONS && window.VIZLIB_CAPTIONS[c.viz] ? '<div class="cap">' + window.VIZLIB_CAPTIONS[c.viz] + '</div>' : ''); cv.setAttribute('role', 'region'); cv.setAttribute('aria-label', c.title + ' diagram and text explanation'); cv.tabIndex = 0; sec.insertBefore(cv, sec.children[1] || null); sec.appendChild(txt('p', 'visual-task', 'Trace the arrows. Predict what changes if one input, dependency or constraint fails; then explain the mechanism aloud.')); }
+        if (c.deeper && !qbank) { var depth = el('details', 'depth'); depth.appendChild(txt('summary', null, 'Go deeper')); depth.appendChild(el('div', 'prose', c.deeper)); sec.appendChild(depth); }
+        if (c.check && c.check.auditCaution) sec.appendChild(txt('p', 'note', 'Review note: ' + c.check.auditCaution + ' Historical selections remain in your backup; this check is paused pending revision.'));
+        if (c.check && !c.check.auditCaution) {
+          var legacyAnswer = legacyQuizIndex(topic.id, c.id, c.check.answer, c.check.options.length); var mq = el('details', 'mcq'); mq.appendChild(txt('summary', null, 'Optional prediction check')); mq.appendChild(txt('div', 'q', c.check.question)); var opts = el('div', 'opts'); var checkKey = c.check.revision ? c.id + '@' + c.check.revision : c.id; var chosen = t.checks[checkKey]; if (typeof chosen !== 'number' || !isFinite(chosen) || Math.floor(chosen) !== chosen || chosen < 0 || chosen >= c.check.options.length) chosen = null;
+          quizDisplayOrder(topic.id, c.id, c.check.options.length).forEach(function (oi) { var o = c.check.options[oi], storedIndex = legacyQuizIndex(topic.id, c.id, oi, c.check.options.length); var ob = txt('button', 'opt', o); ob.type = 'button'; if (chosen != null) { ob.disabled = true; if (oi === c.check.answer) ob.classList.add('right'); else if (storedIndex === chosen) ob.classList.add('wrong'); } ob.addEventListener('click', function () { t.checks[checkKey] = storedIndex; if (oi === c.check.answer) t.learn[c.id] = true; persist(topic.id); rerenderChapter(topic); }); opts.appendChild(ob); });
+          mq.appendChild(opts); if (chosen != null) { mq.appendChild(txt('div', 'ex', (chosen === legacyAnswer ? 'Correct. ' : 'Not quite. ') + c.check.explain)); var retry = txt('button', 'btn', 'Try again'); retry.type = 'button'; retry.addEventListener('click', function () { delete t.checks[checkKey]; persist(topic.id); rerenderChapter(topic); }); mq.appendChild(retry); } sec.appendChild(mq);
         }
         var row = el('div', 'row');
         var doneLabel = c.link ? 'Mark done' : 'Mark as read';
         var got = txt('button', 'btn' + (read ? ' done' : ' primary'), read ? 'Done' + ' ' + TICK : doneLabel); got.type = 'button'; got.setAttribute('aria-pressed', read ? 'true' : 'false'); got.addEventListener('click', function () { t.learn[c.id] = !read; persist(topic.id); rerenderChapter(topic); }); row.appendChild(got);
         sec.appendChild(row); body.appendChild(sec);
-        if (i === 0) appendReadings();
+
       });
       appendTopicViz();
+      appendReadings();
     }
 
     var G = graded();
@@ -1024,7 +1135,7 @@ window.PREP_IO = (function () {
           var cmp2 = txt('button', 'btn primary', 'Compare with a strong answer'); cmp2.type = 'button'; cmp2.addEventListener('click', function () { md2.hidden = !md2.hidden; cmp2.textContent = md2.hidden ? 'Compare with a strong answer' : 'Hide the strong answer'; }); row3.appendChild(cmp2);
           row3.appendChild(selfMarkButton(st, topic, 'Mark practised'));
         }
-        if (a.timeboxSec) { var tb = txt('button', 'btn', 'Start ' + Math.round(a.timeboxSec / 6) / 10 + ' min timer'); tb.type = 'button'; var tm = txt('span', 'timer', ''); var iv = null, left = a.timeboxSec;
+        if (a.timeboxSec && !publicCourse) { var tb = txt('button', 'btn', 'Start ' + Math.round(a.timeboxSec / 6) / 10 + ' min timer'); tb.type = 'button'; var tm = txt('span', 'timer', ''); var iv = null, left = a.timeboxSec;
           tb.addEventListener('click', function () { if (iv) { clearInterval(iv); iv = null; tb.textContent = 'Restart timer'; return; } left = a.timeboxSec; tb.textContent = 'Stop'; tm.classList.remove('over'); iv = setInterval(function () { left--; var mm = Math.floor(Math.abs(left) / 60), ss = Math.abs(left) % 60; tm.textContent = (left < 0 ? '-' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss; if (left < 0) tm.classList.add('over'); }, 1000); intervals.push(iv); });
           row3.appendChild(tb); row3.appendChild(tm); }
         if (G) { var rv2 = txt('button', 'btn ghost', 'Show a strong answer'); rv2.type = 'button'; row3.appendChild(rv2); rv2.addEventListener('click', function () { if (md2.hidden && !st.attempts && !confirm('You have not tried this one yet. Show the strong answer anyway?')) return; md2.hidden = !md2.hidden; }); }
@@ -1042,13 +1153,20 @@ window.PREP_IO = (function () {
       var ps2 = el('div', 'part'); ps2.id = 'say-' + topic.id; var ph3 = el('div', 'ph'); ph3.appendChild(txt('span', 'lbl', 'Rehearse')); ph3.appendChild(txt('h3', null, 'Spoken answer')); ps2.appendChild(ph3);
       if (topic.sayQuestion) { var sq = el('div', 'sayq'); sq.appendChild(txt('span', 'lbl', 'The question')); sq.appendChild(txt('span', null, topic.sayQuestion)); ps2.appendChild(sq); }
       ps2.appendChild(txt('div', 'sub', 'Answer the question above in your own words. Say it without reading, time it (60 to 90 seconds), then mark it rehearsed.'));
-      var sy = el('div', 'say'); sy.appendChild(txt('div', 'lbl', 'Spoken answer')); sy.appendChild(el('div', 'prose', topic.sayItOutLoud)); ps2.appendChild(sy);
+      var sy = el('details', 'say'); sy.appendChild(txt('summary', null, 'Compare with a sample explanation')); sy.appendChild(txt('div', 'lbl', 'Spoken answer')); sy.appendChild(el('div', 'prose', topic.sayItOutLoud)); ps2.appendChild(sy);
       var row4 = el('div', 'row'); var sw = txt('button', 'btn', 'Start stopwatch'); sw.type = 'button'; var tm2 = txt('span', 'timer', ''); var iv2 = null, s = 0;
       sw.addEventListener('click', function () { if (iv2) { clearInterval(iv2); iv2 = null; sw.textContent = 'Start stopwatch'; return; } s = 0; sw.textContent = 'Stop'; tm2.classList.remove('over'); iv2 = setInterval(function () { s++; tm2.textContent = Math.floor(s / 60) + ':' + (s % 60 < 10 ? '0' : '') + s % 60 + (s > 100 ? ' (trim)' : ''); if (s > 100) tm2.classList.add('over'); }, 1000); intervals.push(iv2); });
       var mk = txt('button', 'btn' + (t.said ? ' done' : ' primary'), t.said ? 'Rehearsed ' + TICK : 'Mark rehearsed'); mk.type = 'button'; mk.setAttribute('aria-pressed', t.said ? 'true' : 'false'); mk.addEventListener('click', function () { t.said = !t.said; persist(topic.id); rerenderChapter(topic); });
       row4.appendChild(sw); row4.appendChild(tm2); row4.appendChild(mk); ps2.appendChild(row4); body.appendChild(ps2);
     }
-    ch.appendChild(body); return ch;
+    Array.prototype.forEach.call(body.querySelectorAll('pre'), function (pre) { pre.tabIndex = 0; pre.setAttribute('role', 'region'); pre.setAttribute('aria-label', 'Scrollable code example'); });
+    ch.appendChild(body); if (publicCourse && window.PREP_PRACTICE && window.PREP_PRACTICE.mount) {
+      window.PREP_PRACTICE.mount(ch, topic.id);
+      Array.prototype.forEach.call(ch.querySelectorAll('.practice-sim'), function (sim, index) {
+        var heading = sim.querySelector('h2,h3'); if (heading) { heading.id = 'practice-title-' + topic.id + '-' + index; sim.setAttribute('aria-labelledby', heading.id); }
+        sim.setAttribute('aria-describedby', chapterTitle.id);
+      });
+    } return ch;
   }
 
   function renderGlossary() {
@@ -1149,7 +1267,7 @@ window.PREP_IO = (function () {
   var anchorClickHandler = function (ev) {
     var a = ev.target.closest && ev.target.closest('a[href^="#"]'); if (!a) return;
     var id = a.getAttribute('href').slice(1); var target = document.getElementById(id); if (!target) return;
-    ev.preventDefault(); closeMenu(); target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    ev.preventDefault(); closeMenu(); target.scrollIntoView({ behavior: window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
     if (id.indexOf('sec-') === 0 && state.view) setHash(state.view + '/' + id.slice(4));
   };
   document.addEventListener('click', anchorClickHandler);
@@ -1164,15 +1282,15 @@ window.PREP_IO = (function () {
     var h = (location.hash || '').replace(/^#/, ''); if (!h) return false;
     try {
       var parts = h.split('/'), vid = decodeURIComponent(parts[0]);
-      var ok = (vid === 'who' && C.interviewer) || (vid === 'glossary' && GLOSSARY.length) || TOPICS.some(function (t) { return t.id === vid; });
+      var ok = (vid === 'home' && publicCourse) || (vid === 'who' && C.interviewer) || (vid === 'glossary' && GLOSSARY.length) || TOPICS.some(function (t) { return t.id === vid; });
       if (!ok) return false;
-      state.view = vid; state.pendingScroll = parts[1] ? 'sec-' + decodeURIComponent(parts[1]) : null;
+      rememberRoute(h); state.view = vid; state.pendingScroll = parts[1] ? 'sec-' + decodeURIComponent(parts[1]) : null;
       if (privateHost && !privateReady) privateInitialRoute = { view: state.view, pendingScroll: state.pendingScroll };
       return true;
     } catch (e) { return false; }
   }
   applyHash();
-  if (!state.view) state.view = (orderedTopics()[0] || {}).id;
+  if (!state.view) state.view = publicCourse ? 'home' : (orderedTopics()[0] || {}).id;
   renderAll();
   if (state.pendingScroll) { var ps0 = document.getElementById(state.pendingScroll); if (ps0) ps0.scrollIntoView({ block: 'start' }); state.pendingScroll = null; }
 
@@ -1392,7 +1510,18 @@ window.PREP_IO = (function () {
       }, function () {});
     }, delay);
   }
-  var hashHandler = function () { if (applyHash()) { if (publicMode) publicNavigationRevision++; renderAll(); if (state.pendingScroll) { var e = document.getElementById(state.pendingScroll); if (e) e.scrollIntoView({ block: 'start' }); state.pendingScroll = null; } else window.scrollTo({ top: 0 }); } };
+  function handleRouteChange() {
+    var applied = applyHash();
+    // Back from the first pushed chapter restores the initial hashless home.
+    // Keep initial hydration's saved route behavior independent of this event.
+    if (!applied && publicCourse && !location.hash) { state.view = 'home'; state.pendingScroll = null; applied = true; }
+    if (!applied) return;
+    if (publicMode) publicNavigationRevision++;
+    renderAll();
+    if (state.pendingScroll) { var e = document.getElementById(state.pendingScroll); if (e) e.scrollIntoView({ block: 'start' }); state.pendingScroll = null; }
+    else window.scrollTo({ top: 0 });
+  }
+  var hashHandler = handleRouteChange;
   function handleOnline() { if (!cloudUid) return; if (publicMode && !cloudBaselineState) { retryPublicHydration(true); return; } if (publicMode && !cloudDirty) { refreshPublicProgress(); return; } scheduleCloudSave(); if (!publicMode) refreshPublicProgress(); }
   var onlineHandler = handleOnline;
   var visibilityHandler = function () { if (document.visibilityState !== 'visible') return; if (publicMode && !cloudBaselineState) retryPublicHydration(true); else refreshPublicProgress(); };

@@ -286,6 +286,9 @@ def render_index(entries):
              '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>',
              '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">',
              "<style>" + CSS + "</style>"]
+    public = len(entries) == 1 and entries[0]["pack"] == "course"
+    if public:
+        parts.append("<style>.role-paths{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:14px;margin:24px 0}.role-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;min-width:0}.role-card h3{margin:0 0 8px}.role-card p{font-size:14px;color:var(--ink-dim)}.catalog-search{width:100%;font:inherit;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--ink);margin:10px 0 24px}.ch .secs{display:none}.ch:focus-within .secs{display:block}.ch a:focus-visible,.role-card a:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:4px}.ch[hidden],.track[hidden]{display:none}.top .site{font-size:14px}@media(prefers-reduced-motion:reduce){*{transition:none!important}}</style>")
     tabs = ""
     if multi:
         tabs = '<nav class="tabs" aria-label="Courses">%s</nav>' % "".join(
@@ -295,7 +298,14 @@ def render_index(entries):
     parts.append('<div class="hero"><div class="eb">Free study path</div><h1>%s</h1><p>%s</p>'
                  '<div class="cta"><a class="btn" id="continue" href="#"><span><span class="k">Start the course</span><br><span class="v"></span></span>&rarr;</a>'
                  '<span class="stats"><b>%d</b> track%s &middot; <b>%d</b> chapters &middot; <b>%d</b> sections &middot; <b>%d</b> exercises</span></div></div>' % (
-                     esc(course_title), esc(PROMISE), n_tr, "" if n_tr == 1 else "s", n_ch, n_sec, n_ex))
+                     esc(course_title), esc("Visual explanations and original experiments for ML, AI, forward-deployed and staff engineering. Build tests, evaluations, decisions and runbooks; practise explaining the trade-offs." if public else PROMISE), n_tr, "" if n_tr == 1 else "s", n_ch, n_sec, n_ex))
+    if public:
+        js = "const fs=require('fs'),w={};new Function('window',fs.readFileSync(process.argv[1],'utf8'))(w);console.log(JSON.stringify(w.PREP_CONTENT.paths));"
+        paths = json.loads(subprocess.check_output(["node", "-e", js, os.path.join(ROOT,"packs","course","content.js")], encoding="utf-8"))
+        parts.append('<section aria-labelledby="path-title"><h2 id="path-title">Choose a recommended path</h2><p>Change the order, not your access. Skip ahead and browse every chapter. Question banks are optional review.</p><div class="role-paths">')
+        for path in paths:
+            parts.append('<article class="role-card"><h3>%s</h3><p>%s</p><a class="btn quiet" href="course.html?role=%s#home">Explore this path &rarr;</a></article>' % (esc(path['label']),esc(path['capstone']),esc(path['id'])))
+        parts.append('</div></section><p><a class="btn quiet" href="course.html#coding-drills/cdr-diagnostic">Open coding practice</a> <a class="btn quiet" href="course.html#scenario-questions/sq-discovery-pilot-handoff">Try a delivery case</a> <a class="btn quiet" href="course.html#system-design-cases/sdc-enterprise-features">Design a multi-tenant feature system</a></p><h2>All chapters</h2><label for="catalog-search">Find a concept, chapter or task</label><input class="catalog-search" id="catalog-search" type="search" placeholder="Try SQL, feature, retrieval or incident"><p id="catalog-empty" hidden>No matching chapter or lesson. Try a related concept, or clear the search to browse all chapters.</p>')
     parts.append('<details class="legend"><summary>How to read this roadmap</summary><div class="legend-body">'
                  '<span class="lg"><span class="sw danger"></span> core focus</span>'
                  '<span class="lg"><span class="sw warning"></span> recommended depth</span>'
@@ -309,6 +319,8 @@ def render_index(entries):
     parts.append("</main>")
     parts.append("<footer>Progress is read from what this browser has saved. Open a chapter page once and it will show up here, or import a saved progress file on that page.</footer>")
     parts.append("<script>" + SCRIPT + "</script>")
+    if public:
+        parts.append(r"""<script>(function(){var q=document.getElementById('catalog-search');q.addEventListener('input',function(){var words=q.value.toLowerCase().trim().split(/\s+/).filter(Boolean),n=0;document.querySelectorAll('.ch').forEach(function(c){var text=c.textContent.toLowerCase();c.hidden=!words.every(function(w){return text.includes(w)});if(!c.hidden)n++});document.querySelectorAll('.track').forEach(function(t){t.hidden=!Array.from(t.querySelectorAll('.ch')).some(function(c){return !c.hidden})});document.getElementById('catalog-empty').hidden=n>0});var c=document.getElementById('continue'),raw;try{raw=localStorage.getItem('prep-course-last-route')}catch(e){}if(c&&typeof raw==='string'&&/^[a-z0-9-]+(?:\/[a-z0-9-]+)?$/.test(raw)){c.href='course.html#'+raw;c.querySelector('.k').textContent='Resume your last chapter';}document.querySelector('.site').textContent='Open ML + AI course';})();</script>""")
     return ascii_only("\n".join(parts))
 
 

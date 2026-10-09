@@ -147,7 +147,7 @@
     b += T(360, 190, 'W + R = 6 > N = 5', { s: 11, c: 'var(--ink)', w: 1 });
     return S(206, b);
   };
-  C['quorum-w-r-n'] = 'Two overlapping brackets of size W and R over N nodes always share at least one node when <b>W + R &gt; N</b>, so a read can never miss the latest write.';
+  C['quorum-w-r-n'] = 'With fixed replica membership, <b>W + R &gt; N</b> guarantees read/write set intersection. Latest-version recovery also needs retained durable versions and correct reconciliation; failed/concurrent writes and sloppy quorums need separate treatment. Intersection alone does not imply linearizability.';
 
   V['raft-election'] = function (u) {
     var b = D(u, 'ar aa ag'), i;

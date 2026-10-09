@@ -174,10 +174,10 @@
     b += F(ring);
     b += AP(u, 'M650 34C700 34 700 -6 40 -6C-10 -6 -10 30 20 34', { c: 'var(--accent)', m: 'aa', w: 1.8, d: '4 4' });
     b += R(190, 150, 380, 36, { f: 'var(--accent-weak)', sk: 'var(--accent)' });
-    b += T(380, 172, 'gradient all-reduce: every GPU ends with the identical, averaged gradient', { s: 10, c: 'var(--ink)' });
+    b += T(380, 172, 'bucketed gradient synchronization can overlap backward', { s: 10, c: 'var(--ink)' });
     return S(200, b);
   };
-  C['data-parallel-allreduce'] = 'Each graphics processing unit (GPU) replica trains on its own batch shard. A ring <b>all-reduce</b> sums and shares gradients so every replica takes the same optimiser step and stays identical.';
+  C['data-parallel-allreduce'] = 'Each graphics processing unit replica processes its example shard. DDP reduces gradient buckets, potentially overlapping backward computation. The ring pictured is one collective implementation; communication can dominate. Replicas apply synchronized updates under the chosen numerical/runtime assumptions.';
 
   V['zero-sharding'] = function (u) {
     var b = D(u, 'ar'), i, cols = [

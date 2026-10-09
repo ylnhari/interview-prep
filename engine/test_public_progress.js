@@ -25,6 +25,9 @@ assert(shell.includes("document.visibilityState !== 'visible'") && shell.include
 
 const local = { topics: { topic: { learn: { one: true }, checks: { one: 2 }, acts: { exercise: { status: 'pass', self: true, lastAnswer: 'draft', attempts: 3, last: { verdict: 'pass' } } } } } };
 const projected = Public.projectProgress(local);
+const revisedChecks = { topics: { topic: { checks: { one: 2, 'one@audit-2026-10': 1 } } } };
+assert.deepStrictEqual(Public.projectProgress(revisedChecks).topics.topic.checks,
+  revisedChecks.topics.topic.checks, 'historical and revised choices both survive public projection');
 assert.strictEqual(projected.topics.topic.acts.exercise.lastAnswer, 'draft', 'bounded drafts sync');
 assert.strictEqual(projected.topics.topic.acts.exercise.attempts, undefined, 'attempt history remains local');
 assert.strictEqual(projected.topics.topic.acts.exercise.last, undefined, 'grading history remains local');

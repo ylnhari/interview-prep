@@ -43,3 +43,11 @@ assert.strictEqual(IO.filename(key, new Date('2026-09-09T10:00:00Z')), 'example-
 assert.strictEqual(IO.filename('prep-state-acme-mle-loop-r2-v1', new Date('2026-01-02T00:00:00Z')), 'acme-mle-loop-r2-progress-2026-01-02.json');
 
 console.log('test_io: OK');
+
+// Revised checks retain old choices under the original key. The versioned key
+// is ordinary learning evidence and round-trips without a schema reset.
+const revisedState = JSON.parse(JSON.stringify(state));
+revisedState.topics['serving-and-scale'].checks['ss-0@audit-2026-10'] = 2;
+const revisedBack = IO.parse(IO.serialise(key, revisedState));
+assert.deepStrictEqual(revisedBack.state.topics['serving-and-scale'].checks,
+  {'ss-0':1, 'ss-0@audit-2026-10':2});

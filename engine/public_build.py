@@ -25,8 +25,8 @@ PUBLIC_PROGRESS_MARKER = "/*__PUBLIC_PROGRESS__*/"
 PUBLIC_PROGRESS_CONFIG_GLOBAL = "window.PREP_PUBLIC_PROGRESS_CONFIG"
 PUBLIC_FIREBASE_KEYS = {"apiKey", "authDomain", "projectId", "appId", "messagingSenderId"}
 REQUIRED_PUBLIC_FIREBASE_KEYS = {"apiKey", "authDomain", "projectId", "appId"}
-DESCRIPTION = ("A free, open course for machine learning engineering interviews, "
-               "with technical chapters, worked examples, and practice questions.")
+DESCRIPTION = ("A free, visual course for ML, AI, forward-deployed and staff engineers, "
+               "with interactive experiments, technical chapters and applied practice.")
 
 
 def validate_base_url(value):
@@ -225,14 +225,20 @@ def build_public(root=ROOT, output_dir=None, base_url=DEFAULT_BASE_URL, cloud_co
         sys.executable, str(root / "engine" / "build.py"), str(course_dir),
         "--out", str(course_path),
     ])
+    try:
+        revision = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], encoding="ascii", stderr=subprocess.DEVNULL).strip()
+    except (OSError, subprocess.CalledProcessError):
+        revision = ""
+    revision_tag = '<meta name="prep-source-revision" content="%s">\n' % revision if re.fullmatch(r"[a-f0-9]{40}", revision) else ""
     course_html = course_path.read_text(encoding="utf-8")
     course_html = ensure_html_document(course_html)
     course_html = strip_owner_progress(course_html, root)
     course_html = inline_public_progress(course_html, root, public_sync_config)
-    title = "Machine learning engineering interview preparation course"
+    title = "ML and AI engineering: learn, explain, build"
     course_html = add_metadata(
         course_html, title=title, canonical=base_url + "course.html",
-        description="Read the free course for machine learning engineering interviews, with technical chapters and practice questions.")
+        description="Learn ML and AI engineering through visual explanations, original interactive experiments and evidence-producing practice.")
+    course_html = course_html.replace("</head>", revision_tag + "</head>", 1)
     course_html = reject_cloud_config(course_html)
     course_path.write_text(course_html, encoding="utf-8")
 
@@ -242,10 +248,11 @@ def build_public(root=ROOT, output_dir=None, base_url=DEFAULT_BASE_URL, cloud_co
         sys.path.insert(0, engine_dir)
     import roadmap
     roadmap_entry = roadmap.public_course_entry(root=str(root), page="course.html")
-    index_html = roadmap.render_index([roadmap_entry])
+    index_html = ensure_html_document(roadmap.render_index([roadmap_entry]))
     index_html = add_metadata(
-        index_html, title="Machine learning engineering interview preparation | Roadmap", canonical=base_url,
-        description="Follow the free machine learning engineering interview course roadmap, with chapters, sections and browser-saved progress.")
+        index_html, title="ML and AI engineering | Course paths", canonical=base_url,
+        description="Explore recommended engineering paths and all public chapters, with chapters, sections and browser-saved progress.")
+    index_html = index_html.replace("</head>", revision_tag + "</head>", 1)
     index_html = reject_cloud_config(index_html)
     (output_dir / "index.html").write_text(index_html, encoding="utf-8")
     (output_dir / "robots.txt").write_text(
