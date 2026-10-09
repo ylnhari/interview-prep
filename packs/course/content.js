@@ -333,6 +333,12 @@ window.PREP_CONTENT = {
           deeper: `<p>Tracks 3 and 5 are specialised depth, not harder versions of Track 4. Use Track 5 when the job involves forecasting, scheduling, routing, capacity or pricing. Use Track 3 when it involves LLM serving, retrieval, fine-tuning or agents.</p>`
         },
         {
+          id: "sh-diagnostic", part: "field", title: "Experienced reader: diagnose, practise, then read",
+          body: `<p>Skip the basics you can already explain. Start with <a href="#rag-and-agents/raa-a4">the existing nine-minute controlled-document RAG design</a> without revealing its answer. Compare your diagram with its marking guide; choose only the weak area: <a href="#rag-and-agents/raa-f5">retrieval/evaluation definitions</a>, <a href="#genai-platform/gp-structured-output-drill">structured-answer validation</a>, or <a href="#rag-and-agents/raa-agent-resume-case">agent recovery and approvals</a>. Use the <a href="#coding-drills/cdr-diagnostic">25-minute coding diagnostic</a> separately.</p>
+<p>For AI application delivery, practise <a href="#scenario-questions/sq-discovery-pilot-handoff">discovery to pilot to handoff</a>. An optional twenty-minute application exercise is to define a batch endpoint with per-item results, partial failures, deadlines and retry rules using the existing API/testing chapters. Separate deterministic contract/permission tests from model-quality evaluations. If you already study system design elsewhere, use this course's relevant links as gap checks rather than restarting Track 1.</p>
+<p>Read only what the exercise exposed: LangGraph replay/idempotency (20 minutes), Anthropic agent evaluation structure and repeated trials (15), or Contextual Retrieval indexing-time augmentation (15). Microsoft multitenant RAG is an optional five-minute controls cross-check. The ByteMonk video is an optional overview. These are estimated study budgets, not publisher runtimes; readings live in the retrieval/agents chapter. Mark an exercise practised after testing and explaining it; existing completion marks remain intact.</p>`, deeper: null, check: null
+        },
+        {
           id: "sh-3",
           part: "field",
           title: "Keep your place",
