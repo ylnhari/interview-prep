@@ -4,7 +4,7 @@ A free, visual course for ML engineers, AI engineers, forward-deployed AI engine
 
 Choose one of four recommended role paths, skip ahead or search the complete catalogue. Six browse groups cover ML foundations, systems foundations and cases, production ML, AI engineering, optional decision systems, and practice/question banks. Paths change recommendations and project framing; they never restrict access or confer a job level.
 
-Chapters combine existing animated diagrams with concise explanations, selected external teaching and applied tasks. Original learner-controlled models explore decision thresholds, historical availability, request budgets and tenant scheduling. Exercises include design, explanation, debugging and code; only exercises explicitly labeled code are runnable code tasks. Long explanations, checks and reference answers are optional disclosures rather than the default reading experience.
+Chapters combine existing animated diagrams with concise explanations, selected external teaching and applied tasks. Original learner-controlled models explore decision thresholds, historical availability, request budgets and tenant scheduling. Exercises include design, explanation, debugging and code; only exercises explicitly labeled code are runnable code tasks. A problem and mechanism remain visible before each diagram. Full explanations, checks and reference answers are optional disclosures. Controlled AI cases explore routing policy, missing evidence, unknown agent effects and measured inference delays.
 
 Progress is self-recorded learning evidence, not mastery, a credential or a prediction of interview success. Reading budgets are editorial estimates unless a resource explicitly gives a publisher duration.
 

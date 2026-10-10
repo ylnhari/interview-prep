@@ -70,11 +70,15 @@ const byId=id=>topics.find(t=>t.id===id);
 const remember=new Function('topicById','META','localStorage','return ('+source('rememberRoute')+')')(byId,{id:'course'},routeStore);
 const resume=new Function('topicById','META','localStorage','return ('+source('resumeRoute')+')')(byId,{id:'course'},routeStore);
 remember('one/lat');assert.equal(routeCache['prep-course-last-route'],'one/lat');assert.equal(resume().section.id,'lat');
+topics[0].activities=[{id:'drill',title:'Testing and explanation'}];
+remember('one/drill');assert.equal(routeCache['prep-course-last-route'],'one/drill');assert.equal(resume().section.id,'drill','Resume retains a valid activity destination');
+remember('one/lat');
 remember('home');assert.equal(routeCache['prep-course-last-route'],'one/lat','home preserves last learning destination');
 remember('one/not-a-lesson');assert.equal(routeCache['prep-course-last-route'],'one','unknown sections are not stored');
 remember('two/leak');assert.equal(resume().topic.id,'two');
 routeCache['prep-course-last-route']='missing/topic';assert.equal(resume(),null,'stale chapter routes fall back safely');
 console.log('test_visual_course: Resume raw-string contract and validated chapter/section persistence OK');
+assert(shell.includes("box2.id = 'sec-' + a.id"),'activity links have actual rendered destinations using the existing route contract');
 let navigationRenders=0,navigationScrolls=0;
 const routeContext={state:{view:'one',pendingScroll:'sec-lat'},publicCourse:true,publicMode:false,publicNavigationRevision:0,location:{hash:''},applyHash(){return false;},renderAll(){navigationRenders++;},document:{getElementById(){return null;}},window:{scrollTo(){navigationScrolls++;}}};
 const routeEvent=new Function('context','with(context){return ('+source('handleRouteChange')+');}')(routeContext);
@@ -82,8 +86,18 @@ routeEvent();assert.equal(routeContext.state.view,'home','Back to initial empty 
 routeContext.location.hash='#unknown';routeContext.state.view='one';routeEvent();assert.equal(routeContext.state.view,'one','unknown fragment leaves current chapter intact');
 routeContext.location.hash='';routeContext.publicCourse=false;routeEvent();assert.equal(routeContext.state.view,'one','private initial route is not replaced with public home');
 console.log('test_visual_course: browser history empty-fragment event and invalid/private route behavior OK');
+const activityScrolls=[];
+const activityRoutes={state:{},location:{hash:'#one/drill'},publicCourse:true,privateHost:false,privateReady:true,C:{},GLOSSARY:[],TOPICS:topics,rememberRoute:remember,publicMode:false,publicNavigationRevision:0,renderAll(){},document:{getElementById(id){return {scrollIntoView(){activityScrolls.push(id);}};}},window:{scrollTo(){}}};
+activityRoutes.applyHash=new Function('context','with(context){return ('+source('applyHash')+');}')(activityRoutes);
+const activityEvent=new Function('context','with(context){return ('+source('handleRouteChange')+');}')(activityRoutes);
+activityEvent();assert.equal(activityRoutes.state.view,'one');assert.equal(activityScrolls.pop(),'sec-drill');
+activityRoutes.location.hash='#two/leak';activityEvent();assert.equal(activityScrolls.pop(),'sec-leak');
+activityRoutes.location.hash='#one/drill';activityEvent();assert.equal(activityScrolls.pop(),'sec-drill','Back to an activity targets the exact exercise');
+assert.equal(resume().section.id,'drill');assert.equal(activityRoutes.state.pendingScroll,null,'scroll is consumed after each render');
+console.log('test_visual_course: actual hash/route handlers retain and revisit an activity destination');
 
-assert(shell.includes("teaching.open = !publicCourse && i === 0"),'public glossary starts collapsed; private disclosure contract retained');
+assert(shell.includes("splitLessonBody(c.body, i === 0)"),'public glossary remains optional while other lessons get visible teaching');
+assert(shell.includes("teaching.open = !publicCourse && i === 0"),'private orientation disclosure contract retained');
 assert(shell.includes('selected.focus({preventScroll:true})'),'role selection restores focus after rendering');
 console.log('Public glossary default and role focus source contract passed; rendered checks recorded separately.');
 

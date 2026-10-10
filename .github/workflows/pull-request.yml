@@ -64,6 +64,7 @@ jobs:
           node engine/test_interactive_practice.cjs
           node engine/test_feature_platform.cjs
           node engine/test_ai_audit.cjs
+          node engine/test_ai_learning.cjs
           node engine/test_decision_audit.cjs
           node engine/test_systems_audit.cjs
           python -m unittest engine.test_ml_content engine.test_coding_sql

@@ -7,6 +7,9 @@ for(const p of c.paths){assert(p.capstone);assert.equal(new Set(p.ids).size,p.id
 const missing=[];
 function scan(value,where){if(typeof value==='string'){for(const match of value.matchAll(/href=["']#([a-z0-9-]+)(?:\/([a-z0-9-]+))?["']/g)){const [,tid,sid]=match;if(['home','glossary'].includes(tid))continue;const t=by.get(tid);if(!t||sid&&!t.learn.concat(t.activities).some(s=>s.id===sid))missing.push(where+' → '+tid+(sid?'/'+sid:''));}}else if(value&&typeof value==='object'){for(const [k,v]of Object.entries(value))scan(v,where+'/'+k);}}
 for(const t of topics)scan(t,t.id);
+function validAnchors(value,where){if(typeof value==='string'){assert.equal((value.match(/<a\s[^>]*>/g)||[]).length,(value.match(/<\/a>/g)||[]).length,where+' balanced links');}else if(value&&typeof value==='object'){for(const [key,v]of Object.entries(value))validAnchors(v,where+'/'+key);}}
+for(const t of topics)validAnchors(t,t.id);
+for(const [id,g]of Object.entries(c.lessonGuides||{})){assert(topics.some(t=>t.learn.some(s=>s.id===id)),id+' guide has a retained destination');for(const field of ['scenario','mechanism','diagram','prediction'])assert(typeof g[field]==='string'&&g[field].length>25,id+' meaningful '+field);}
 if(missing.length){console.error('INVALID SEMANTIC DESTINATIONS\n'+missing.join('\n'));process.exitCode=1;}
 console.log(JSON.stringify({topics:topics.length,lessons:topics.reduce((n,t)=>n+t.learn.length,0),checks:topics.reduce((n,t)=>n+t.learn.filter(s=>s.check).length,0),activities:topics.reduce((n,t)=>n+t.activities.length,0),codeActivities:topics.reduce((n,t)=>n+t.activities.filter(a=>a.type==='code').length,0),visualReferences:topics.reduce((n,t)=>n+t.learn.concat(t.activities).filter(s=>s.viz).length,0),readings:topics.reduce((n,t)=>n+(c.readings[t.id]||t.readings||[]).length,0),badLinks:missing.length}));
 

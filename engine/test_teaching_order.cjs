@@ -38,13 +38,16 @@ inOrder(sections, [
   'if (c.link && c.link.url) sec.appendChild(extLink(c.link));',
   'if (qbank && c.deeper)',
   'review.appendChild(pr);',
-  "teaching.appendChild(el('div', 'prose', c.body));",
+  "context.appendChild(txt('p', null, lessonGuide.scenario))",
+  "context.appendChild(txt('p', null, lessonGuide.mechanism))",
   'if (c.viz && window.VIZLIB && window.VIZLIB[c.viz])',
-  'sec.insertBefore(cv, sec.children[1] || null)',
+  'prepareDiagram(cv, c.title); sec.appendChild(cv);',
+  'if (teaching) sec.appendChild(teaching);',
+  'window.PREP_AI_PRACTICE.mountLesson(sec, c.id)',
   "if (c.deeper && !qbank)",
   'if (c.check && !c.check.auditCaution)'
-], 'diagram is inserted before optional teaching, depth and prediction check');
-assert(sections.includes("cv.setAttribute('aria-label', c.title + ' diagram and text explanation')"), 'scrollable diagram has accessible region label');
+], 'problem and mechanism precede diagram, optional full teaching, depth and prediction check');
+assert(shell.includes("container.setAttribute('aria-label', label + ' diagram and text explanation')"), 'scrollable diagram has accessible region label');
 
 assert(
   sections.includes("window.VIZLIB_CAPTIONS[c.viz] ? '<div class=\"cap\">' + window.VIZLIB_CAPTIONS[c.viz]"),

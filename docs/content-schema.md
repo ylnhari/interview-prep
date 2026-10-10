@@ -10,6 +10,15 @@ All HTML strings are backtick template literals. Never write the two characters 
 
 ## Top level
 
+The public course may also supply `lessonGuides`, keyed by retained lesson IDs.
+Each guide has plain-text `scenario`, `mechanism`, `diagram` (a reading task, not
+a diagram ID) and `prediction` fields. Scenario and mechanism remain visible
+before the diagram; the canonical full body and deeper references remain
+optional. Without a guide, the renderer shows a complete opening paragraph
+(or the complete short body) and excludes that excerpt from the full disclosure.
+Key terms and question banks remain optional references. These presentation
+fields do not change completion or quiz storage.
+
 - `meta` — `{ id, title, eyebrow, heading, footer, favicon }`. `id` scopes browser progress storage; `title` becomes the page title; `eyebrow` and `heading` fill the header.
 - `interviewAt` — ISO datetime string or `null` (the header shows a countdown, or "date TBD").
 - `groups` — ordered menu groups: `[{ id, label, sub, ids: [topicId, ...] }]`. Order = importance. A topic id may come from this pack or from `useCore`.
