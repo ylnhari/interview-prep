@@ -40,7 +40,7 @@ Read the helper signatures at the top of `engine/viz-lib.js` and copy the style 
 
 ### Narrow responsive-flow exception
 
-`rag-two-paths` is the one current exception to the fixed-viewBox rule. It returns a self-contained semantic HTML/CSS flow with ordered-list steps and decorative CSS arrows, because shrinking its two operational RAG paths into a 760px drawing would make the labels unreadable on a phone. Its style is scoped to the supplied `uid`, all meaning is present in headings and text, it uses only existing theme tokens, and it has no controls, scripts, external assets, network dependencies, or shell changes. New diagrams remain SVG by default; use this exception only when a fixed diagram cannot keep required labels readable at 14px or larger on a narrow viewport.
+`rag-two-paths` and the AI architectures in `zzz-ai-learning.js` use semantic HTML/CSS flows when a fixed drawing would shrink essential labels below 14px on a phone. Scope styles to the supplied `uid`, retain all meaning in headings and ordered text, and use existing theme tokens. Factories return static markup without external assets or scripts. The separate `PREP_AI_PRACTICE.mountLesson` controller adds native selects and buttons beside selected public lessons; it makes no requests, timers, external effects or progress writes. Keep fixtures inspectable and reset feedback when their constraints change. Other diagrams remain SVG by default. The public shell scales legacy SVG geometry and labels together in labeled, focusable scroll regions.
 
 ## Validate
 

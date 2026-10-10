@@ -83,7 +83,8 @@ routeContext.location.hash='#unknown';routeContext.state.view='one';routeEvent()
 routeContext.location.hash='';routeContext.publicCourse=false;routeEvent();assert.equal(routeContext.state.view,'one','private initial route is not replaced with public home');
 console.log('test_visual_course: browser history empty-fragment event and invalid/private route behavior OK');
 
-assert(shell.includes("teaching.open = !publicCourse && i === 0"),'public glossary starts collapsed; private disclosure contract retained');
+assert(shell.includes("splitLessonBody(c.body, i === 0)"),'public glossary remains optional while other lessons get visible teaching');
+assert(shell.includes("teaching.open = !publicCourse && i === 0"),'private orientation disclosure contract retained');
 assert(shell.includes('selected.focus({preventScroll:true})'),'role selection restores focus after rendering');
 console.log('Public glossary default and role focus source contract passed; rendered checks recorded separately.');
 

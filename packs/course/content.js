@@ -526,3 +526,49 @@ window.PREP_CONTENT = {
  };
  Object.values(C.readings).forEach(rs=>rs.forEach(r=>{if(purposes[r.u]){r.w=purposes[r.u];r.purpose=r.w;}}));
 })(window.PREP_CONTENT);
+
+// Optional always-visible teaching guides keyed by stable section IDs.
+window.PREP_CONTENT.lessonGuides = {
+  'gp-f2': {
+    scenario: 'A platform serves public FAQ requests and confidential EU requests from one model catalog. Model A costs less but is approved only for public data. Model B supports confidential EU processing; a later fixture makes it unavailable. Predict an eligible route before revealing the result.',
+    mechanism: 'The catalog records supported tasks, data classes, regions, availability and measured quality/latency. Policy determines eligibility before cost ranks the candidates. The router/runtime executes a bounded request; independent checks validate response shape, evidence and permitted actions. Evaluation and operational outcomes feed reviewed release/configuration decisions. Passing quality evaluation cannot grant data access, and having no eligible model requires a declared defer or escalation outcome.',
+    diagram: 'Follow the authenticated request through eligibility, routing/runtime, model/tools, response checks and the declared outcome. Treat catalog policy as a side input and evaluation as separate release feedback, rather than another model call on every request.',
+    prediction: 'If a model passes quality evaluation but lacks permission for a data class, the guardrail must block it; evaluation does not grant access.'
+  },
+  'raa-f1a': {
+    scenario: 'A policy assistant indexes a handbook; then a policy is revised and access changes while a user asks about an exception. The needed addendum may be missing, superseded, or outside that user’s permitted scope.',
+    mechanism: 'Ingestion versions source material with provenance and access metadata, validates it, and publishes an index. On each request, the server checks current authorization before search, reranking or cache reuse, then assembles bounded evidence and checks the answer’s citations. Deletions and permission changes must propagate. If a required addendum is missing, retrieval cannot invent it; identify the gap or abstain until it is indexed.',
+    diagram: 'Trace the offline path from source update through validated index publication, then the online path from current authorization through retrieval to checked answer. Notice where permission changes and missing sources must be handled.',
+    prediction: 'An answer missing a required addendum is incomplete even when every retrieved passage is relevant; pause or abstain and repair index coverage.'
+  },
+  'raa-f5': {
+    scenario: 'A test question explicitly requires three passages to support a complete answer. The retriever returns one relevant passage in its top results, and the generator writes a plausible response. Score retrieval coverage before judging the answer’s faithfulness.',
+    mechanism: 'Passage recall counts retrieved required passages against the full required set; query hit only asks whether at least one relevant passage appeared. Complete-evidence success asks whether every passage needed for this question is present. These measures expose different failures: a hit can coexist with a large evidence gap. Faithfulness is a separate check of whether the answer stays within the evidence supplied. A fixed golden set makes those measurements comparable across changes.',
+    diagram: 'Compare the candidate retrieval paths and their ranked results; keep passage coverage separate from whether the final answer is supported by the evidence it received.',
+    prediction: 'With one of three required passages retrieved, passage recall is 1/3, query hit is true, and complete-evidence success is false.'
+  },
+  'raa-agent-execution': {
+    scenario: 'A workflow receives approval to set record R7 to “reviewed.” The worker sends the write, times out before recording the result, then resumes after access has been revoked. Its model now proposes adding a second field.',
+    mechanism: 'Resume the checkpointed action, exact approved arguments, consent scope and stable operation key. Revalidate current authorization beside the actual tool call; revoked access blocks execution, and the added field requires fresh consent. A timeout leaves the effect unknown. Reconcile through an authorized status lookup or recipient-side deduplication using the same key. If neither can establish a safe outcome, preserve uncertainty and escalate instead of inventing a new key or repeating the write.',
+    diagram: 'Trace the structured proposal, exact consent, current authorization and durable operation record before the protected effect. Follow the unknown-outcome branch to an authorized reconciliation; locate the model outside the permission boundary.',
+    prediction: 'After revocation, no second write occurs; the uncertain first effect is reconciled or escalated using the original operation key.'
+  },
+  'lie-f1': {
+    scenario: 'Durations: A has 800 ms queue, 80 ms prefill, 20 ms median inter-token time, zero preemptions. B has 20 ms queue, 600 ms prefill, 20 ms median inter-token time, zero preemptions. C has 30 ms queue, 100 ms prefill, 20 ms median inter-token time, a 900 ms inter-token stall, and three cache preemptions.',
+    mechanism: 'Prefill processes input; decode emits tokens sequentially. A’s delay is queueing, B’s is prefill, and C’s stall occurs during decode with cache preemptions. The trace locates time spent but does not establish a universal bottleneck: batching, kernels, scheduling and cache policy can change the cause. Test diagnoses against resource measurements.',
+    diagram: 'Read upstream work, admission, prefill, first token and decode as separate intervals. Locate each measured delay, then compare cache events with C’s token timestamps before assigning a cause.',
+    prediction: 'A is queue-dominated, B is prefill-dominated, and C’s 900 ms inter-token stall coincides with three cache preemptions; none establishes a universal TTFT rule.'
+  },
+  'lie-f9': {
+    scenario: 'A: 800 ms queue, 80 ms prefill, 20 ms median inter-token time, zero preemptions. B: 20 ms queue, 600 ms prefill, 20 ms median inter-token time, zero preemptions. C: 30 ms queue, 100 ms prefill, 20 ms median inter-token time, a 900 ms inter-token stall and three cache preemptions.',
+    mechanism: 'Separate queue and prefill before the first token from later decode intervals. A’s wait is queueing; B’s is prefill; C’s long stall occurs between tokens alongside cache preemptions. Track cache occupancy, per-request percentiles, throughput and goodput. Higher aggregate throughput can coexist with slower individual requests. These traces describe this workload, not a universal TTFT or decode law.',
+    diagram: 'Follow the request through gateway, admission, scheduler/tokenizer, KV cache and accelerator, streaming and observability. Identify which component needs a discriminating measurement; follow deployment feedback separately.',
+    prediction: 'C’s 900 ms delay is inter-token, not queue or prefill; its three cache preemptions are a hypothesis to investigate, not proof of a universal cause.'
+  },
+  'gp-structured-validation': {
+    scenario: 'A model returns valid JSON with an answer and an authorized citation ID, but the cited passage does not support a material claim. The response parses cleanly and still must be rejected.',
+    mechanism: 'Parse the complete response, enforce fields and types, check IDs against current authorized evidence, then verify claim support. Schema validity proves shape; citation membership proves permission. Refusal is an outcome, truncation incomplete, and timeout unconfirmed. Bound repairs by attempts, deadline, tokens and cost. Unsupported claims abstain; validation never authorizes a write.',
+    diagram: 'Follow the input and output checks around generation, then distinguish format validation, citation authorization, and claim-support checking as separate decisions.',
+    prediction: 'The answer is not accepted: valid JSON and an authorized citation do not establish that the passage supports the claim.'
+  }
+};

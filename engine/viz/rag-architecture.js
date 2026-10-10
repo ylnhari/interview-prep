@@ -44,6 +44,7 @@
       '<li><strong>parse / OCR / preserve tables</strong><span class="rag-detail">Keep useful structure while extracting searchable text.</span></li>' +
       '<li><strong>source ID, current version, ACL metadata</strong><span class="rag-detail">Keep identity, freshness, and access-control-list metadata with the content.</span></li>' +
       '<li><strong>chunk</strong><span class="rag-detail">Split content into retrieval-sized evidence units.</span></li>' +
+      '<li><strong>Optional retrieval metadata</strong><span class="rag-detail">Summaries, keywords or example questions can aid retrieval. Keep their source/version lineage; evaluate rather than assuming enrichment helps.</span></li>' +
       '<li><strong>Build search indexes</strong><span class="rag-detail">Embeddings for vector search; keyword index for lexical search. Choose either or both for the corpus.</span></li>' +
       '<li><strong>validate, publish index version</strong><span class="rag-detail">Only a checked index version becomes available to requests.</span></li>' +
       '</ol></article>' +
@@ -60,6 +61,7 @@
       '</ol></article>' +
       '</div>' +
       '<p class="rag-crosscut"><strong>Across both paths:</strong> trace source/index version, retrieval, prompt/model; measure freshness, quality, latency, and cost. A citation must support its claim; its presence is not proof.</p>' +
+      '<p class="rag-crosscut"><strong>Optional workflow:</strong> a bounded agent can decide whether another permitted retrieval step is useful. Explicit stopping, current tool authorization and durable effect handling remain separate from evidence retrieval. Evaluation feeds reviewed index, prompt and model releases.</p>' +
       '</section>';
   };
   C['rag-two-paths'] = 'A responsive RAG diagram separates the offline <b>document-update path</b> from the online request path. Authorization happens before retrieval, and a published index version is the explicit handoff between them.';

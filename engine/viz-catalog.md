@@ -259,6 +259,16 @@ Column key: **id** — what the picture shows (and what moves) — concepts it f
 - `dns-lookup` — a browser asking a recursive resolver that walks root to top-level domain to authoritative, and the answer coming back with a time to live and being cached. Fits: how a name becomes an address, DNS caching, time to live trade-offs, why the first request to a host is slower.
 - `round-trip-budget` — one first request across the Atlantic broken into DNS, TCP handshake, TLS handshake, travel and server work, beside the same request on a reused connection, with the speed-of-light numbers below. Fits: latency budgets, where the time actually goes, keep-alive and connection pooling, why bandwidth does not fix latency.
 
+## Readable AI architectures and controlled cases
+
+- `genai-platform-controls`: authenticated request, eligible catalog, router/runtime, model/tools, response boundaries and separate evaluation feedback. Public FAQ, confidential EU and unavailable-model fixtures.
+- `agent-effect-boundary`: exact consent, current authorization, durable intent/key, external effect, unknown outcome and authorized reconciliation. Repeated resume does not invent another effect.
+- `inference-request-timeline` / `ttft-tpot-timeline`: upstream work, measured queue/prefill, first token and inter-token stalls with missing durations explicitly stated.
+- `inference-serving-path`: gateway, admission/router, scheduler/tokenizer, KV cache/accelerator, streaming, observability and reviewed deployment feedback.
+
+These boards use responsive semantic HTML with 14px labels. Native controls are
+mounted beside selected lessons by `PREP_AI_PRACTICE`, independently of progress.
+
 ## Enterprise feature platform
 
 - `enterprise-feature-path` / `enterprise-feature-platform`: tenant-aware durable changelog, offline/online sinks and availability evidence. Interactive Harbor stages and labs are mounted alongside the diagram.
