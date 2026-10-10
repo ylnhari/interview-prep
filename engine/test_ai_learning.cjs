@@ -79,4 +79,35 @@ const shown=split(intro+long+'<ul><li>artifact</li></ul>',false);assert(shown.vi
 const prepare=new Function('publicCourse','txt','return ('+source('prepareDiagram')+')')(true,()=>({}));
 const svg={style:{},getAttribute(){return '0 0 760 200';},querySelectorAll(){return [{getAttribute(){return '9';}}];}};
 const region={setAttribute(){},querySelectorAll(){return [svg];},insertBefore(){}};prepare(region,'Test');assert.equal(svg.style.minWidth,'1183px');assert.equal(region.tabIndex,0);
+// Inspect the actual effective course text, rather than another rendering of its ideas.
+const course={};
+for(const f of ['library.js',...fs.readdirSync('core').filter(f=>f.endsWith('.js')&&f!=='library.js').sort()])vm.runInNewContext(fs.readFileSync('core/'+f,'utf8'),{window:course});
+vm.runInNewContext(fs.readFileSync('packs/course/content.js','utf8'),{window:course});
+const publishedTopics=[...course.PREP_CONTENT.topics,...course.PREP_CONTENT.useCore.map(id=>course.PREP_CORE[id])];
+const openingMechanisms={
+  'sdf-f3':/update an order and its payment record together[\s\S]*multi-record transactions/,
+  'nb-f6':/propagation[\s\S]*transmission[\s\S]*queueing and processing[\s\S]*faster link/,
+  'ss-v3-request-stages':/end-to-end deadline[\s\S]*queueing[\s\S]*tested fallback/,
+  'ss-f4':/ramp time[\s\S]*zone-loss[\s\S]*startup delay/,
+  'ss-f5':/100 requests per second[\s\S]*600-request-per-second[\s\S]*six healthy replicas[\s\S]*downstream/,
+  'or-2':/variables, objective and constraints[\s\S]*LP[\s\S]*MIP[\s\S]*CP-SAT[\s\S]*solver status/,
+  'ct-5':/noisy updates[\s\S]*already committed decisions[\s\S]*switching costs[\s\S]*hard constraints/
+};
+for(const [id,mechanism] of Object.entries(openingMechanisms)){
+  const section=publishedTopics.flatMap(t=>t.learn).find(s=>s.id===id);
+  const opening=split(section.body,false), text=section.body.match(/^<p>[\s\S]*?<\/p>/)[0];
+  assert.match(opening.visible,mechanism,id+' explains a concrete mechanism before disclosure');
+  assert(opening.visible.includes(text));assert(!opening.remaining.includes(text),id+' opening is not duplicated');
+  assert(opening.remaining.includes('<li>'),id+' extended explanation is retained');
+  assert(opening.visible.replace(/<[^>]*>/g,'').trim().split(/\s+/).length<=90,id+' concise authored context');
+}
+const sizing=publishedTopics.flatMap(t=>t.learn).find(s=>s.id==='ss-f5').body;
+const perReplica=Number(sizing.match(/sustains (\d+) requests per second/)[1]);
+const peakRequests=Number(sizing.match(/A (\d+)-request-per-second peak/)[1]);
+assert.equal(Math.ceil(peakRequests/perReplica),6,'displayed sizing example needs six replicas before allowances');
+for(const topic of publishedTopics.filter(t=>!t.id.includes('question-bank')))for(const [index,section] of topic.learn.entries()){
+  if(!index||!section.body||course.PREP_CONTENT.lessonGuides?.[section.id])continue;
+  const opening=split(section.body,false);
+  assert(!opening.remaining||opening.visible.replace(/<[^>]*>/g,'').trim().split(/\s+/).length>17,section.id+' does not hide its teaching behind a slogan');
+}
 console.log('test_ai_learning: controller events, eligibility/evidence boundaries, unknown effects, reset/repeated resume, measured intervals and visible teaching passed');

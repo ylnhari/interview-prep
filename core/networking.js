@@ -144,7 +144,7 @@
         part: 'field',
         title: 'Where the time goes in a round trip',
         viz: 'round-trip-budget',
-        body: `<p>Latency is made of four things, and it helps to name which one you are fighting.</p>
+        body: `<p>A small request can be slow even when the server computes quickly. Split elapsed time into propagation over distance, transmission of bytes, queueing and processing. A faster link reduces transmission time; it cannot remove distance or a saturated queue. Use a request trace and workload measurements to identify the dominant component before choosing an optimization.</p>
 <ul>
 <li><b>Propagation.</b> Distance divided by speed. Light in fibre covers about 200,000 kilometres a second, and the cable does not run in a straight line. New York to London is 5,585 kilometres, which is 56 milliseconds for a round trip at the theoretical best and about 70 in practice. New York to Sydney is 15,993 kilometres, about 160 milliseconds. Inside one data centre a round trip is about half a millisecond. These numbers are physics plus routing, and no engineering removes them.</li>
 <li><b>Transmission.</b> How long it takes to push the bytes onto the link: size divided by link rate. This is the only part that a bigger link improves, and for small requests it is negligible.</li>

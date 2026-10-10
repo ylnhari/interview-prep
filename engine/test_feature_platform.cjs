@@ -18,6 +18,16 @@ const browserWindow={};const context={window:browserWindow,document:{createEleme
 for(const f of ['engine/viz-lib.js','engine/viz/interactive-practice.js','engine/viz/z-feature-platform-practice.js'])vm.runInNewContext(fs.readFileSync(f,'utf8'),context);
 browserWindow.PREP_PRACTICE.mount({querySelector(){return null;},firstElementChild:{insertAdjacentElement(where,node){mounted=node;}}},'enterprise-feature-platform');
 assert(mounted.innerHTML.includes('Regional scenario: 60s freshness, replica lag 5m'));
+const diagramFloor=Number(mounted.innerHTML.match(/\.harbor-diagram svg\{min-width:(\d+)px\}/)[1]);
+assert.match(mounted.innerHTML,/\.harbor-diagram\{overflow-x:auto;width:100%;min-width:0;max-width:100%/);
+assert.match(mounted.innerHTML,/class="harbor-diagram" tabindex="0" role="region" aria-label="Scrollable feature architecture/);
+assert(mounted.innerHTML.includes('Scroll the architecture horizontally when needed'));
+for(const stage of [1,2,3,4])for(const failure of ['none','fresh','burst','late','sink','region']){
+ const svg=browserWindow.HARBOR_PRACTICE.architecture('readability-'+stage,stage,failure);
+ const width=Number(svg.match(/viewBox="0 0 (\d+)/)[1]);
+ const smallest=Math.min(...[...svg.matchAll(/font-size="(\d+(?:\.\d+)?)"/g)].map(m=>Number(m[1])));
+ assert(smallest*diagramFloor/width>=14,'dynamic Harbor labels retain 14px at stage '+stage+' / '+failure);
+}
 assert.match(nodes['.harbor-feedback'].textContent,/six-hour/);
 assert.doesNotMatch(nodes['.build-feedback'].textContent,/60 seconds/);
 nodes['.harbor-failure'].value='region';nodes['.harbor-failure'].change();
