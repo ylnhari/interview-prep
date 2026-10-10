@@ -56,3 +56,32 @@ No external media runtime or architecture replication is claimed. The local
 Java runtime remains unavailable; the unchanged secret-free Firestore emulator
 checks must pass in GitHub before publication. No rules deployment or production
 progress action belongs to this release.
+
+## Final readability corrections
+
+An independent rendered/source review found seven remaining lessons with only
+5–17 words before a closed explanation: `sdf-f3`, `nb-f6`,
+`ss-v3-request-stages`, `ss-f4`, `ss-f5`, `or-2` and `ct-5`. Each now starts
+with authored context explaining a concrete mechanism, constraint or worked
+example. The longer teaching remains available, and the visible paragraph is
+not repeated inside its disclosure. No sentence-count heuristic or additional
+quiz mapping is introduced. `test_ai_learning.cjs` inspects the actual resolved
+course text, checks those mechanisms and the displayed six-replica arithmetic,
+and checks for remaining non-reference slogans of 17 words or fewer.
+
+Harbor's separately mounted stage diagram did not pass through the shell's SVG
+preparation. Its dynamic SVG now has a 968px geometry floor: its 760-unit
+viewBox and smallest 11-unit label produce at least 14px rendered text. The
+existing labeled, focusable diagram region contains horizontal scrolling; a
+visible hint explains it. Geometry checks cover all four stages and six failure
+settings. The native stage and constraint controls retain their behavior.
+
+Codex In-app Browser confirmed all seven authored openings visible while their
+extended explanation stayed closed. At 320px, page client and scroll width both
+measured 305px, while the Harbor region was 249px wide and its SVG 968px wide.
+Stage four and the regional constraint redrew correctly; keyboard Right scrolled
+the focused region with a visible outline. Desktop page width and scroll width
+both measured 1040px. Temporary viewport overrides were reset. Existing AI,
+progress, navigation, domain and guest/configured-build tests passed; the local
+Python suite passed 29 tests with two Windows symlink-privilege skips. The
+required Linux CI also checks those platform-specific cases before publication.
