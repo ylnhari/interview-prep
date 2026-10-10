@@ -21,6 +21,7 @@ without changing existing IDs, quiz mappings, answer revisions or progress data.
 | Outcome was revealed before a prediction | Platform, RAG and evidence cases expose inputs first; a native prediction is required before outcome/feedback. A fixture change clears the prediction and feedback. | Actual unavailable routing gate; controller tests for all branches |
 | Guide comparison text was unused; changed results lacked announcements | Optional post-attempt spoken comparison consumes `lessonGuides.prediction`; a concise status summary announces fixture/results and the worked trace is labeled. | Source/order tests and actual inference result summary |
 | Rendered review caught residual stale content | Corrected the malformed fine-tuning link and universal prompt-cost/interview-frequency wording; brought the shared batching diagram/caption into conditional agreement with its teaching. | Effective-content link-balance and domain regression checks |
+| Activity IDs existed but links had no DOM scroll target | Existing `#topic/activity-id` routes now land on the actual exercise and Resume retains the activity destination. No ID is renamed. | Real capstone, agent-resume and structured-validation drill links; route regression tests |
 | Light warning/danger text was too faint | Darker existing light-theme tokens; selects and options have explicit foreground/background colors. | Bounded light/dark rendered review |
 
 ## Verification

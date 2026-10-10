@@ -254,7 +254,7 @@
   .part > .prose { margin-top: 12px; }
 
   /* exercise card */
-  .act { border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; background: var(--surface); margin-top: 14px; }
+  .act { border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; background: var(--surface); margin-top: 14px; scroll-margin-top:var(--header-clearance); }
   .act.pass { border-color: color-mix(in srgb, var(--good) 45%, var(--border)); }
   .act .ah { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
   .act .ah h4 { margin: 0; font-family: var(--font-display); font-size: 16.5px; line-height: 1.35; font-weight: 600; flex: 1; text-wrap: balance; }
@@ -950,7 +950,7 @@ window.PREP_IO = (function () {
   function rememberRoute(route) {
     var parts = String(route || '').split('/'), topicId = parts[0], topic = topicById(topicId);
     if (!topic) return;
-    var section = topic.learn.filter(function (c) { return c.id === parts[1]; })[0];
+    var section = topic.learn.concat(topic.activities || []).filter(function (c) { return c.id === parts[1]; })[0];
     var safeRoute = topicId + (section ? '/' + section.id : '');
     try { localStorage.setItem('prep-' + (META.id || 'pack') + '-last-route', safeRoute); } catch (e) {}
   }
@@ -958,7 +958,7 @@ window.PREP_IO = (function () {
     try {
       var route = localStorage.getItem('prep-' + (META.id || 'pack') + '-last-route') || '';
       var parts = route.split('/'), topic = topicById(parts[0]); if (!topic) return null;
-      var section = topic.learn.filter(function (c) { return c.id === parts[1]; })[0];
+      var section = topic.learn.concat(topic.activities || []).filter(function (c) { return c.id === parts[1]; })[0];
       return {topic:topic, section:section || null};
     } catch (e) { return null; }
   }
@@ -1202,7 +1202,7 @@ window.PREP_IO = (function () {
       var px = el('div', 'part'); px.id = 'ex-' + topic.id; var ph2 = el('div', 'ph'); ph2.appendChild(txt('span', 'lbl', p.pA + '/' + p.nA)); ph2.appendChild(txt('h3', null, 'Exercises')); px.appendChild(ph2);
       px.appendChild(txt('div', 'sub', G ? 'Claude marks your answer against what this chapter asks for. Try again until it passes. If you claim more than you have actually done, it tells you where.' : 'Write your answer first, then compare it with a strong answer and mark the exercise practised.'));
       topic.activities.forEach(function (a) {
-        var st = AC(topic.id, a.id); var box2 = el('div', 'act' + (st.status === 'pass' ? ' pass' : ''));
+        var st = AC(topic.id, a.id); var box2 = el('div', 'act' + (st.status === 'pass' ? ' pass' : '')); box2.id = 'sec-' + a.id;
         var ah = el('div', 'ah'); ah.appendChild(txt('span', 'type', a.type)); ah.appendChild(txt('h4', null, a.title)); if (st.status !== 'none') ah.appendChild(txt('span', 'verdict ' + st.status, st.self ? 'practised' : st.status === 'pass' ? 'passed' : 'try again')); box2.appendChild(ah);
         box2.appendChild(el('div', 'prose', a.prompt));
         if (a.viz && window.VIZLIB && window.VIZLIB[a.viz]) { var av = el('div', 'cviz'); av.innerHTML = window.VIZLIB[a.viz]('a' + Math.random().toString(36).slice(2, 8)) + (window.VIZLIB_CAPTIONS && window.VIZLIB_CAPTIONS[a.viz] ? '<div class="cap">' + window.VIZLIB_CAPTIONS[a.viz] + '</div>' : ''); prepareDiagram(av, a.title); box2.appendChild(av); }
