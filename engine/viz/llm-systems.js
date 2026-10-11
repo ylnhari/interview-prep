@@ -19,7 +19,7 @@
     b += T(40, 168, 'a fixed-size window slides by less than its own width', { s: 10, c: 'var(--ink-dim)', a: 'start' });
     b += R(40, 176, 200, 20, { f: 'none', sk: 'var(--accent)', sw: 2, cls: 'v-move-x', st: DXS(450) });
     b += T(150, 190, 'window', { s: 9, c: 'var(--accent)' });
-    b += T(400, 208, 'without overlap, an answer that spans a chunk boundary loses its context', { s: 10, c: 'var(--ink-dim)' });
+    b += T(400, 208, 'Retrieving only one side of a chunk boundary can omit needed context; overlap or context expansion can help.', { s: 10, c: 'var(--ink-dim)' });
     return S(220, b);
   };
   C['chunk-overlap'] = 'Adjacent fixed-size chunks repeat an <b>overlap</b> region, reducing boundary losses. A span longer than that overlap can still be split; inspect retrieved context and preserve structure rather than assuming overlap guarantees completeness.';
