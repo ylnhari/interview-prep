@@ -35,6 +35,13 @@ for(const path of C.paths){ctx.roleId=path.id;const sequence=ctx.recommendedTopi
 for(const route of ['#coding-drills/cdr-binary-search','#scenario-questions/sq-3','#coding-drills/cdr-binary-search']){location.hash=route;ctx.applyHash();ctx.renderBook();assert.equal(book.children[0].id,'sec-'+route.split('/')[1]);}
 assert(persists>=391);assert.match(shell,/\.lesson-video[^}]*aspect-ratio:16\/9/);assert.match(shell,/max-width:940px/);assert.match(shell,/grid-template-columns:245px minmax\(0,1fr\)/);
 console.log('Single-view primary content, canonical numbering, completion, valid/invalid deep links, history routes and four role sequences passed: '+count+' retained lesson/practice routes.');
+const codingTopic=ctx.topicById('coding-drills');
+const codingIntroduction=all(ctx.renderLesson(codingTopic,codingTopic.learn[0]));
+assert(!codingIntroduction.some(n=>n.cls==='lesson-resources'),'coding introduction has no chapter resource block');
+for(const lesson of codingTopic.learn){
+ const nodes=all(ctx.renderLesson(codingTopic,lesson));
+ assert(nodes.some(n=>n.html===lesson.body),'topic-specific teaching and problem links stay in their lesson body');
+}
 
 // Mobile direct navigation sets the new route before rendering, closes the
 // independently scrolling menu and returns keyboard focus to Contents.

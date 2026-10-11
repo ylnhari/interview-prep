@@ -55,7 +55,7 @@ for(const id of ['cdr-binary-search','cdr-intervals-greedy','cdr-stacks','cdr-li
  assert.match(lesson.body,/<b>Test and explain\.<\/b>/);
 }
 assert.equal(coding.learn.find(s=>s.id==='cdr-f1').title,'Choose a coding topic and its problem pair');
-assert(c.readings['coding-drills'].some(r=>r.provider==='GeeksforGeeks'));
+assert.equal(c.readings['coding-drills'].length,0,'coding resources remain on relevant lessons rather than a mixed chapter list');
 assert(!c.readings['coding-drills'].some(r=>/\.pdf|lecture-notes|runestone/i.test(r.u)));
 console.log('Expanded coding learning sources, practice progression and stable destinations passed.');
 

@@ -174,10 +174,7 @@ window.PREP_CONTENT = {
       { l: "Google SRE book: table of contents", u: "https://sre.google/sre-book/table-of-contents/", w: "Read effective troubleshooting, emergency response and postmortem culture. Scenario answers are marked on that shape: contain, diagnose, fix, prevent.", m: 40 },
       { l: "Amazon Builders' Library", u: "https://aws.amazon.com/builders-library/", w: "Real accounts of what goes wrong under load, which is where these scenarios come from.", m: 25 }
     ],
-    "coding-drills": [
-      { l: "Python heapq documentation", u: "https://docs.python.org/3/library/heapq.html", w: "Top-k, streaming selection and merge patterns. Know nlargest, heappushpop and heapreplace well enough not to look them up.", m: 15 },
-      { l: "PostgreSQL: window functions tutorial", u: "https://www.postgresql.org/docs/current/tutorial-window.html", w: "The shortest correct explanation of OVER, PARTITION BY and frames. It is the one SQL topic that comes up again and again.", m: 20 }
-    ],
+    "coding-drills": [],
     "question-bank-fundamentals": [
       { l: "PRIMER: Hyndman - evaluating point forecast accuracy", u: "https://otexts.com/fpp3/accuracy.html", w: "Roughly a third of the forecasting answers here just restate one of these pages. Read it before you test yourself.", m: 8 },
       { l: "PRIMER: OR-Tools overview", u: "https://developers.google.com/optimization/introduction", w: "The split between the model and the solver, which is behind most of the optimisation answers here.", m: 6 }
@@ -572,17 +569,6 @@ window.PREP_CONTENT.lessonGuides = {
     prediction: 'The answer is not accepted: valid JSON and an authorized citation do not establish that the passage supports the claim.'
   }
 };
-
-// Broad algorithm references complement the topic-specific learn/solve links.
-(function (C) {
-  var resources = [
-    ['GeeksforGeeks: hashing tutorial', 'https://www.geeksforgeeks.org/dsa/introduction-to-hashing-2/', 'Start with the topic-specific web tutorial in each lesson, then solve its ordered LeetCode problems.', 'GeeksforGeeks', 15],
-    ['GeeksforGeeks: binary search tutorial', 'https://www.geeksforgeeks.org/dsa/binary-search/', 'Read the worked search and boundary examples before the binary-search problem pair.', 'GeeksforGeeks', 15]
-  ];
-  resources.forEach(function (r) {
-    C.readings['coding-drills'].push({l:r[0],u:r[1],w:r[2],purpose:r[2],provider:r[3],format:'Web tutorial',access:'Learning text publicly readable 2026-10-11; interactive exercise execution and linked accounts not tested.',m:r[4],budgetLabel:'Estimated study budget for a selected topic, not the whole course',optional:true,checkedAt:'2026-10-11'});
-  });
-}(window.PREP_CONTENT));
 
 // Source-informed scenario Q&A; linked sources are background, not question predictions.
 (function (C) {
