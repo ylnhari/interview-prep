@@ -50,6 +50,8 @@ assert.doesNotMatch(s('question-bank-ml-foundations','qbmlf-a2',true).prompt,/tr
 assert.match(s('question-bank-ml-foundations','qbmlf-1').deeper,/preserves neighbor ordering/);
 assert.match(s('question-bank-fundamentals','qb-5').deeper,/n=4/);
 assert.match(s('question-bank-system-design','qbsd-3').deeper,/read uncommitted level permits dirty reads/);
+const acidAnswer=s('question-bank-system-design','qbsd-3').deeper.match(/<li><b>A16\.<\/b>(.*?)<\/li>/)[1];
+for(const guarantee of ['Atomicity','Consistency','Isolation','Durability']) assert.ok(acidAnswer.includes(guarantee), guarantee+' retained in A16');
 assert.match(s('question-bank-system-design','qbsd-7').deeper,/In-memory mutation can precede/);
 assert.match(s('question-bank-system-design','qbsd-a2',true).model,/1,000 bad requests/);
 assert.doesNotMatch(s('question-bank-system-design','qbsd-a1',true).model,/catches a contract mismatch at compile time/);

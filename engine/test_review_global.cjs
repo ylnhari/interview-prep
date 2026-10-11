@@ -17,6 +17,8 @@ assert.match(row('Cache invalidation and TTL'),/not age relative to the origin/)
 assert.doesNotMatch(row('Cache invalidation and TTL'),/staleness bounded by the TTL/);
 const start=C.topics.find(t=>t.id==='start-here');
 assert.match(start.learn.find(s=>s.id==='sh-diagnostic').body,/visible reference answer/);
+assert.match(start.learn.find(s=>s.id==='sh-diagnostic').body,/Compare your diagram with the worked answer/);
+assert.doesNotMatch(start.learn.find(s=>s.id==='sh-diagnostic').body,/marking guide/);
 assert.match(start.learn.find(s=>s.id==='sh-3').body,/visible feedback/);
 assert.doesNotMatch(C.readings['control-theory'].map(r=>r.purpose||r.w).join(' '),/Skip anything with an equation|Do not study it/);
 console.log('Global glossary contracts, asymmetric-cost counterexample and direct-reference reading copy passed.');

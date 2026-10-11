@@ -103,3 +103,17 @@ Baseline: abd4b97ad27c9b2c95a8409a49b018fd9a5311fe. Exactly 99 independently sup
 | SYS-30 | Accepted; corrected or previously corrected mechanism verified | sd-foundations.js / capacity-estimate;2requests/day, /86400seconds,10xpeak,2MB payload and rounding explicit;dimension and label regression ([owner ledger](2026-10-11-dispositions-diagrams.md)) |
 | SYS-31 | Accepted; corrected or previously corrected mechanism verified | sd-coordination.js / lru-list;Access-C path starts x200; resulting orderC,D,B,A;actual path and order assertion ([owner ledger](2026-10-11-dispositions-diagrams.md)) |
 | SYS-32 | Accepted; corrected or previously corrected mechanism verified | Accepted; earlier correction retained;qbsd-a2 queue acknowledgement/retry admits duplicates; no single-delivery once-only promise. ([owner ledger](2026-10-11-dispositions-practice.md)) |
+
+## Final bounded follow-up to candidate a2eae02
+
+Independent review found 93 of the original 99 groups fully resolved in that candidate. This follow-up closes the six residual groups and one learning-copy issue without opening a new broad audit:
+
+| Finding | Remaining occurrence corrected | Regression evidence |
+| --- | --- | --- |
+| PT-17 | sdc-10 high-level design releases independently verified segments or buffers and verifies the complete answer first. | test_review_systems rejects the contradictory immediate-token/before-or-as wording. |
+| SYS-10 | apc-0 explains media-type patch-document operations and non-inherent idempotency. | test_review_systems verifies effective key terms. |
+| SYS-14 | cache-5 freshness depends on authoritative current refill, enforced expiry and separate source-age/version/stale-serving bounds. | test_review_systems verifies assumptions and rejects categorical TTL wording. |
+| T-07 | or-a1 allows retaining all hard constraints; bounded slack requires an explicitly approved negotiable preference. | test_review_ml checks both effective prompt and rubric. |
+| T-14 | ct-2 says the loop can flap, rather than must flap; trailing-maximum mechanism retained. Stable utilization at target is a counterexample to inevitable flapping. | test_review_ml rejects categorical wording. |
+| T-22 | qbsd-3/A16 covers atomicity, consistency, isolation and durability with configured-contract qualifications. | test_review_practice checks all four within A16, retaining the dirty-read statement. |
+| Learning copy | sh-diagnostic refers to the visible worked answer rather than a marking guide. | test_review_global verifies the effective copy. |
