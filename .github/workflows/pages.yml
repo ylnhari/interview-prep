@@ -63,6 +63,7 @@ jobs:
         run: |
           node engine/test_visual_course.cjs
           node engine/test_course_catalog.cjs
+          node engine/test_navigation_numbering.cjs
           node engine/test_interactive_practice.cjs
           node engine/test_feature_platform.cjs
           node engine/test_ai_audit.cjs
