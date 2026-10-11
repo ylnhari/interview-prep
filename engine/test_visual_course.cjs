@@ -96,7 +96,7 @@ activityRoutes.location.hash='#one/drill';activityEvent();assert.equal(activityS
 assert.equal(resume().section.id,'drill');assert.equal(activityRoutes.state.pendingScroll,null,'scroll is consumed after each render');
 console.log('test_visual_course: actual hash/route handlers retain and revisit an activity destination');
 
-assert(shell.includes("splitLessonBody(c.body, i === 0)"),'public glossary remains optional while other lessons get visible teaching');
+assert(shell.includes("splitLessonBody(c.body, i === 0, c.presentation === 'learn-solve' || c.presentation === 'scenario-qa')"),'public glossary remains optional while learn/solve resources and scenario answers stay visible');
 assert(shell.includes("teaching.open = !publicCourse && i === 0"),'private orientation disclosure contract retained');
 assert(shell.includes('selected.focus({preventScroll:true})'),'role selection restores focus after rendering');
 console.log('Public glossary default and role focus source contract passed; rendered checks recorded separately.');

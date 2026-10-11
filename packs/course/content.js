@@ -583,3 +583,18 @@ window.PREP_CONTENT.lessonGuides = {
     C.readings['coding-drills'].push({l:r[0],u:r[1],w:r[2],purpose:r[2],provider:r[3],format:'Textbook / lecture notes',access:'Learning text publicly readable 2026-10-11; interactive exercise execution and linked accounts not tested.',m:r[4],budgetLabel:'Estimated study budget for a selected topic, not the whole course',optional:true,checkedAt:'2026-10-11'});
   });
 }(window.PREP_CONTENT));
+
+// Source-informed scenario Q&A; linked sources are background, not question predictions.
+(function (C) {
+  C.readings['scenario-questions'].forEach(function (r) {
+    r.w = r.purpose = r.u.indexOf('sre.google') >= 0 ? 'Optional background on troubleshooting, incident coordination and learning from failures. Use the specific incident-response chapter below for worked cases.' : 'Optional engineering background on operating systems under load; choose an article relevant to the failure you are investigating.';
+    r.optional = true;
+  });
+  [
+    ['Harvard: answering behavioral and case questions', 'https://careerservices.fas.harvard.edu/resources/interviewing/', 'Use specific situations and actions for past experience; clarify a hypothetical problem before reasoning through alternatives. Do not present hypothetical worked responses as personal experience.', 'Harvard career services'],
+    ['Engineering interview guidance: concrete examples and changing constraints', 'https://www.atlassian.com/company/careers/resources/interviewing/engineering', 'Read the system-design discussion for practical reasoning, trade-offs and changed follow-up constraints. This is one provider\'s guidance, not a promise of any interview question.', 'Atlassian'],
+    ['Google SRE workbook: incident response cases', 'https://sre.google/workbook/incident-response/', 'Read the cases to see how coordination, communication and verified mitigation affect recovery; the response roles depend on the organization.', 'Google SRE']
+  ].forEach(function (r) {
+    C.readings['scenario-questions'].push({l:r[0],u:r[1],w:r[2],purpose:r[2],provider:r[3],format:'Guide / worked case studies',access:'Learning text publicly readable 2026-10-11; linked tools and accounts not tested.',m:15,budgetLabel:'Estimated study budget for selected sections',optional:true,checkedAt:'2026-10-11'});
+  });
+}(window.PREP_CONTENT));

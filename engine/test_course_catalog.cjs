@@ -58,3 +58,71 @@ assert.equal(coding.learn.find(s=>s.id==='cdr-f1').title,'Six starter patterns, 
 assert(c.readings['coding-drills'].some(r=>r.provider==='MIT OpenCourseWare'));
 assert(c.readings['coding-drills'].some(r=>r.provider==='Runestone Academy'));
 console.log('Expanded coding learning sources, practice progression and stable destinations passed.');
+
+// Execute the actual body splitter against every new lesson, including the
+// two longer bodies that previously hid their Learn/Solve links.
+const rendererText=fs.readFileSync('engine/shell.html','utf8');
+function rendererFunction(name) {
+ const start=rendererText.indexOf('function '+name+'(');let depth=0;
+ for(let i=rendererText.indexOf('{',start);i<rendererText.length;i++){
+  if(rendererText[i]==='{')depth++;
+  if(rendererText[i]==='}'&&--depth===0)return rendererText.slice(start,i+1);
+ }
+ throw Error('Missing renderer function '+name);
+}
+const splitBody=new Function('stripHtml','return ('+rendererFunction('splitLessonBody')+')')(s=>s.replace(/<[^>]+>/g,''));
+const directCoding=coding.learn.filter(s=>s.presentation==='learn-solve');assert.equal(directCoding.length,15);
+for(const s of directCoding){
+ const display=splitBody(s.body,false,true);assert.equal(display.remaining,'',s.id+' has no hidden primary teaching');
+ for(const match of s.body.matchAll(/href="([^"]+)"/g))assert(display.visible.includes(match[0]),s.id+' keeps each resource visible');
+}
+const scenarios=by.get('scenario-questions');assert.equal(scenarios.presentation,'scenario-qa');
+assert.deepEqual(Array.from(scenarios.learn,s=>s.id),['sq-0','sq-1','sq-2','sq-3','sq-4']);
+let cases=0;
+for(const [i,s]of scenarios.learn.entries()){
+ assert.equal(s.presentation,'scenario-qa');assert.equal(s.viz,null);assert.equal(s.deeper,null);
+ assert(s.check,'retained canonical quiz data');assert.equal(splitBody(s.body,i===0,true).remaining,'');
+ if(i){const count=(s.body.match(/<h4>/g)||[]).length;cases+=count;
+ for(const label of ['Situation.','A worked response.','Why this works.'])assert.equal(s.body.split(label).length-1,count,s.id+' complete Q&A cases');
+ assert(!/<b>\d+\.|Artifact:|Predeclare/.test(s.body),s.id+' no numbered instruction leftovers');}
+}
+assert.equal(cases,14);
+assert.equal(scenarios.activities.length,6);
+for(const a of scenarios.activities){assert(a.prompt.includes('Situation.'));assert(a.model.includes('A worked response.'));assert(a.model.includes('Why this works.'));assert.equal(a.viz,null);}
+assert.match(rendererText,/if \(scenarioQA\) \{ box2\.appendChild\(el\('div', 'prose', a\.model\)\)[^\n]+return; \}/,'scenario responses bypass the generic answer form');
+assert.match(rendererText,/c\.presentation !== 'learn-solve' && topic\.presentation !== 'scenario-qa'/,'generic quiz UI is omitted without changing saved mapping');
+console.log('All 15 coding lessons keep resources visible; 14 scenario cases and 6 follow-ups show direct Q&A with retained IDs.');
+
+// Render the real chapter function into a small synthetic node tree. This
+// checks disclosure ancestry and form presence; it does not simulate layout.
+class RenderNode {
+ constructor(tag,cls,html=''){this.tag=tag;this.cls=cls||'';this.html=html;this.children=[];this.dataset={};this.style={setProperty(){}};this.attrs={};}
+ appendChild(n){this.children.push(n);return n;}
+ setAttribute(k,v){this.attrs[k]=v;}
+ addEventListener(){}
+ querySelectorAll(){return [];}
+ set innerHTML(v){this.html=v;}
+}
+const makeNode=(tag,cls,html)=>new RenderNode(tag,cls,html);
+const renderContext={C:c, publicCourse:true, TOPICS:topics, GROUPS:c.groups, READINGS:c.readings,VIZ:{},window:{},state:{},progressApi:null,
+ T:()=>({learn:{},checks:{},reads:{},said:false}),AC:()=>({status:'none',attempts:0,lastAnswer:''}),
+ topicProgress:t=>({rL:0,nL:t.learn.length,nA:t.activities.length,pA:0,pct:0,label:'started'}),
+ isQBank:()=>false,isPrereqs:()=>false,groupOf:()=>({label:'Practice'}),topicById:id=>by.get(id),
+ el:makeNode,txt:makeNode,document:{createElement:tag=>makeNode(tag),createTextNode:text=>makeNode('text',null,text)},
+ DOT:'·',TICK:'✓',selectedResource:()=>null,safeExternalUrl:u=>u,URL,
+ splitLessonBody:splitBody,graded:()=>false,legacyQuizIndex:(t,s,i)=>i,quizDisplayOrder:(t,s,n)=>Array.from({length:n},(_,i)=>i),
+ selfMarkButton:()=>makeNode('button'),revealBlock:(title,model)=>makeNode('div',null,model),persist(){},persistDraft(){},rerenderChapter(){},rerenderCheck(){},renderGrade:()=>makeNode('div')};
+const realRenderChapter=new Function('context','with(context){return ('+rendererFunction('renderChapter')+');}')(renderContext);
+function renderedNodes(node,ancestors=[]){return [{node,ancestors},...node.children.flatMap(child=>renderedNodes(child,ancestors.concat(node)))];}
+const scenarioTree=renderedNodes(realRenderChapter(scenarios,40));
+assert(!scenarioTree.some(({node})=>node.tag==='textarea'),'scenario Q&A has no answer boxes');
+assert(!scenarioTree.some(({node})=>node.tag==='details'),'scenario Q&A has no template accordions');
+assert(!scenarioTree.some(({node})=>node.cls==='cviz'),'no decorative scenario diagrams');
+for(const a of scenarios.activities){const box=scenarioTree.find(({node})=>node.id==='sec-'+a.id);assert(box,a.id+' retained activity anchor');assert(box.node.children.some(n=>n.html===a.model),a.id+' directly visible response');}
+const codingTree=renderedNodes(realRenderChapter(coding,39));
+for(const lesson of directCoding){
+ const body=codingTree.find(({node})=>node.html===lesson.body);assert(body,lesson.id+' complete body rendered');
+ assert(!body.ancestors.some(n=>n.tag==='details'),lesson.id+' Learn/Solve outside any disclosure');
+ const reference=codingTree.find(({node})=>node.html===lesson.deeper);assert(reference);assert(!reference.ancestors.some(n=>n.tag==='details'),lesson.id+' brief reference directly visible');
+}
+console.log('Actual synthetic chapter rendering: all coding links directly visible; scenario Q&A has no disclosures, diagrams or answer boxes.');

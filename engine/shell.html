@@ -828,7 +828,8 @@ window.PREP_IO = (function () {
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
   function txt(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; e.textContent = text; return e; }
   // Keep complete paragraphs visible; extended teaching remains optional.
-  function splitLessonBody(html, referenceOnly) {
+  function splitLessonBody(html, referenceOnly, keepVisible) {
+    if (keepVisible) return { visible: html, remaining: '' };
     if (referenceOnly) return { visible: '', remaining: html };
     var words = stripHtml(html).trim().split(/\s+/).length;
     if (words <= 120) return { visible: html, remaining: '' };
@@ -1048,7 +1049,7 @@ window.PREP_IO = (function () {
     var msText = prereqs ? p.rL + ' of ' + p.nL + ' done' : p.pct + '% ' + DOT + ' ' + p.label + ' ' + DOT + ' ' + p.rL + '/' + p.nL + ' sections read' + (p.nA ? ' ' + DOT + ' ' + p.pA + '/' + p.nA + ' exercises' : '');
     ms.appendChild(txt('span', null, msText)); hd.appendChild(ms);
     if (qbank) { var tg = txt('button', 'btn' + (state.hideAnswers !== false ? ' primary' : ''), state.hideAnswers !== false ? 'Show the answers' : 'Hide the answers and test yourself'); tg.type = 'button'; tg.style.marginTop = '10px'; tg.addEventListener('click', function () { state.hideAnswers = state.hideAnswers === false; persist(); renderBook(); }); hd.appendChild(tg); }
-    if (publicCourse) {
+    if (publicCourse && topic.presentation !== 'scenario-qa') {
       var guide = (C.chapterGuides || {})[topic.id] || {}, orient = el('div', 'chapter-orientation');
       orient.appendChild(txt('p', 'outcome', 'Outcome: ' + (guide.outcome || 'Explain this mechanism, diagnose a failure and justify an applied decision.')));
       orient.appendChild(txt('p', null, 'Work artifact: ' + (guide.artifact || 'Annotated diagram, evidence-backed solution or decision record.')));
@@ -1061,7 +1062,7 @@ window.PREP_IO = (function () {
       var outline = el('details', 'lesson-outline'); outline.appendChild(txt('summary', null, 'Lesson outline / skip ahead')); topic.learn.forEach(function (c) { var a = txt('a', null, c.title); a.href = '#sec-' + c.id; outline.appendChild(a); }); orient.appendChild(outline); hd.appendChild(orient);
     }
     ch.appendChild(hd);
-    if (publicCourse) {
+    if (publicCourse && topic.presentation !== 'scenario-qa') {
       var resources = READINGS[topic.id] || [], featured = selectedResource(resources);
       if (featured) {
         var featuredHref = safeExternalUrl(featured.u);
@@ -1083,7 +1084,8 @@ window.PREP_IO = (function () {
     }
     function appendReadings() {
       if (READINGS[topic.id] && READINGS[topic.id].length) {
-        var rd = el('details', 'reads'); rd.appendChild(txt('summary', null, 'Go deeper: selected external resources')); var rh = el('div', 'rh'); rh.appendChild(txt('span', 'lbl', 'Where to read more')); rh.appendChild(txt('span', 'sub', 'Start with the ones marked PRIMER if the basics are rusty. Tick each one when you have read it.')); rd.appendChild(rh);
+        var directReadings = publicCourse && topic.presentation === 'scenario-qa';
+        var rd = el(directReadings ? 'section' : 'details', 'reads'); rd.appendChild(txt(directReadings ? 'h3' : 'summary', null, directReadings ? 'Useful reading' : 'Go deeper: selected external resources')); var rh = el('div', 'rh'); rh.appendChild(txt('span', 'lbl', 'Where to read more')); if (!directReadings) rh.appendChild(txt('span', 'sub', 'Start with the ones marked PRIMER if the basics are rusty. Tick each one when you have read it.')); rd.appendChild(rh);
         var readings = READINGS[topic.id];
         if (progressApi && progressApi.migrateIndexedReads && progressApi.migrateIndexedReads(t.reads, readings)) persist(topic.id);
         readings.forEach(function (r, ri) {
@@ -1136,8 +1138,8 @@ window.PREP_IO = (function () {
           pr.appendChild(qlist); if (ps.length > 1) pr.appendChild(ps[ps.length - 1].cloneNode(true));
           var review = el('details', 'bank-review'); review.appendChild(txt('summary', null, 'Optional retrieval practice / reference questions')); review.appendChild(pr); sec.appendChild(review);
         } else if (c.body) {
-          var lessonGuide = publicCourse && (C.lessonGuides || {})[c.id];
-          var presentation = publicCourse ? splitLessonBody(c.body, i === 0) : { visible: '', remaining: c.body };
+          var lessonGuide = publicCourse && c.presentation !== 'learn-solve' && c.presentation !== 'scenario-qa' && (C.lessonGuides || {})[c.id];
+          var presentation = publicCourse ? splitLessonBody(c.body, i === 0, c.presentation === 'learn-solve' || c.presentation === 'scenario-qa') : { visible: '', remaining: c.body };
           if (lessonGuide) {
             var context = el('div', 'lesson-context');
             context.appendChild(txt('p', null, lessonGuide.scenario));
@@ -1160,9 +1162,9 @@ window.PREP_IO = (function () {
         if (teaching) sec.appendChild(teaching);
         if (publicCourse && window.PREP_AI_PRACTICE) window.PREP_AI_PRACTICE.mountLesson(sec, c.id);
         if (lessonGuide && lessonGuide.prediction) { var comparison = el('details', 'prediction-guide'); comparison.appendChild(txt('summary', null, 'Explain aloud, then compare your prediction')); comparison.appendChild(txt('p', null, lessonGuide.prediction)); sec.appendChild(comparison); }
-        if (c.deeper && !qbank) { var depth = el('details', 'depth'); depth.appendChild(txt('summary', null, 'Go deeper')); depth.appendChild(el('div', 'prose', c.deeper)); sec.appendChild(depth); }
+        if (c.deeper && !qbank) { if (c.presentation === 'learn-solve') sec.appendChild(el('div', 'prose', c.deeper)); else { var depth = el('details', 'depth'); depth.appendChild(txt('summary', null, 'Go deeper')); depth.appendChild(el('div', 'prose', c.deeper)); sec.appendChild(depth); } }
         if (c.check && c.check.auditCaution) sec.appendChild(txt('p', 'note', 'Review note: ' + c.check.auditCaution + ' Historical selections remain in your backup; this check is paused pending revision.'));
-        if (c.check && !c.check.auditCaution) {
+        if (c.check && !c.check.auditCaution && c.presentation !== 'learn-solve' && topic.presentation !== 'scenario-qa') {
           var legacyAnswer = legacyQuizIndex(topic.id, c.id, c.check.answer, c.check.options.length); var mq = el('details', 'mcq'); mq.appendChild(txt('summary', null, 'Optional prediction check')); mq.appendChild(txt('div', 'q', c.check.question)); var opts = el('div', 'opts'); var checkKey = c.check.revision ? c.id + '@' + c.check.revision : c.id; var chosen = t.checks[checkKey]; if (typeof chosen !== 'number' || !isFinite(chosen) || Math.floor(chosen) !== chosen || chosen < 0 || chosen >= c.check.options.length) chosen = null;
           quizDisplayOrder(topic.id, c.id, c.check.options.length).forEach(function (oi) { var o = c.check.options[oi], storedIndex = legacyQuizIndex(topic.id, c.id, oi, c.check.options.length); var ob = txt('button', 'opt', o); ob.type = 'button'; if (chosen != null) { ob.disabled = true; if (oi === c.check.answer) ob.classList.add('right'); else if (storedIndex === chosen) ob.classList.add('wrong'); } ob.addEventListener('click', function () { t.checks[checkKey] = storedIndex; if (oi === c.check.answer) t.learn[c.id] = true; persist(topic.id); rerenderCheck(topic, c.id); }); opts.appendChild(ob); });
           mq.appendChild(opts); if (chosen != null) { var feedback = txt('div', 'ex', (chosen === legacyAnswer ? 'Correct. ' : 'Not quite. ') + c.check.explain); feedback.setAttribute('role', 'status'); mq.appendChild(feedback); var retry = txt('button', 'btn', 'Try again'); retry.type = 'button'; retry.addEventListener('click', function () { delete t.checks[checkKey]; persist(topic.id); rerenderCheck(topic, c.id); }); mq.appendChild(retry); } sec.appendChild(mq);
@@ -1205,12 +1207,14 @@ window.PREP_IO = (function () {
 
     // exercises
     if (topic.activities.length) {
-      var px = el('div', 'part'); px.id = 'ex-' + topic.id; var ph2 = el('div', 'ph'); ph2.appendChild(txt('span', 'lbl', p.pA + '/' + p.nA)); ph2.appendChild(txt('h3', null, 'Exercises')); px.appendChild(ph2);
-      px.appendChild(txt('div', 'sub', G ? 'Claude marks your answer against what this chapter asks for. Try again until it passes. If you claim more than you have actually done, it tells you where.' : 'Write your answer first, then compare it with a strong answer and mark the exercise practised.'));
+      var scenarioQA = publicCourse && topic.presentation === 'scenario-qa';
+      var px = el('div', 'part'); px.id = 'ex-' + topic.id; var ph2 = el('div', 'ph'); ph2.appendChild(txt('span', 'lbl', p.pA + '/' + p.nA)); ph2.appendChild(txt('h3', null, scenarioQA ? 'Further situations and optional extended practice' : 'Exercises')); px.appendChild(ph2);
+      if (!scenarioQA) px.appendChild(txt('div', 'sub', G ? 'Claude marks your answer against what this chapter asks for. Try again until it passes. If you claim more than you have actually done, it tells you where.' : 'Write your answer first, then compare it with a strong answer and mark the exercise practised.'));
       topic.activities.forEach(function (a) {
         var st = AC(topic.id, a.id); var box2 = el('div', 'act' + (st.status === 'pass' ? ' pass' : '')); box2.id = 'sec-' + a.id;
-        var ah = el('div', 'ah'); ah.appendChild(txt('span', 'type', a.type)); ah.appendChild(txt('h4', null, a.title)); if (st.status !== 'none') ah.appendChild(txt('span', 'verdict ' + st.status, st.self ? 'practised' : st.status === 'pass' ? 'passed' : 'try again')); box2.appendChild(ah);
+        var ah = el('div', 'ah'); if (!scenarioQA) ah.appendChild(txt('span', 'type', a.type)); ah.appendChild(txt('h4', null, a.title)); if (st.status !== 'none') ah.appendChild(txt('span', 'verdict ' + st.status, st.self ? 'practised' : st.status === 'pass' ? 'passed' : 'try again')); box2.appendChild(ah);
         box2.appendChild(el('div', 'prose', a.prompt));
+        if (scenarioQA) { box2.appendChild(el('div', 'prose', a.model)); box2.appendChild(selfMarkButton(st, topic, 'Mark reviewed')); px.appendChild(box2); return; }
         if (a.viz && window.VIZLIB && window.VIZLIB[a.viz]) { var av = el('div', 'cviz'); av.innerHTML = window.VIZLIB[a.viz]('a' + Math.random().toString(36).slice(2, 8)) + (window.VIZLIB_CAPTIONS && window.VIZLIB_CAPTIONS[a.viz] ? '<div class="cap">' + window.VIZLIB_CAPTIONS[a.viz] + '</div>' : ''); prepareDiagram(av, a.title); box2.appendChild(av); }
         var ta2 = document.createElement('textarea'); ta2.placeholder = a.type === 'formulate' ? 'Decision variables, objective, constraints, problem class' : 'Write your answer the way you would say it out loud'; ta2.value = st.lastAnswer || ''; ta2.dataset.prepFocus = 'answer-act-' + topic.id + '-' + a.id; ta2.setAttribute('aria-label', 'Your answer'); ta2.addEventListener('input', function () { st.lastAnswer = ta2.value; persistDraft(topic.id); }); box2.appendChild(ta2);
         var row3 = el('div', 'row'); var out2 = el('div'); var md2 = revealBlock('A strong answer', a.model);
@@ -1231,7 +1235,7 @@ window.PREP_IO = (function () {
         box2.appendChild(md2);
         px.appendChild(box2);
       });
-      if (!G) px.appendChild(txt('div', 'note', 'Automatic AI marking is not included here. Compare with the strong answer and mark practised.'));
+      if (!G && !scenarioQA) px.appendChild(txt('div', 'note', 'Automatic AI marking is not included here. Compare with the strong answer and mark practised.'));
       body.appendChild(px);
     }
 
