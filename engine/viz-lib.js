@@ -662,23 +662,24 @@
 
   V['load-balancer-replicas'] = function (u) {
     var b = D(u, 'ar ag ad'), i;
-    b += HD('load balancer and readiness checks');
-    b += B(24, 88, 96, 42, 'clients');
-    b += A(u, 122, 109, 168, 109);
-    b += F('M122 109H168');
-    b += B(172, 82, 108, 54, 'load~balancer', { f: 'var(--accent-weak)', sk: 'var(--accent)' });
-    var ys = [46, 96, 146];
+    // Fit a desktop reading column without shrinking labels. Narrow screens
+    // retain the shell's keyboard-accessible horizontal diagram scrolling.
+    b += T(320, 26, 'Load balancer and readiness checks', { s: 16, w: 1 });
+    b += B(16, 145, 90, 50, 'clients', { ts: 14 });
+    b += A(u, 108, 170, 138, 170);
+    b += F('M108 170H138');
+    b += B(142, 136, 130, 68, 'load~balancer', { ts: 15, f: 'var(--accent-weak)', sk: 'var(--accent)' });
+    var ys = [60, 140, 220];
     var names = ['replica A', 'replica B', 'replica C'];
     for (i = 0; i < 3; i++) {
       var dead = i === 1;
-      b += AP(u, 'M282 109C330 109 340 ' + (ys[i] + 20) + ' 388 ' + (ys[i] + 20), { m: dead ? 'ad' : 'ag', c: dead ? 'var(--danger)' : 'var(--good)', d: dead ? '4 4' : '' });
-      b += B(392, ys[i], 150, 40, names[i], { f: dead ? 'var(--danger-weak)' : 'var(--surface-2)', sk: dead ? 'var(--danger)' : 'var(--border)', tc: dead ? 'var(--ink-dim)' : 'var(--ink)', cls: dead ? 'v-blink' : '' });
-      b += DT(560, ys[i] + 20, 6, { f: dead ? 'var(--danger)' : 'var(--good)' });
-      b += T(576, ys[i] + 24, dead ? 'health check failing' : 'healthy', { a: 'start', s: 10, c: dead ? 'var(--danger)' : 'var(--ink-dim)' });
+      b += AP(u, 'M274 170C300 170 300 ' + (ys[i] + 30) + ' 324 ' + (ys[i] + 30), { m: dead ? 'ad' : 'ag', c: dead ? 'var(--danger)' : 'var(--good)', d: dead ? '4 4' : '' });
+      b += B(328, ys[i], 296, 60, names[i] + '~' + (dead ? 'Not ready: no new traffic' : 'Ready: receive new traffic'), { ts: 15, f: dead ? 'var(--danger-weak)' : 'var(--surface-2)', sk: dead ? 'var(--danger)' : 'var(--border)', tc: dead ? 'var(--danger)' : 'var(--ink)', tc2: dead ? 'var(--danger)' : 'var(--ink-dim)' });
     }
-    b += F('M282 109C330 109 340 66 388 66', { c: 'var(--good)' });
-    b += T(380, 210, 'failed readiness removes new traffic; graceful shutdown separately drains in-flight work', { s: 10, c: 'var(--ink-dim)' });
-    return S(222, b);
+    b += F('M274 170C300 170 300 90 324 90', { c: 'var(--good)' });
+    b += T(320, 310, 'Failed readiness removes new traffic.', { s: 14, c: 'var(--ink-dim)' });
+    b += T(320, 332, 'Shutdown separately drains in-flight work.', { s: 14, c: 'var(--ink-dim)' });
+    return S(346, b).replace('viewBox="0 0 760 ', 'viewBox="0 0 640 ');
   };
 
   V['autoscaling-queue'] = function (u) {

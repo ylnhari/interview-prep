@@ -63,13 +63,14 @@ jobs:
           node engine/test_course_catalog.cjs
           node engine/test_navigation_numbering.cjs
           node engine/test_lesson_views.cjs
+          node engine/test_diagram_readability.cjs
           node engine/test_interactive_practice.cjs
           node engine/test_feature_platform.cjs
           node engine/test_ai_audit.cjs
           node engine/test_ai_learning.cjs
           node engine/test_decision_audit.cjs
           node engine/test_systems_audit.cjs
-          python -m unittest engine.test_ml_content engine.test_coding_sql
+          python -m unittest engine.test_ml_content engine.test_coding_sql engine.test_python_concepts
       - name: Test progress compatibility guard
         run: node engine/test_progress_compatibility.cjs
       - name: Verify saved-progress compatibility
