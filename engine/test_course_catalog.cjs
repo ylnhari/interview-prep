@@ -42,3 +42,19 @@ assert((c.readings['rag-and-agents']||w.PREP_CORE['rag-and-agents'].readings).so
 const metadataOnly={};vm.runInNewContext(fs.readFileSync('packs/course/content.js','utf8'),{window:metadataOnly});assert.equal(metadataOnly.PREP_CONTENT.paths.length,4,'roadmap metadata extraction works without core loaded');
 
 for(const t of topics)assert(!/interviewers?|most people|universally asked|senior answer|2025.2026/.test(t.why||""),t.id+" introduces the engineering outcome without an unsupported interview or audience prediction");
+
+// Coding scope is a learning progression, rather than a six-pattern-only list.
+const coding=by.get('coding-drills');
+for(const id of ['cdr-binary-search','cdr-intervals-greedy','cdr-stacks','cdr-linked-lists','cdr-trees','cdr-graphs-ordering','cdr-union-find','cdr-shortest-paths','cdr-backtracking','cdr-dynamic-programming','cdr-tries','cdr-bits','cdr-arrays-hashing','cdr-two-pointers','cdr-heaps']) {
+ const lesson=coding.learn.find(s=>s.id===id);assert(lesson,id+' is discoverable by stable section ID');
+ assert(lesson.body.indexOf('<b>Learn.</b>')<lesson.body.indexOf('<b>Solve.</b>'),id+' teaches before assigning practice');
+ const urls=[...lesson.body.matchAll(/href="([^"]+)"/g)].map(m=>m[1]);
+ assert.equal(urls.filter(u=>u.startsWith('https://leetcode.com/problems/')).length,2,id+' starter and follow-up are direct problems');
+ assert(urls.some(u=>/^https:\/\/(runestone\.academy|usaco\.guide|cp-algorithms\.com|docs\.python\.org)\//.test(u)),id+' has a topic-specific teaching source');
+ assert(lesson.deeper&&lesson.check&&lesson.check.explain,id+' has a reference approach and explained quick check');
+ assert.match(lesson.body,/<b>Test and explain\.<\/b>/);
+}
+assert.equal(coding.learn.find(s=>s.id==='cdr-f1').title,'Six starter patterns, with pseudocode models');
+assert(c.readings['coding-drills'].some(r=>r.provider==='MIT OpenCourseWare'));
+assert(c.readings['coding-drills'].some(r=>r.provider==='Runestone Academy'));
+console.log('Expanded coding learning sources, practice progression and stable destinations passed.');

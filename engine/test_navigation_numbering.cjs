@@ -15,7 +15,7 @@ const rail = new Node('nav'), context = {C, TOPICS, GROUPS, roleId: '', publicCo
   el: (tag, cls, text) => new Node(tag, cls, text), txt: (tag, cls, text) => new Node(tag, cls, text),
   nextUnfinished: () => null, overall: () => 0, topicProgress: () => ({rL: 1, nL: 3, pct: 10, label: 'started'}),
   T: () => ({learn: Object.fromEntries(TOPICS.flatMap(t => t.learn.map(s => [s.id, true])))}), go: (...args) => {context.route = args;}, stripHtml: s => s.replace(/<[^>]*>/g, '')};
-for (const name of ['groupOf', 'orderedTopics', 'topicById', 'chapterNumber', 'lessonNumber', 'selectedPath', 'recommendedTopics', 'searchLessons', 'renderRail']) {
+for (const name of ['groupOf', 'orderedTopics', 'topicById', 'chapterNumber', 'lessonNumber', 'pathStepLabel', 'searchLessonLabel', 'selectedPath', 'recommendedTopics', 'searchLessons', 'renderRail']) {
   const start = shell.indexOf('  function ' + name + '('); let depth = 0, end;
   for (let i = shell.indexOf('{', start); i < shell.length; i++) {
     if (shell[i] === '{') depth++;
@@ -40,6 +40,10 @@ for (const [i, t] of ordered.entries()) {
 for (const path of C.paths) {
   context.roleId = path.id;
   for (const t of context.recommendedTopics()) assert.equal(context.chapterNumber(t.id), ordered.indexOf(t) + 1);
+  path.ids.forEach((id, i) => {
+    const t = context.topicById(id);
+    assert.equal(context.pathStepLabel(t, i), `Step ${i + 1} ${context.DOT} Chapter ${ordered.indexOf(t) + 1}: ${t.title}`);
+  });
 }
 context.T = () => ({learn: {}});
 context.state.view = ordered[0].id; context.renderRail();
@@ -49,8 +53,11 @@ for (const [j, s] of ordered[0].learn.entries()) {
   assert.equal(link.children[1].text, s.title);
   assert.equal(link.attrs['aria-label'], undefined);
 }
-for (const query of ['cache', 'latency', 'historical']) for (const {topic, section} of context.searchLessons(query)) {
+for (const query of ['cache', 'latency', 'historical', 'binary search', 'union-find', 'backtracking', 'trie']) for (const {topic, section} of context.searchLessons(query)) {
   assert.equal(context.lessonNumber(topic, section), `${ordered.indexOf(topic) + 1}.${topic.learn.indexOf(section) + 1}`);
+  assert.equal(context.searchLessonLabel(topic, section), `${context.lessonNumber(topic, section)} ${topic.title} / ${section.title}`);
 }
+assert.match(shell, /pathStepLabel\(t, i\)/);
+assert.match(shell, /searchLessonLabel\(match.topic, match.section\)/);
 assert.match(shell, /grid-template-columns: max-content minmax\(0, 1fr\)/);
 console.log('Catalogue chapter/lesson labels, completion, retained anchors, click targets, role paths and filtered search passed (' + ordered.length + ' chapters).');

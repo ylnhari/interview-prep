@@ -572,3 +572,14 @@ window.PREP_CONTENT.lessonGuides = {
     prediction: 'The answer is not accepted: valid JSON and an authorized citation do not establish that the passage supports the claim.'
   }
 };
+
+// Broad algorithm references complement the topic-specific learn/solve links.
+(function (C) {
+  var resources = [
+    ['Runestone: algorithms and data structures in Python', 'https://runestone.academy/ns/books/published/pythonds3/index.html', 'Use the chapter-specific links in the coding lessons first. This free textbook provides the surrounding analysis, Python implementations, recursion, searching, sorting, trees and graphs.', 'Runestone Academy', 45],
+    ['MIT 6.006: algorithm lecture notes', 'https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/lecture-notes/', 'Choose lectures 3-8 for sorting and data structures, 9-13 for graph traversal and shortest paths, or 15-18 for dynamic-programming formulations. Read the corresponding notes before attempting the paired coding problems.', 'MIT OpenCourseWare', 45]
+  ];
+  resources.forEach(function (r) {
+    C.readings['coding-drills'].push({l:r[0],u:r[1],w:r[2],purpose:r[2],provider:r[3],format:'Textbook / lecture notes',access:'Learning text publicly readable 2026-10-11; interactive exercise execution and linked accounts not tested.',m:r[4],budgetLabel:'Estimated study budget for a selected topic, not the whole course',optional:true,checkedAt:'2026-10-11'});
+  });
+}(window.PREP_CONTENT));
