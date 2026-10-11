@@ -47,12 +47,12 @@ for(const t of topics)assert(!/interviewers?|most people|universally asked|senio
 const coding=by.get('coding-drills');
 for(const id of ['cdr-binary-search','cdr-intervals-greedy','cdr-stacks','cdr-linked-lists','cdr-trees','cdr-graphs-ordering','cdr-union-find','cdr-shortest-paths','cdr-backtracking','cdr-dynamic-programming','cdr-tries','cdr-bits','cdr-arrays-hashing','cdr-two-pointers','cdr-heaps']) {
  const lesson=coding.learn.find(s=>s.id===id);assert(lesson,id+' is discoverable by stable section ID');
- assert(lesson.body.indexOf('<b>Learn.</b>')<lesson.body.indexOf('<b>Solve.</b>'),id+' teaches before assigning practice');
+ assert(lesson.body.indexOf('<ul>')<lesson.body.indexOf('LeetCode practice:'),id+' learning destinations precede practice');
  const urls=[...lesson.body.matchAll(/href="([^"]+)"/g)].map(m=>m[1]);
  assert.equal(urls.filter(u=>u.startsWith('https://leetcode.com/problems/')).length,2,id+' starter and follow-up are direct problems');
- assert(urls.some(u=>/^https:\/\/(www\.geeksforgeeks\.org|usaco\.guide|cp-algorithms\.com|docs\.python\.org)\//.test(u)),id+' has a topic-specific teaching source');
+ assert(urls.some(u=>!u.startsWith('https://leetcode.com/problems/')),id+' has a topic-specific teaching destination');
  assert(!lesson.deeper&&lesson.check&&lesson.check.explain,id+' keeps compatibility data while using linked teaching');
- assert.match(lesson.body,/<b>Test and explain\.<\/b>/);
+ assert.doesNotMatch(lesson.body,/<pre|<textarea|Test and explain|Access:|Estimated study budget/);
 }
 assert.equal(coding.learn.find(s=>s.id==='cdr-f1').title,'Choose a coding topic and its problem pair');
 assert.equal(c.readings['coding-drills'].length,0,'coding resources remain on relevant lessons rather than a mixed chapter list');

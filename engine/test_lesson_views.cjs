@@ -12,7 +12,18 @@ const ctx={C,TOPICS,GROUPS:C.groups,roleId:'',publicCourse:true,privateHost:fals
  el:(...a)=>new Node(...a),txt:(...a)=>new Node(...a),safeExternalUrl:u=>u,prepareDiagram(){},extLink:l=>new Node('a',null,l.label),
  T:id=>{if(!records.has(id))records.set(id,{learn:{},reads:{},checks:{}});return records.get(id);},AC:(t,s)=>{const id=t+'/'+s;if(!activities.has(id))activities.set(id,{status:'none'});return activities.get(id);},
  persist(){persists++;},rerenderChapter(){},rememberRoute(){},selfMarkButton:r=>new Node('button',null,r.status),renderHome:()=>new Node('section','home'),renderGlossary:()=>new Node('section','glossary')};
-for(const name of ['groupOf','orderedTopics','topicById','chapterNumber','lessonNumber','selectedPath','recommendedTopics','selectedResource','viewOrder','lessonSections','selectedLesson','renderLesson','renderLessonNav','renderBook','applyHash'])ctx[name]=new Function('context','with(context){return ('+source(name)+');}')(ctx);
+for(const name of ['resolveLessonRoute','retirePublicActivities','groupOf','orderedTopics','topicById','chapterNumber','lessonNumber','selectedPath','recommendedTopics','selectedResource','viewOrder','lessonSections','selectedLesson','renderLesson','renderLessonNav','renderBook','applyHash'])ctx[name]=new Function('context','with(context){return ('+source(name)+');}')(ctx);
+const retainedRoutingRecord={status:'pass',lastAnswer:'legacy routing answer',attempts:2};
+activities.set('rag-and-agents/raa-a2',retainedRoutingRecord);
+ctx.retirePublicActivities();
+assert.equal(activities.get('rag-and-agents/raa-a2'),retainedRoutingRecord,'retirement does not delete saved records');
+assert(!ctx.topicById('rag-and-agents').activities.some(a=>a.id==='raa-a2'),'retired worksheet absent from learner lists');
+let canonicalRoutingUrl;ctx.window.history={replaceState(a,b,url){canonicalRoutingUrl=url;}};
+location.hash='#rag-and-agents/raa-a2';ctx.applyHash();ctx.renderBook();
+assert.equal(canonicalRoutingUrl,'#rag-and-agents/raa-f8','legacy link is replaced by the canonical teaching URL');
+assert.equal(book.children[0].id,'sec-raa-f8','legacy worksheet link opens existing substantive routing lesson');
+ctx.state.pendingScroll=null;assert.equal(ctx.selectedLesson(ctx.topicById('rag-and-agents')).id,'raa-f8','legacy URL resolves without pending scroll too');
+ctx.state.pendingScroll='sec-raa-a2';assert.equal(ctx.selectedLesson(ctx.topicById('rag-and-agents')).id,'raa-f8','legacy saved pending destination resolves too');ctx.state.pendingScroll=null;
 let count=0;
 for(const topic of ctx.orderedTopics()){
  ctx.state.view=topic.id;location.hash='#'+topic.id;ctx.renderBook();assert.equal(book.children[0].id,'sec-'+topic.learn[0].id,'chapter route opens first lesson');

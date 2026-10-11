@@ -73,6 +73,7 @@ window.PREP_CONTENT = {
   overlays: {},
 
   interviewer: null,
+  lessonRedirects: { "rag-and-agents/raa-a2": "rag-and-agents/raa-f8" },
 
   readings: {
     "system-design-fundamentals": [
