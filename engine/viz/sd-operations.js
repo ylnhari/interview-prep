@@ -88,11 +88,11 @@
       inner += '<g' + IX(i) + '>' + g + '</g>';
     }
     b += SQ(inner);
-    b += T(380, 150, 'every stage reads and writes correctly on its own - the app never needs a matching deploy', { s: 10, c: 'var(--ink-dim)' });
-    b += T(380, 170, 'stop at any stage and the system is still consistent', { s: 10, c: 'var(--good)' });
+    b += T(380, 150, 'each stage needs compatible writers, atomic updates and version-guarded backfill', { s: 10, c: 'var(--ink-dim)' });
+    b += T(380, 170, 'verify parity before switching; retire old writers and rollback paths before dropping', { s: 10, c: 'var(--good)' });
     return S(186, b);
   };
-  C['expand-contract-migration'] = 'Expand and contract splits one risky schema change into small, individually safe steps: add the new shape, dual-write, backfill, switch reads, then <b>drop the old shape</b> only once nothing depends on it.';
+  C['expand-contract-migration'] = "Expand/contract requires compatible application deployments, atomic dual writes or an explicit consistency protocol, version-guarded backfill and parity checks. Drop the old shape only after old writers and incompatible rollback paths are retired.";
 
   V['rpo-rto'] = function (u) {
     var b = D(u, 'ar ad');
@@ -147,7 +147,7 @@
     var cols = [
       { lab: 'shared pool~one database,~a tenant_id column', f: 'var(--accent-weak)' },
       { lab: 'shared, capped~one database,~per-tenant quota', f: 'var(--warning-weak)' },
-      { lab: 'dedicated~one schema or DB~per tenant', f: 'var(--good-weak)' }
+      { lab: 'dedicated compute~independent instance~per tenant', f: 'var(--good-weak)' }
     ];
     for (i = 0; i < cols.length; i++) {
       var x = 40 + i * 240;
@@ -156,15 +156,15 @@
     b += SQ(inner);
     b += T(140, 130, 'cheapest; one noisy~tenant can slow everyone', { ts: 9.5, c: 'var(--ink-dim)' });
     b += T(380, 130, 'a quota stops one tenant~from starving the rest', { ts: 9.5, c: 'var(--ink-dim)' });
-    b += T(620, 130, 'strongest isolation;~most operational cost', { ts: 9.5, c: 'var(--ink-dim)' });
+    b += T(620, 130, 'resource isolation;~higher operational cost', { ts: 9.5, c: 'var(--ink-dim)' });
     b += DT(140, 190, 7, { f: 'var(--danger)', cls: 'v-blink' });
     b += T(160, 194, 'noisy tenant here reaches everyone sharing the pool', { s: 10, c: 'var(--danger)', a: 'start' });
     return S(210, b);
   };
-  C['tenant-isolation'] = 'Isolation is a spectrum: a shared pool is cheap but lets one <b>noisy tenant</b> hurt the rest, and a quota or a dedicated store trades cost for a harder blast-radius limit.';
+  C['tenant-isolation'] = "A schema per tenant gives logical separation but may share CPU, memory and storage. Quotas bound specified resources; an independently provisioned instance can improve resource isolation at higher cost.";
 
   V['case-rate-limiter'] = function (u) {
-    var b = D(u, 'ar aa ad');
+    var b = D(u, 'ar aa ad ag');
     b += HD('where the limiter sits, and what key it uses');
     b += B(24, 84, 90, 46, 'client');
     b += A(u, 118, 107, 158, 107);
@@ -215,28 +215,28 @@
     b += B(24, 30, 130, 40, 'charge request~key: idem-882');
     b += A(u, 158, 50, 200, 50);
     b += F('M158 50H200');
-    b += B(204, 30, 140, 40, 'seen this key?', { f: 'var(--warning-weak)', sk: 'var(--warning)', ts: 9.5 });
+    b += B(204, 30, 140, 40, 'create / lookup~PENDING key (atomic)', { f: 'var(--warning-weak)', sk: 'var(--warning)', ts: 9.5 });
     b += AP(u, 'M274 70C274 90 220 90 220 108', { m: 'ag', c: 'var(--good)' });
     b += F('M274 70C274 90 220 90 220 108', { c: 'var(--good)' });
-    b += B(140, 112, 160, 34, 'yes: return the~stored result, no charge', { ts: 9, f: 'var(--good-weak)', sk: 'var(--good)' });
+    b += B(140, 112, 160, 34, 'terminal: return result~pending: reconcile', { ts: 9, f: 'var(--good-weak)', sk: 'var(--good)' });
     b += AP(u, 'M344 70C344 90 420 90 420 108', { m: 'aa', c: 'var(--accent)' });
     b += F('M344 70C344 90 420 90 420 108', { c: 'var(--accent)' });
-    b += B(340, 112, 160, 34, 'no: charge once,~store the result', { ts: 9, f: 'var(--accent-weak)', sk: 'var(--accent)' });
+    b += B(340, 112, 160, 34, 'new: stable provider key~unknown: reconcile', { ts: 9, f: 'var(--accent-weak)', sk: 'var(--accent)' });
     b += CY(560, 24, 170, 130, '', { ts: 9 });
     b += T(645, 44, 'ledger', { s: 10, w: 1 });
     b += LN(575, 66, 715, 66, { c: 'var(--border)' });
     b += T(645, 84, 'debit: customer $20', { s: 9, c: 'var(--ink-dim)' });
     b += T(645, 104, 'credit: merchant $20', { s: 9, c: 'var(--ink-dim)' });
-    b += T(645, 124, 'every entry balances', { s: 9, c: 'var(--good)' });
+    b += T(645, 124, 'terminal journal: atomic', { s: 9, c: 'var(--good)' });
     b += AP(u, 'M420 130C480 130 500 90 560 90', { c: 'var(--accent)', m: 'aa' });
     b += F('M420 130C480 130 500 90 560 90', { c: 'var(--accent)' });
-    b += T(380, 200, 'reconciliation later replays the ledger against the processor\'s own record of what happened', { s: 10, c: 'var(--ink-dim)' });
+    b += T(380, 200, 'resolve provider outcome within key scope/retention; atomically record balanced terminal journal', { s: 10, c: 'var(--ink-dim)' });
     return S(216, b);
   };
-  C['case-payments-ledger'] = 'An <b>idempotency key</b> makes a retried charge safe, and every movement of money is written as a balanced double-entry <b>ledger</b> row rather than an in-place balance update, so reconciliation has a full trail to check.';
+  C['case-payments-ledger'] = "Create or look up a durable PENDING operation before charging; use a stable provider key within its supported scope and retention. Unknown outcomes require reconciliation. Commit terminal journal updates atomically; materialized balances may be transactionally maintained.";
 
   V['case-recsys-two-stage'] = function (u) {
-    var b = D(u, 'ar aa');
+    var b = D(u, 'ar aa ag');
     b += HD('two stages: fast and broad, then slow and precise');
     b += B(24, 80, 90, 46, 'user~context');
     b += A(u, 118, 103, 158, 103);
@@ -257,7 +257,7 @@
   C['case-recsys-two-stage'] = 'Fast candidate retrieval searches the large catalog using an index or parallel generators and narrows it to a few hundred items. The heavier <b>ranker</b> evaluates only that shortlist; candidate generation does not inspect every item with one cheap model.';
 
   V['case-fraud-stream'] = function (u) {
-    var b = D(u, 'ar aa ad');
+    var b = D(u, 'ar aa ad ag aw');
     b += HD('score in milliseconds, label weeks later');
     b += B(24, 30, 100, 34, 'transaction');
     b += A(u, 128, 47, 164, 47);

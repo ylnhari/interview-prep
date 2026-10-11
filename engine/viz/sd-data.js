@@ -6,10 +6,10 @@
 
   V['btree-index'] = function (u) {
     var b = D(u, 'ar aa');
-    b += HD('B-tree index: O(log n) to any row');
-    b += B(301, 40, 160, 32, 'root~[41 | 88]', { ts: 11 });
-    b += B(124, 102, 180, 30, '[10 | 25]', { ts: 10 });
-    b += B(458, 102, 180, 30, '[55 | 70]', { ts: 10 });
+    b += HD('B+ tree index: O(log n) lookup');
+    b += B(301, 40, 160, 32, 'root~[55]', { ts: 11 });
+    b += B(124, 102, 180, 30, '[25]', { ts: 10 });
+    b += B(458, 102, 180, 30, '[70]', { ts: 10 });
     b += B(60, 166, 140, 34, 'leaf~1..24', { ts: 10 });
     b += B(227, 166, 140, 34, 'leaf~25..54', { ts: 10 });
     b += B(394, 166, 140, 34, 'leaf~55..69', { ts: 10, f: 'var(--accent-weak)', sk: 'var(--accent)', cls: 'v-pulse' });
@@ -28,7 +28,7 @@
     b += T(30, 84, '~4-5 hops even at 1B rows', { s: 10, c: 'var(--ink-dim)', a: 'start' });
     return S(222, b);
   };
-  C['btree-index'] = 'A B-tree descends from root to leaf in a handful of hops no matter how large the table gets; the <b>highlighted search path</b> shows one lookup, and leaf pages stay linked for fast range scans.';
+  C['btree-index'] = 'This B+ tree uses separators 55, 25 and 70 to route key 62 into leaf 55..69. Lookup depth grows logarithmically with the indexed keys; linked <b>leaf pages</b> support sorted range scans.';
 
   V['isolation-anomalies'] = function (u) {
     var b = D(u, 'ar'), i, r, c;
@@ -128,7 +128,7 @@
     var b = D(u, 'ar aa ad'), i;
     b += T(195, 20, 'range partitioning', { s: 11, w: 1 });
     b += T(575, 20, 'hash partitioning', { s: 11, w: 1 });
-    b += LN(385, 14, 385, 200, { d: '3 4' });
+    b += LN(385, 14, 385, 182, { d: '3 4' });
     var ranges = ['A - H', 'I - Q', 'R - Z'];
     for (i = 0; i < 3; i++) {
       var hot = i === 2;
@@ -182,7 +182,7 @@
     b += T(360, 24, 'only the arc between B and D moves to D', { s: 10, c: 'var(--good)', a: 'start' });
     b += T(360, 44, 'every other node keeps its keys untouched', { s: 10, c: 'var(--ink-dim)', a: 'start' });
     b += T(360, 192, 'hash(key) walks clockwise to the next node', { s: 10, c: 'var(--ink-dim)', a: 'start' });
-    return S(212, b);
+    return S(230, b);
   };
   C['consistent-hash-ring'] = 'A key walks clockwise to the next node on the ring; when <b>node D joins</b>, only the arc between it and its predecessor moves, and every other node keeps its keys untouched.';
 

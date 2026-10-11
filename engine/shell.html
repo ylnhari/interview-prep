@@ -841,6 +841,7 @@ window.PREP_IO = (function () {
   function nextUnfinished() {
     var ts = publicCourse ? recommendedTopics() : orderedTopics();
     for (var i = 0; i < ts.length; i++) { var t = ts[i], st = T(t.id); for (var j = 0; j < t.learn.length; j++) { if (!st.learn[t.learn[j].id]) return { topic: t, section: t.learn[j] }; } }
+    if (publicCourse) { for (var a = 0; a < ts.length; a++) { for (var b = 0; b < ts[a].activities.length; b++) { var practice = ts[a].activities[b]; if (AC(ts[a].id, practice.id).status !== 'pass') return {topic:ts[a], section:practice}; } } return null; }
     for (var k = 0; k < ts.length; k++) { if (!topicProgress(ts[k]).complete) return { topic: ts[k], section: null }; }
     return null;
   }
@@ -1079,12 +1080,12 @@ window.PREP_IO = (function () {
       var resources = el('section', 'lesson-resources'); resources.appendChild(txt('h2', null, 'Resources for this chapter'));
       var readings = READINGS[topic.id];
       if (progressApi && progressApi.migrateIndexedReads && progressApi.migrateIndexedReads(record.reads, readings)) persist(topic.id);
-      var videoAdded = false;
+      var featured = selectedResource(readings);
       readings.forEach(function (r, i) { var url = safeExternalUrl(r.u); if (!url) return;
         var parsed = new URL(url), video = parsed.hostname === 'youtu.be' ? parsed.pathname.slice(1) : /^(www\.)?youtube\.com$/.test(parsed.hostname) ? parsed.searchParams.get('v') : null;
-        if (!videoAdded && /^[A-Za-z0-9_-]{11}$/.test(video || '')) { var frame = el('iframe', 'lesson-video'); frame.src = 'https://www.youtube-nocookie.com/embed/' + video; frame.title = r.l; frame.loading = 'lazy'; frame.setAttribute('allowfullscreen', ''); frame.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin'); resources.appendChild(frame); videoAdded = true; }
+        if (r === featured && /^[A-Za-z0-9_-]{11}$/.test(video || '')) { var frame = el('iframe', 'lesson-video'); frame.src = 'https://www.youtube-nocookie.com/embed/' + video; frame.title = r.l; frame.loading = 'lazy'; frame.setAttribute('allowfullscreen', ''); frame.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin'); resources.appendChild(frame); }
         var line = el('div', 'resource-line'), checkbox = el('input'); checkbox.type = 'checkbox'; checkbox.checked = !!record.reads[r.u]; checkbox.setAttribute('aria-label', 'Mark read: ' + r.l); checkbox.addEventListener('change', function () { record.reads[r.u] = checkbox.checked; persist(topic.id); }); line.appendChild(checkbox);
-        var a = txt('a', null, r.l); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; line.appendChild(a); resources.appendChild(line); if (r.purpose || r.w) resources.appendChild(txt('p', null, r.purpose || r.w)); }); page.appendChild(resources);
+        var a = txt('a', null, r.l + (r.optional && !/^optional\b/i.test(r.l || '') ? ' (optional)' : '')); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; line.appendChild(a); resources.appendChild(line); if (r.purpose || r.w) resources.appendChild(txt('p', null, r.purpose || r.w)); if (r.access) resources.appendChild(txt('p', 'resource-meta', 'Access: ' + r.access)); }); page.appendChild(resources);
     }
     var row = el('div', 'row lesson-completion');
     if (activity) row.appendChild(selfMarkButton(AC(topic.id, lesson.id), topic, 'Mark practised'));
@@ -1093,10 +1094,12 @@ window.PREP_IO = (function () {
   }
   function rerenderChapter(topic) {
     if (state.view !== topic.id) { renderRail(); return; }
+    var active = document.activeElement, restoreCompletion = publicCourse && active && active.matches && active.matches('.lesson-completion button');
     var y = window.scrollY, disclosures = Array.prototype.map.call(book.querySelectorAll('details'), function (d) { return d.open; });
     renderBook(); renderRail();
     Array.prototype.forEach.call(book.querySelectorAll('details'), function (d, i) { if (i < disclosures.length) d.open = disclosures[i]; });
     window.scrollTo({ top: y });
+    if (restoreCompletion) { var completion = book.querySelector('.lesson-completion button'); if (completion) completion.focus({preventScroll:true}); }
   }
   function rerenderCheck(topic, sectionId) {
     rerenderChapter(topic);
@@ -1132,7 +1135,7 @@ window.PREP_IO = (function () {
   // strong-answer / model reveal shared by exercises and the connect block
   function revealBlock(label, html) { var md = el('div', 'model'); md.hidden = true; md.appendChild(txt('div', 'lbl', label)); md.appendChild(el('div', 'prose', html)); return md; }
   function selfMarkButton(rec, topic, label) {
-    var on = rec.status === 'pass' && rec.self;
+    var on = rec.status === 'pass' && (publicCourse || rec.self);
     var b = txt('button', 'btn' + (on ? ' done' : ''), on ? label + ' ' + TICK : label); b.type = 'button'; b.setAttribute('aria-pressed', on ? 'true' : 'false');
     b.addEventListener('click', function () { if (on) { rec.status = 'none'; delete rec.self; } else { rec.status = 'pass'; rec.self = true; } persist(topic.id); rerenderChapter(topic); });
     return b;

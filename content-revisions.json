@@ -145,11 +145,20 @@
   "quizRevisions": [
     {
       "pack": "course",
+      "topic": "networking-basics",
+      "id": "nb-f3",
+      "before": "e7b47ef3262d0cafa28cf3eae8dcd039f6e3e1a1645c20a5dd3eed3c9d810343",
+      "after": "22a78d12a0d56570e3996c26316393c07adb7dc769e4ccc3b1b0e39d6c5cd635",
+      "revision": "audit-2026-10-11-review",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
       "topic": "sql-databases",
       "id": "sql-f2",
-      "before": "5e3955ab345c88d357205f94a038e3112cc556cc2f550ef5e584081a4b0490f7",
-      "after": "ad41b0e7d44c96ec40d6efad06501bbc249786afac9fa20c913319beef3558cb",
-      "revision": "audit-2026-10",
+      "before": "ad41b0e7d44c96ec40d6efad06501bbc249786afac9fa20c913319beef3558cb",
+      "after": "ad97ba78f0692facb705e89f2cc1a3ead40e9aa5686fa0ed5e3df7431cd25a16",
+      "revision": "audit-2026-10-11-review",
       "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
     },
     {
@@ -174,9 +183,9 @@
       "pack": "course",
       "topic": "sql-databases",
       "id": "sql-f9",
-      "before": "032f87e9f934ed210d95f40668e867a023640d8fb150052e98f0b16a2b8a8ee2",
-      "after": "71f00b54e84d4a8664146e0895377367666a7fe8b7dfd7c85cb8f820eaa42d63",
-      "revision": "audit-2026-10",
+      "before": "71f00b54e84d4a8664146e0895377367666a7fe8b7dfd7c85cb8f820eaa42d63",
+      "after": "7608f291dbd93789a17db9d07429e83844cb36178e695e271b69f5a9d6a90ad5",
+      "revision": "audit-2026-10-11-review",
       "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
     },
     {
@@ -191,10 +200,28 @@
     {
       "pack": "course",
       "topic": "search-and-retrieval",
+      "id": "sr-f2",
+      "before": "be87c0b6e97ea61ca2a6c8c4cbf6a2c7cc8118dbea29693e3a3cce75e618a7f3",
+      "after": "0b0f09a67211edca6ec56943b1eef96687853ae62492785ee30d156fb5029c35",
+      "revision": "audit-2026-10-11-review",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
+      "topic": "search-and-retrieval",
       "id": "sr-f5",
       "before": "e32ab52049aecbf084d3d0c23ca85bb09f4e0e1b4e3dbd29e6d0604cd2d68f22",
       "after": "639a3450e8d190bf8bb296bdcda5c0d6cb829fb50ca79564f2afabadd27e4e2f",
       "revision": "audit-2026-10",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
+      "topic": "counting-and-sketches",
+      "id": "cs-f4",
+      "before": "a49b1eb067222e55881b819cb8469a9d20536a5c8702cbf03a6590c0d9b847f4",
+      "after": "9f802ed518ed06c22a89dd3626e507dc66713f161c7626c1aea6f05de3a7a345",
+      "revision": "audit-2026-10-11-review",
       "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
     },
     {
@@ -226,11 +253,29 @@
     },
     {
       "pack": "course",
+      "topic": "system-design-cases",
+      "id": "sdc-10",
+      "before": "bd70697350d2cf0c45a3c2aafee273a61a70e4c5b866a38bf03f5712297e7cf1",
+      "after": "0267637f823dd7c5514926b66dae08bfeb343130ddbcb710571f83fcb49be320",
+      "revision": "audit-2026-10-11-review",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
       "topic": "reliability-ops",
       "id": "ro-f4",
       "before": "b9e50c6f7e55a9198342a335a8256cf682d05dd906eeb6bf0f03e3c570fbdd4b",
       "after": "0f0efe4c658794ee3dabdb05ef03d0196e6855a17ff8eff9382216449ccf962f",
       "revision": "audit-2026-10",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
+      "topic": "mlops-tooling",
+      "id": "mot-0",
+      "before": "823e2d59f82fc06aa66f58e88a773fd7b38f7b10be1515b189e8a04b467bfc55",
+      "after": "56c84d8ef9b367be023c3f1c23d4a42c017775f80a40e45c41d19aa799daf6ab",
+      "revision": "audit-2026-10-11-review",
       "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
     },
     {
@@ -370,6 +415,15 @@
     },
     {
       "pack": "course",
+      "topic": "llm-inference-engineering",
+      "id": "lie-f9",
+      "before": "e5f80f8484a56c44caca81f5fcd59e6693a39edb5eb9b892a33f00fa15d3e388",
+      "after": "a4c1c9894fe7b9a591da7a8c3dc0df74f981a0fb525cf23b2f01351bcc9e84bb",
+      "revision": "audit-2026-10-11-review",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
       "topic": "llm-fine-tuning-and-alignment",
       "id": "lft-f1",
       "before": "d1dbfba28406ba55523c993044dfd5841a8f2367a9a16a6595b4586613a56196",
@@ -505,6 +559,15 @@
     },
     {
       "pack": "course",
+      "topic": "classical-models",
+      "id": "cm-0",
+      "before": "295b47aba1d5964a80b2c4ee6627d492cab3cf0901f81ea9c313c5299b67a47e",
+      "after": "9434302f6646952a834ed3193d3def750ac44f922ef5bc06a5dfaaead2c5ea62",
+      "revision": "audit-2026-10-11-review",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
       "topic": "evaluation-and-selection",
       "id": "es-f1",
       "before": "b71a891b96e4d7c50d8b83993153293ea45e1e15740359dd1a3f2c367e8237cb",
@@ -524,10 +587,28 @@
     {
       "pack": "course",
       "topic": "deep-learning-essentials",
+      "id": "dle-f2",
+      "before": "109812993ad3f3be4148dc0e74796417ed952d6ad17b28ed399c77611e2d6c93",
+      "after": "a21c7b5282042b8ea04c8fb97acf2fd2fc8c36ea79b584d0920bd37331be2ff7",
+      "revision": "audit-2026-10-11-review",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
+      "topic": "deep-learning-essentials",
       "id": "dle-f4",
       "before": "58f57db2da03c53718cd9400953a5ea02a9b9735757849152d91e3af6107cda4",
       "after": "6d55c7f805f33a657b97fc694c5a75f23ce3f5650fffa849d3483f36251be432",
       "revision": "audit-2026-10",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
+      "topic": "deep-learning-essentials",
+      "id": "dle-f6",
+      "before": "51a724bee8afc3413d1df4be5a045e008580a67bbc233c25eaf38a36e09c3c7b",
+      "after": "b5d2af2c3ea6f43232c3e5935038f98809d38f8db07174ec1782f0d6c6561669",
+      "revision": "audit-2026-10-11-review",
       "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
     },
     {
@@ -555,6 +636,15 @@
       "before": "dc22ccff3a4764dd0c62a82f67ca9fdb7ba5a39bd0192fd73eca5047636b7bc0",
       "after": "f2acd59030ac31ab0062fd9b39cbb6c94a0ec1ecbab433de95f13b4924237194",
       "revision": "audit-2026-10",
+      "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
+    },
+    {
+      "pack": "course",
+      "topic": "or-tooling",
+      "id": "or-6",
+      "before": "f081d1798208432dc6da364ccf06111756bba47556089cb889fc0345c8d10d47",
+      "after": "3c413754679b83505aa0191f875af28d2b17d4b2c9f8a9da1186ca8c5b8317c7",
+      "revision": "audit-2026-10-11-review",
       "reason": "Source-backed course audit correction; see docs/course-redesign-audit.md and domain resolution ledgers. Old answers remain historical evidence under the original key; revised practice uses a new versioned check key."
     },
     {

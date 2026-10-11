@@ -74,8 +74,8 @@
     b += B(400, 70, 170, 66, 'RRF(D) =~1/(60+3) + 1/(60+2)~= 0.0320', { ts: 9, f: 'var(--accent-weak)', sk: 'var(--accent)' });
     b += A(u, 570, 103, 610, 103, { c: 'var(--accent)', m: 'aa' });
     b += F('M570 103H610');
-    b += B(614, 82, 130, 42, 'D is fused #2', { ts: 10, f: 'var(--good-weak)', sk: 'var(--good)', cls: 'v-pulse' });
-    b += T(380, 200, 'a document ranked well by both lists beats one ranked #1 by only one', { s: 10, c: 'var(--ink-dim)' });
+    b += B(614, 82, 130, 42, 'D is fused #3', { ts: 10, f: 'var(--good-weak)', sk: 'var(--good)', cls: 'v-pulse' });
+    b += T(380, 200, 'compute every fused score: A, B, D, C is the resulting order', { s: 10, c: 'var(--ink-dim)' });
     return S(214, b);
   };
   C['hybrid-rank-fusion'] = 'Reciprocal rank fusion (RRF) adds 1 divided by k plus rank from each list. Here document D is rank 3 and rank 2, so with k = 60 its score is 1/63 + 1/62, about <b>0.0320</b>.';
@@ -217,7 +217,7 @@
   C['polling-vs-websocket'] = 'Polling pays for a request even when nothing changed; a WebSocket keeps <b>one connection</b> either side can use any time.';
 
   V['websocket-fanout'] = function (u) {
-    var b = D(u, 'ar aa');
+    var b = D(u, 'ar aa ag');
     b += HD('route an event to the gateway that owns the socket');
     b += B(20, 40, 100, 40, 'user 9~sends a like');
     b += A(u, 122, 60, 168, 60, { c: 'var(--accent)', m: 'aa' });
@@ -240,7 +240,7 @@
   C['websocket-fanout'] = 'An established WebSocket is already bound to one gateway. A connection registry maps the target user to that owner, so the event is published to the <b>owning gateway or shard channel</b>, not to every server. Reconnect affinity is a separate policy.';
 
   V['notification-pipeline'] = function (u) {
-    var b = D(u, 'ar aa');
+    var b = D(u, 'ar aa ag');
     b += HD('a notification, from event to delivery receipt');
     b += B(14, 70, 110, 46, 'event~order shipped');
     b += A(u, 126, 93, 172, 93, { c: 'var(--accent)', m: 'aa' });

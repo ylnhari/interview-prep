@@ -75,8 +75,8 @@
     b += AP(u, 'M400 48V80', { d: '3 4', c: 'var(--ink-dim)', m: 'none' });
     b += AP(u, 'M500 48Q560 70 545 92', { d: '3 4', c: 'var(--ink-dim)', m: 'ar' });
     b += T(430, 60, 'O(1) lookup~straight to the node', { s: 9, c: 'var(--ink-dim)', a: 'start' });
-    b += GROW(AP(u, 'M370 96C300 60 150 60 100 94', { c: 'var(--accent)', m: 'aa', d: '4 4' }));
-    b += T(230, 58, 'access C: move to head', { s: 10, c: 'var(--accent)' });
+    b += GROW(AP(u, 'M200 96C175 60 150 60 100 94', { c: 'var(--accent)', m: 'aa', d: '4 4' }));
+    b += T(230, 58, 'access C: new order C, D, B, A', { s: 10, c: 'var(--accent)' });
     b += AP(u, 'M690 116H730V150', { c: 'var(--danger)', m: 'ad' });
     b += T(700, 168, 'evict at tail', { s: 10, c: 'var(--danger)', a: 'middle', cls: 'v-blink' });
     return S(190, b);
@@ -143,7 +143,7 @@
     b += T(220, 116, 'W = 3 write quorum', { s: 10, c: 'var(--accent)' });
     b += LN(338, 130, 662, 130, { c: 'var(--good)', w: 2 });
     b += T(500, 146, 'R = 3 read quorum', { s: 10, c: 'var(--good)' });
-    b += T(360, 172, 'n3 sits in both quorums - a read is guaranteed to see the latest write', { s: 10, c: 'var(--ink-dim)' });
+    b += T(360, 172, 'n3 sits in both quorums; retained versions still need correct reconciliation', { s: 10, c: 'var(--ink-dim)' });
     b += T(360, 190, 'W + R = 6 > N = 5', { s: 11, c: 'var(--ink)', w: 1 });
     return S(206, b);
   };
@@ -168,10 +168,10 @@
     var repl = '';
     for (i = 0; i < 5; i++) { if (i !== 1) { repl += F('M220 80L' + xs[i] + ' 176', { c: 'var(--accent)', w: 1.8 }); } }
     b += repl;
-    b += T(390, 196, 'AppendEntries: committed once a majority has the entry in its log', { s: 10, c: 'var(--ink-dim)' });
+    b += T(390, 196, 'commit a current-term entry on a majority; earlier entries commit with it', { s: 10, c: 'var(--ink-dim)' });
     return S(212, b);
   };
-  C['raft-election'] = 'A candidate that wins a <b>majority of votes</b> becomes leader for the term, then replicates every entry until a majority has logged it.';
+  C['raft-election'] = 'A candidate with an eligible log that wins a <b>majority of votes</b> becomes leader for the term. Majority replication commits a current-term entry; earlier entries commit indirectly with it, not merely by counting their replicas.';
 
   V['lamport-clock'] = function (u) {
     var b = D(u, 'ar aa');

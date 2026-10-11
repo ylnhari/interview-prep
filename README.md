@@ -13,7 +13,7 @@ Private packs are excluded from the public build. The GitHub Pages site builds o
 **What a page gives you**
 
 - Chapters in recommended order, each with a Key terms section (every term defined before use), animated concept diagrams (inline SVG, both themes), selected resources with format, provider, access labels and estimated study budgets, quick checks, a "map it onto your own work" recall exercise, practice exercises with marking guides, and optional explain-it-back practice.
-- Question banks with answers inline (toggle to self-test) and a general glossary. Private packs can add a round or interviewer profile with confirmed facts separated from inferences.
+- Question banks with answers inline (attempt before consulting references) and a general glossary. Private packs can add a round or interviewer profile with confirmed facts separated from inferences.
 - A roadmap page (`index.html` on the public site, `dist/index.html` for local builds) linking tracks, chapters and sections with browser-saved progress.
 - Progress is saved in the browser and can be exported or imported as a JSON file. Google sign-in is optional: when the public Spark configuration is present, a visitor can choose to sync compact course progress between devices. Guest learning always works without it. Sync covers completion, checks, quiz choices, exercise status and bounded answer drafts—not grading history—and does not include course content, private packs or profile data.
 

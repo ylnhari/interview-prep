@@ -6,7 +6,7 @@
 
   V['lsm-tree-levels'] = function (u) {
     var b = D(u, 'ar aa ag');
-    b += HD('LSM tree: write path, then compaction across levels');
+    b += HD('LSM: synchronous durability example, then leveled compaction');
     b += B(20, 30, 84, 36, 'write', { ts: 10 });
     b += A(u, 104, 48, 140, 48);
     b += F('M104 48H140');
@@ -33,7 +33,7 @@
     b += T(380, 224, 'compaction keeps the file count a read must check from growing forever', { s: 10, c: 'var(--ink-dim)', a: 'start' });
     return S(232, b);
   };
-  C['lsm-tree-levels'] = 'A write lands in the write-ahead log and the memtable; once the memtable fills it flushes to a new <b>SSTable</b> at level 0, and compaction merges files down into fewer, larger, non-overlapping files at each level below.';
+  C['lsm-tree-levels'] = "This illustrates synchronous durability: append and synchronize WAL before durable acknowledgement. Memtable updates may occur before synchronization in other implementations. Flush creates SSTables; leveled compaction manages overlaps and read amplification.";
 
   V['lsm-read-path'] = function (u) {
     var b = D(u, 'ar aa ad ag');
@@ -163,7 +163,7 @@
   C['queue-vs-stream'] = 'In a task queue, one competing consumer handles each delivery at a time, but failure before acknowledgement can cause <b>redelivery</b>. In an event stream, retained events let independent consumer groups read at their own pace.';
 
   V['consumer-group-offsets'] = function (u) {
-    var b = D(u, 'ar aa');
+    var b = D(u, 'ar aa ag');
     b += HD('one topic, two independent consumer groups');
     var px = [40, 220, 400, 580];
     var i;
@@ -171,7 +171,7 @@
       b += R(px[i], 30, 150, 30, { f: 'var(--surface-3)', sk: 'var(--border)' });
       b += T(px[i] + 75, 50, 'partition ' + i, { s: 9, c: 'var(--ink-dim)' });
     }
-    var offA = [95, 145, 45, 195];
+    var offA = [95, 135, 45, 125];
     for (i = 0; i < 4; i++) {
       b += DT(px[i] + offA[i], 45, 5, { f: 'var(--accent)' });
     }
@@ -183,7 +183,7 @@
     b += A(u, 655, 60, 300, 84, { c: 'var(--accent)', m: 'aa' });
     b += B(40, 88, 130, 30, 'consumer A1~partitions 0,1', { ts: 8.5, f: 'var(--accent-weak)', sk: 'var(--accent)' });
     b += B(250, 88, 130, 30, 'consumer A2~partitions 2,3', { ts: 8.5, f: 'var(--accent-weak)', sk: 'var(--accent)' });
-    var offB = [45, 65, 175, 105];
+    var offB = [45, 65, 115, 105];
     for (i = 0; i < 4; i++) {
       b += DT(px[i] + offB[i], 45, 5, { f: 'var(--good)' });
     }

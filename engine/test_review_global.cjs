@@ -1,0 +1,22 @@
+'use strict';
+const fs=require('fs'),vm=require('vm'),assert=require('node:assert/strict'),window={};
+for(const f of ['library.js',...fs.readdirSync('core').filter(f=>f.endsWith('.js')&&f!=='library.js').sort()])vm.runInNewContext(fs.readFileSync('core/'+f,'utf8'),{window});
+vm.runInNewContext(fs.readFileSync('packs/course/content.js','utf8'),{window});
+const C=window.PREP_CONTENT,rows=C.glossary.flatMap(g=>g.rows),row=name=>rows.find(r=>r[0]===name).join(' ');
+assert.match(row('Hard against soft constraint'),/availability, safety and legal limits remain hard/);
+assert.doesNotMatch(row('Hard against soft constraint'),/make capacity soft/);
+assert.match(row('Linear programming / mixed-integer programming / CP-SAT'),/MILP/);
+assert.match(row('Linear programming / mixed-integer programming / CP-SAT'),/can be nonlinear/);
+assert.match(row('Newsvendor quantile'),/single-period.*linear marginal.*Cu\/\(Cu\+Co\)/);
+// Asymmetric squared costs need not choose the linear newsvendor quantile.
+const squaredCost=q=>.5*q*q+.5*3*(10-q)**2;
+assert.equal(squaredCost(7.5),37.5);assert.equal(squaredCost(10),50);
+assert.match(row('Receding horizon / model predictive control'),/state-evolution model.*finite-horizon objective and constraints/);
+assert.match(row('Receding horizon / model predictive control'),/only uncommitted future actions/);
+assert.match(row('Cache invalidation and TTL'),/not age relative to the origin/);
+assert.doesNotMatch(row('Cache invalidation and TTL'),/staleness bounded by the TTL/);
+const start=C.topics.find(t=>t.id==='start-here');
+assert.match(start.learn.find(s=>s.id==='sh-diagnostic').body,/visible reference answer/);
+assert.match(start.learn.find(s=>s.id==='sh-3').body,/visible feedback/);
+assert.doesNotMatch(C.readings['control-theory'].map(r=>r.purpose||r.w).join(' '),/Skip anything with an equation|Do not study it/);
+console.log('Global glossary contracts, asymmetric-cost counterexample and direct-reference reading copy passed.');

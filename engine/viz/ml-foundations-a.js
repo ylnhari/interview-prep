@@ -24,26 +24,18 @@
   };
 
   V['gradient-descent-bowl'] = function (u) {
-    var b = D(u, 'ar aa'), i, inner = '';
-    b += HD('gradient descent', 'θ(t+1) = θ(t) − η·∇L(θ(t))');
-    b += AP(u, 'M70 60Q400 210 730 60', { m: 'none', c: 'var(--border)', w: 2 });
-    var xs = [110, 195, 275, 350, 415, 470];
-    var ys = [70, 105, 133, 155, 170, 178];
-    for (i = 0; i < xs.length - 1; i++) {
-      inner += '<g' + IX(i) + '>' + A(u, xs[i], ys[i], xs[i + 1], ys[i + 1], { c: 'var(--accent)', w: 1.8, m: 'aa' }) + '</g>';
-    }
-    for (i = 0; i < xs.length; i++) {
-      inner += '<g' + IX(i) + '>' + DT(xs[i], ys[i], i === xs.length - 1 ? 7 : 5, { f: i === xs.length - 1 ? 'var(--good)' : 'var(--accent)', cls: i === xs.length - 1 ? 'v-pulse' : '' }) + '</g>';
-    }
-    b += SQ(inner);
-    b += LN(400, 30, 400, 200, { d: '3 4' });
-    b += T(400, 22, 'minimum', { s: 10, c: 'var(--ink-dim)' });
-    b += T(150, 44, 'large step: slope is steep here', { s: 10, c: 'var(--ink-dim)' });
-    b += T(560, 194, 'tiny steps as the slope flattens', { s: 10, c: 'var(--ink-dim)' });
-    b += T(380, 222, 'each step moves opposite the gradient; step size shrinks with the slope', { s: 10, c: 'var(--ink-dim)' });
-    return S(232, b);
+    var b=D(u,'ar aa'),i,curve=[],theta=-2.8,eta=0.2,points=[];
+    function px(t){return 400+100*t;}function py(t){return 190-14*t*t;}
+    b+=HD('gradient descent on L(theta) = theta squared','theta_next = theta - 0.2 * 2 theta');
+    for(i=-3.3;i<=3.301;i+=0.1)curve.push(px(i).toFixed(2)+','+py(i).toFixed(2));
+    b+=PL(curve.join(' '),{c:'var(--border)',w:2});
+    for(i=0;i<7;i++){points.push([px(theta),py(theta)]);theta-=eta*2*theta;}
+    for(i=0;i<points.length;i++){if(i)b+=A(u,points[i-1][0],points[i-1][1],points[i][0],points[i][1],{c:'var(--accent)',m:'aa'});
+      b+=DT(points[i][0],points[i][1],5,{f:i===points.length-1?'var(--good)':'var(--accent)'});}
+    b+=LN(400,35,400,200,{d:'3 4'});b+=T(400,22,'minimum: theta = 0',{s:10});
+    b+=T(380,222,'fixed learning rate; displacement shrinks because the gradient shrinks',{s:10,c:'var(--ink-dim)'});
+    return S(232,b);
   };
-
   V['chain-rule-graph'] = function (u) {
     var b = D(u, 'ar aa aw');
     b += HD('backpropagation is the chain rule through a graph');
@@ -166,7 +158,7 @@
     b += T(660, 154, 'training', { a: 'start', s: 10, c: 'var(--good)' });
     b += B(300, 40, 200, 30, 'generalisation gap', { ts: 10, f: 'var(--warning-weak)', sk: 'var(--warning)', cls: 'v-pulse' });
     b += A(u, 380, 70, 400, 100, { c: 'var(--warning)', m: 'none' });
-    b += T(380, 216, 'gap narrows with more data only if variance, not bias, is the problem', { s: 10, c: 'var(--ink-dim)' });
+    b += T(380, 216, 'a narrowing gap can reflect reduced sampling variance even when bias remains', { s: 10, c: 'var(--ink-dim)' });
     return S(228, b);
   };
 
@@ -197,8 +189,8 @@
       inner += '<g' + IX(i) + '>';
       inner += LN(x + 10, 150, x + 220, 150, { c: 'var(--border)' });
       if (i === 0) {
-        inner += PL(x + '20,150 ' + (x + 50) + ',80 ' + (x + 80) + ',150', { c: 'var(--accent)', w: 2 });
-        inner += PL(x + '80,150 ' + (x + 110) + ',80 ' + (x + 140) + ',150', { c: 'var(--good)', w: 2, d: '4 3' });
+        inner += PL((x + 20) + ',150 ' + (x + 50) + ',80 ' + (x + 80) + ',150', { c: 'var(--accent)', w: 2 });
+        inner += PL((x + 80) + ',150 ' + (x + 110) + ',80 ' + (x + 140) + ',150', { c: 'var(--good)', w: 2, d: '4 3' });
         inner += LN(x + 100, 60, x + 100, 150, { c: 'var(--ink-dim)', d: '3 3' });
         inner += T(x + 40, 70, 'train', { s: 9, c: 'var(--accent)' });
         inner += T(x + 130, 70, 'live', { s: 9, c: 'var(--good)' });
@@ -210,7 +202,7 @@
         inner += T(x + 60, 164, 'train mix', { s: 9, c: 'var(--accent)' });
         inner += T(x + 148, 164, 'live mix', { s: 9, c: 'var(--good)' });
       } else {
-        inner += PL(x + '20,140 ' + (x + 110) + ',80 ' + (x + 200) + ',140', { c: 'var(--ink-dim)', w: 2 });
+        inner += PL((x + 20) + ',140 ' + (x + 110) + ',80 ' + (x + 200) + ',140', { c: 'var(--ink-dim)', w: 2 });
         inner += LN(x + 20, 150, x + 200, 100, { c: 'var(--danger)', w: 2, d: '5 3', cls: 'v-pulse' });
         inner += T(x + 60, 60, 'same inputs,~new boundary', { s: 9, c: 'var(--danger)' });
       }
@@ -223,12 +215,12 @@
   };
 
   C['dot-product-similarity'] = 'Two vectors from the origin with the angle between them; the dot product and norms combine into <b>cosine similarity</b>.';
-  C['gradient-descent-bowl'] = 'A loss bowl with a ball taking steps downhill, each one <b>shrinking</b> as the slope flattens near the minimum.';
+  C['gradient-descent-bowl'] = "The objective is theta squared, with fixed learning rate 0.2. Actual gradient-descent steps theta_next = 0.6 theta approach zero; movement shrinks as its gradient shrinks.";
   C['chain-rule-graph'] = 'Forward pass computes and stores values left to right; the backward pass <b>multiplies local derivatives</b> right to left.';
-  C['softmax-temperature'] = 'The same logits at two temperatures: low temperature sharpens onto one class, high temperature <b>flattens</b> the bars.';
+  C['softmax-temperature'] = "For these distinct logits, decreasing positive temperature concentrates probability on the unique largest logit; increasing it approaches uniform. Tied maxima share the low-temperature limiting probability.";
   C['cross-entropy-curve'] = 'Loss as -ln(p): confident correct predictions cost almost nothing, and the curve <b>shoots up</b> as confidence in the wrong class grows.';
   C['bias-variance-targets'] = 'Four targets: variance scatters the hits around their own centre, and bias <b>drags the whole cluster</b> off the bullseye.';
-  C['learning-curves'] = 'Training and validation error against training-set size, with the <b>generalisation gap</b> between them highlighted.';
+  C['learning-curves'] = "Training and validation error against training-set size. A narrowing generalisation gap can reflect reduced sampling variance even if substantial model bias remains; the gap alone does not diagnose the source.";
   C['leakage-timeline'] = 'A decision at t0 with an allowed feature window before it; a dashed arrow shows information from after t0 <b>leaking backward</b>.';
   C['distribution-shift'] = 'Three small panels appearing in sequence: the inputs moving, the label mix moving, and the same inputs meeting a <b>new decision boundary</b>.';
 
