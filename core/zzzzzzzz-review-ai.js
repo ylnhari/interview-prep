@@ -1,6 +1,16 @@
 /* Evidence-backed AI teaching corrections; retained routes and quiz mappings. */
 (function(root){
   'use strict';
+  var retrieval = root.PREP_CORE['rag-and-agents'];
+  var sparseLesson = retrieval.learn.find(function (s) { return s.id === 'raa-f3'; });
+  sparseLesson.body = `<p>Start with keyword search for <code>reset password</code>. An <b>inverted index</b> maps each indexed term to the documents containing it: <code>reset → documents 2, 7</code>, <code>password → documents 2, 5, 7</code>. Those lists identify candidates without rereading every document.</p>
+<p><b>Sparse</b> describes a representation with mostly zero entries. For an illustrative vocabulary of 100,000 words and a document using 300 distinct terms, imagine one slot per vocabulary word: only 300 slots need a nonzero value. A real index stores the relevant terms and document lists, not a huge array of all those zero slots.</p>
+<p><b>BM25</b> ranks lexical matches using how rare a term is across the collection, how often it occurs in the document with diminishing returns, and document length. See the <a href="#search-and-retrieval/sr-f2">worked BM25 formula</a>.</p>
+<p>An <b>analyzer</b> processes text into terms. It splits text and may lowercase or stem it; configured rules determine whether <code>resetting</code> and <code>reset</code> match. <a href="https://www.elastic.co/docs/solutions/search/full-text/how-full-text-works">Elastic explains the index, BM25 and analyzer pipeline</a>.</p>
+<p><b>Learned sparse models</b> learn term weights and may expand text with related terms, allowing matches beyond the original wording. Sparse does not mean lexical-only retrieval. <a href="https://www.elastic.co/search-labs/blog/lexical-and-semantic-search-with-elasticsearch">Elastic compares lexical search with learned sparse semantic search</a>.</p>
+<p><b>Dense retrieval</b> compares learned embeddings. <b>Hybrid retrieval</b> combines sparse and dense rankings; <b>reranking</b> scores a retrieved shortlist again. Their failure sets can overlap. Compare these alternatives against simple baselines on actual query slices rather than assuming hybrid always wins.</p>`;
+  var retrievalTerms = retrieval.learn.find(function (s) { return s.id === 'raa-0'; });
+  retrievalTerms.body = retrievalTerms.body.replace(/<li><b>Sparse retrieval<\/b>[\s\S]*?<\/li>/, '<li><b>Sparse retrieval</b> - search using term representations with mostly zero entries. BM25 is a lexical sparse method; learned sparse models also exist. <a href="#rag-and-agents/raa-f3">Follow a keyword query through the index, ranking and analyzers</a>.</li>');
   var core=root.PREP_CORE;
   function lesson(topic,id){return core[topic].learn.find(function(s){return s.id===id;});}
   lesson('genai-platform','gp-0').body=lesson('genai-platform','gp-0').body.replace('<p>Enough to be precise, no more. Depth beyond this is not what this round is testing.</p>', '');

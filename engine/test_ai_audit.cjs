@@ -31,6 +31,18 @@ assert.match(section('qbllm-1').body,/model-specific prices affect latency and c
 assert.match(section('tas-0').body,/scheduled groups such as warps/);
 assert.doesNotMatch(section('tas-0').body,/all run the same instruction/);
 assert.match(section('raa-0').body,/learned sparse models also exist/);
+const sparseTeaching=section('raa-f3').body;
+const teachingSteps=['reset password','inverted index','100,000','BM25','analyzer','Learned sparse models'];
+for(let i=1;i<teachingSteps.length;i++)assert(sparseTeaching.indexOf(teachingSteps[i-1])<sparseTeaching.indexOf(teachingSteps[i]),'concrete sparse retrieval flow');
+assert.match(sparseTeaching,/300 distinct terms/);
+assert.match(sparseTeaching,/not a huge array/);
+assert.match(sparseTeaching,/diminishing returns/);
+assert.match(sparseTeaching,/configured rules determine/);
+assert.match(sparseTeaching,/Sparse does not mean lexical-only/);
+assert.match(sparseTeaching,/href="https:\/\/www.elastic.co\/docs\/solutions\/search\/full-text\/how-full-text-works"/);
+assert.match(sparseTeaching,/href="https:\/\/www.elastic.co\/search-labs\/blog\/lexical-and-semantic-search-with-elasticsearch"/);
+assert.match(section('raa-0').body,/href="#rag-and-agents\/raa-f3"/);
+assert.doesNotMatch(section('raa-0').body,/100,000|reset password/);
 assert.match(section('raa-0').check.options[section('raa-0').check.answer],/learned sparse models also exist/);
 assert.match(section('tas-f7').check.options[section('tas-f7').check.answer],/mathematically equivalent.*declared tolerances/);
 assert.match(section('tas-f7').check.explain,/does not imply bitwise identity/);
