@@ -89,6 +89,7 @@ console.log('test_visual_course: browser history empty-fragment event and invali
 const activityScrolls=[];
 const activityRoutes={state:{},location:{hash:'#one/drill'},publicCourse:true,privateHost:false,privateReady:true,C:{},GLOSSARY:[],TOPICS:topics,rememberRoute:remember,publicMode:false,publicNavigationRevision:0,renderAll(){},document:{getElementById(id){return {scrollIntoView(){activityScrolls.push(id);}};}},window:{scrollTo(){}}};
 activityRoutes.applyHash=new Function('context','with(context){return ('+source('applyHash')+');}')(activityRoutes);
+activityRoutes.resolveLessonRoute=new Function('context','with(context){return ('+source('resolveLessonRoute')+');}')(activityRoutes);
 const activityEvent=new Function('context','with(context){return ('+source('handleRouteChange')+');}')(activityRoutes);
 activityEvent();assert.equal(activityRoutes.state.view,'one');assert.equal(activityScrolls.pop(),'sec-drill');
 activityRoutes.location.hash='#two/leak';activityEvent();assert.equal(activityScrolls.pop(),'sec-leak');

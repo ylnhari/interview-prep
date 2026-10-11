@@ -652,6 +652,12 @@ window.PREP_IO = (function () {
   // Public pages select the isolated one-document adapter only when explicit
   // public config is present. The private PREP_CLOUD route remains unchanged.
   var publicCourse = !privateHost && C.meta && C.meta.id === 'course';
+  retirePublicActivities();
+  function retirePublicActivities() {
+    if (!publicCourse) return;
+    TOPICS.forEach(function (topic) { topic.activities = topic.activities.filter(function (activity) { return !Object.prototype.hasOwnProperty.call(C.lessonRedirects || {}, topic.id + '/' + activity.id); }); });
+  }
+  function resolveLessonRoute(route) { return publicCourse && Object.prototype.hasOwnProperty.call(C.lessonRedirects || {}, route) ? C.lessonRedirects[route] : route; }
   document.body.classList.toggle('public-course', !!publicCourse);
   var publicMode = publicCourse && !!window.PREP_PUBLIC_PROGRESS_CONFIG && !!(window.PREP_PUBLIC_PROGRESS && window.PREP_PUBLIC_PROGRESS.create);
   var progressApi = publicMode ? window.PREP_PUBLIC_PROGRESS : window.PREP_CLOUD;
@@ -1036,7 +1042,8 @@ window.PREP_IO = (function () {
   function lessonSections(topic) { return (topic.learn || []).concat(topic.activities || []); }
   function selectedLesson(topic) {
     var id = (state.pendingScroll || '').replace(/^sec-/, '');
-    if (!id) { try { var parts = (location.hash || '').replace(/^#/, '').split('/'); if (decodeURIComponent(parts[0]) === topic.id) id = decodeURIComponent(parts[1] || ''); } catch (e) {} }
+    if (id) id = resolveLessonRoute(topic.id + '/' + id).split('/')[1];
+    if (!id) { try { var parts = resolveLessonRoute((location.hash || '').replace(/^#/, '')).split('/'); if (decodeURIComponent(parts[0]) === topic.id) id = decodeURIComponent(parts[1] || ''); } catch (e) {} }
     var sections = lessonSections(topic);
     return sections.filter(function (s) { return s.id === id; })[0] || sections[0];
   }
@@ -1477,6 +1484,9 @@ window.PREP_IO = (function () {
   var privateInitialRoute = null;
   function applyHash() {
     var h = (location.hash || '').replace(/^#/, ''); if (!h) return false;
+    var resolved = resolveLessonRoute(h);
+    if (resolved !== h && window.history && window.history.replaceState) window.history.replaceState(null, '', '#' + resolved);
+    h = resolved;
     try {
       var parts = h.split('/'), vid = decodeURIComponent(parts[0]);
       var ok = (vid === 'home' && publicCourse) || (vid === 'who' && C.interviewer) || (vid === 'glossary' && GLOSSARY.length) || TOPICS.some(function (t) { return t.id === vid; });

@@ -15,7 +15,7 @@ const rail = new Node('nav'), context = {C, TOPICS, GROUPS, roleId: '', publicCo
   el: (tag, cls, text) => new Node(tag, cls, text), txt: (tag, cls, text) => new Node(tag, cls, text),
   nextUnfinished: () => null, overall: () => 0, topicProgress: () => ({rL: 1, nL: 3, pct: 10, label: 'started'}),
   T: () => ({learn: Object.fromEntries(TOPICS.flatMap(t => t.learn.map(s => [s.id, true])))}), go: (...args) => {context.route = args;}, stripHtml: s => s.replace(/<[^>]*>/g, '')};
-for (const name of ['groupOf', 'orderedTopics', 'topicById', 'chapterNumber', 'lessonNumber', 'pathStepLabel', 'searchLessonLabel', 'selectedPath', 'recommendedTopics', 'searchLessons', 'lessonSections', 'selectedLesson', 'renderRail']) {
+for (const name of ['resolveLessonRoute','retirePublicActivities','groupOf', 'orderedTopics', 'topicById', 'chapterNumber', 'lessonNumber', 'pathStepLabel', 'searchLessonLabel', 'selectedPath', 'recommendedTopics', 'searchLessons', 'lessonSections', 'selectedLesson', 'renderRail']) {
   const start = shell.indexOf('  function ' + name + '('); let depth = 0, end;
   for (let i = shell.indexOf('{', start); i < shell.length; i++) {
     if (shell[i] === '{') depth++;
@@ -24,6 +24,7 @@ for (const name of ['groupOf', 'orderedTopics', 'topicById', 'chapterNumber', 'l
   const src = shell.slice(start, end).trim();
   context[name] = new Function('context', 'with(context) { return (' + src + '); }')(context);
 }
+context.retirePublicActivities();
 function all(node) { return [node, ...node.children.flatMap(all)]; }
 const ordered = context.orderedTopics();
 for (const [i, t] of ordered.entries()) {

@@ -48,6 +48,7 @@ const C=w.PREP_CONTENT; if(C.useCore&&w.PREP_CORE) C.useCore.forEach(id=>{ if(w.
 C.topics.forEach(t=>{t.learn=t.learn||[];t.activities=t.activities||[];});
 const OV=w.PREP_OVERLAYS||C.overlays||{}; Object.keys(OV).forEach(id=>{const t=C.topics.find(x=>x.id===id); if(!t) return; const o=OV[id]||{}; if(o.learn){let lf=-1;t.learn.forEach((c,i)=>{if(c.part==='field')lf=i;}); o.learn.forEach((c,k)=>t.learn.splice(lf+1+k,0,c));} if(o.activities) t.activities=t.activities.concat(o.activities); if(o.sayItOutLoud) t.sayItOutLoud=o.sayItOutLoud;});
 const byId=Object.fromEntries(C.topics.map(t=>[t.id,t]));
+if(C.meta&&C.meta.id==='course') C.topics.forEach(t=>{t.activities=t.activities.filter(a=>!Object.hasOwn(C.lessonRedirects||{},t.id+'/'+a.id));});
 const groups=(C.groups||[{id:'all',label:'Chapters',ids:C.topics.map(t=>t.id)}]).map(g=>({id:g.id,label:g.label,sub:g.sub||'',chapters:g.ids.filter(i=>byId[i]).map(i=>({id:i,title:byId[i].title,level:byId[i].level||'good',levelLabel:byId[i].levelLabel||'',kind:byId[i].kind||'',sections:byId[i].learn.map(c=>({id:c.id,title:c.title,part:c.part||'',link:!!(c.link&&c.link.url)})),exercises:byId[i].activities.length,hasSay:!!byId[i].sayItOutLoud}))}));
 console.log(JSON.stringify({meta:C.meta||{},interviewAt:C.interviewAt||null,hasInterviewer:!!C.interviewer,groups,glossary:!!(C.glossary&&C.glossary.length)}));
 """
