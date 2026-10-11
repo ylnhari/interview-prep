@@ -10,12 +10,12 @@ class Node {
   addEventListener(k, fn) { this[k] = fn; }
   set innerHTML(v) { this.children = []; }
 }
-const rail = new Node('nav'), context = {C, TOPICS, GROUPS, roleId: '', publicCourse: true, GLOSSARY: [], PART_SHORT: {}, TICK: '\u2713', DOT: '\u00b7', state: {},
+const rail = new Node('nav'), context = {C, TOPICS, GROUPS, roleId: '', publicCourse: true, GLOSSARY: [], PART_SHORT: {}, TICK: '\u2713', DOT: '\u00b7', state: {}, location:{hash:''},
   document: {getElementById(id){ return id === 'rail' ? rail : new Node('div'); }},
   el: (tag, cls, text) => new Node(tag, cls, text), txt: (tag, cls, text) => new Node(tag, cls, text),
   nextUnfinished: () => null, overall: () => 0, topicProgress: () => ({rL: 1, nL: 3, pct: 10, label: 'started'}),
   T: () => ({learn: Object.fromEntries(TOPICS.flatMap(t => t.learn.map(s => [s.id, true])))}), go: (...args) => {context.route = args;}, stripHtml: s => s.replace(/<[^>]*>/g, '')};
-for (const name of ['groupOf', 'orderedTopics', 'topicById', 'chapterNumber', 'lessonNumber', 'pathStepLabel', 'searchLessonLabel', 'selectedPath', 'recommendedTopics', 'searchLessons', 'renderRail']) {
+for (const name of ['groupOf', 'orderedTopics', 'topicById', 'chapterNumber', 'lessonNumber', 'pathStepLabel', 'searchLessonLabel', 'selectedPath', 'recommendedTopics', 'searchLessons', 'lessonSections', 'selectedLesson', 'renderRail']) {
   const start = shell.indexOf('  function ' + name + '('); let depth = 0, end;
   for (let i = shell.indexOf('{', start); i < shell.length; i++) {
     if (shell[i] === '{') depth++;
@@ -30,9 +30,9 @@ for (const [i, t] of ordered.entries()) {
   context.state.view = t.id; context.renderRail();
   const nodes = all(rail), button = nodes.find(n => n.dataset.id === t.id);
   assert.equal(button.children[0].children[0].text, `${i + 1}. ${t.title}`);
-  assert.equal(button.attrs['aria-current'], 'page'); button.click(); assert.deepEqual(context.route, [t.id]);
+  assert.equal(button.attrs['aria-expanded'], 'true'); button.click(); assert.deepEqual(context.route, [t.id]);
   for (const [j, s] of t.learn.entries()) {
-    const link = nodes.find(n => n.href === '#sec-' + s.id);
+    const link = nodes.find(n => n.href === '#' + t.id + '/' + s.id);
     assert.equal(link.children[0].text, `${i + 1}.${j + 1}`);
     assert.equal(link.attrs['aria-label'], `${i + 1}.${j + 1} ${s.title}, completed`);
   }
@@ -48,7 +48,7 @@ for (const path of C.paths) {
 context.T = () => ({learn: {}});
 context.state.view = ordered[0].id; context.renderRail();
 for (const [j, s] of ordered[0].learn.entries()) {
-  const link = all(rail).find(n => n.href === '#sec-' + s.id);
+  const link = all(rail).find(n => n.href === '#' + ordered[0].id + '/' + s.id);
   assert.equal(link.children[0].text, `1.${j + 1}`);
   assert.equal(link.children[1].text, s.title);
   assert.equal(link.attrs['aria-label'], undefined);

@@ -54,7 +54,7 @@ async function testExternalUrlsRejectActiveSchemes() {
 async function testMobileRailNavigationRestoresFocus() {
   const calls = [];
   const context = {
-    state: {},
+    state: {}, publicCourse:false,
     document: { body: { classList: { contains(name) { return name === 'menu-open'; } } } },
     persist() { calls.push('persist'); },
     closeMenu() { calls.push('close'); },

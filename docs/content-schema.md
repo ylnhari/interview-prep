@@ -198,3 +198,12 @@ flag.
 The Pages workflow checks the push event's predecessor SHA with full Git history. A manual run requires an
 explicit committed public baseline SHA. On a repository's first push GitHub supplies no predecessor, so the
 workflow runs tests and page schema validation but reports that it cannot prove continuity.
+# Public lesson views
+
+The public course renders one retained learning section or activity per route
+(`#topic-id/section-id`). A chapter-only route opens its first lesson. Canonical
+numbers come from the catalogue, including when a recommended path changes the
+reading order. Body, deeper explanation and activity models are directly visible;
+the public renderer adds no answer form or generic prediction wrapper. Existing
+quiz mappings and stored drafts remain compatible, even when no quiz control is
+shown. Private pack rendering retains its chapter reader.
