@@ -45,7 +45,7 @@ inOrder(sections, [
   'if (teaching) sec.appendChild(teaching);',
   'window.PREP_AI_PRACTICE.mountLesson(sec, c.id)',
   "if (c.deeper && !qbank)",
-  'if (c.check && !c.check.auditCaution)'
+  "if (c.check && !c.check.auditCaution && c.presentation !== 'learn-solve' && topic.presentation !== 'scenario-qa')"
 ], 'problem and mechanism precede diagram, optional full teaching, depth and prediction check');
 assert(shell.includes("container.setAttribute('aria-label', label + ' diagram and text explanation')"), 'scrollable diagram has accessible region label');
 

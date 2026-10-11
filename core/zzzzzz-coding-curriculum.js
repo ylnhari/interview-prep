@@ -152,7 +152,7 @@
   lessons.forEach(function (lesson) {
     var learn = lesson.sources.map(function (s) { return link(s[0], s[1]) + ': ' + s[2]; }).join(' ');
     var solve = lesson.problems.map(function (p, i) { return (i ? 'Then: ' : 'Start: ') + link(p[0], 'https://leetcode.com/problems/' + p[1] + '/'); }).join('. ');
-    chapter.learn.push({id: lesson.id, part: 'field', title: lesson.title,
+    chapter.learn.push({id: lesson.id, part: 'field', title: lesson.title, presentation: 'learn-solve',
       body: '<p>' + lesson.mechanism + '</p><p><b>Learn.</b> ' + learn + '</p><p><b>Solve.</b> ' + solve + '.</p><p><b>Test and explain.</b> ' + lesson.test + '</p>',
       deeper: '<p>' + lesson.hint + '</p>',
       check: {question: lesson.question, options: [lesson.correct].concat(lesson.distractors), answer: 0, explain: lesson.correct + ' ' + lesson.hint},
