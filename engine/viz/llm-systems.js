@@ -33,7 +33,7 @@
     b += A(u, 110, 108, 148, 148);
     b += F('M110 108L148 148');
     b += B(148, 32, 160, 40, 'dense search~(embeddings, meaning)', { ts: 10 });
-    b += B(148, 132, 160, 40, 'sparse search~(BM25, exact words)', { ts: 10 });
+    b += B(148, 132, 160, 40, 'sparse search~(BM25, analyzed terms)', { ts: 10 });
     b += A(u, 308, 52, 344, 52);
     b += A(u, 308, 152, 344, 152);
     b += B(344, 32, 110, 40, 'ranked list A', { ts: 10, f: 'var(--surface-3)' });
@@ -47,7 +47,7 @@
     b += T(400, 200, 'reciprocal rank fusion blends two independently ranked lists into one score per document', { s: 10, c: 'var(--ink-dim)' });
     return S(214, b);
   };
-  C['hybrid-retrieval'] = 'A <b>dense</b> (embedding) search and a <b>sparse</b> (keyword) search run side by side, and a fusion step combines both rankings, so a query wins on either meaning or exact wording.';
+  C['hybrid-retrieval'] = 'A <b>dense</b> (embedding) search and an <b>analyzed lexical</b> (BM25) search run side by side. Fusion combines their rankings; evaluate retrieval quality and latency on the actual workload rather than assuming the combination improves every query.';
 
   V['hnsw-layers'] = function (u) {
     var b = D(u, 'ar aa ag'), i;
