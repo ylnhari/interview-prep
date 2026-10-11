@@ -132,7 +132,7 @@
     }
     return S(200, b);
   };
-  C['paged-attention-blocks'] = 'PagedAttention splits each sequence into fixed-size blocks and scatters them across a shared pool, the way an operating system pages virtual memory, so nothing is wasted between sequences.';
+  C['paged-attention-blocks'] = 'PagedAttention maps logical sequence blocks into a shared physical pool, reducing external fragmentation and enabling sharing. The final partially filled block can still waste space; block metadata and runtime overhead also remain.';
 
   V['quantization-bits'] = function (u) {
     var b = D(u, 'ar aa');

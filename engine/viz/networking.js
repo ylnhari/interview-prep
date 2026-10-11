@@ -43,7 +43,7 @@
 
   V['tcp-handshake'] = function (u) {
     var b = D(u, 'ar aa'), i, yy, inner = '';
-    var bars = [['TCP alone', 1], ['TCP + TLS 1.3', 2], ['TCP + TLS 1.2', 3], ['QUIC, new', 1], ['QUIC, resumed', 0]];
+    var bars = [['TCP alone', 1], ['TCP + TLS 1.3', 2], ['TCP + TLS 1.2', 3], ['QUIC, new', 1], ['QUIC, accepted 0-RTT', 0]];
     b += T(24, 20, 'the handshake before the first byte of data', { a: 'start', s: 12, w: 1 });
     b += B(40, 30, 100, 26, 'client', { ts: 10 });
     b += B(330, 30, 100, 26, 'server', { ts: 10 });
@@ -79,7 +79,7 @@
     b += T(502, 202, 'a round trip New York to London is about 56 ms', { a: 'start', s: 9.5, c: 'var(--ink-dim)' });
     return S(216, b);
   };
-  C['tcp-handshake'] = 'TCP spends <b>one full round trip</b> before the request is even sent; TLS adds another, and QUIC folds the two into one.';
+  C['tcp-handshake'] = "This conventional TCP handshake spends one round trip before request data. New QUIC combines transport and TLS setup in one round trip; resumed 0-RTT requires accepted early data and a replay-safe application policy. Resumption alone does not guarantee zero round trips.";
 
   /* ---------------------------------------------------------- HTTP versions */
 
@@ -125,10 +125,10 @@
     b += LN(670, 84, 670, 106, { c: 'var(--warning)', w: 2, cls: 'v-blink' });
     b += T(660, 56, 'one packet lost', { s: 9, c: 'var(--warning)' });
     b += T(520, 156, 'QUIC recovers each stream on its', { a: 'start', s: 9.5, c: 'var(--ink-dim)' });
-    b += T(520, 170, 'own, so only that stream waits.', { a: 'start', s: 9.5, c: 'var(--ink-dim)' });
+    b += T(520, 170, 'own; shared congestion still matters.', { a: 'start', s: 9.5, c: 'var(--ink-dim)' });
     return S(200, b);
   };
-  C['http-versions'] = 'HTTP/2 removes the queue at the message level but still rides one TCP connection; HTTP/3 moves onto UDP so a lost packet <b>stalls only its own stream</b>.';
+  C['http-versions'] = "HTTP/2 multiplexes streams over one TCP byte stream. QUIC avoids cross-stream transport ordering stalls, but a lost packet can contain frames for several streams and shared congestion control still affects them.";
 
   /* ---------------------------------------------------------- DNS lookup */
 

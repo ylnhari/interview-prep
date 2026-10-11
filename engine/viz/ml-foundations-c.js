@@ -59,8 +59,9 @@
     b += A(u, 384, 140, 200, 140, { c: 'var(--danger)', m: 'ad' });
     b += A(u, 192, 140, 30, 140, { c: 'var(--danger)', m: 'ad' });
     b += T(486, 130, 'dL/dz_out = y-hat - y = -0.52', { s: 9, c: 'var(--danger)', a: 'middle' });
-    b += T(290, 130, 'dL/da_B=0.16, dL/da_A=0', { s: 9, c: 'var(--danger)', a: 'middle' });
+    b += T(290, 130, 'dL/da_B=0.15525; dL/da_A=-0.51749; dL/dz_A=0', { s: 9, c: 'var(--danger)', a: 'middle' });
     b += T(112, 130, 'dW_B=[0.16,0.31], dW_A=0', { s: 9, c: 'var(--danger)', a: 'middle' });
+    b += T(400, 178, 'output weights [1, -0.3], bias 0.2; ReLU A blocks its incoming gradient', { s: 10, c: 'var(--ink-dim)' });
     b += T(400, 160, 'backward pass', { s: 10, c: 'var(--danger)', a: 'middle' });
     b += T(400, 198, 'ReLU has derivative 0 below 0, so no gradient reaches A for this example; persistent inactivity is a dead unit', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
     return S(216, b);
@@ -116,7 +117,7 @@
     b += T(400, 200, 'weight decay shrinks every weight a little each step; gradient clipping caps a spike before it lands', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
     return S(214, b);
   };
-  C['lr-schedule'] = 'The learning rate ramps up during <b>warm-up</b>, while Adam’s early gradient estimates are still unreliable, then rides a <b>cosine curve</b> back down as training settles.';
+  C['lr-schedule'] = "This illustrates warm-up followed by cosine decay. Warm-up can stabilize some recipes; its value depends on initialization, architecture, normalization and optimizer. Some Pre-LayerNorm transformer recipes work without it.";
 
   V['conv-receptive-field'] = function (u) {
     var b = D(u, 'ar');
@@ -139,7 +140,7 @@
     b += T(380, 202, 'stride and pooling shrink the map; stacking layers grows what one late cell has seen', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
     return S(214, b);
   };
-  C['conv-receptive-field'] = 'Two stacked 3x3 convolutions already give one output cell a 5x5 view of the original image, at a fraction of one 5x5 convolution’s parameters.';
+  C['conv-receptive-field'] = "With stride and dilation one, two stacked 3x3 convolutions have a 5x5 receptive field. Ignoring biases, weights total 9 Cin Cmid + 9 Cmid Cout versus 25 Cin Cout. Equal widths give 18 C squared versus 25 C squared; other widths can reverse the saving.";
 
   V['attention-heads'] = function (u) {
     var b = D(u, 'ar aa'), i;
@@ -240,13 +241,14 @@
     b += A(u, 652, 90, 692, 90, { c: 'var(--accent)', m: 'aa' });
     b += F('M126 90L166 90M322 90L362 90M498 90L538 90M652 90L692 90');
     b += T(716, 94, 'response', { a: 'start', s: 9, c: 'var(--ink-dim)' });
-    b += AP(u, 'M607 60V26H80V70', { c: 'var(--danger)', d: '4 4', m: 'ad' });
+    b += AP(u, 'M245 60V34H80V70', { c: 'var(--danger)', d: '4 4', m: 'ad' });
     b += T(350, 20, 'a failed validation returns 422 immediately, before any batch or model call', { s: 9, c: 'var(--danger)', a: 'middle' });
     b += B(200, 150, 160, 36, 'GET /healthz~liveness and readiness', { ts: 9, f: 'var(--surface-3)' });
-    b += T(400, 205, 'a timeout wraps the model call itself, so one slow batch never hangs every client waiting on the endpoint', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
-    return S(218, b);
+    b += T(400, 205, 'deadline covers admission, queue, features and inference; bound each wait', { s: 10, c: 'var(--ink-dim)', a: 'middle' });
+    b += T(400, 225, 'cancelling a request may not stop GPU work; bound runtime capacity', { s: 10, c: 'var(--ink-dim)' });
+    return S(240, b);
   };
-  C['fastapi-serving'] = 'A Pydantic request model rejects a bad request with a 422 before any model code runs; a batcher groups what is left for the GPU, and a timeout wraps only the model call.';
+  C['fastapi-serving'] = "Pydantic normally rejects invalid input with 422 before inference. Admission, queueing, features and execution share an end-to-end deadline and bounded capacity. Cancelling a request or async wait does not necessarily stop GPU work.";
 
   V['k8s-ml-service'] = function (u) {
     var b = D(u, 'ar aa aw'), i;

@@ -230,7 +230,7 @@
 
   V['bandit-vs-rl'] = function (u) {
     var b = D(u, 'ar ag aa'), i, inner = '';
-    b += T(24, 20, 'bandit: one decision, fast feedback', { a: 'start', s: 11, w: 1 });
+    b += T(24, 20, 'bandit: no action-driven state carry-over', { a: 'start', s: 11, w: 1 });
     b += T(404, 20, 'RL: a chain of states, delayed return', { a: 'start', s: 11, w: 1 });
     b += LN(384, 30, 384, 182, { d: '3 4' });
     b += B(26, 74, 70, 38, 'context');
@@ -240,7 +240,7 @@
       inner += '<g' + IX(i) + '>' + A(u, 98, 93, 142, yy + 15) +
         B(146, yy, 76, 30, arms[i], { ts: 10, f: i === 1 ? 'var(--accent-weak)' : 'var(--surface-2)' }) +
         A(u, 224, yy + 15, 258, yy + 15, { c: 'var(--good)', m: 'ag' }) +
-        T(300, yy + 19, 'reward now', { s: 10, c: 'var(--good)' }) + '</g>';
+        T(300, yy + 19, 'chosen reward', { s: 10, c: 'var(--good)' }) + '</g>';
     }
     b += SQ(inner);
     var st = ['s1', 's2', 's3', 'end'];
@@ -469,16 +469,16 @@
       b += R(x, 52, 10, 30, { f: 'var(--accent-weak)' });
       b += DT(x + 5, narrow[i] ? 67 : 40, 4, { f: narrow[i] ? 'var(--good)' : 'var(--danger)' });
       b += R(x + 34, 106, 10, 62, { f: 'var(--accent-weak)' });
-      b += DT(x + 39, 137, 4, { f: 'var(--good)' });
+      b += DT(x + 39, 137 + (narrow[i] ? 0 : -27), 4, { f: 'var(--good)' });
     }
     b += T(110, 70, 'narrow', { a: 'end', s: 10, c: 'var(--ink-dim)' });
     b += T(110, 142, 'wide', { a: 'end', s: 10, c: 'var(--ink-dim)' });
     b += R(120, 184, 300, 12, { f: 'var(--surface-3)' });
-    b += R(120, 184, 188, 12, { f: 'var(--danger)', cls: 'v-pulse' });
-    b += T(430, 194, '62% covered', { a: 'start', s: 10, c: 'var(--danger)' });
+    b += R(120, 184, 187.5, 12, { f: 'var(--danger)', cls: 'v-pulse' });
+    b += T(430, 194, '62.5% covered (5/8)', { a: 'start', s: 10, c: 'var(--danger)' });
     b += R(120, 202, 300, 12, { f: 'var(--surface-3)' });
-    b += R(120, 202, 285, 12, { f: 'var(--good)' });
-    b += T(430, 212, '95% covered, but wide', { a: 'start', s: 10, c: 'var(--good)' });
+    b += R(120, 202, 300, 12, { f: 'var(--good)' });
+    b += T(430, 212, '100% covered (8/8), but wide', { a: 'start', s: 10, c: 'var(--good)' });
     return S(226, b);
   };
 
@@ -917,7 +917,7 @@
     b += AP(u, 'M600 130C566 148 420 148 386 130', { m: 'ad', c: 'var(--danger)', d: '4 4' });
     b += T(490, 165, 'probe fails: reopen', { s: 10, c: 'var(--danger)', cls: 'v-blink' });
     b += DT(126, 88, 5, { f: 'var(--good)', cls: 'v-pulse' });
-    b += T(380, 214, 'the breaker protects the caller, not the failing dependency', { s: 10, c: 'var(--ink-dim)' });
+    b += T(380, 214, 'the breaker limits caller harm and reduces load on a failing dependency', { s: 10, c: 'var(--ink-dim)' });
     return S(226, b);
   };
 
@@ -941,26 +941,21 @@
   };
 
   V['scale-test-3x'] = function (u) {
-    var b = D(u, 'ar ad'), i, inner = '';
-    b += HD('illustrative scale test at three times peak', 'choose the margin from measured risk');
-    b += LN(70, 160, 720, 160);
-    b += LN(70, 40, 70, 160);
-    b += LN(70, 122, 720, 122, { c: 'var(--accent)', d: '5 4' });
-    b += T(76, 116, 'expected peak', { a: 'start', s: 10, c: 'var(--accent)' });
-    b += LN(70, 62, 720, 62, { c: 'var(--danger)', d: '5 4' });
-    b += T(76, 56, 'p99 latency budget', { a: 'start', s: 10, c: 'var(--danger)' });
-    var hs = [26, 46, 68, 92];
-    for (i = 0; i < 4; i++) {
-      inner += '<g' + IX(i) + '>' + R(200 + i * 120, 160 - hs[i], 80, hs[i], { f: i === 3 ? 'var(--danger-weak)' : 'var(--accent-weak)', sk: i === 3 ? 'var(--danger)' : 'var(--accent)' }) +
-        T(240 + i * 120, 176, ['1x', '1.5x', '2x', '3x'][i], { s: 10, c: 'var(--ink-dim)' }) + '</g>';
+    var b=D(u,'ar ad'),i,loads=[1,1.5,2,3],latency=[65,115,170,260],budget=200;
+    function px(v){return 100+180*v;} function py(v){return 180-0.5*v;}
+    b+=HD('illustrative load test','x: offered load / forecast peak; y: measured p99 latency (ms)');
+    b+=LN(70,180,720,180);b+=LN(70,35,70,180);
+    b+=LN(px(1),35,px(1),180,{c:'var(--accent)',d:'5 4'});
+    b+=T(px(1),45,'forecast peak: 1x',{s:10,c:'var(--accent)'});
+    b+=LN(70,py(budget),720,py(budget),{c:'var(--danger)',d:'5 4'});
+    b+=T(76,py(budget)-6,'budget: 200 ms',{a:'start',s:10,c:'var(--danger)'});
+    for(i=0;i<loads.length;i++){var x=px(loads[i]),y=py(latency[i]),fail=latency[i]>budget;
+      b+=R(x-26,y,52,180-y,{f:fail?'var(--danger-weak)':'var(--accent-weak)',sk:fail?'var(--danger)':'var(--accent)'});
+      b+=T(x,196,loads[i]+'x',{s:10});b+=T(x,y-8,latency[i]+' ms',{s:10});
     }
-    b += SQ(inner);
-    b += DT(600, 62, 6, { f: 'var(--danger)', cls: 'v-pulse' });
-    b += T(640, 46, 'breaks here', { s: 10, c: 'var(--danger)' });
-    b += T(380, 198, 'the point of the test is to find the first thing that bends, before the season does', { s: 10, c: 'var(--ink-dim)' });
-    return S(210, b);
+    b+=T(380,220,'3x exceeds this fixture budget; choose the margin from measured risk',{s:10,c:'var(--ink-dim)'});
+    return S(234,b);
   };
-
   V['degrade-to-fallback'] = function (u) {
     var b = D(u, 'ar ag ad');
     b += HD('degrade to a fallback');
@@ -988,7 +983,7 @@
     var b = D(u, 'ar ag'), i, inner = '';
     b += HD('canary rollout');
     var steps = ['1%', '5%', '25%', '100%'];
-    var wid = [10, 34, 96, 300];
+    var wid = [3, 15, 75, 300];
     for (i = 0; i < 4; i++) {
       var y = 44 + i * 34;
       var g = T(96, y + 15, steps[i], { a: 'end', s: 10, c: 'var(--ink-dim)' });
@@ -1001,7 +996,7 @@
     b += SQ(inner);
     b += T(256, 194, 'traffic on the new version', { s: 10, c: 'var(--accent)' });
     b += T(560, 194, 'error rate, latency, business metric', { s: 10, c: 'var(--ink-dim)' });
-    b += T(380, 214, 'each step is a decision point, and every step can go backwards', { s: 10, c: 'var(--ink-dim)' });
+    b += T(380, 214, 'traffic rollback needs compatibility; completed effects are not undone', { s: 10, c: 'var(--ink-dim)' });
     return S(226, b);
   };
 
@@ -1077,11 +1072,11 @@
     }
     b += T(640, 40, 'bad release', { s: 10, c: 'var(--danger)', cls: 'v-blink' });
     b += LN(60, 122, 700, 122, { c: 'var(--border)' });
-    b += AP(u, 'M640 138H300', { m: 'ag', c: 'var(--good)', w: 2 });
-    b += F('M640 138H300', { c: 'var(--good)' });
+    b += AP(u, 'M640 138H470', { m: 'ag', c: 'var(--good)', w: 2 });
+    b += F('M640 138H470', { c: 'var(--good)' });
     b += T(470, 158, 'traffic is repointed to a compatible version kept ready', { s: 10, c: 'var(--good)' });
-    b += DT(300, 122, 7, { f: 'var(--good)', cls: 'v-pulse' });
-    b += T(300, 178, 'v3 serving again', { s: 10, c: 'var(--good)' });
+    b += DT(470, 122, 7, { f: 'var(--good)', cls: 'v-pulse' });
+    b += T(470, 178, 'v3 serving again', { s: 10, c: 'var(--good)' });
     b += T(380, 200, 'data migrations are the part that does not roll back; plan them forward-compatible', { s: 10, c: 'var(--ink-dim)' });
     return S(212, b);
   };
@@ -1158,8 +1153,8 @@
     b += HD('nearest neighbours by cosine similarity');
     b += LN(70, 190, 420, 190);
     b += LN(70, 44, 70, 190);
-    var near = [[210, 96], [246, 118], [180, 128]];
-    var far = [[330, 70], [366, 150], [130, 68], [300, 172], [396, 106], [150, 172]];
+    var near = [[180, 128], [330, 70], [246, 118]];
+    var far = [[210, 96], [366, 150], [130, 68], [300, 172], [396, 106], [150, 172]];
     for (i = 0; i < far.length; i++) { b += DT(far[i][0], far[i][1], 4.5, { f: 'var(--ink-dim)' }); }
     var inner = '';
     for (i = 0; i < near.length; i++) {
@@ -1394,7 +1389,7 @@
     'open-vs-closed-loop': 'An open loop cannot react to measured error. Feedback <b>can reduce error</b> when the closed loop is observable, controllable and stably tuned; feedback alone does not guarantee bounded error.',
     'receding-horizon': 'Plan over a long horizon but <b>commit only the first slot</b>, then re-plan as new information lands.',
     'mdp-loop': 'In a Markov decision process (MDP), the agent picks an action, the environment returns the next state, and the <b>reward can arrive many steps later</b>.',
-    'bandit-vs-rl': 'A bandit is one decision with fast feedback; reinforcement learning (RL) follows a <b>chain of states</b> where credit may need to be assigned across time.',
+    'bandit-vs-rl': 'A contextual bandit observes the chosen action\'s reward without consequential action-driven state carry-over; that reward may be delayed. Reinforcement learning (RL) models actions that affect a <b>chain of future states</b> and returns.',
     'assignment-matrix': 'Assignment picks one owner per item subject to <b>per-owner capacity</b> — a constraint problem, not a ranking problem.',
     'vrp-routes': 'Vehicle routing builds a route per vehicle so that every stop is visited inside its <b>time window</b>.',
     'exact-vs-metaheuristic-landscape': 'An exact solver gives a <b>proven bound</b>; a metaheuristic wanders out of local dips and gives a good answer quickly.',
@@ -1426,11 +1421,11 @@
     'db-replication-sharding': 'Replication adds read copies at the cost of <b>lag</b>; sharding splits the key space to add write capacity.',
     'idempotency-key': 'An idempotency key lets a retry return the <b>stored result</b> instead of writing twice.',
     'rate-limiter-token-bucket': 'A token bucket allows a burst equal to the bucket size while holding the <b>sustained rate</b> at the refill rate.',
-    'circuit-breaker-states': 'A breaker goes closed to open on errors, half-open after a cool-off, and back to closed only if the probe succeeds — it protects the <b>caller</b>.',
+    'circuit-breaker-states': 'A breaker opens after sufficient failures, allows bounded probes after a cool-off and closes after recovery criteria pass. It limits caller harm and reduces offered load on the failing dependency.',
     'multi-region-failover': 'Failover only exists if the router, the data path, and the runbook have all been <b>exercised</b> together.',
     'scale-test-3x': 'Three times expected peak is an <b>illustrative margin</b>, not a universal target. Choose the test load from forecast uncertainty, failure scenarios, launch risk and cost, then identify the first component that bends.',
     'degrade-to-fallback': 'Decide the degraded answer in advance — rules or a cached result — and <b>alert on how often it fires</b>.',
-    'canary-rollout': 'A canary raises traffic in steps with a <b>metrics gate</b> at each one, and every step can be reversed.',
+    'canary-rollout': 'A canary raises traffic in steps with a <b>metrics gate</b>. Traffic rollback requires a compatible previous version; it does not undo data changes or external effects.',
     'blue-green-swap': 'Two full environments make the rollback a single router flip, because the previous version is still running.',
     'shadow-traffic': 'When isolated correctly, shadow traffic has <b>no user-facing decision effect</b>. It can still consume capacity and money, expose sensitive input, mutate telemetry or tools, and needs access controls and monitoring.',
     'drift-monitor': 'Population stability index (PSI) is one possible input-drift score. The shown 0.20 threshold is <b>illustrative</b>: binning, baseline, sample size and operational cost determine a local threshold and response.',

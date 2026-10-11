@@ -115,7 +115,7 @@ assert.equal(chooseResource([{...curated,optional:true},relevantReading]),releva
 assert.equal(chooseResource([optionalVideo]),undefined,'only optional references means no default teaching card');
 
 let panels=[{open:true},{open:false},{open:true}],scrollRestored;
-const rerenderContext={state:{view:'topic'},book:{querySelectorAll(){return panels;}},window:{scrollY:417,scrollTo(v){scrollRestored=v.top;}},renderBook(){panels=[{open:false},{open:true},{open:false}];},renderRail(){}};
+const rerenderContext={publicCourse:false,document:{activeElement:null},state:{view:'topic'},book:{querySelectorAll(){return panels;}},window:{scrollY:417,scrollTo(v){scrollRestored=v.top;}},renderBook(){panels=[{open:false},{open:true},{open:false}];},renderRail(){}};
 const redraw=new Function('context','with(context){return ('+source('rerenderChapter')+');}')(rerenderContext);
 redraw({id:'topic'});assert.deepEqual(panels.map(p=>p.open),[true,false,true],'marking a section preserves the learner-opened disclosures');assert.equal(scrollRestored,417);
 let focused=0;const feedback={focus(){focused++;}},checkPanel={open:false,querySelector(sel){return sel==='.ex'?feedback:null;}};

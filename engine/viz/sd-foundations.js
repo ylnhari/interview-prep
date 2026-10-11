@@ -10,21 +10,22 @@
     b += B(14, 66, 130, 50, 'DAU~10,000,000');
     b += A(u, 148, 91, 198, 91, { c: 'var(--accent)', m: 'aa' });
     b += F('M148 91H198');
-    b += T(173, 78, 'x actions/day', { s: 10, c: 'var(--ink-dim)' });
+    b += T(173, 57, 'x 2/day', { s: 10, c: 'var(--ink-dim)' });
+    b += T(173, 70, '/ 86,400 s', { s: 10, c: 'var(--ink-dim)' });
     b += B(202, 66, 130, 50, 'avg QPS~230 req/s');
     b += A(u, 336, 91, 386, 91, { c: 'var(--accent)', m: 'aa' });
     b += F('M336 91H386');
-    b += T(361, 78, 'x peak factor', { s: 10, c: 'var(--ink-dim)' });
+    b += T(361, 57, 'x 10 peak', { s: 10, c: 'var(--ink-dim)' });
     b += B(390, 66, 130, 50, 'peak QPS~2,300 req/s', { f: 'var(--accent-weak)', sk: 'var(--accent)' });
     b += A(u, 524, 91, 574, 91, { c: 'var(--accent)', m: 'aa' });
     b += F('M524 91H574');
-    b += T(549, 78, 'x bytes/item', { s: 10, c: 'var(--ink-dim)' });
+    b += T(549, 57, 'x 2 MB', { s: 10, c: 'var(--ink-dim)' });
     b += B(578, 66, 168, 50, 'peak bandwidth~4.6 GB/s', { f: 'var(--accent-weak)', sk: 'var(--accent)' });
     b += T(380, 148, 'the same three steps size storage: swap bandwidth for bytes x retention', { s: 10, c: 'var(--ink-dim)' });
     b += T(380, 168, 'always say the assumption out loud before the arithmetic', { s: 10, c: 'var(--ink-dim)' });
     return S(188, b);
   };
-  C['capacity-estimate'] = 'Turn a user count into <b>QPS, storage and bandwidth</b> with the same three multiplications, stated out loud.';
+  C['capacity-estimate'] = 'Assume 10 million daily users, two requests each per day, a tenfold peak and 2 MB per response. Dividing by 86,400 seconds gives about 230 average QPS, 2,300 peak QPS and 4.6 GB/s peak response bandwidth; these are rounded estimates.';
 
   V['scale-up-vs-out'] = function (u) {
     var b = D(u, 'ar aa'), i, inner = '';
@@ -156,12 +157,12 @@
     b += T(200, 116, 'original request to replica A', { s: 9, c: 'var(--ink-dim)' });
     b += R(140, 154, 140, 20, { f: 'var(--good-weak)', sk: 'var(--good)' });
     b += T(30, 168, 'B', { a: 'end', s: 10, c: 'var(--ink-dim)' });
-    b += T(210, 148, 'hedge to replica B, sent after the p50 wait', { s: 9, c: 'var(--ink-dim)' });
+    b += T(210, 148, 'aggressive p50 hedge example: about half get an extra request', { s: 9, c: 'var(--ink-dim)' });
     b += LN(280, 108, 280, 182, { c: 'var(--good)', w: 2 });
     b += DT(280, 108, 5, { f: 'var(--good)', cls: 'v-pulse' });
-    b += T(280, 200, 'first response wins; the slower one is cancelled', { s: 10, c: 'var(--good)' });
+    b += T(280, 200, 'first response wins; cancellation may not stop downstream work', { s: 10, c: 'var(--good)' });
     return S(216, b);
   };
-  C['tail-latency-hedge'] = 'A hedged request starts a second try after the typical wait; the <b>first response back</b> wins and the other is dropped.';
+  C['tail-latency-hedge'] = "This aggressive p50 illustration can add roughly 50% request load. Production hedging needs a measured tail threshold, spare capacity and a duplication budget. Use safe duplicate semantics; cancellation may not stop the losing request.";
 
 }(typeof window !== 'undefined' ? window : this));

@@ -11,8 +11,8 @@
     b += LN(70, 176, 720, 176);
     b += LN(400, 30, 400, 176, { d: '3 4' });
     b += T(400, 22, 'z = 0 → p = 0.5', { s: 10, c: 'var(--ink-dim)' });
-    b += LN(70, 90, 720, 90, { d: '2 4', c: 'var(--ink-dim)' });
-    b += T(58, 94, '0.5', { a: 'end', s: 10, c: 'var(--ink-dim)' });
+    b += LN(70, 103, 720, 103, { d: '2 4', c: 'var(--ink-dim)' });
+    b += T(58, 107, '0.5', { a: 'end', s: 10, c: 'var(--ink-dim)' });
     var pts = [], z;
     for (z = -6; z <= 6.001; z += 0.3) {
       var p = 1 / (1 + Math.exp(-z));
@@ -38,26 +38,22 @@
 
   /* ---------------------------------------------------------------- ridge-vs-lasso */
   V['ridge-vs-lasso'] = function (u) {
-    var b = D(u, 'ar'), i;
-    b += HD('ridge (L2) vs lasso (L1): where the loss contour meets the penalty region');
-    var cx1 = 195, cx2 = 555, cy = 120;
-    b += T(cx1, 40, 'ridge: circular penalty', { s: 11, w: 1 });
-    b += '<ellipse cx="' + cx1 + '" cy="' + cy + '" rx="150" ry="34" fill="none" stroke="var(--border)" stroke-width="1.2" transform="rotate(-18 ' + cx1 + ' ' + cy + ')"/>';
-    b += '<ellipse cx="' + cx1 + '" cy="' + cy + '" rx="96" ry="20" fill="none" stroke="var(--border)" stroke-width="1.2" transform="rotate(-18 ' + cx1 + ' ' + cy + ')"/>';
-    b += '<circle cx="' + cx1 + '" cy="' + cy + '" r="46" fill="var(--accent-weak)" stroke="var(--accent)" stroke-width="1.4"/>';
-    b += DT(cx1 - 6, cy + 10, 5, { f: 'var(--good)', cls: 'v-pulse' });
-    b += T(cx1 - 6, cy + 30, 'both weights shrink,~neither hits zero', { s: 9, c: 'var(--good)' });
-    b += T(cx2, 40, 'lasso: diamond penalty', { s: 11, w: 1 });
-    b += '<ellipse cx="' + cx2 + '" cy="' + cy + '" rx="150" ry="34" fill="none" stroke="var(--border)" stroke-width="1.2" transform="rotate(-18 ' + cx2 + ' ' + cy + ')"/>';
-    b += '<ellipse cx="' + cx2 + '" cy="' + cy + '" rx="96" ry="20" fill="none" stroke="var(--border)" stroke-width="1.2" transform="rotate(-18 ' + cx2 + ' ' + cy + ')"/>';
-    b += PG((cx2) + ',' + (cy - 46) + ' ' + (cx2 + 46) + ',' + cy + ' ' + cx2 + ',' + (cy + 46) + ' ' + (cx2 - 46) + ',' + cy, { f: 'var(--accent-weak)', sk: 'var(--accent)' });
-    b += DT(cx2, cy - 46, 5, { f: 'var(--good)', cls: 'v-pulse' });
-    b += T(cx2 + 60, cy - 46, 'corner hit:~one weight = 0', { s: 9, c: 'var(--good)' });
-    b += LN(375, 30, 375, 190, { d: '3 4' });
-    b += T(380, 210, 'a sharp corner on the constraint region is what makes lasso zero out coefficients; a circle has no corner', { s: 10, c: 'var(--ink-dim)' });
-    return S(224, b);
+    var b=D(u,'ar'),scale=40,cy=140,optimum=[2,0.5],norm=Math.sqrt(4.25);
+    b+=HD('constrained least squares: loss centred at (2, 0.5)','L = (w1-2)^2 + (w2-0.5)^2; constraint radius = 1');
+    [200,560].forEach(function(cx,index){
+      b+=LN(cx-55,cy,cx+140,cy);b+=LN(cx,cy+48,cx,cy-100);
+      b+=T(cx+142,cy+4,'w1',{s:10,a:'start'});b+=T(cx,cy-106,'w2',{s:10});
+      var solution=index?[1,0]:[2/norm,0.5/norm],radius=index?Math.sqrt(1.25):norm-1;
+      if(index)b+=PG(cx+','+(cy-scale)+' '+(cx+scale)+','+cy+' '+cx+','+(cy+scale)+' '+(cx-scale)+','+cy,{f:'var(--accent-weak)',sk:'var(--accent)'});
+      else b+='<circle cx="'+cx+'" cy="'+cy+'" r="'+scale+'" fill="var(--accent-weak)" stroke="var(--accent)"/>';
+      b+='<circle cx="'+(cx+scale*optimum[0])+'" cy="'+(cy-scale*optimum[1])+'" r="'+(radius*scale)+'" fill="none" stroke="var(--border)" stroke-width="1.5"/>';
+      b+=DT(cx+scale*optimum[0],cy-scale*optimum[1],3,{f:'var(--ink-dim)'});
+      b+=DT(cx+scale*solution[0],cy-scale*solution[1],5,{f:'var(--good)'});
+      b+=T(cx+40,195,index?'L1 solution: (1, 0)':'L2 solution: (0.9701, 0.2425)',{s:10,c:'var(--good)'});
+    });
+    b+=T(380,218,'loss contours expand from the unconstrained optimum; first feasible touch is marked',{s:10,c:'var(--ink-dim)'});
+    return S(232,b);
   };
-
   /* ---------------------------------------------------------------- calibration-curve */
   V['calibration-curve'] = function (u) {
     var b = D(u, 'ar'), i, inner = '';
@@ -66,8 +62,9 @@
     b += LN(70, 30, 70, 176);
     b += LN(70, 176, 400, 30, { d: '3 4' });
     b += T(230, 20, 'perfectly calibrated', { s: 10, c: 'var(--ink-dim)' });
-    var xs = [100, 160, 220, 280, 340];
-    var ysBad = [150, 118, 96, 76, 50];
+    var predicted = [0.1, 0.3, 0.5, 0.7, 0.9], observed = [0.05, 0.18, 0.32, 0.48, 0.68];
+    var xs = predicted.map(function (p) { return 70 + 330 * p; });
+    var ysBad = observed.map(function (p) { return 176 - 146 * p; });
     var pts = [];
     for (i = 0; i < xs.length; i++) { pts.push(xs[i] + ',' + ysBad[i]); }
     b += PL(pts.join(' '), { c: 'var(--warning)', w: 2.2 });
@@ -100,9 +97,10 @@
     b += B(280, 46, 130, 40, 'root~Gini = 0.50');
     b += A(u, 345, 88, 320, 118);
     b += A(u, 345, 88, 370, 118);
-    b += B(240, 128, 130, 40, 'left~Gini = 0.18', { f: 'var(--good-weak)', sk: 'var(--good)' });
-    b += B(390, 128, 130, 40, 'right~Gini = 0.20', { f: 'var(--danger-weak)', sk: 'var(--danger)' });
-    b += T(560, 46, 'gain = 0.50 −~weighted(0.18, 0.20)', { s: 10, c: 'var(--ink-dim)' });
+    b += B(240, 128, 130, 40, 'left~Gini = 0.4082', { f: 'var(--good-weak)', sk: 'var(--good)' });
+    b += B(390, 128, 130, 40, 'right~Gini = 0.0000', { f: 'var(--danger-weak)', sk: 'var(--danger)' });
+    b += T(620, 46, 'weighted Gini = 0.2857', { s: 10, c: 'var(--ink-dim)' });
+    b += T(620, 68, 'gain = 0.2143', { s: 10, c: 'var(--ink-dim)' });
     b += B(560, 90, 160, 60, 'the tree tries every~feature and threshold, and~keeps the split with~the largest gain', { ts: 10, f: 'var(--surface-2)' });
     b += T(380, 216, 'a deeper tree keeps splitting until a stopping rule fires -- that stopping rule is what controls overfitting', { s: 10, c: 'var(--ink-dim)' });
     return S(228, b);
@@ -146,32 +144,26 @@
 
   /* ---------------------------------------------------------------- svm-margin */
   V['svm-margin'] = function (u) {
-    var b = D(u, 'ar ag ad'), i;
-    b += HD('maximum margin classifier');
-    var good = [[110, 60], [140, 90], [90, 110], [160, 50], [130, 130]];
-    var bad = [[420, 150], [460, 120], [500, 170], [440, 190], [380, 180]];
-    for (i = 0; i < good.length; i++) { b += DT(good[i][0], good[i][1], 6, { f: 'var(--good)' }); }
-    for (i = 0; i < bad.length; i++) { b += DT(bad[i][0], bad[i][1], 6, { f: 'var(--danger)' }); }
-    b += AP(u, 'M60 40L560 200', { m: 'none', c: 'var(--ink)', w: 2 });
-    b += AP(u, 'M40 68L540 228', { m: 'none', c: 'var(--accent)', w: 1.4, d: '5 5', cls: 'v-pulse' });
-    b += AP(u, 'M80 12L580 172', { m: 'none', c: 'var(--accent)', w: 1.4, d: '5 5', cls: 'v-pulse' });
-    b += DT(160, 50, 7, { sk: 'var(--accent)', f: 'none', sw: 2 });
-    b += DT(130, 130, 7, { sk: 'var(--accent)', f: 'none', sw: 2 });
-    b += DT(380, 180, 7, { sk: 'var(--accent)', f: 'none', sw: 2 });
-    b += T(560, 40, 'support vectors are circled --~only they set the boundary', { a: 'end', s: 10, c: 'var(--accent)' });
-    b += T(120, 210, 'moving any other point does not change the line', { s: 10, c: 'var(--ink-dim)' });
-    b += B(600, 60, 130, 100, 'hinge loss:~0 once a point clears~its margin, growing~linearly if it does not', { ts: 10, f: 'var(--surface-2)' });
-    return S(228, b);
+    var b=D(u,'ar'),i,good=[[110,60],[140,90],[90,110],[160,50],[130,130]],bad=[[420,150],[460,120],[500,170],[440,190],[380,180]],center=25050,halfGap=10750;
+    function marginLine(value,o){return LN((value-30*40)/80,40,(value-30*195)/80,195,o);}
+    b+=HD('hard-margin linear SVM: one separable fixture');
+    b+=marginLine(center,{c:'var(--ink)',w:2});
+    b+=marginLine(center-halfGap,{c:'var(--accent)',d:'5 5'});b+=marginLine(center+halfGap,{c:'var(--accent)',d:'5 5'});
+    for(i=0;i<good.length;i++)b+=DT(good[i][0],good[i][1],6,{f:'var(--good)'});
+    for(i=0;i<bad.length;i++)b+=DT(bad[i][0],bad[i][1],6,{f:'var(--danger)'});
+    [[160,50],[130,130],[380,180]].forEach(function(p){b+=DT(p[0],p[1],8,{sk:'var(--accent)',f:'none',sw:2});});
+    b+=B(570,55,165,90,'support vectors circled~w = (80,30)/10750~b = -25050/10750',{ts:10});
+    b+=T(380,214,'a nonsupport point can move without changing this optimum only outside its class margin',{s:10,c:'var(--ink-dim)'});
+    return S(228,b);
   };
-
   /* ---------------------------------------------------------------- kmeans-steps */
   V['kmeans-steps'] = function (u) {
     var b = D(u, 'ar'), i, j, inner = '';
     b += HD('k-means: assign, then update, repeat');
     var pts = [[30, 40], [45, 60], [25, 70], [60, 30], [120, 40], [140, 65], [110, 75], [150, 30], [70, 130], [90, 150], [55, 145], [110, 160]];
     var centroidsInit = [[40, 40], [130, 45], [80, 145]];
-    var centroidsFinal = [[40, 50], [130, 47], [82, 146]];
     var groupOf = [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2];
+    var centroidsFinal = [0, 1, 2].map(function (group) { var members = pts.filter(function (p, index) { return groupOf[index] === group; }); return [members.reduce(function (sum, p) { return sum + p[0]; }, 0) / members.length, members.reduce(function (sum, p) { return sum + p[1]; }, 0) / members.length]; });
     var colors = ['var(--accent)', 'var(--good)', 'var(--warning)'];
     var panelX = [30, 300, 570];
     var stepTitle = ['start: pick k random centroids', 'assign each point to its nearest centroid', 'move each centroid to its cluster\'s mean'];
@@ -216,7 +208,7 @@
 
   /* ---------------------------------------------------------------- confusion-matrix */
   V['confusion-matrix'] = function (u) {
-    var b = D(u, 'ar ag ad');
+    var b = D(u, 'ar aa ag ad');
     b += HD('confusion matrix', 'rows = actual, columns = predicted');
     var x0 = 140, y0 = 40, cw = 130, ch = 60;
     b += T(x0 + cw, y0 - 14, 'predicted +', { s: 10, c: 'var(--ink-dim)' });
@@ -237,30 +229,23 @@
 
   /* ---------------------------------------------------------------- roc-vs-pr */
   V['roc-vs-pr'] = function (u) {
-    var b = D(u, 'ar'), i;
-    b += HD('ROC curve vs precision-recall curve', 'same model, 0.1% positive rate');
-    b += LN(60, 170, 300, 170);
-    b += LN(60, 30, 60, 170);
-    b += LN(60, 170, 300, 30, { d: '3 4', c: 'var(--ink-dim)' });
-    b += T(180, 20, 'ROC', { s: 11, w: 1 });
-    b += T(180, 190, 'false positive rate →', { s: 9, c: 'var(--ink-dim)' });
-    var rocPts = ['60,170', '90,80', '140,52', '220,36', '300,30'];
-    b += PL(rocPts.join(' '), { c: 'var(--accent)', w: 2.2 });
-    b += F('M60 170Q140 60 300 30', { cls: 'v-flow-slow', c: 'var(--accent)', w: 1.2, d: '3 5' });
-    b += T(100, 130, 'looks strong:~AUC ≈ 0.95', { s: 9, c: 'var(--good)' });
-    b += LN(420, 170, 660, 170);
-    b += LN(420, 30, 420, 170);
-    b += T(540, 20, 'precision-recall', { s: 11, w: 1 });
-    b += T(540, 190, 'recall →', { s: 9, c: 'var(--ink-dim)' });
-    b += LN(420, 165, 660, 165, { d: '2 4', c: 'var(--danger)' });
-    b += T(665, 168, 'baseline ≈ prevalence (0.1%)', { a: 'start', s: 9, c: 'var(--danger)' });
-    var prPts = ['420,50', '470,60', '520,80', '580,110', '660,150'];
-    b += PL(prPts.join(' '), { c: 'var(--warning)', w: 2.2 });
-    b += T(560, 96, 'reveals the~precision collapse~the fraud team~actually feels', { s: 9, c: 'var(--warning)' });
-    b += T(380, 216, 'with 999 negatives per positive, a tiny false-positive rate is still thousands of false alarms', { s: 10, c: 'var(--ink-dim)' });
-    return S(228, b);
+    var b=D(u,'ar'),i,prevalence=0.001,rates=[[0,0],[0.125,9/14],[1/3,59/70],[2/3,67/70],[1,1]],roc=[],pr=[],auc=0;
+    function precision(fpr,tpr){return prevalence*tpr/(prevalence*tpr+(1-prevalence)*fpr);}
+    b+=HD('ROC and precision-recall from one threshold fixture','prevalence = 0.001; PR y-axis zoom: 0 to 0.01');
+    b+=LN(60,170,300,170);b+=LN(60,30,60,170);b+=LN(60,170,300,30,{d:'3 4'});
+    b+=LN(420,170,660,170);b+=LN(420,30,420,170);
+    for(i=0;i<rates.length;i++){roc.push((60+240*rates[i][0])+','+(170-140*rates[i][1]));
+      if(i){auc+=(rates[i][0]-rates[i-1][0])*(rates[i][1]+rates[i-1][1])/2;
+        pr.push((420+240*rates[i][1])+','+(170-140*precision(rates[i][0],rates[i][1])/0.01));}}
+    b+=PL(roc.join(' '),{c:'var(--accent)',w:2.2});b+=PL(pr.join(' '),{c:'var(--warning)',w:2.2});
+    b+=LN(420,156,660,156,{d:'3 4',c:'var(--danger)'});
+    b+=T(180,20,'ROC',{s:11,w:1});b+=T(540,20,'precision-recall',{s:11,w:1});
+    b+=T(180,190,'FPR: 0 to 1',{s:10});b+=T(540,190,'recall: 0 to 1',{s:10});
+    b+=T(180,60,'AUC = '+auc.toFixed(5),{s:10,c:'var(--accent)'});
+    b+=T(540,145,'baseline precision = 0.001',{s:10,c:'var(--danger)'});
+    b+=T(380,214,'FPR 0.125, recall 9/14: precision = '+precision(0.125,9/14).toFixed(5),{s:10,c:'var(--ink-dim)'});
+    return S(228,b);
   };
-
   /* ---------------------------------------------------------------- ab-test-flow */
   V['ab-test-flow'] = function (u) {
     var b = D(u, 'ar aa ag');
@@ -283,15 +268,15 @@
   };
 
   C['sigmoid-threshold'] = 'The sigmoid curve turning a raw score into a probability; points above the <b>0.5 threshold</b> are classified positive, below it negative.';
-  C['ridge-vs-lasso'] = 'Loss contours meeting a circular ridge penalty versus a diamond lasso penalty -- the diamond\'s <b>corner</b> is what zeroes out a coefficient.';
-  C['calibration-curve'] = 'A reliability diagram sagging below the diagonal -- the model is <b>overconfident</b> -- fixed by Platt scaling or isotonic regression.';
+  C['ridge-vs-lasso'] = "For squared distance from the unconstrained optimum (2,0.5), the unit L2 solution is its radial projection and the unit L1 solution is (1,0). Contours touch the marked feasible solutions; sparsity is possible, not guaranteed for every L1 problem.";
+  C['calibration-curve'] = "Observed frequencies below predicted probabilities illustrate overconfidence. Fit Platt scaling or isotonic regression on held-out calibration data and evaluate on separate data; improvement is not guaranteed.";
   C['tree-split'] = 'Candidate splits are scored by the impurity drop they buy; the tree keeps the one with the <b>largest gain</b>.';
   C['boosting-residuals'] = 'Three rounds of boosting: each new tree targets what the previous ones got wrong, and the <b>gap to the truth shrinks</b> each round.';
-  C['svm-margin'] = 'A maximum-margin boundary with its <b>support vectors circled</b> -- only those points determine where the line sits.';
+  C['svm-margin'] = "The circled support vectors determine this hard-margin optimum. Moving a nonsupport point leaves it unchanged only while that point remains outside its class margin; crossing it can change the solution.";
   C['kmeans-steps'] = 'k-means alternating between assigning points to the nearest centroid and <b>moving each centroid</b> to its cluster\'s mean.';
   C['data-split-time'] = 'A correct time-ordered split (train, then validation, then test) above a shuffled split where <b>future rows leak</b> into training.';
   C['confusion-matrix'] = 'The four outcomes of a binary classifier, with precision and recall traced back to the cells that <b>define each one</b>.';
-  C['roc-vs-pr'] = 'The same fraud model on an ROC curve (looks excellent) and a precision-recall curve, where the <b>rare positive class</b> tells a harder truth.';
+  C['roc-vs-pr'] = "Both curves use the same threshold fixture and prevalence 0.001. ROC AUC is 0.82113; precision is about 0.00512 at recall 9/14 and FPR 0.125. The PR axis is explicitly zoomed; its baseline equals prevalence.";
   C['ab-test-flow'] = 'Users randomly split into control and treatment, their guardrail and goal metrics compared against <b>what chance alone would produce</b>.';
 
 }(typeof window !== 'undefined' ? window : this));

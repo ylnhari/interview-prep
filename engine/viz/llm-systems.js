@@ -22,7 +22,7 @@
     b += T(400, 208, 'without overlap, an answer that spans a chunk boundary loses its context', { s: 10, c: 'var(--ink-dim)' });
     return S(220, b);
   };
-  C['chunk-overlap'] = 'A document is cut into fixed-size chunks that share a small <b>overlap</b> with their neighbour, so an idea that falls near a boundary still appears whole in at least one chunk.';
+  C['chunk-overlap'] = 'Adjacent fixed-size chunks repeat an <b>overlap</b> region, reducing boundary losses. A span longer than that overlap can still be split; inspect retrieved context and preserve structure rather than assuming overlap guarantees completeness.';
 
   V['hybrid-retrieval'] = function (u) {
     var b = D(u, 'ar aa');
