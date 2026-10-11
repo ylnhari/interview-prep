@@ -58,3 +58,10 @@ assert.match(goodput.rubric,/distinguishes this rate from the SLO attainment fra
 assert.equal(100*.99,99);assert.equal(200*.9,180);
 assert(200*.9>100*.99 && .9<.99 && 200*(1-.9)>100*(1-.99));
 console.log('AI review: preserved routes/quiz mappings, corrected mechanism coverage and 9 validation contracts passed');
+const chunkTeaching=lesson('rag-and-agents','raa-f2');
+assert.equal(chunkTeaching.viz,'chunk-overlap');
+assert.match(chunkTeaching.body,/^<p>A travel policy/);
+for(const term of ['where to cut','what to embed','what context to return','Fixed-token windows','Recursive splitting','Sentence or paragraph splitting','Structure-aware splitting','Semantic splitting','Parent-child retrieval','tree-sitter','TableChunks','Permission changes must propagate'])assert(chunkTeaching.body.includes(term),term);
+assert.match(chunkTeaching.body,/not another boundary algorithm/);
+assert.match(chunkTeaching.body,/comparable returned-context budgets/);
+assert.doesNotMatch(chunkTeaching.body,/<textarea|<form|chunk boundary falls where the topic actually shifts|so a chunk never ends mid-thought/);

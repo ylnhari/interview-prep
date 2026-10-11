@@ -178,7 +178,7 @@
       links[id].forEach(function (r) {
         section.body = section.body.replace(/<a href="([^"]+)">([^<]+)<\/a>/g, function (anchor, url, label) { return url === r[1] ? label : anchor; });
       });
-      section.body = primary + section.body;
+      section.body = id === "raa-f2" ? section.body + primary : primary + section.body;
     }
   });
   var alignment = lesson("lft-f6");
