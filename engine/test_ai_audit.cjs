@@ -2,10 +2,48 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict'),path=require('node:path');
 const base=path.join(__dirname,'..');
 const context={window:{}};vm.createContext(context);
-for(const file of ['library.js',...fs.readdirSync(path.join(base,'core')).filter(f=>f.endsWith('.js')&&f!=='library.js').sort()])vm.runInContext(fs.readFileSync(path.join(base,'core',file),'utf8'),context,{filename:file});
+let beforeLearningLinks;
+for(const file of ['library.js',...fs.readdirSync(path.join(base,'core')).filter(f=>f.endsWith('.js')&&f!=='library.js').sort()]){
+ if(file==='zzzzzzzzzz-lesson-learning-links.js')beforeLearningLinks=JSON.parse(JSON.stringify(context.window.PREP_CORE));
+ vm.runInContext(fs.readFileSync(path.join(base,'core',file),'utf8'),context,{filename:file});
+}
 const core=context.window.PREP_CORE;
 const section=id=>Object.values(core).flatMap(t=>t.learn).find(s=>s.id===id);
 const activity=id=>Object.values(core).flatMap(t=>t.activities).find(a=>a.id===id);
+if(beforeLearningLinks){
+ const after=JSON.parse(JSON.stringify(core));let changedBodies=0;
+ for(const [id,t] of Object.entries(beforeLearningLinks)){
+  assert.deepEqual(after[id].activities,t.activities);
+  for(const old of t.learn){const now=after[id].learn.find(s=>s.id===old.id);assert(now);assert.deepEqual(now.check,old.check);assert.equal(now.viz,old.viz);assert.equal(now.title,old.title);if(now.body!==old.body)changedBodies++;}
+ }
+ assert.equal(changedBodies,26,'bounded lesson-specific learning mapping plus RAG evaluation sources');
+ const added=core['rag-and-agents'].learn.filter(s=>!beforeLearningLinks['rag-and-agents'].learn.some(old=>old.id===s.id));
+ assert.deepEqual(Array.from(added,s=>s.id),['raa-reranking','raa-production-cases','raa-pgvector-operations','raa-qdrant-operations','raa-elasticsearch-operations']);
+ for(const s of added){assert.equal(s.check,null);assert.equal(s.deeper,null);assert.doesNotMatch(s.body,/<textarea|<form|<details|rubric|write your answer/);}
+ const reranking=section('raa-reranking');
+ assert.match(reranking.body,/sbert.net\/examples\/sentence_transformer\/applications\/retrieve_rerank\/README.html/);
+ assert.match(reranking.body,/Synthetic ordering example/);
+ assert.match(reranking.body,/not automatically calibrated probabilities/);
+ assert.match(reranking.body,/cannot recover evidence the first stage never retrieved/);
+ assert.match(section('raa-f3').body,/href="#rag-and-agents\/raa-reranking"/);
+ assert.match(section('raa-production-cases').body,/turbopuffer.*Kafka.*Spark.*Airflow.*DynamoDB.*Ray/);
+ assert.match(section('raa-production-cases').body,/underlying search\/vector database is not disclosed/);
+ assert.match(section('raa-production-cases').body,/client can cache results/);
+ assert.match(section('raa-pgvector-operations').body,/ddl-rowsecurity.html/);
+ assert.match(section('raa-qdrant-operations').body,/new collection.*dual-write.*historical.*quality.*alias.*query embedding model/);
+ assert.match(section('raa-elasticsearch-operations').body,/does not automatically improve/);
+ assert(!section('raa-f5').deeper.includes('Agent outcomes'),'agent evaluation leaves introductory RAG recall');
+ assert(section('raa-agent-execution').deeper.includes('Agent outcomes'),'agent evaluation follows execution teaching');
+ assert(section('raa-agent-execution').deeper.includes('demystifying-evals-for-ai-agents'));
+ assert(!core['rag-and-agents'].readings.some(r=>r.u.includes('demystifying-evals-for-ai-agents')));
+ assert.match(section('raa-f1a').body,/advanced_rag/);
+ assert(section('raa-f1a').body.endsWith(beforeLearningLinks['rag-and-agents'].learn.find(s=>s.id==='raa-f1a').body),'production fixture retained after primary walkthrough');
+ assert.match(section('raa-f3').body,/reciprocal-rank-fusion/);
+ assert.match(section('raa-f3').check.explain,/cannot recover documents absent/);
+ assert.equal((section('raa-agent-execution').body.match(/href="https:\/\/docs.langchain.com\/oss\/python\/langgraph\/functional-api"/g)||[]).length,1);
+ assert.match(section('lft-f6').body,/Supervised fine-tuning learns from desired responses/);
+ assert.match(section('dle-f8').body,/Original encoder-decoder Transformer/);
+}
 assert.match(section('lie-f7').body,/min\(1,p\(x\)\/q\(x\)\)/);
 assert.match(section('lie-f7').body,/positive residual/);
 assert.match(section('lie-f3').body,/may still return or stream/);
