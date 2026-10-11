@@ -22,7 +22,7 @@ window.PREP_CONTENT = {
     { id: "track3", label: "Track 3 \u00b7 LLMs in production", sub: "serving and cost, inference engineering, fine-tuning and alignment, retrieval and agents", ids: ["genai-platform", "llm-inference-engineering", "llm-fine-tuning-and-alignment", "rag-and-agents"] },
     { id: "track4", label: "Track 4 \u00b7 Maths and ML foundations", sub: "the maths, data and generalisation, classical models, evaluation, and deep learning", ids: ["ml-math-essentials", "data-and-generalization", "classical-models", "evaluation-and-selection", "deep-learning-essentials"] },
     { id: "track5", label: "Track 5 \u00b7 Decision systems", sub: "forecasting with uncertainty, optimisation, feedback loops that re-plan, and when to let a model learn the decision", ids: ["forecasting-uq", "or-tooling", "control-theory", "rl-judgment"] },
-    { id: "track6", label: "Track 6 \u00b7 Practice", sub: "scenario questions, coding drills, and about three hundred questions with the answers hidden", ids: ["coding-drills", "scenario-questions", "question-bank-system-design", "question-bank-mle", "question-bank-ml-foundations", "question-bank-llm", "question-bank-fundamentals"] }
+    { id: "track6", label: "Track 6 \u00b7 Practice", sub: "scenario questions, coding drills, and worked question-and-answer references", ids: ["coding-drills", "scenario-questions", "question-bank-system-design", "question-bank-mle", "question-bank-ml-foundations", "question-bank-llm", "question-bank-fundamentals"] }
   ],
 
   useCore: [
@@ -576,11 +576,11 @@ window.PREP_CONTENT.lessonGuides = {
 // Broad algorithm references complement the topic-specific learn/solve links.
 (function (C) {
   var resources = [
-    ['Runestone: algorithms and data structures in Python', 'https://runestone.academy/ns/books/published/pythonds3/index.html', 'Use the chapter-specific links in the coding lessons first. This free textbook provides the surrounding analysis, Python implementations, recursion, searching, sorting, trees and graphs.', 'Runestone Academy', 45],
-    ['MIT 6.006: algorithm lecture notes', 'https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/lecture-notes/', 'Choose lectures 3-8 for sorting and data structures, 9-13 for graph traversal and shortest paths, or 15-18 for dynamic-programming formulations. Read the corresponding notes before attempting the paired coding problems.', 'MIT OpenCourseWare', 45]
+    ['GeeksforGeeks: hashing tutorial', 'https://www.geeksforgeeks.org/dsa/introduction-to-hashing-2/', 'Start with the topic-specific web tutorial in each lesson, then solve its ordered LeetCode problems.', 'GeeksforGeeks', 15],
+    ['GeeksforGeeks: binary search tutorial', 'https://www.geeksforgeeks.org/dsa/binary-search/', 'Read the worked search and boundary examples before the binary-search problem pair.', 'GeeksforGeeks', 15]
   ];
   resources.forEach(function (r) {
-    C.readings['coding-drills'].push({l:r[0],u:r[1],w:r[2],purpose:r[2],provider:r[3],format:'Textbook / lecture notes',access:'Learning text publicly readable 2026-10-11; interactive exercise execution and linked accounts not tested.',m:r[4],budgetLabel:'Estimated study budget for a selected topic, not the whole course',optional:true,checkedAt:'2026-10-11'});
+    C.readings['coding-drills'].push({l:r[0],u:r[1],w:r[2],purpose:r[2],provider:r[3],format:'Web tutorial',access:'Learning text publicly readable 2026-10-11; interactive exercise execution and linked accounts not tested.',m:r[4],budgetLabel:'Estimated study budget for a selected topic, not the whole course',optional:true,checkedAt:'2026-10-11'});
   });
 }(window.PREP_CONTENT));
 

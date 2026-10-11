@@ -50,13 +50,13 @@ for(const id of ['cdr-binary-search','cdr-intervals-greedy','cdr-stacks','cdr-li
  assert(lesson.body.indexOf('<b>Learn.</b>')<lesson.body.indexOf('<b>Solve.</b>'),id+' teaches before assigning practice');
  const urls=[...lesson.body.matchAll(/href="([^"]+)"/g)].map(m=>m[1]);
  assert.equal(urls.filter(u=>u.startsWith('https://leetcode.com/problems/')).length,2,id+' starter and follow-up are direct problems');
- assert(urls.some(u=>/^https:\/\/(runestone\.academy|usaco\.guide|cp-algorithms\.com|docs\.python\.org)\//.test(u)),id+' has a topic-specific teaching source');
- assert(lesson.deeper&&lesson.check&&lesson.check.explain,id+' has a reference approach and explained quick check');
+ assert(urls.some(u=>/^https:\/\/(www\.geeksforgeeks\.org|usaco\.guide|cp-algorithms\.com|docs\.python\.org)\//.test(u)),id+' has a topic-specific teaching source');
+ assert(!lesson.deeper&&lesson.check&&lesson.check.explain,id+' keeps compatibility data while using linked teaching');
  assert.match(lesson.body,/<b>Test and explain\.<\/b>/);
 }
-assert.equal(coding.learn.find(s=>s.id==='cdr-f1').title,'Six starter patterns, with pseudocode models');
-assert(c.readings['coding-drills'].some(r=>r.provider==='MIT OpenCourseWare'));
-assert(c.readings['coding-drills'].some(r=>r.provider==='Runestone Academy'));
+assert.equal(coding.learn.find(s=>s.id==='cdr-f1').title,'Choose a coding topic and its problem pair');
+assert(c.readings['coding-drills'].some(r=>r.provider==='GeeksforGeeks'));
+assert(!c.readings['coding-drills'].some(r=>/\.pdf|lecture-notes|runestone/i.test(r.u)));
 console.log('Expanded coding learning sources, practice progression and stable destinations passed.');
 
 // Execute the actual body splitter against every new lesson, including the
@@ -123,6 +123,6 @@ const codingTree=renderedNodes(realRenderChapter(coding,39));
 for(const lesson of directCoding){
  const body=codingTree.find(({node})=>node.html===lesson.body);assert(body,lesson.id+' complete body rendered');
  assert(!body.ancestors.some(n=>n.tag==='details'),lesson.id+' Learn/Solve outside any disclosure');
- const reference=codingTree.find(({node})=>node.html===lesson.deeper);assert(reference);assert(!reference.ancestors.some(n=>n.tag==='details'),lesson.id+' brief reference directly visible');
+
 }
 console.log('Actual synthetic chapter rendering: all coding links directly visible; scenario Q&A has no disclosures, diagrams or answer boxes.');

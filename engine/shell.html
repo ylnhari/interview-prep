@@ -410,6 +410,36 @@
   @media(max-width:420px) { .row { flex-wrap:wrap; } .chapter-orientation { padding:12px; } }
   @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } * { animation-duration:0.01ms!important; transition-duration:0.01ms!important; } }
 
+/* Public reading layout: scoped so private packs retain their existing reader. */
+body.public-course .top-inner { max-width:1180px; min-height:64px; box-sizing:border-box; }
+body.public-course .shell { max-width:1180px; grid-template-columns:245px minmax(0,1fr); gap:32px; }
+body.public-course .rail { top:var(--header-clearance); max-height:calc(100dvh - var(--header-clearance) - 16px); }
+body.public-course .toc { border:0; border-radius:0; background:transparent; }
+body.public-course .dh { background:transparent; border-bottom:1px solid var(--border); }
+body.public-course .ti { border-radius:4px; }
+body.public-course .ti .m { display:none; }
+body.public-course .si[aria-current="page"] { background:var(--accent-weak); font-weight:600; }
+body.public-course .practice-link { display:block; padding-left:18px; }
+body.public-course .continue { border-radius:4px; }
+.lesson-page { padding:10px 0 24px; overflow-wrap:anywhere; }
+.lesson-page h1 { font-size:clamp(24px,3vw,32px); line-height:1.3; margin:8px 0 24px; }
+.lesson-chapter { font-size:13px; color:var(--ink-dim); margin:0; }
+.lesson-copy { line-height:1.75; }
+.lesson-copy > div { margin:0 0 24px; }
+.lesson-copy .cviz { margin:24px 0; }
+.lesson-copy .practice-sim { border-radius:4px; margin:24px 0; }
+.lesson-resources { border-top:1px solid var(--border); margin-top:28px; padding-top:18px; }
+.lesson-resources h2 { font-size:18px; }
+.lesson-resources a { display:block; margin:12px 0 4px; }
+.lesson-resources p { font-size:14px; margin:4px 0 16px; }
+.resource-line { display:flex; align-items:baseline; gap:10px; }
+.lesson-video { width:100%; aspect-ratio:16/9; border:0; margin:12px 0 20px; }
+.inline-explanation { border:0; padding:0; margin:20px 0; }
+.lesson-completion { margin-top:28px; }
+body.public-course .chnav { border-top:1px solid var(--border); padding-top:20px; }
+body.public-course .navbtn { border:0; border-radius:4px; text-decoration:none; }
+@media(max-width:940px) { body.public-course .shell { grid-template-columns:minmax(0,1fr); gap:0; } body.public-course.menu-open .rail { top:0; max-height:100dvh; } }
+@media(max-width:540px) { body.public-course .shell { padding:16px; } .lesson-page h1 { font-size:24px; } }
 </style>
 
 <header class="top">
@@ -931,7 +961,7 @@ window.PREP_IO = (function () {
       var members = GROUPS.length ? orderedTopics().filter(function (t) { return groupOf(t.id) === grp; }) : orderedTopics();
       members.forEach(function (t) {
         var p = topicProgress(t); var active = state.view === t.id;
-        var a = el('button', 'ti' + (active ? ' cur' : '')); a.type = 'button'; a.dataset.id = t.id; if (active) a.setAttribute('aria-current', 'page');
+        var a = el('button', 'ti' + (active ? ' cur' : '')); a.type = 'button'; a.dataset.id = t.id; if (publicCourse) a.setAttribute('aria-expanded', active ? 'true' : 'false'); else if (active) a.setAttribute('aria-current', 'page');
         var tt = el('span', 't'); tt.appendChild(txt('span', null, chapterNumber(t.id) + '. ' + t.title)); tt.appendChild(txt('span', 'n', p.rL + '/' + p.nL)); a.appendChild(tt);
         var m = el('span', 'm'); var bar = el('span', 'bar', '<i></i>'); bar.style.setProperty('--pct', p.pct); m.appendChild(bar); m.appendChild(txt('span', 'state' + (p.complete ? ' verified' : ''), p.label)); a.appendChild(m);
         a.addEventListener('click', function () { go(t.id); });
@@ -941,11 +971,12 @@ window.PREP_IO = (function () {
           var parts = {}; t.learn.forEach(function (c) { if (c.part) parts[c.part] = 1; }); var multi = Object.keys(parts).length > 1;
           t.learn.forEach(function (c, i) {
             if (multi && c.part && c.part !== lastPart) { lastPart = c.part; sub.appendChild(txt('div', 'sp', PART_SHORT[c.part] || c.part)); }
-            var li = el('a', 'si' + (tst.learn[c.id] ? ' read' : '')); li.href = '#sec-' + c.id; li.appendChild(txt('span', 'sn', lessonNumber(t, c))); li.appendChild(txt('span', null, c.title + (tst.learn[c.id] ? ' ' + TICK : ''))); if (tst.learn[c.id]) li.setAttribute('aria-label', lessonNumber(t, c) + ' ' + c.title + ', completed'); sub.appendChild(li);
+            var li = el('a', 'si' + (tst.learn[c.id] ? ' read' : '')); li.href = publicCourse ? '#' + t.id + '/' + c.id : '#sec-' + c.id; if (publicCourse && selectedLesson(t) === c) li.setAttribute('aria-current', 'page'); li.appendChild(txt('span', 'sn', lessonNumber(t, c))); li.appendChild(txt('span', null, c.title + (tst.learn[c.id] ? ' ' + TICK : ''))); if (tst.learn[c.id]) li.setAttribute('aria-label', lessonNumber(t, c) + ' ' + c.title + ', completed'); sub.appendChild(li);
           });
-          if (t.connect) { var lc = el('a', 'si'); lc.href = '#connect-' + t.id; lc.appendChild(txt('span', 'sn', DOT)); lc.appendChild(txt('span', null, 'Map it onto your work')); sub.appendChild(lc); }
-          if (t.activities.length) { var la = el('a', 'si'); la.href = '#ex-' + t.id; la.appendChild(txt('span', 'sn', DOT)); la.appendChild(txt('span', null, 'Exercises (' + p.pA + '/' + p.nA + ')')); sub.appendChild(la); }
-          if (t.sayItOutLoud) { var ls2 = el('a', 'si'); ls2.href = '#say-' + t.id; ls2.appendChild(txt('span', 'sn', DOT)); ls2.appendChild(txt('span', null, 'Spoken answer')); sub.appendChild(ls2); }
+          if (publicCourse) t.activities.forEach(function (c) { var practice = txt('a', 'si practice-link', c.title); practice.href = '#' + t.id + '/' + c.id; if (selectedLesson(t) === c) practice.setAttribute('aria-current', 'page'); sub.appendChild(practice); });
+          if (!publicCourse && t.connect) { var lc = el('a', 'si'); lc.href = '#connect-' + t.id; lc.appendChild(txt('span', 'sn', DOT)); lc.appendChild(txt('span', null, 'Map it onto your work')); sub.appendChild(lc); }
+          if (!publicCourse && t.activities.length) { var la = el('a', 'si'); la.href = '#ex-' + t.id; la.appendChild(txt('span', 'sn', DOT)); la.appendChild(txt('span', null, 'Exercises (' + p.pA + '/' + p.nA + ')')); sub.appendChild(la); }
+          if (!publicCourse && t.sayItOutLoud) { var ls2 = el('a', 'si'); ls2.href = '#say-' + t.id; ls2.appendChild(txt('span', 'sn', DOT)); ls2.appendChild(txt('span', null, 'Spoken answer')); sub.appendChild(ls2); }
           g.appendChild(sub);
         }
       });
@@ -973,6 +1004,13 @@ window.PREP_IO = (function () {
   function closeMenu() { document.body.classList.remove('menu-open'); document.getElementById('menu-btn').setAttribute('aria-expanded', 'false'); }
   function go(view, secId) {
     var restoreMenuFocus = document.body.classList.contains('menu-open');
+    if (publicCourse) {
+      state.view = view; state.pendingScroll = null; setHash(secId ? view + '/' + secId : view);
+      persist(); closeMenu(); renderAll(); window.scrollTo({ top: 0 });
+      if (restoreMenuFocus) menuBtn.focus({ preventScroll: true });
+      else { var heading = book.querySelector('.lesson-page h1'); if (heading) { heading.tabIndex = -1; heading.focus({preventScroll:true}); } }
+      return;
+    }
     state.view = view; persist(); closeMenu(); renderAll(); setHash(secId ? view + '/' + secId : view);
     if (secId) { var s = document.getElementById('sec-' + secId); if (s) { s.scrollIntoView({ block: 'start' }); if (restoreMenuFocus) menuBtn.focus({ preventScroll: true }); return; } }
     window.scrollTo({ top: 0 });
@@ -989,7 +1027,69 @@ window.PREP_IO = (function () {
     if (state.view === 'glossary') { book.appendChild(renderGlossary()); book.appendChild(renderNav('glossary')); return; }
     var t = topicById(state.view);
     var n = orderedTopics().indexOf(t) + 1;
+    if (publicCourse) { var lesson = selectedLesson(t); if (lesson) { book.appendChild(renderLesson(t, lesson)); book.appendChild(renderLessonNav(t, lesson)); } return; }
     book.appendChild(renderChapter(t, n)); book.appendChild(renderNav(t.id));
+  }
+  // Public routes retain the chapter/section IDs used by progress and old links.
+  // The route is UI state, never a new field in the synced progress schema.
+  function lessonSections(topic) { return (topic.learn || []).concat(topic.activities || []); }
+  function selectedLesson(topic) {
+    var id = (state.pendingScroll || '').replace(/^sec-/, '');
+    if (!id) { try { var parts = (location.hash || '').replace(/^#/, '').split('/'); if (decodeURIComponent(parts[0]) === topic.id) id = decodeURIComponent(parts[1] || ''); } catch (e) {} }
+    var sections = lessonSections(topic);
+    return sections.filter(function (s) { return s.id === id; })[0] || sections[0];
+  }
+  function renderLessonNav(topic, lesson) {
+    var sequence = []; recommendedTopics().forEach(function (t) { lessonSections(t).forEach(function (s) { sequence.push({topic:t, section:s}); }); });
+    var index = sequence.findIndex(function (x) { return x.topic.id === topic.id && x.section.id === lesson.id; });
+    var nav = el('nav', 'chnav'); nav.setAttribute('aria-label', 'Lesson navigation');
+    function link(entry, direction) {
+      var a = el('a', 'navbtn ' + direction.toLowerCase()); a.href = '#' + entry.topic.id + '/' + entry.section.id;
+      a.appendChild(txt('span', 'k', direction)); a.appendChild(txt('span', 'v', (entry.topic.learn.indexOf(entry.section) >= 0 ? lessonNumber(entry.topic, entry.section) + ' ' : 'Practice: ') + entry.section.title)); return a;
+    }
+    nav.appendChild(index > 0 ? link(sequence[index - 1], 'Previous') : el('span'));
+    if (index >= 0 && index < sequence.length - 1) nav.appendChild(link(sequence[index + 1], 'Next'));
+    return nav;
+  }
+  function renderLesson(topic, lesson) {
+    var page = el('article', 'lesson-page'), record = T(topic.id), activity = topic.learn.indexOf(lesson) < 0;
+    page.id = 'sec-' + lesson.id;
+    page.appendChild(txt('p', 'lesson-chapter', 'Chapter ' + chapterNumber(topic.id) + ' · ' + topic.title));
+    var heading = txt('h1', null, (activity ? 'Practice: ' : lessonNumber(topic, lesson) + ' ') + lesson.title); heading.id = 'lesson-title-' + lesson.id; page.appendChild(heading);
+    page.setAttribute('aria-labelledby', heading.id);
+    var prose = el('div', 'prose lesson-copy');
+    if (lesson.link && lesson.link.url) prose.appendChild(extLink(lesson.link));
+    prose.appendChild(el('div', null, activity ? lesson.prompt : lesson.body));
+    if (lesson.viz && window.VIZLIB && window.VIZLIB[lesson.viz]) {
+      var diagram = el('figure', 'cviz'); diagram.innerHTML = window.VIZLIB[lesson.viz]('lesson-' + lesson.id) + (window.VIZLIB_CAPTIONS && window.VIZLIB_CAPTIONS[lesson.viz] ? '<figcaption class="cap">' + window.VIZLIB_CAPTIONS[lesson.viz] + '</figcaption>' : '');
+      prepareDiagram(diagram, lesson.title); prose.appendChild(diagram);
+    }
+    if (lesson === topic.learn[0] && VIZ[topic.id] && !lesson.viz) { var overview = el('figure', 'cviz'); overview.innerHTML = VIZ[topic.id].svg + '<figcaption class="cap">' + VIZ[topic.id].cap + '</figcaption>'; prepareDiagram(overview, lesson.title); prose.appendChild(overview); }
+    if (activity && lesson.model) prose.appendChild(el('div', 'worked-answer', lesson.model));
+    if (!activity && lesson.deeper) prose.appendChild(el('div', null, lesson.deeper));
+    if (!activity && window.PREP_AI_PRACTICE) window.PREP_AI_PRACTICE.mountLesson(prose, lesson.id);
+    var simulations = {'evaluation-and-selection':'es-f4','classical-models':'cm-f2','data-features':'df-v2-time-leakage','queues-and-streams':'qs-f5','system-design-cases':'sdc-enterprise-features','sre-practices':'srep-f2','enterprise-feature-platform':'efp-stages'};
+    if (simulations[topic.id] === lesson.id && window.PREP_PRACTICE && window.PREP_PRACTICE.mount) window.PREP_PRACTICE.mount(prose, topic.id);
+    // Supporting explanations are visible; controls inside substantive demos remain usable.
+    Array.prototype.forEach.call(prose.querySelectorAll('details'), function (d) { var section = el('section', 'inline-explanation'); while (d.firstChild) { var child = d.firstChild; if (child.tagName === 'SUMMARY') { section.appendChild(txt('h3', null, child.textContent)); d.removeChild(child); } else section.appendChild(child); } d.parentNode.replaceChild(section, d); });
+    Array.prototype.forEach.call(prose.querySelectorAll('pre'), function (p) { p.tabIndex = 0; p.setAttribute('role', 'region'); p.setAttribute('aria-label', 'Scrollable code example'); });
+    page.appendChild(prose);
+    // Chapter reading lists belong to the introductory lesson, not every page.
+    if (lesson === topic.learn[0] && (READINGS[topic.id] || []).length) {
+      var resources = el('section', 'lesson-resources'); resources.appendChild(txt('h2', null, 'Resources for this chapter'));
+      var readings = READINGS[topic.id];
+      if (progressApi && progressApi.migrateIndexedReads && progressApi.migrateIndexedReads(record.reads, readings)) persist(topic.id);
+      var videoAdded = false;
+      readings.forEach(function (r, i) { var url = safeExternalUrl(r.u); if (!url) return;
+        var parsed = new URL(url), video = parsed.hostname === 'youtu.be' ? parsed.pathname.slice(1) : /^(www\.)?youtube\.com$/.test(parsed.hostname) ? parsed.searchParams.get('v') : null;
+        if (!videoAdded && /^[A-Za-z0-9_-]{11}$/.test(video || '')) { var frame = el('iframe', 'lesson-video'); frame.src = 'https://www.youtube-nocookie.com/embed/' + video; frame.title = r.l; frame.loading = 'lazy'; frame.setAttribute('allowfullscreen', ''); frame.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin'); resources.appendChild(frame); videoAdded = true; }
+        var line = el('div', 'resource-line'), checkbox = el('input'); checkbox.type = 'checkbox'; checkbox.checked = !!record.reads[r.u]; checkbox.setAttribute('aria-label', 'Mark read: ' + r.l); checkbox.addEventListener('change', function () { record.reads[r.u] = checkbox.checked; persist(topic.id); }); line.appendChild(checkbox);
+        var a = txt('a', null, r.l); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; line.appendChild(a); resources.appendChild(line); if (r.purpose || r.w) resources.appendChild(txt('p', null, r.purpose || r.w)); }); page.appendChild(resources);
+    }
+    var row = el('div', 'row lesson-completion');
+    if (activity) row.appendChild(selfMarkButton(AC(topic.id, lesson.id), topic, 'Mark practised'));
+    else { var read = !!record.learn[lesson.id], done = txt('button', 'btn' + (read ? ' done' : ''), read ? 'Completed ' + TICK : 'Mark complete'); done.type = 'button'; done.setAttribute('aria-pressed', read ? 'true' : 'false'); done.addEventListener('click', function () { record.learn[lesson.id] = !read; persist(topic.id); rerenderChapter(topic); }); row.appendChild(done); }
+    page.appendChild(row); return page;
   }
   function rerenderChapter(topic) {
     if (state.view !== topic.id) { renderRail(); return; }
@@ -1357,6 +1457,9 @@ window.PREP_IO = (function () {
   // in-page anchors: scroll explicitly (hash navigation is unreliable inside an artifact frame)
   var anchorClickHandler = function (ev) {
     var a = ev.target.closest && ev.target.closest('a[href^="#"]'); if (!a) return;
+    if (publicCourse && !ev.ctrlKey && !ev.metaKey && !ev.shiftKey && !ev.altKey) {
+      try { var route = a.getAttribute('href').slice(1).split('/'), topic = topicById(decodeURIComponent(route[0])); if (topic) { ev.preventDefault(); go(topic.id, route[1] ? decodeURIComponent(route[1]) : null); return; } } catch (e) {}
+    }
     var id = a.getAttribute('href').slice(1); var target = document.getElementById(id); if (!target) return;
     ev.preventDefault(); closeMenu(); target.scrollIntoView({ behavior: window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
     if (id.indexOf('sec-') === 0 && state.view) setHash(state.view + '/' + id.slice(4));
@@ -1376,6 +1479,7 @@ window.PREP_IO = (function () {
       var ok = (vid === 'home' && publicCourse) || (vid === 'who' && C.interviewer) || (vid === 'glossary' && GLOSSARY.length) || TOPICS.some(function (t) { return t.id === vid; });
       if (!ok) return false;
       rememberRoute(h); state.view = vid; state.pendingScroll = parts[1] ? 'sec-' + decodeURIComponent(parts[1]) : null;
+      if (publicCourse && parts[1]) { var topic = TOPICS.filter(function (t) { return t.id === vid; })[0]; if (!topic || !topic.learn.concat(topic.activities || []).some(function (s) { return s.id === decodeURIComponent(parts[1]); })) state.pendingScroll = null; }
       if (privateHost && !privateReady) privateInitialRoute = { view: state.view, pendingScroll: state.pendingScroll };
       return true;
     } catch (e) { return false; }
