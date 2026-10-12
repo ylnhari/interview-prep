@@ -25,10 +25,9 @@
     ]
   ],
   "cdr-two-pointers": [
-    [
-      "Two pointers and sliding windows",
-      "https://usaco.guide/silver/two-pointers?lang=py"
-    ]
+    ["Sliding windows: fixed size", "https://www.hellointerview.com/learn/code/sliding-window/fixed-length"],
+    ["Sliding windows: variable size", "https://www.hellointerview.com/learn/code/sliding-window/variable-length"],
+    ["Two pointers: separate concept", "https://usaco.guide/silver/two-pointers?lang=py"]
   ],
   "cdr-binary-search": [
     [
