@@ -69,6 +69,7 @@ jobs:
           node engine/test_ai_learning.cjs
           node engine/test_decision_audit.cjs
           node engine/test_systems_audit.cjs
+          node engine/test_chunking_lab.cjs
           python -m unittest engine.test_ml_content engine.test_coding_sql
       - name: Test progress compatibility guard
         run: node engine/test_progress_compatibility.cjs
